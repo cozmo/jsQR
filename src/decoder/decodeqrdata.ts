@@ -1,4 +1,4 @@
-import {BitStream} from "../common/bitStream";
+import {BitStream} from "../common/bitstream";
 
 // return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
 function byteArrayToString(bytes: number[]): string {
