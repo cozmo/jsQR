@@ -1,0 +1,30 @@
+{
+  "name": "js-qr",
+  "version": "0.1.0",
+  "description": "QR code detection, extraction, decoding and parsing written as pure JS port of the ZXing library.",
+  "repository": "https://github.com/cozmo/js-qr",
+  "main": "./dist/js-qr.js",
+  "contributors": [
+    {
+      "name": "Cosmo Wolfe",
+      "email": "cosmo.wolfe@gmail.com"
+    },
+    {
+      "name": "Jefff Nelson",
+      "email": "gmjefff@gmail.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "mocha": "^2.3.4",
+    "ts-loader": "^0.7.2",
+    "ts-node": "^0.5.4",
+    "typescript": "^1.7.3",
+    "webpack": "^1.12.9"
+  },
+  "scripts": {
+    "build": "./node_modules/webpack/bin/webpack.js",
+    "watch": "./node_modules/webpack/bin/webpack.js --watch",
+    "test": "./node_modules/mocha/bin/mocha --require ts-node/register ./test/test-*.ts"
+  }
+}
