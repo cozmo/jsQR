@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "module": "commonjs",
-    "noImplicitAny": true
-  },
-  "files": [
-    "./src/Main.ts"
-  ]
-}
