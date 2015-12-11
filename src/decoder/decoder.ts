@@ -1,7 +1,7 @@
 import {BitMatrix} from "../common/bitmatrix";
 import {decodeQRdata} from "./decodeqrdata";
 import {numBitsDiffering} from "../common/helpers";
-import {ReedSolomonDecoder} from "./reedSolomon";
+import {ReedSolomonDecoder} from "./reedsolomon";
 import {Version, ErrorCorrectionLevel, getVersionForNumber} from "../common/version";
 
 const FORMAT_INFO_MASK_QR = 0x5412;
