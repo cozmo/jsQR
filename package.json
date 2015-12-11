@@ -1,9 +1,9 @@
 {
-  "name": "js-qr",
+  "name": "jsqr",
   "version": "0.1.0",
   "description": "QR code detection, extraction, decoding and parsing written as pure JS port of the ZXing library.",
-  "repository": "https://github.com/cozmo/js-qr",
-  "main": "./dist/js-qr.js",
+  "repository": "https://github.com/cozmo/jsQR",
+  "main": "./dist/jsQR.js",
   "contributors": [
     {
       "name": "Cosmo Wolfe",

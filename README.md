@@ -23,11 +23,11 @@ jsQR is a fully featured port of the QR code portions of the zxing library, with
 #### NodeJS
 
 ```
-npm install jsQR --save
+npm install jsqr --save
 ```
 
 ```javascript
-jsqr = require("jsQR");
+jsQR = require("jsqr");
 ```
 
 #### Browser
