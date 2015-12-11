@@ -372,10 +372,10 @@ function correctErrors(codewordBytes: number[], numDataCodewords: number) {
 }
 
 export function decode(matrix: BitMatrix): string {
-    var version = readVersion(matrix);
-    if (!version) {
-        return null;
-    }
+   var version = readVersion(matrix);
+   if (!version) {
+     return null;
+   }
 
    var formatInfo = readFormatInformation(matrix);
    if (!formatInfo) {

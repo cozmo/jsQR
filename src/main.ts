@@ -16,7 +16,7 @@ function createBitMatrix(data: boolean[], width: number) {
 
 function decodeQRFromImage(data: number[], width: number, height: number): string {
   var binarizedImage = binarizeImage(data, width, height);
-
+  
   var location = locate(binarizedImage);
   if (!location) {
     return null;
