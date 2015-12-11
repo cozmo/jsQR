@@ -1,5 +1,7 @@
 # jsQR
 
+[![Build Status](https://travis-ci.org/cozmo/jsQR.svg?branch=master)](https://travis-ci.org/cozmo/jsQR)
+
 A pure javascript port of the [ZXing](https://github.com/zxing/zxing) QR parsing library.
 This library takes in raw images and will locate, extract and parse any QR codes found within.
 It also exposes methods to do each step of the process individually.
