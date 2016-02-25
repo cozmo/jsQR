@@ -54,6 +54,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	/// <reference path="./common/types.d.ts" />
 	var binarizer_1 = __webpack_require__(1);
 	var locator_1 = __webpack_require__(3);
@@ -91,6 +92,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	var bitmatrix_1 = __webpack_require__(2);
 	// Magic Constants
 	var BLOCK_SIZE_POWER = 3;
@@ -246,6 +248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var BitMatrix = (function () {
 	    function BitMatrix(data, width) {
 	        this.width = width;
@@ -266,7 +269,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.data[y * this.width + x] = v;
 	    };
 	    BitMatrix.prototype.copyBit = function (x, y, versionBits) {
-	        /// bool bit = mirrored ? bitMatrix[j, i] : bitMatrix[i, j];
 	        return this.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
 	    };
 	    BitMatrix.prototype.setRegion = function (left, top, width, height) {
@@ -278,8 +280,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    };
+	    BitMatrix.prototype.mirror = function () {
+	        for (var x = 0; x < this.width; x++) {
+	            for (var y = x + 1; y < this.height; y++) {
+	                if (this.get(x, y) != this.get(y, x)) {
+	                    this.set(x, y, !this.get(x, y));
+	                    this.set(y, x, !this.get(y, x));
+	                }
+	            }
+	        }
+	    };
 	    return BitMatrix;
-	})();
+	}());
 	exports.BitMatrix = BitMatrix;
 
 
@@ -287,6 +299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 3 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var CENTER_QUORUM = 2;
 	var MIN_SKIP = 3;
 	var MAX_MODULES = 57;
@@ -318,7 +331,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return new FinderPattern(combinedX, combinedY, combinedModuleSize, combinedCount);
 	    };
 	    return FinderPattern;
-	})();
+	}());
 	function foundPatternCross(stateCount) {
 	    var totalModuleSize = 0;
 	    for (var i = 0; i < 5; i++) {
@@ -812,6 +825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	/// <reference path="../common/types.d.ts" />
 	var alignment_finder_1 = __webpack_require__(5);
 	var perspective_transform_1 = __webpack_require__(7);
@@ -1125,6 +1139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	var helpers_1 = __webpack_require__(6);
 	function aboutEquals(center, moduleSize, i, j) {
 	    if (Math.abs(i - center.y) <= moduleSize && Math.abs(j - center.x) <= moduleSize) {
@@ -1321,6 +1336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var BITS_SET_IN_HALF_BYTE = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
 	function numBitsDiffering(a, b) {
 	    a ^= b; // a now has a 1 bit exactly where its bit differs with b's
@@ -1347,6 +1363,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	/// <reference path="../common/types.d.ts" />
+	"use strict";
 	function squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3) {
 	    var dx3 = x0 - x1 + x2 - x3;
 	    var dy3 = y0 - y1 + y2 - y3;
@@ -1448,6 +1465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	var helpers_1 = __webpack_require__(6);
 	var VERSION_DECODE_INFO = [
 	    0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
@@ -1464,7 +1482,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.dataCodewords = _dataCodewords;
 	    }
 	    return ECB;
-	})();
+	}());
 	var ECBlocks = (function () {
 	    function ECBlocks(_ecCodewordsPerBlock) {
 	        var _ecBlocks = [];
@@ -1481,7 +1499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.ecCodewordsPerBlock * this.getNumBlocks();
 	    };
 	    return ECBlocks;
-	})();
+	}());
 	var Version = (function () {
 	    function Version(_versionNumber, _alignmentPatternCenters) {
 	        var _ecBlocks = [];
@@ -1531,7 +1549,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return null;
 	    };
 	    return Version;
-	})();
+	}());
 	exports.Version = Version;
 	var VERSIONS = [
 	    new Version(1, [], new ECBlocks(7, new ECB(1, 19)), new ECBlocks(10, new ECB(1, 16)), new ECBlocks(13, new ECB(1, 13)), new ECBlocks(17, new ECB(1, 9))),
@@ -1588,10 +1606,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	var bitmatrix_1 = __webpack_require__(2);
 	var decodeqrdata_1 = __webpack_require__(10);
 	var helpers_1 = __webpack_require__(6);
-	var reedSolomon_1 = __webpack_require__(12);
+	var reedsolomon_1 = __webpack_require__(12);
 	var version_1 = __webpack_require__(8);
 	var FORMAT_INFO_MASK_QR = 0x5412;
 	var FORMAT_INFO_DECODE_LOOKUP = [
@@ -1896,7 +1915,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	}
 	function correctErrors(codewordBytes, numDataCodewords) {
-	    var rsDecoder = new reedSolomon_1.ReedSolomonDecoder();
+	    var rsDecoder = new reedsolomon_1.ReedSolomonDecoder();
 	    var numCodewords = codewordBytes.length;
 	    // First read into an array of ints
 	    var codewordsInts = new Array(numCodewords);
@@ -1913,7 +1932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    return true;
 	}
-	function decode(matrix) {
+	function decodeMatrix(matrix) {
 	    var version = readVersion(matrix);
 	    if (!version) {
 	        return null;
@@ -1938,7 +1957,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var resultBytes = new Array(totalBytes);
 	    var resultOffset = 0;
 	    // Error-correct and copy data blocks together into a stream of bytes
-	    dataBlocks.forEach(function (dataBlock) {
+	    for (var _i = 0, dataBlocks_1 = dataBlocks; _i < dataBlocks_1.length; _i++) {
+	        var dataBlock = dataBlocks_1[_i];
 	        var codewordBytes = dataBlock.codewords;
 	        var numDataCodewords = dataBlock.numDataCodewords;
 	        if (!correctErrors(codewordBytes, numDataCodewords))
@@ -1946,8 +1966,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        for (var i = 0; i < numDataCodewords; i++) {
 	            resultBytes[resultOffset++] = codewordBytes[i];
 	        }
-	    });
+	    }
 	    return decodeqrdata_1.decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
+	}
+	function decode(matrix) {
+	    var result = decodeMatrix(matrix);
+	    if (result) {
+	        return result;
+	    }
+	    // Decoding didn't work, try mirroring the QR
+	    matrix.mirror();
+	    return decodeMatrix(matrix);
 	}
 	exports.decode = decode;
 
@@ -1956,7 +1985,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var bitStream_1 = __webpack_require__(11);
+	"use strict";
+	var bitstream_1 = __webpack_require__(11);
 	// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
 	function byteArrayToString(bytes) {
 	    var str = "";
@@ -1997,7 +2027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.characterCountBitsForVersions[offset];
 	    };
 	    return Mode;
-	})();
+	}());
 	var TERMINATOR_MODE = new Mode([0, 0, 0], 0x00); // Not really a mod...
 	var NUMERIC_MODE = new Mode([10, 12, 14], 0x01);
 	var ALPHANUMERIC_MODE = new Mode([9, 11, 13], 0x02);
@@ -2179,7 +2209,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function decodeQRdata(data, version, ecl) {
 	    var symbolSequence = -1;
 	    var parityData = -1;
-	    var bits = new bitStream_1.BitStream(data);
+	    var bits = new bitstream_1.BitStream(data);
 	    var result = { val: "" }; // Have to pass this around so functions can share a reference to a string
 	    var fc1InEffect = false;
 	    var mode;
@@ -2262,6 +2292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 11 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var BitStream = (function () {
 	    function BitStream(bytes) {
 	        this.byteOffset = 0;
@@ -2308,7 +2339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return 8 * (this.bytes.length - this.byteOffset) - this.bitOffset;
 	    };
 	    return BitStream;
-	})();
+	}());
 	exports.BitStream = BitStream;
 
 
@@ -2316,6 +2347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 12 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var ReedSolomonDecoder = (function () {
 	    function ReedSolomonDecoder() {
 	        this.field = new GenericGF(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
@@ -2372,7 +2404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            rLast = r;
 	            tLast = t;
 	            // Divide rLastLast by rLast, with quotient in q and remainder in r
-	            if (rLast.isZero) {
+	            if (rLast.isZero()) {
 	                // Oops, Euclidean algorithm already terminated?
 	                // throw new ReedSolomonException("r_{i-1} was zero");
 	                return null;
@@ -2381,7 +2413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var q = this.field.zero;
 	            var denominatorLeadingTerm = rLast.getCoefficient(rLast.degree());
 	            var dltInverse = this.field.inverse(denominatorLeadingTerm);
-	            while (r.degree() >= rLast.degree() && !r.isZero) {
+	            while (r.degree() >= rLast.degree() && !r.isZero()) {
 	                var degreeDiff = r.degree() - rLast.degree();
 	                var scale = this.field.multiply(r.getCoefficient(r.degree()), dltInverse);
 	                q = q.addOrSubtract(this.field.buildMonomial(degreeDiff, scale));
@@ -2450,7 +2482,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return result;
 	    };
 	    return ReedSolomonDecoder;
-	})();
+	}());
 	exports.ReedSolomonDecoder = ReedSolomonDecoder;
 	var GenericGFPoly = (function () {
 	    function GenericGFPoly(field, coefficients) {
@@ -2522,7 +2554,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.isZero()) {
 	            return other;
 	        }
-	        if (other.isZero) {
+	        if (other.isZero()) {
 	            return this;
 	        }
 	        var smallerCoefficients = this.coefficients;
@@ -2595,7 +2627,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return new GenericGFPoly(this.field, product);
 	    };
 	    return GenericGFPoly;
-	})();
+	}());
 	var GenericGF = (function () {
 	    function GenericGF(primitive, size, genBase) {
 	        // ok.
@@ -2673,7 +2705,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return new GenericGFPoly(this, coefficients);
 	    };
 	    return GenericGF;
-	})();
+	}());
 
 
 /***/ }
