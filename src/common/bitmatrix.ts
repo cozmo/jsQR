@@ -26,7 +26,6 @@ export class BitMatrix {
   }
 
   copyBit(x: number, y: number, versionBits: number): number {
-    /// bool bit = mirrored ? bitMatrix[j, i] : bitMatrix[i, j];
     return this.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
   }
 
@@ -36,6 +35,17 @@ export class BitMatrix {
     for (var y = top; y < bottom; y++) {
       for (var x = left; x < right; x++) {
         this.set(x, y, true);
+      }
+    }
+  }
+
+  mirror(){
+    for (var x = 0; x < this.width; x++){
+      for (var y = x + 1; y < this.height; y++){
+        if (this.get(x, y) != this.get(y, x)){
+          this.set(x, y, !this.get(x, y))
+          this.set(y, x, !this.get(y, x))
+        }
       }
     }
   }

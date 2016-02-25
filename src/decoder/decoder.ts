@@ -371,7 +371,7 @@ function correctErrors(codewordBytes: number[], numDataCodewords: number) {
    return true;
 }
 
-export function decode(matrix: BitMatrix): string {
+function decodeMatrix(matrix: BitMatrix): string {
    var version = readVersion(matrix);
    if (!version) {
      return null;
@@ -401,7 +401,7 @@ export function decode(matrix: BitMatrix): string {
    var resultOffset = 0;
 
    // Error-correct and copy data blocks together into a stream of bytes
-   dataBlocks.forEach((dataBlock) => {
+   for (var dataBlock of dataBlocks) {
       var codewordBytes = dataBlock.codewords;
       var numDataCodewords = dataBlock.numDataCodewords;
       if (!correctErrors(codewordBytes, numDataCodewords))
@@ -409,7 +409,17 @@ export function decode(matrix: BitMatrix): string {
       for (var i = 0; i < numDataCodewords; i++) {
          resultBytes[resultOffset++] = codewordBytes[i];
       }
-   });
+   }
 
    return decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
+}
+
+export function decode(matrix: BitMatrix): string {
+   var result = decodeMatrix(matrix)
+   if (result){
+      return result;
+   }
+   // Decoding didn't work, try mirroring the QR
+   matrix.mirror()
+   return decodeMatrix(matrix)
 }

@@ -65,7 +65,8 @@ export class ReedSolomonDecoder {
       tLast = t;
 
       // Divide rLastLast by rLast, with quotient in q and remainder in r
-      if (rLast.isZero) {
+
+      if (rLast.isZero()) {
         // Oops, Euclidean algorithm already terminated?
         // throw new ReedSolomonException("r_{i-1} was zero");
         return null;
@@ -74,7 +75,7 @@ export class ReedSolomonDecoder {
       var q = this.field.zero;
       var denominatorLeadingTerm = rLast.getCoefficient(rLast.degree());
       var dltInverse = this.field.inverse(denominatorLeadingTerm);
-      while (r.degree() >= rLast.degree() && !r.isZero) {
+      while (r.degree() >= rLast.degree() && !r.isZero()) {
         var degreeDiff = r.degree() - rLast.degree();
         var scale = this.field.multiply(r.getCoefficient(r.degree()), dltInverse);
         q = q.addOrSubtract(this.field.buildMonomial(degreeDiff, scale));
@@ -231,7 +232,7 @@ class GenericGFPoly {
     if (this.isZero()) {
       return other;
     }
-    if (other.isZero) {
+    if (other.isZero()) {
       return this;
     }
 
