@@ -40,11 +40,11 @@ export class BitMatrix {
   }
 
   mirror(){
-    for (var x = 0; x < this.width; x++){
-      for (var y = x + 1; y < this.height; y++){
-        if (this.get(x, y) != this.get(y, x)){
-          this.set(x, y, !this.get(x, y))
-          this.set(y, x, !this.get(y, x))
+    for (var x = 0; x < this.width; x++) {
+      for (var y = x + 1; y < this.height; y++) {
+        if (this.get(x, y) != this.get(y, x)) {
+          this.set(x, y, !this.get(x, y));
+          this.set(y, x, !this.get(y, x));
         }
       }
     }

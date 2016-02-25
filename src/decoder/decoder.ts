@@ -415,11 +415,11 @@ function decodeMatrix(matrix: BitMatrix): string {
 }
 
 export function decode(matrix: BitMatrix): string {
-   var result = decodeMatrix(matrix)
-   if (result){
+   var result = decodeMatrix(matrix);
+   if (result) {
       return result;
    }
    // Decoding didn't work, try mirroring the QR
-   matrix.mirror()
-   return decodeMatrix(matrix)
+   matrix.mirror();
+   return decodeMatrix(matrix);
 }

@@ -65,7 +65,6 @@ export class ReedSolomonDecoder {
       tLast = t;
 
       // Divide rLastLast by rLast, with quotient in q and remainder in r
-
       if (rLast.isZero()) {
         // Oops, Euclidean algorithm already terminated?
         // throw new ReedSolomonException("r_{i-1} was zero");
