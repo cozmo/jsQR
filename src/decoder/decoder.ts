@@ -1,5 +1,5 @@
 import {BitMatrix} from "../common/bitmatrix";
-import {decodeQRdata} from "./decodeqrdata";
+import {decodeQRDataAsString, decodeQRDataAsBytes} from "./decodeqrdata";
 import {numBitsDiffering} from "../common/helpers";
 import {ReedSolomonDecoder} from "./reedsolomon";
 import {Version, ErrorCorrectionLevel, getVersionForNumber} from "../common/version";
@@ -371,7 +371,7 @@ function correctErrors(codewordBytes: number[], numDataCodewords: number) {
   return true;
 }
 
-function decodeMatrix(matrix: BitMatrix): string {
+function inspectMatrix(matrix: BitMatrix) {
   var version = readVersion(matrix);
   if (!version) {
     return null;
@@ -411,15 +411,39 @@ function decodeMatrix(matrix: BitMatrix): string {
     }
   }
 
-  return decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
+  return {
+    bytes: resultBytes,
+    version: version,
+    ecLevel: ecLevel
+  };
+}
+
+function decodeMatrixAsString(matrix: BitMatrix): string {
+  let qr = inspectMatrix(matrix);
+  return decodeQRDataAsString(qr.bytes, qr.version.versionNumber, qr.ecLevel.name);
+}
+
+function decodeMatrixAsBytes(matrix:BitMatrix): number[] {
+  let qr = inspectMatrix(matrix);
+  return decodeQRDataAsBytes(qr.bytes, qr.version.versionNumber, qr.ecLevel.name);
 }
 
 export function decode(matrix: BitMatrix): string {
-  var result = decodeMatrix(matrix);
+  var result = decodeMatrixAsString(matrix);
   if (result) {
     return result;
   }
   // Decoding didn't work, try mirroring the QR
   matrix.mirror();
-  return decodeMatrix(matrix);
+  return decodeMatrixAsString(matrix);
+}
+
+export function decodeBytes(matrix: BitMatrix): number[] {
+  var result = decodeMatrixAsBytes(matrix);
+  if (result) {
+    return result;
+  }
+  // Decoding didn't work, try mirroring the QR
+  matrix.mirror();
+  return decodeMatrixAsBytes(matrix);
 }

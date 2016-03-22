@@ -236,7 +236,14 @@ var GB2312_SUBSET = 1
 
 // Takes in a byte array, a qr version number and an error correction level.
 // Returns decoded data.
-export function decodeQRdata(data: number[], version: number, ecl: string): string {
+export function decodeQRDataAsBytes(data: number[], version: number, ecl: string): number[] {
+  // TODO: implement
+  return null;
+}
+
+// Takes in a byte array, a qr version number and an error correction level.
+// Returns decoded data.
+export function decodeQRDataAsString(data: number[], version: number, ecl: string): string {
   var symbolSequence = -1;
   var parityData = -1;
 
