@@ -12,9 +12,10 @@ describe('main', () => {
       'extractQRFromBinaryImage',
       'decodeQR',
       'createBitMatrix',
-      'decodeQRFromImage'
+      'decodeQRFromImage',
+      'decodeQRFromImageAsByteArray',
     ]
-    var exportedKeys: string[] = Object.keys(qrJS)
+    var exportedKeys: string[] = Object.keys(qrJS);
     assert.deepEqual(exportedKeys, expectedKeys);
   });
 });
