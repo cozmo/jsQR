@@ -1,15 +1,6 @@
 import {BitStream} from "../common/bitstream";
 
-// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
-function byteArrayToString(bytes: number[]): string {
-  var str = "";
-  for (var i = 0; i < bytes.length; i++) {
-    str += String.fromCharCode(bytes[i]);
-  }
-  return str;
-}
-
-function toAlphaNumericChar(value: number): string {
+function toAlphaNumericByte(value: number): number {
   var ALPHANUMERIC_CHARS: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
     'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
     'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -17,7 +8,7 @@ function toAlphaNumericChar(value: number): string {
   if (value >= ALPHANUMERIC_CHARS.length) {
     throw new Error("Could not decode alphanumeric char");
   }
-  return ALPHANUMERIC_CHARS[value];
+  return ALPHANUMERIC_CHARS[value].charCodeAt(0);
 }
 
 class Mode {
@@ -103,11 +94,11 @@ function parseECIValue(bits: BitStream): number {
   throw new Error("Bad ECI bits starting with byte " + firstByte);
 }
 
-interface resultString {
-  val: string
+interface resultByteArray {
+  val: number[]
 }
 
-function decodeHanziSegment(bits: BitStream, result: resultString, count: number): boolean {
+function decodeHanziSegment(bits: BitStream, result: resultByteArray, count: number): boolean {
   // Don't crash trying to read more bits than we have available.
   if (count * 13 > bits.available()) {
     return false;
@@ -133,11 +124,11 @@ function decodeHanziSegment(bits: BitStream, result: resultString, count: number
     offset += 2;
     count--;
   }
-  result.val = byteArrayToString(buffer);
+  result.val = buffer;
   return true;
 }
 
-function decodeNumericSegment(bits: BitStream, result: resultString, count: number): boolean {
+function decodeNumericSegment(bits: BitStream, result: resultByteArray, count: number): boolean {
   // Read three digits at a time
   while (count >= 3) {
     // Each 10 bits encodes three digits
@@ -148,9 +139,9 @@ function decodeNumericSegment(bits: BitStream, result: resultString, count: numb
     if (threeDigitsBits >= 1000) {
       return false;
     }
-    result.val += toAlphaNumericChar(threeDigitsBits / 100);
-    result.val += toAlphaNumericChar((threeDigitsBits / 10) % 10);
-    result.val += toAlphaNumericChar(threeDigitsBits % 10);
+    result.val.push(toAlphaNumericByte(threeDigitsBits / 100));
+    result.val.push(toAlphaNumericByte((threeDigitsBits / 10) % 10));
+    result.val.push(toAlphaNumericByte(threeDigitsBits % 10));
 
     count -= 3;
   }
@@ -163,8 +154,8 @@ function decodeNumericSegment(bits: BitStream, result: resultString, count: numb
     if (twoDigitsBits >= 100) {
       return false;
     }
-    result.val += toAlphaNumericChar(twoDigitsBits / 10);
-    result.val += toAlphaNumericChar(twoDigitsBits % 10);
+    result.val.push(toAlphaNumericByte(twoDigitsBits / 10));
+    result.val.push(toAlphaNumericByte(twoDigitsBits % 10));
   }
   else if (count == 1) {
     // One digit left over to read
@@ -175,12 +166,12 @@ function decodeNumericSegment(bits: BitStream, result: resultString, count: numb
     if (digitBits >= 10) {
       return false;
     }
-    result.val += toAlphaNumericChar(digitBits);
+    result.val.push(toAlphaNumericByte(digitBits));
   }
   return true;
 }
 
-function decodeAlphanumericSegment(bits: BitStream, result: resultString, count: number, fc1InEffect: boolean) {
+function decodeAlphanumericSegment(bits: BitStream, result: resultByteArray, count: number, fc1InEffect: boolean) {
   // Read two characters at a time
   var start = result.val.length;
   while (count > 1) {
@@ -188,8 +179,8 @@ function decodeAlphanumericSegment(bits: BitStream, result: resultString, count:
       return false;
     }
     var nextTwoCharsBits = bits.readBits(11);
-    result.val += toAlphaNumericChar(nextTwoCharsBits / 45);
-    result.val += toAlphaNumericChar(nextTwoCharsBits % 45);
+    result.val.push(toAlphaNumericByte(nextTwoCharsBits / 45));
+    result.val.push(toAlphaNumericByte(nextTwoCharsBits % 45));
     count -= 2;
   }
   if (count == 1) {
@@ -197,20 +188,20 @@ function decodeAlphanumericSegment(bits: BitStream, result: resultString, count:
     if (bits.available() < 6) {
       return false;
     }
-    result.val += toAlphaNumericChar(bits.readBits(6));
+    result.val.push(toAlphaNumericByte(bits.readBits(6)));
   }
   // See section 6.4.8.1, 6.4.8.2
   if (fc1InEffect) {
     // We need to massage the result a bit if in an FNC1 mode:
     for (var i = start; i < result.val.length; i++) {
-      if (result.val[i] == '%') {
-        if (i < result.val.length - 1 && result.val[i + 1] == '%') {
+      if (result.val[i] == '%'.charCodeAt(0)) {
+        if (i < result.val.length - 1 && result.val[i + 1] == '%'.charCodeAt(0)) {
           // %% is rendered as %
-          result.val = result.val.slice(0, i + 1) + result.val.slice(i + 2)
+          result.val = result.val.slice(0, i + 1).concat(result.val.slice(i + 2))
         } else {
           // In alpha mode, % should be converted to FNC1 separator 0x1D
           // THIS IS ALMOST CERTAINLY INVALID
-          result.val[i] = String.fromCharCode(0x1D)
+          result.val[i] = 0x1D
         }
       }
     }
@@ -218,7 +209,7 @@ function decodeAlphanumericSegment(bits: BitStream, result: resultString, count:
   return true;
 }
 
-function decodeByteSegment(bits: BitStream, result: resultString, count: number): boolean {
+function decodeByteSegment(bits: BitStream, result: resultByteArray, count: number): boolean {
   // Don't crash trying to read more bits than we have available.
   if (count << 3 > bits.available()) {
     return false;
@@ -228,7 +219,7 @@ function decodeByteSegment(bits: BitStream, result: resultString, count: number)
   for (var i = 0; i < count; i++) {
     readBytes[i] = bits.readBits(8);
   }
-  result.val = byteArrayToString(readBytes)
+  result.val = readBytes
   return true;
 }
 
@@ -236,12 +227,12 @@ var GB2312_SUBSET = 1
 
 // Takes in a byte array, a qr version number and an error correction level.
 // Returns decoded data.
-export function decodeQRdata(data: number[], version: number, ecl: string): string {
+export function decodeQRdata(data: number[], version: number, ecl: string): number[] {
   var symbolSequence = -1;
   var parityData = -1;
 
   var bits = new BitStream(data);
-  var result = { val: <string>"" }; // Have to pass this around so functions can share a reference to a string
+  var result = { val: <number[]>[] }; // Have to pass this around so functions can share a reference to a string
 
   var fc1InEffect = false;
   var mode: Mode;
