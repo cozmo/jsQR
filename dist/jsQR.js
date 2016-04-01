@@ -67,13 +67,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.locateQRInBinaryImage = locateQRInBinaryImage;
 	var extractQRFromBinaryImage = extractor_1.extract;
 	exports.extractQRFromBinaryImage = extractQRFromBinaryImage;
-	var decodeQR = decoder_1.decode;
+	function decodeQR(matrix) {
+	    return byteArrayToString(decoder_1.decode(matrix));
+	}
 	exports.decodeQR = decodeQR;
+	// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
+	function byteArrayToString(bytes) {
+	    var str = "";
+	    for (var i = 0; i < bytes.length; i++) {
+	        str += String.fromCharCode(bytes[i]);
+	    }
+	    return str;
+	}
 	function createBitMatrix(data, width) {
 	    return new bitmatrix_1.BitMatrix(data, width);
 	}
 	exports.createBitMatrix = createBitMatrix;
 	function decodeQRFromImage(data, width, height) {
+	    return byteArrayToString(decodeQRFromImageAsByteArray(data, width, height));
+	}
+	exports.decodeQRFromImage = decodeQRFromImage;
+	function decodeQRFromImageAsByteArray(data, width, height) {
 	    var binarizedImage = binarizeImage(data, width, height);
 	    var location = locator_1.locate(binarizedImage);
 	    if (!location) {
@@ -83,9 +97,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!rawQR) {
 	        return null;
 	    }
-	    return decodeQR(rawQR);
+	    return decoder_1.decode(rawQR);
 	}
-	exports.decodeQRFromImage = decodeQRFromImage;
+	exports.decodeQRFromImageAsByteArray = decodeQRFromImageAsByteArray;
 
 
 /***/ },
@@ -1987,15 +2001,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	var bitstream_1 = __webpack_require__(11);
-	// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
-	function byteArrayToString(bytes) {
-	    var str = "";
-	    for (var i = 0; i < bytes.length; i++) {
-	        str += String.fromCharCode(bytes[i]);
-	    }
-	    return str;
-	}
-	function toAlphaNumericChar(value) {
+	function toAlphaNumericByte(value) {
 	    var ALPHANUMERIC_CHARS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
 	        'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
 	        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -2003,7 +2009,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (value >= ALPHANUMERIC_CHARS.length) {
 	        throw new Error("Could not decode alphanumeric char");
 	    }
-	    return ALPHANUMERIC_CHARS[value];
+	    return ALPHANUMERIC_CHARS[value].charCodeAt(0);
 	}
 	var Mode = (function () {
 	    function Mode(characterCountBitsForVersions, bits) {
@@ -2109,7 +2115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        offset += 2;
 	        count--;
 	    }
-	    result.val = byteArrayToString(buffer);
+	    result.val = buffer;
 	    return true;
 	}
 	function decodeNumericSegment(bits, result, count) {
@@ -2123,9 +2129,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (threeDigitsBits >= 1000) {
 	            return false;
 	        }
-	        result.val += toAlphaNumericChar(threeDigitsBits / 100);
-	        result.val += toAlphaNumericChar((threeDigitsBits / 10) % 10);
-	        result.val += toAlphaNumericChar(threeDigitsBits % 10);
+	        result.val.push(toAlphaNumericByte(threeDigitsBits / 100));
+	        result.val.push(toAlphaNumericByte((threeDigitsBits / 10) % 10));
+	        result.val.push(toAlphaNumericByte(threeDigitsBits % 10));
 	        count -= 3;
 	    }
 	    if (count == 2) {
@@ -2137,8 +2143,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (twoDigitsBits >= 100) {
 	            return false;
 	        }
-	        result.val += toAlphaNumericChar(twoDigitsBits / 10);
-	        result.val += toAlphaNumericChar(twoDigitsBits % 10);
+	        result.val.push(toAlphaNumericByte(twoDigitsBits / 10));
+	        result.val.push(toAlphaNumericByte(twoDigitsBits % 10));
 	    }
 	    else if (count == 1) {
 	        // One digit left over to read
@@ -2149,7 +2155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (digitBits >= 10) {
 	            return false;
 	        }
-	        result.val += toAlphaNumericChar(digitBits);
+	        result.val.push(toAlphaNumericByte(digitBits));
 	    }
 	    return true;
 	}
@@ -2161,8 +2167,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return false;
 	        }
 	        var nextTwoCharsBits = bits.readBits(11);
-	        result.val += toAlphaNumericChar(nextTwoCharsBits / 45);
-	        result.val += toAlphaNumericChar(nextTwoCharsBits % 45);
+	        result.val.push(toAlphaNumericByte(nextTwoCharsBits / 45));
+	        result.val.push(toAlphaNumericByte(nextTwoCharsBits % 45));
 	        count -= 2;
 	    }
 	    if (count == 1) {
@@ -2170,21 +2176,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (bits.available() < 6) {
 	            return false;
 	        }
-	        result.val += toAlphaNumericChar(bits.readBits(6));
+	        result.val.push(toAlphaNumericByte(bits.readBits(6)));
 	    }
 	    // See section 6.4.8.1, 6.4.8.2
 	    if (fc1InEffect) {
 	        // We need to massage the result a bit if in an FNC1 mode:
 	        for (var i = start; i < result.val.length; i++) {
-	            if (result.val[i] == '%') {
-	                if (i < result.val.length - 1 && result.val[i + 1] == '%') {
+	            if (result.val[i] == '%'.charCodeAt(0)) {
+	                if (i < result.val.length - 1 && result.val[i + 1] == '%'.charCodeAt(0)) {
 	                    // %% is rendered as %
-	                    result.val = result.val.slice(0, i + 1) + result.val.slice(i + 2);
+	                    result.val = result.val.slice(0, i + 1).concat(result.val.slice(i + 2));
 	                }
 	                else {
 	                    // In alpha mode, % should be converted to FNC1 separator 0x1D
 	                    // THIS IS ALMOST CERTAINLY INVALID
-	                    result.val[i] = String.fromCharCode(0x1D);
+	                    result.val[i] = 0x1D;
 	                }
 	            }
 	        }
@@ -2200,7 +2206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 0; i < count; i++) {
 	        readBytes[i] = bits.readBits(8);
 	    }
-	    result.val = byteArrayToString(readBytes);
+	    result.val = readBytes;
 	    return true;
 	}
 	var GB2312_SUBSET = 1;
@@ -2210,7 +2216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var symbolSequence = -1;
 	    var parityData = -1;
 	    var bits = new bitstream_1.BitStream(data);
-	    var result = { val: "" }; // Have to pass this around so functions can share a reference to a string
+	    var result = { val: [] }; // Have to pass this around so functions can share a reference to a string
 	    var fc1InEffect = false;
 	    var mode;
 	    while (mode != TERMINATOR_MODE) {
