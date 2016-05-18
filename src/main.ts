@@ -8,13 +8,28 @@ import {BitMatrix} from "./common/bitmatrix";
 var binarizeImage = binarize;
 var locateQRInBinaryImage = locate;
 var extractQRFromBinaryImage = extract;
-var decodeQR = decode;
+function decodeQR(matrix: BitMatrix) : string {
+  return byteArrayToString(decode(matrix));
+}
+
+// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
+function byteArrayToString(bytes: number[]): string {
+  var str = "";
+  for (var i = 0; i < bytes.length; i++) {
+    str += String.fromCharCode(bytes[i]);
+  }
+  return str;
+}
 
 function createBitMatrix(data: boolean[], width: number) {
   return new BitMatrix(data, width);
 }
 
 function decodeQRFromImage(data: number[], width: number, height: number): string {
+  return byteArrayToString(decodeQRFromImageAsByteArray(data, width, height));
+}
+
+function decodeQRFromImageAsByteArray(data: number[], width: number, height: number): number[] {
   var binarizedImage = binarizeImage(data, width, height);
 
   var location = locate(binarizedImage);
@@ -27,7 +42,7 @@ function decodeQRFromImage(data: number[], width: number, height: number): strin
     return null;
   }
 
-  return decodeQR(rawQR);
+  return decode(rawQR);
 }
 
 export {
@@ -37,4 +52,5 @@ export {
   decodeQR,
   createBitMatrix,
   decodeQRFromImage,
+  decodeQRFromImageAsByteArray,
 };

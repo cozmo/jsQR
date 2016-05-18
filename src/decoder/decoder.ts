@@ -371,7 +371,7 @@ function correctErrors(codewordBytes: number[], numDataCodewords: number) {
   return true;
 }
 
-function decodeMatrix(matrix: BitMatrix): string {
+function decodeMatrix(matrix: BitMatrix): number[] {
   var version = readVersion(matrix);
   if (!version) {
     return null;
@@ -414,7 +414,7 @@ function decodeMatrix(matrix: BitMatrix): string {
   return decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
 }
 
-export function decode(matrix: BitMatrix): string {
+export function decode(matrix: BitMatrix): number[] {
   var result = decodeMatrix(matrix);
   if (result) {
     return result;
