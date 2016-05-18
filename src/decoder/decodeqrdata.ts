@@ -111,7 +111,7 @@ function decodeHanziSegment(bits: BitStream, result: resultByteArray, count: num
   while (count > 0) {
     // Each 13 bits encodes a 2-byte character
     var twoBytes = bits.readBits(13);
-    var assembledTwoBytes = ((twoBytes / 0x060) << 8) | (twoBytes % 0x060);
+    var assembledTwoBytes = (Math.floor(twoBytes / 0x060) << 8) | (twoBytes % 0x060);
     if (assembledTwoBytes < 0x003BF) {
       // In the 0xA1A1 to 0xAAFE range
       assembledTwoBytes += 0x0A1A1;
@@ -139,8 +139,8 @@ function decodeNumericSegment(bits: BitStream, result: resultByteArray, count: n
     if (threeDigitsBits >= 1000) {
       return false;
     }
-    result.val.push(toAlphaNumericByte(threeDigitsBits / 100));
-    result.val.push(toAlphaNumericByte((threeDigitsBits / 10) % 10));
+    result.val.push(toAlphaNumericByte(Math.floor(threeDigitsBits / 100)));
+    result.val.push(toAlphaNumericByte(Math.floor(threeDigitsBits / 10) % 10));
     result.val.push(toAlphaNumericByte(threeDigitsBits % 10));
 
     count -= 3;
@@ -154,7 +154,7 @@ function decodeNumericSegment(bits: BitStream, result: resultByteArray, count: n
     if (twoDigitsBits >= 100) {
       return false;
     }
-    result.val.push(toAlphaNumericByte(twoDigitsBits / 10));
+    result.val.push(toAlphaNumericByte(Math.floor(twoDigitsBits / 10)));
     result.val.push(toAlphaNumericByte(twoDigitsBits % 10));
   }
   else if (count == 1) {
@@ -179,7 +179,7 @@ function decodeAlphanumericSegment(bits: BitStream, result: resultByteArray, cou
       return false;
     }
     var nextTwoCharsBits = bits.readBits(11);
-    result.val.push(toAlphaNumericByte(nextTwoCharsBits / 45));
+    result.val.push(toAlphaNumericByte(Math.floor(nextTwoCharsBits / 45)));
     result.val.push(toAlphaNumericByte(nextTwoCharsBits % 45));
     count -= 2;
   }
