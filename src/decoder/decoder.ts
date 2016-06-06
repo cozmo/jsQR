@@ -415,6 +415,9 @@ function decodeMatrix(matrix: BitMatrix): number[] {
 }
 
 export function decode(matrix: BitMatrix): number[] {
+  if(matrix == null) {
+    return null
+  }
   var result = decodeMatrix(matrix);
   if (result) {
     return result;

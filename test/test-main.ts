@@ -18,4 +18,12 @@ describe('main', () => {
     var exportedKeys: string[] = Object.keys(qrJS);
     assert.deepEqual(exportedKeys, expectedKeys);
   });
+
+  it('allows null byte arrays', () => {
+    assert.doesNotThrow(() => {
+      qrJS.decodeQR(null)
+    })
+    
+    assert.equal(qrJS.decodeQR(null), "")
+  })
 });
