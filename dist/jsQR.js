@@ -74,8 +74,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
 	function byteArrayToString(bytes) {
 	    var str = "";
-	    for (var i = 0; i < bytes.length; i++) {
-	        str += String.fromCharCode(bytes[i]);
+	    if (bytes != null && bytes != undefined) {
+	        for (var i = 0; i < bytes.length; i++) {
+	            str += String.fromCharCode(bytes[i]);
+	        }
 	    }
 	    return str;
 	}
@@ -1984,6 +1986,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return decodeqrdata_1.decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
 	}
 	function decode(matrix) {
+	    if (matrix == null) {
+	        return null;
+	    }
 	    var result = decodeMatrix(matrix);
 	    if (result) {
 	        return result;
