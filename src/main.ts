@@ -15,8 +15,10 @@ function decodeQR(matrix: BitMatrix) : string {
 // return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
 function byteArrayToString(bytes: number[]): string {
   var str = "";
-  for (var i = 0; i < bytes.length; i++) {
-    str += String.fromCharCode(bytes[i]);
+  if(bytes != null && bytes != undefined) {
+    for (var i = 0; i < bytes.length; i++) {
+      str += String.fromCharCode(bytes[i]);
+    }
   }
   return str;
 }
