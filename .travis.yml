@@ -1,1 +1,7 @@
 language: node_js
+deploy:
+  provider: npm
+  on:
+    branch: master
+  email: cosmo.wolfe@gmail.com
+  api_key: $NPM_API_TOKEN
