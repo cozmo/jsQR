@@ -219,7 +219,7 @@ function decodeByteSegment(bits: BitStream, result: resultByteArray, count: numb
   for (var i = 0; i < count; i++) {
     readBytes[i] = bits.readBits(8);
   }
-  result.val = readBytes
+  Array.prototype.push.apply(result.val, readBytes);
   return true;
 }
 

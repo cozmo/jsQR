@@ -1,6 +1,6 @@
 {
   "name": "jsqr",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "QR code detection, extraction, decoding and parsing written as pure JS port of the ZXing library.",
   "repository": "https://github.com/cozmo/jsQR",
   "main": "./dist/jsQR.js",
@@ -23,8 +23,8 @@
     "webpack": "^1.12.9"
   },
   "scripts": {
-    "build": "./node_modules/webpack/bin/webpack.js",
-    "watch": "./node_modules/webpack/bin/webpack.js --watch",
-    "test": "./node_modules/mocha/bin/mocha --require ts-node/register ./test/test-*.ts"
+    "build": "node ./node_modules/webpack/bin/webpack.js",
+    "watch": "node ./node_modules/webpack/bin/webpack.js --watch",
+    "test": "node ./node_modules/mocha/bin/mocha --require ts-node/register ./test/test-*.ts"
   }
 }

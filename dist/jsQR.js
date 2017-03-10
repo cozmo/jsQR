@@ -2211,7 +2211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 0; i < count; i++) {
 	        readBytes[i] = bits.readBits(8);
 	    }
-	    result.val = readBytes;
+	    Array.prototype.push.apply(result.val, readBytes);
 	    return true;
 	}
 	var GB2312_SUBSET = 1;
