@@ -215,7 +215,7 @@ function decodeByteSegment(bits: BitStream, result: resultByteArray, count: numb
     return false;
   }
 
-  var readBytes: number[] = new Array(count);
+  var readBytes: Uint32Array = new Uint32Array(count);
   for (var i = 0; i < count; i++) {
     readBytes[i] = bits.readBits(8);
   }
@@ -231,7 +231,7 @@ export function decodeQRdata(data: number[], version: number, ecl: string): numb
   var symbolSequence = -1;
   var parityData = -1;
 
-  var bits = new BitStream(data);
+  var bits = new BitStream(new Uint32Array(data));
   var result = { val: <number[]>[] }; // Have to pass this around so functions can share a reference to a number[]
   var fc1InEffect = false;
   var mode: Mode;
