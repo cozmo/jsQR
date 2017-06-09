@@ -394,7 +394,7 @@ function decodeMatrix(matrix: BitMatrix): number[] {
   dataBlocks.forEach((dataBlock) => {
     totalBytes += dataBlock.numDataCodewords;
   });
-  var resultBytes = new Array(totalBytes);
+  var resultBytes = new Uint8ClampedArray(totalBytes);
   var resultOffset = 0;
 
   // Error-correct and copy data blocks together into a stream of bytes

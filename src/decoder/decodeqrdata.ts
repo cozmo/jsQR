@@ -227,11 +227,11 @@ var GB2312_SUBSET = 1
 
 // Takes in a byte array, a qr version number and an error correction level.
 // Returns decoded data.
-export function decodeQRdata(data: number[], version: number, ecl: string): number[] {
+export function decodeQRdata(data: Uint8ClampedArray, version: number, ecl: string): number[] {
   var symbolSequence = -1;
   var parityData = -1;
 
-  var bits = new BitStream(new Uint32Array(data));
+  var bits = new BitStream(data);
   var result = { val: <number[]>[] }; // Have to pass this around so functions can share a reference to a number[]
   var fc1InEffect = false;
   var mode: Mode;
