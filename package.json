@@ -16,11 +16,12 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
+    "awesome-typescript-loader": "^3.2.3",
     "mocha": "^2.3.4",
-    "ts-loader": "^0.7.2",
-    "ts-node": "^0.5.4",
-    "typescript": "^1.7.3",
-    "webpack": "^1.12.9"
+    "ts-node": "^3.3.0",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2",
+    "webpack": "^3.5.5"
   },
   "scripts": {
     "build": "node ./node_modules/webpack/bin/webpack.js",

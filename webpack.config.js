@@ -6,11 +6,11 @@ module.exports = {
     library: 'jsQR'
   },
   resolve: {
-    extensions: ['', '.ts']
+    extensions: [".js", ".json", ".ts"]
   },
   module: {
-    loaders: [
-      { test: /\.ts$/, loader: 'ts-loader' }
+    rules: [
+      { test: /\.ts$/, use: [{ loader: "awesome-typescript-loader" }] }
     ]
   }
 }
