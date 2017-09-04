@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './src/Main.ts',
+  entry: './src/main.ts',
   output: {
     filename: './dist/jsQR.js',
     libraryTarget: 'umd',

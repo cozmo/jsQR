@@ -27,11 +27,11 @@ function createBitMatrix(data: boolean[], width: number) {
   return new BitMatrix(data, width);
 }
 
-function decodeQRFromImage(data: number[], width: number, height: number): string {
+function decodeQRFromImage(data: Uint8ClampedArray, width: number, height: number): string {
   return byteArrayToString(decodeQRFromImageAsByteArray(data, width, height));
 }
 
-function decodeQRFromImageAsByteArray(data: number[], width: number, height: number): number[] {
+function decodeQRFromImageAsByteArray(data: Uint8ClampedArray, width: number, height: number): number[] {
   var binarizedImage = binarizeImage(data, width, height);
 
   var location = locate(binarizedImage);

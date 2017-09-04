@@ -131,7 +131,7 @@ function calculateThresholdForBlock(luminances: number[], subWidth: number, subH
   return outMatrix;
 }
 
-export function binarize(data: number[], width: number, height: number): BitMatrix {
+export function binarize(data: Uint8ClampedArray, width: number, height: number): BitMatrix {
   if (data.length !== width * height * 4) {
     throw new Error("Binarizer data.length != width * height * 4");
   }

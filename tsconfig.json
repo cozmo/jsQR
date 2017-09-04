@@ -4,6 +4,6 @@
     "noImplicitAny": true
   },
   "files": [
-    "./src/Main.ts"
+    "./src/main.ts"
   ]
 }
