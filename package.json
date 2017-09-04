@@ -16,15 +16,36 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
+    "@types/jest": "^20.0.8",
+    "async": "^2.5.0",
+    "awesome-typescript-loader": "^3.2.3",
+    "fast-png": "^3.1.0",
+    "jest": "^20.0.4",
     "mocha": "^2.3.4",
-    "ts-loader": "^0.7.2",
-    "ts-node": "^0.5.4",
-    "typescript": "^1.7.3",
-    "webpack": "^1.12.9"
+    "png-img": "^2.1.1",
+    "pngjs": "^3.3.0",
+    "ts-jest": "^20.0.14",
+    "ts-node": "^3.3.0",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2",
+    "upng-js": "^1.0.1",
+    "webpack": "^3.5.5"
   },
   "scripts": {
     "build": "node ./node_modules/webpack/bin/webpack.js",
     "watch": "node ./node_modules/webpack/bin/webpack.js --watch",
-    "test": "node ./node_modules/mocha/bin/mocha --require ts-node/register ./test/test-*.ts"
+    "test": "node ./node_modules/.bin/jest"
+  },
+  "jest": {
+    "verbose": true,
+    "testRegex": ".+test.+(ts|js)",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "node"
+    ],
+    "transform": {
+      "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
   }
 }

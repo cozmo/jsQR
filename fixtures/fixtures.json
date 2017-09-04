@@ -1,0 +1,3242 @@
+[
+  {
+    "inputPath": "./fixtures/source/0.png",
+    "output": "Happy 1st Birthday GeekUp Leeds! http://www.geekup.org",
+    "location": {
+      "bottomLeft": {
+        "x": 191,
+        "y": 54
+      },
+      "topLeft": {
+        "x": 189,
+        "y": 146
+      },
+      "topRight": {
+        "x": 95.5,
+        "y": 143.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-0.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-0.png"
+  },
+  {
+    "inputPath": "./fixtures/source/1.png",
+    "output": "http://adsites.com.au/?E=280",
+    "location": {
+      "bottomLeft": {
+        "x": 73.5,
+        "y": 152
+      },
+      "topLeft": {
+        "x": 74,
+        "y": 117.5
+      },
+      "topRight": {
+        "x": 108,
+        "y": 118
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-1.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-1.png"
+  },
+  {
+    "inputPath": "./fixtures/source/10.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 79,
+        "y": 168
+      },
+      "topLeft": {
+        "x": 75.5,
+        "y": 81.5
+      },
+      "topRight": {
+        "x": 159,
+        "y": 80.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-10.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-10.png"
+  },
+  {
+    "inputPath": "./fixtures/source/100.png",
+    "output": "MECARD:N:æ¸¬è©¦;;",
+    "location": {
+      "bottomLeft": {
+        "x": 85,
+        "y": 265
+      },
+      "topLeft": {
+        "x": 85,
+        "y": 85
+      },
+      "topRight": {
+        "x": 265,
+        "y": 85
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-100.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-100.png"
+  },
+  {
+    "inputPath": "./fixtures/source/101.png",
+    "output": "BEGIN:VCARD\r\nN:Kennedy;Steve\r\nTEL:+44 (0)7775 755503\r\nADR;HOME:;;Flat 2, 43 Howitt Road, Belsize Park;London;;NW34LU;UK\r\nORG:NetTek Ltd;\r\nTITLE:Consultant\r\nEMAIL:steve@nettek.co.uk\r\nURL:www.nettek.co.uk\r\nEMAIL;IM:MSN:steve@gbnet.net\r\nNOTE:Testing 1 2 3\r\nBDAY:19611105\r\nEND:VCARD",
+    "location": {
+      "bottomLeft": {
+        "x": 3.5,
+        "y": 61.5
+      },
+      "topLeft": {
+        "x": 3.5,
+        "y": 3.5
+      },
+      "topRight": {
+        "x": 61.5,
+        "y": 3.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-101.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-101.png"
+  },
+  {
+    "inputPath": "./fixtures/source/102.png",
+    "output": "°¢;;",
+    "location": {
+      "bottomLeft": {
+        "x": 22.5,
+        "y": 84.5
+      },
+      "topLeft": {
+        "x": 22.5,
+        "y": 42.5
+      },
+      "topRight": {
+        "x": 64.5,
+        "y": 42.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-102.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-102.png"
+  },
+  {
+    "inputPath": "./fixtures/source/103.png",
+    "output": "http://www.google.com/",
+    "location": {
+      "bottomLeft": {
+        "x": 22.5,
+        "y": 76.5
+      },
+      "topLeft": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "topRight": {
+        "x": 76.5,
+        "y": 22.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-103.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-103.png"
+  },
+  {
+    "inputPath": "./fixtures/source/104.png",
+    "output": "http://www.google.com/",
+    "location": {
+      "bottomLeft": {
+        "x": 22.5,
+        "y": 76.5
+      },
+      "topLeft": {
+        "x": 22.5,
+        "y": 22.5
+      },
+      "topRight": {
+        "x": 76.5,
+        "y": 22.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-104.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-104.png"
+  },
+  {
+    "inputPath": "./fixtures/source/105.png",
+    "output": "http://wwws.keihin.ktr.mlit.go.jp/keitai/",
+    "location": {
+      "bottomLeft": {
+        "x": 124.5,
+        "y": 161.5
+      },
+      "topLeft": {
+        "x": 125,
+        "y": 107.5
+      },
+      "topRight": {
+        "x": 182,
+        "y": 104
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-105.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-105.png"
+  },
+  {
+    "inputPath": "./fixtures/source/106.png",
+    "output": "http://d.kaywa.com/20207100",
+    "location": {
+      "bottomLeft": {
+        "x": 131,
+        "y": 115.5
+      },
+      "topLeft": {
+        "x": 132,
+        "y": 41.5
+      },
+      "topRight": {
+        "x": 206.5,
+        "y": 45
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-106.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-106.png"
+  },
+  {
+    "inputPath": "./fixtures/source/107.png",
+    "output": "http://goo.by/wkEtco",
+    "location": {
+      "bottomLeft": {
+        "x": 80.5,
+        "y": 161.5
+      },
+      "topLeft": {
+        "x": 79.5,
+        "y": 102
+      },
+      "topRight": {
+        "x": 143.5,
+        "y": 98.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-107.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-107.png"
+  },
+  {
+    "inputPath": "./fixtures/source/108.png",
+    "output": "BIZCARD:N:Todd;X:Ogasawara;T:Tech Geek;C:MobileViews.com;A:MobileTown USA;E:editor@mobileviews.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 41.5,
+        "y": 350.5
+      },
+      "topLeft": {
+        "x": 41.5,
+        "y": 211.5
+      },
+      "topRight": {
+        "x": 180.5,
+        "y": 211.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-108.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-108.png"
+  },
+  {
+    "inputPath": "./fixtures/source/109.png",
+    "output": "http://staticrooster.com",
+    "location": {
+      "bottomLeft": {
+        "x": 116.5,
+        "y": 194.5
+      },
+      "topLeft": {
+        "x": 116.5,
+        "y": 91.5
+      },
+      "topRight": {
+        "x": 220.5,
+        "y": 91.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-109.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-109.png"
+  },
+  {
+    "inputPath": "./fixtures/source/11.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 65,
+        "y": 164.5
+      },
+      "topLeft": {
+        "x": 67.5,
+        "y": 69.5
+      },
+      "topRight": {
+        "x": 161,
+        "y": 70
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-11.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-11.png"
+  },
+  {
+    "inputPath": "./fixtures/source/110.png",
+    "output": "Morden",
+    "location": {
+      "bottomLeft": {
+        "x": 52.5,
+        "y": 150.5
+      },
+      "topLeft": {
+        "x": 52.5,
+        "y": 52.5
+      },
+      "topRight": {
+        "x": 150.5,
+        "y": 52.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-110.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-110.png"
+  },
+  {
+    "inputPath": "./fixtures/source/111.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 65.5,
+        "y": 193.83333333333334
+      },
+      "topLeft": {
+        "x": 52.5,
+        "y": 51
+      },
+      "topRight": {
+        "x": 187.5,
+        "y": 45
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-111.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-111.png"
+  },
+  {
+    "inputPath": "./fixtures/source/112.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 66.5,
+        "y": 188.5
+      },
+      "topLeft": {
+        "x": 53.5,
+        "y": 67.5
+      },
+      "topRight": {
+        "x": 182,
+        "y": 58.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-112.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-112.png"
+  },
+  {
+    "inputPath": "./fixtures/source/113.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 71.5,
+        "y": 201.5
+      },
+      "topLeft": {
+        "x": 69.5,
+        "y": 104.5
+      },
+      "topRight": {
+        "x": 171.5,
+        "y": 105.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-113.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-113.png"
+  },
+  {
+    "inputPath": "./fixtures/source/114.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 77.5,
+        "y": 172
+      },
+      "topLeft": {
+        "x": 75,
+        "y": 73.5
+      },
+      "topRight": {
+        "x": 176.5,
+        "y": 73.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-114.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-114.png"
+  },
+  {
+    "inputPath": "./fixtures/source/115.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 56,
+        "y": 178.5
+      },
+      "topLeft": {
+        "x": 63.5,
+        "y": 49
+      },
+      "topRight": {
+        "x": 199,
+        "y": 60
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-115.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-115.png"
+  },
+  {
+    "inputPath": "./fixtures/source/116.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 55,
+        "y": 182
+      },
+      "topLeft": {
+        "x": 55,
+        "y": 60.5
+      },
+      "topRight": {
+        "x": 203,
+        "y": 52.416666666666664
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-116.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-116.png"
+  },
+  {
+    "inputPath": "./fixtures/source/117.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 48.5,
+        "y": 197.5
+      },
+      "topLeft": {
+        "x": 54.5,
+        "y": 50
+      },
+      "topRight": {
+        "x": 208,
+        "y": 60.857142857142854
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-117.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-117.png"
+  },
+  {
+    "inputPath": "./fixtures/source/118.png",
+    "output": "http://OHAIPUZZLE.COM",
+    "location": {
+      "bottomLeft": {
+        "x": 92,
+        "y": 162
+      },
+      "topLeft": {
+        "x": 90.5,
+        "y": 106
+      },
+      "topRight": {
+        "x": 148.5,
+        "y": 103.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-118.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-118.png"
+  },
+  {
+    "inputPath": "./fixtures/source/119.png",
+    "output": "http://arnaud.sahuguet.com/graffiti/test.php?ll=-74.00309961503218,40.74102573163046,0",
+    "location": {
+      "bottomLeft": {
+        "x": 54.5,
+        "y": 216
+      },
+      "topLeft": {
+        "x": 60,
+        "y": 63.5
+      },
+      "topRight": {
+        "x": 203,
+        "y": 61.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-119.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-119.png"
+  },
+  {
+    "inputPath": "./fixtures/source/12.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 48,
+        "y": 160
+      },
+      "topLeft": {
+        "x": 63,
+        "y": 50.642857142857146
+      },
+      "topRight": {
+        "x": 168.75,
+        "y": 65.75
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-12.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-12.png"
+  },
+  {
+    "inputPath": "./fixtures/source/120.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 69.5,
+        "y": 166.5
+      },
+      "topLeft": {
+        "x": 68.5,
+        "y": 59.5
+      },
+      "topRight": {
+        "x": 175,
+        "y": 58.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-120.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-120.png"
+  },
+  {
+    "inputPath": "./fixtures/source/121.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 53,
+        "y": 179.5
+      },
+      "topLeft": {
+        "x": 65,
+        "y": 41.5
+      },
+      "topRight": {
+        "x": 182.5,
+        "y": 63
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-121.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-121.png"
+  },
+  {
+    "inputPath": "./fixtures/source/122.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 76.5,
+        "y": 164
+      },
+      "topLeft": {
+        "x": 77.5,
+        "y": 43.5
+      },
+      "topRight": {
+        "x": 199.5,
+        "y": 45.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-122.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-122.png"
+  },
+  {
+    "inputPath": "./fixtures/source/123.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 93,
+        "y": 146
+      },
+      "topLeft": {
+        "x": 93,
+        "y": 73
+      },
+      "topRight": {
+        "x": 167,
+        "y": 72
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-123.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-123.png"
+  },
+  {
+    "inputPath": "./fixtures/source/124.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 64,
+        "y": 192
+      },
+      "topLeft": {
+        "x": 54.5,
+        "y": 73
+      },
+      "topRight": {
+        "x": 162,
+        "y": 86.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-124.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-124.png"
+  },
+  {
+    "inputPath": "./fixtures/source/125.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 85,
+        "y": 178
+      },
+      "topLeft": {
+        "x": 63.5,
+        "y": 80.1
+      },
+      "topRight": {
+        "x": 159,
+        "y": 54.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-125.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-125.png"
+  },
+  {
+    "inputPath": "./fixtures/source/126.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 54.5,
+        "y": 186.5
+      },
+      "topLeft": {
+        "x": 58,
+        "y": 67
+      },
+      "topRight": {
+        "x": 166.5,
+        "y": 58
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-126.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-126.png"
+  },
+  {
+    "inputPath": "./fixtures/source/127.png",
+    "output": "MECARD:N:Google 411,;TEL:18665881077;;",
+    "location": {
+      "bottomLeft": {
+        "x": 96,
+        "y": 212.5
+      },
+      "topLeft": {
+        "x": 46.9,
+        "y": 104.8
+      },
+      "topRight": {
+        "x": 141.4,
+        "y": 47.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-127.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-127.png"
+  },
+  {
+    "inputPath": "./fixtures/source/128.png",
+    "output": "UI office hours signup\r\nhttp://www.corp.google.com/sparrow/ui_office_hours/ \r\n",
+    "location": {
+      "bottomLeft": {
+        "x": 43,
+        "y": 185.5
+      },
+      "topLeft": {
+        "x": 44.5,
+        "y": 61
+      },
+      "topRight": {
+        "x": 178.5,
+        "y": 65
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-128.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-128.png"
+  },
+  {
+    "inputPath": "./fixtures/source/129.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 190,
+        "y": 366.5
+      },
+      "topLeft": {
+        "x": 205,
+        "y": 162
+      },
+      "topRight": {
+        "x": 421.5,
+        "y": 165
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-129.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-129.png"
+  },
+  {
+    "inputPath": "./fixtures/source/13.png",
+    "output": "http://google.com/gwt/n?u=bluenile.com",
+    "location": {
+      "bottomLeft": {
+        "x": 240.5,
+        "y": 295
+      },
+      "topLeft": {
+        "x": 244,
+        "y": 175.5
+      },
+      "topRight": {
+        "x": 370.5,
+        "y": 178.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-13.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-13.png"
+  },
+  {
+    "inputPath": "./fixtures/source/130.png",
+    "output": "UI office hours signup\r\nhttp://www.corp.google.com/sparrow/ui_office_hours/ \r\n",
+    "location": {
+      "bottomLeft": {
+        "x": 68,
+        "y": 155.5
+      },
+      "topLeft": {
+        "x": 63,
+        "y": 43.5
+      },
+      "topRight": {
+        "x": 175,
+        "y": 42.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-130.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-130.png"
+  },
+  {
+    "inputPath": "./fixtures/source/131.png",
+    "output": "UI office hours signup\r\nhttp://www.corp.google.com/sparrow/ui_office_hours/ \r\n",
+    "location": {
+      "bottomLeft": {
+        "x": 52.5,
+        "y": 202
+      },
+      "topLeft": {
+        "x": 46,
+        "y": 70.5
+      },
+      "topRight": {
+        "x": 181.5,
+        "y": 69.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-131.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-131.png"
+  },
+  {
+    "inputPath": "./fixtures/source/132.png",
+    "output": "UI office hours signup\r\nhttp://www.corp.google.com/sparrow/ui_office_hours/ \r\n",
+    "location": {
+      "bottomLeft": {
+        "x": 66.5,
+        "y": 144.125
+      },
+      "topLeft": {
+        "x": 64,
+        "y": 32
+      },
+      "topRight": {
+        "x": 187.5,
+        "y": 47
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-132.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-132.png"
+  },
+  {
+    "inputPath": "./fixtures/source/133.png",
+    "output": "UI office hours signup\r\nhttp://www.corp.google.com/sparrow/ui_office_hours/ \r\n",
+    "location": {
+      "bottomLeft": {
+        "x": 67.5,
+        "y": 186
+      },
+      "topLeft": {
+        "x": 61,
+        "y": 62
+      },
+      "topRight": {
+        "x": 203,
+        "y": 69.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-133.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-133.png"
+  },
+  {
+    "inputPath": "./fixtures/source/134.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 67.5,
+        "y": 163
+      },
+      "topLeft": {
+        "x": 72.5,
+        "y": 54.5
+      },
+      "topRight": {
+        "x": 190,
+        "y": 52
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-134.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-134.png"
+  },
+  {
+    "inputPath": "./fixtures/source/135.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 80,
+        "y": 171
+      },
+      "topLeft": {
+        "x": 65.5,
+        "y": 72.5
+      },
+      "topRight": {
+        "x": 159,
+        "y": 67.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-135.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-135.png"
+  },
+  {
+    "inputPath": "./fixtures/source/136.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 63,
+        "y": 154.5
+      },
+      "topLeft": {
+        "x": 68,
+        "y": 80.5
+      },
+      "topRight": {
+        "x": 143.125,
+        "y": 86.875
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-136.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-136.png"
+  },
+  {
+    "inputPath": "./fixtures/source/137.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 88.6,
+        "y": 169.9
+      },
+      "topLeft": {
+        "x": 91,
+        "y": 71.5
+      },
+      "topRight": {
+        "x": 183,
+        "y": 69
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-137.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-137.png"
+  },
+  {
+    "inputPath": "./fixtures/source/138.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 88,
+        "y": 181
+      },
+      "topLeft": {
+        "x": 57.75,
+        "y": 110.5
+      },
+      "topRight": {
+        "x": 127,
+        "y": 79.16666666666667
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-138.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-138.png"
+  },
+  {
+    "inputPath": "./fixtures/source/139.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 60.5,
+        "y": 177.5
+      },
+      "topLeft": {
+        "x": 76.4,
+        "y": 77.6
+      },
+      "topRight": {
+        "x": 192.5,
+        "y": 88
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-139.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-139.png"
+  },
+  {
+    "inputPath": "./fixtures/source/14.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 72.5,
+        "y": 181.5
+      },
+      "topLeft": {
+        "x": 68,
+        "y": 73
+      },
+      "topRight": {
+        "x": 177,
+        "y": 67.16666666666667
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-14.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-14.png"
+  },
+  {
+    "inputPath": "./fixtures/source/140.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 335.5,
+        "y": 297.5
+      },
+      "topLeft": {
+        "x": 194,
+        "y": 300.5
+      },
+      "topRight": {
+        "x": 195.5,
+        "y": 163
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-140.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-140.png"
+  },
+  {
+    "inputPath": "./fixtures/source/141.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 54.5,
+        "y": 171.5
+      },
+      "topLeft": {
+        "x": 51,
+        "y": 71
+      },
+      "topRight": {
+        "x": 153.5,
+        "y": 67
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-141.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-141.png"
+  },
+  {
+    "inputPath": "./fixtures/source/142.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 81.5,
+        "y": 174.5
+      },
+      "topLeft": {
+        "x": 67.5,
+        "y": 78
+      },
+      "topRight": {
+        "x": 165.5,
+        "y": 65
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-142.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-142.png"
+  },
+  {
+    "inputPath": "./fixtures/source/143.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 78,
+        "y": 193
+      },
+      "topLeft": {
+        "x": 80,
+        "y": 79.5
+      },
+      "topRight": {
+        "x": 191,
+        "y": 81.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-143.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-143.png"
+  },
+  {
+    "inputPath": "./fixtures/source/144.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 31.5,
+        "y": 193.5
+      },
+      "topLeft": {
+        "x": 47.5,
+        "y": 83.5
+      },
+      "topRight": {
+        "x": 156.5,
+        "y": 96.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-144.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-144.png"
+  },
+  {
+    "inputPath": "./fixtures/source/145.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 80,
+        "y": 185
+      },
+      "topLeft": {
+        "x": 72,
+        "y": 85.5
+      },
+      "topRight": {
+        "x": 169.5,
+        "y": 78.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-145.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-145.png"
+  },
+  {
+    "inputPath": "./fixtures/source/146.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 48,
+        "y": 150.5
+      },
+      "topLeft": {
+        "x": 64.5,
+        "y": 33.4
+      },
+      "topRight": {
+        "x": 177.5,
+        "y": 52.166666666666664
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-146.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-146.png"
+  },
+  {
+    "inputPath": "./fixtures/source/147.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 84.5,
+        "y": 199
+      },
+      "topLeft": {
+        "x": 64.3,
+        "y": 92.8
+      },
+      "topRight": {
+        "x": 168.5,
+        "y": 66.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-147.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-147.png"
+  },
+  {
+    "inputPath": "./fixtures/source/148.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 61.5,
+        "y": 192.66666666666666
+      },
+      "topLeft": {
+        "x": 82.5,
+        "y": 82.41666666666667
+      },
+      "topRight": {
+        "x": 184,
+        "y": 104.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-148.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-148.png"
+  },
+  {
+    "inputPath": "./fixtures/source/149.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 51.4,
+        "y": 171.6
+      },
+      "topLeft": {
+        "x": 97.75,
+        "y": 68.375
+      },
+      "topRight": {
+        "x": 191.75,
+        "y": 102.625
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-149.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-149.png"
+  },
+  {
+    "inputPath": "./fixtures/source/15.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 57.5,
+        "y": 131.5
+      },
+      "topLeft": {
+        "x": 112.33333333333333,
+        "y": 56.833333333333336
+      },
+      "topRight": {
+        "x": 188,
+        "y": 107.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-15.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-15.png"
+  },
+  {
+    "inputPath": "./fixtures/source/150.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 53.5,
+        "y": 173
+      },
+      "topLeft": {
+        "x": 67.5,
+        "y": 58.5
+      },
+      "topRight": {
+        "x": 182.5,
+        "y": 64
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-150.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-150.png"
+  },
+  {
+    "inputPath": "./fixtures/source/151.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 197.5,
+        "y": 156.5
+      },
+      "topLeft": {
+        "x": 385.5,
+        "y": 151
+      },
+      "topRight": {
+        "x": 390,
+        "y": 333.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-151.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-151.png"
+  },
+  {
+    "inputPath": "./fixtures/source/152.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 68,
+        "y": 173
+      },
+      "topLeft": {
+        "x": 84,
+        "y": 61.5
+      },
+      "topRight": {
+        "x": 190,
+        "y": 52
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-152.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-152.png"
+  },
+  {
+    "inputPath": "./fixtures/source/153.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 57,
+        "y": 186
+      },
+      "topLeft": {
+        "x": 57,
+        "y": 60.5
+      },
+      "topRight": {
+        "x": 186,
+        "y": 58
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-153.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-153.png"
+  },
+  {
+    "inputPath": "./fixtures/source/154.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 56.5,
+        "y": 178.5
+      },
+      "topLeft": {
+        "x": 53,
+        "y": 65.5
+      },
+      "topRight": {
+        "x": 162.5,
+        "y": 59
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-154.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-154.png"
+  },
+  {
+    "inputPath": "./fixtures/source/155.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 61,
+        "y": 165
+      },
+      "topLeft": {
+        "x": 59,
+        "y": 60
+      },
+      "topRight": {
+        "x": 162,
+        "y": 54
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-155.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-155.png"
+  },
+  {
+    "inputPath": "./fixtures/source/156.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 68.5,
+        "y": 189
+      },
+      "topLeft": {
+        "x": 65.5,
+        "y": 84.5
+      },
+      "topRight": {
+        "x": 172.5,
+        "y": 79.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-156.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-156.png"
+  },
+  {
+    "inputPath": "./fixtures/source/157.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 63.5,
+        "y": 178
+      },
+      "topLeft": {
+        "x": 66.5,
+        "y": 71
+      },
+      "topRight": {
+        "x": 176,
+        "y": 69
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-157.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-157.png"
+  },
+  {
+    "inputPath": "./fixtures/source/158.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 61.5,
+        "y": 157
+      },
+      "topLeft": {
+        "x": 88.5,
+        "y": 57.2
+      },
+      "topRight": {
+        "x": 192,
+        "y": 77
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-158.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-158.png"
+  },
+  {
+    "inputPath": "./fixtures/source/159.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 70.5,
+        "y": 184.5
+      },
+      "topLeft": {
+        "x": 60.5,
+        "y": 77
+      },
+      "topRight": {
+        "x": 168,
+        "y": 64.25
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-159.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-159.png"
+  },
+  {
+    "inputPath": "./fixtures/source/16.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 81.5,
+        "y": 170
+      },
+      "topLeft": {
+        "x": 83,
+        "y": 74
+      },
+      "topRight": {
+        "x": 185,
+        "y": 72.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-16.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-16.png"
+  },
+  {
+    "inputPath": "./fixtures/source/160.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 68,
+        "y": 171.5
+      },
+      "topLeft": {
+        "x": 62,
+        "y": 56
+      },
+      "topRight": {
+        "x": 178,
+        "y": 51
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-160.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-160.png"
+  },
+  {
+    "inputPath": "./fixtures/source/161.png",
+    "output": "Google Print Ads - T.G.I.A.F. - January 31, 2008",
+    "location": {
+      "bottomLeft": {
+        "x": 52.5,
+        "y": 169.5
+      },
+      "topLeft": {
+        "x": 48,
+        "y": 58.5
+      },
+      "topRight": {
+        "x": 160.5,
+        "y": 53
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-161.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-161.png"
+  },
+  {
+    "inputPath": "./fixtures/source/17.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 64.5,
+        "y": 177.5
+      },
+      "topLeft": {
+        "x": 60.5,
+        "y": 65.5
+      },
+      "topRight": {
+        "x": 178,
+        "y": 65
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-17.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-17.png"
+  },
+  {
+    "inputPath": "./fixtures/source/18.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 85.5,
+        "y": 160.5
+      },
+      "topLeft": {
+        "x": 80.5,
+        "y": 86
+      },
+      "topRight": {
+        "x": 155,
+        "y": 79.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-18.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-18.png"
+  },
+  {
+    "inputPath": "./fixtures/source/19.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 81.5,
+        "y": 137.5
+      },
+      "topLeft": {
+        "x": 94,
+        "y": 63
+      },
+      "topRight": {
+        "x": 168.5,
+        "y": 73.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-19.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-19.png"
+  },
+  {
+    "inputPath": "./fixtures/source/2.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 323.5,
+        "y": 220
+      },
+      "topLeft": {
+        "x": 462,
+        "y": 217
+      },
+      "topRight": {
+        "x": 468.5,
+        "y": 350.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-2.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-2.png"
+  },
+  {
+    "inputPath": "./fixtures/source/20.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 73.5,
+        "y": 168.5
+      },
+      "topLeft": {
+        "x": 75.5,
+        "y": 65.5
+      },
+      "topRight": {
+        "x": 178,
+        "y": 67.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-20.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-20.png"
+  },
+  {
+    "inputPath": "./fixtures/source/21.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 84,
+        "y": 154.5
+      },
+      "topLeft": {
+        "x": 83.5,
+        "y": 90.5
+      },
+      "topRight": {
+        "x": 147.5,
+        "y": 90.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-21.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-21.png"
+  },
+  {
+    "inputPath": "./fixtures/source/22.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 81.5,
+        "y": 177
+      },
+      "topLeft": {
+        "x": 75.5,
+        "y": 112.5
+      },
+      "topRight": {
+        "x": 138,
+        "y": 108.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-22.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-22.png"
+  },
+  {
+    "inputPath": "./fixtures/source/23.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 88,
+        "y": 149.5
+      },
+      "topLeft": {
+        "x": 91.5,
+        "y": 74.5
+      },
+      "topRight": {
+        "x": 166.5,
+        "y": 78
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-23.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-23.png"
+  },
+  {
+    "inputPath": "./fixtures/source/24.png",
+    "output": "Sean Owen\r\nsrowen@google.com\r\n917-364-2918\r\nhttp://awesome-thoughts.com",
+    "location": {
+      "bottomLeft": {
+        "x": 176.5,
+        "y": 126
+      },
+      "topLeft": {
+        "x": 424,
+        "y": 128
+      },
+      "topRight": {
+        "x": 417.5,
+        "y": 357
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-24.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-24.png"
+  },
+  {
+    "inputPath": "./fixtures/source/25.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 71,
+        "y": 125.5
+      },
+      "topLeft": {
+        "x": 78,
+        "y": 56.5
+      },
+      "topRight": {
+        "x": 150,
+        "y": 67.2
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-25.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-25.png"
+  },
+  {
+    "inputPath": "./fixtures/source/26.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 99.5,
+        "y": 159
+      },
+      "topLeft": {
+        "x": 98.5,
+        "y": 89.5
+      },
+      "topRight": {
+        "x": 173,
+        "y": 84.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-26.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-26.png"
+  },
+  {
+    "inputPath": "./fixtures/source/27.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 86,
+        "y": 153
+      },
+      "topLeft": {
+        "x": 81.5,
+        "y": 85.5
+      },
+      "topRight": {
+        "x": 155,
+        "y": 81
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-27.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-27.png"
+  },
+  {
+    "inputPath": "./fixtures/source/28.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 86,
+        "y": 152
+      },
+      "topLeft": {
+        "x": 86,
+        "y": 80.5
+      },
+      "topRight": {
+        "x": 157,
+        "y": 79
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-28.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-28.png"
+  },
+  {
+    "inputPath": "./fixtures/source/29.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 75.5,
+        "y": 152
+      },
+      "topLeft": {
+        "x": 89,
+        "y": 71
+      },
+      "topRight": {
+        "x": 168,
+        "y": 86
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-29.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-29.png"
+  },
+  {
+    "inputPath": "./fixtures/source/3.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 58.5,
+        "y": 196
+      },
+      "topLeft": {
+        "x": 56,
+        "y": 84
+      },
+      "topRight": {
+        "x": 173,
+        "y": 83.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-3.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-3.png"
+  },
+  {
+    "inputPath": "./fixtures/source/30.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 85,
+        "y": 163.5
+      },
+      "topLeft": {
+        "x": 74.5,
+        "y": 84.25
+      },
+      "topRight": {
+        "x": 153.5,
+        "y": 75
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-30.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-30.png"
+  },
+  {
+    "inputPath": "./fixtures/source/31.png",
+    "output": "http://code.google.com/p/zxing/",
+    "location": {
+      "bottomLeft": {
+        "x": 85.5,
+        "y": 142
+      },
+      "topLeft": {
+        "x": 83.5,
+        "y": 65
+      },
+      "topRight": {
+        "x": 159,
+        "y": 64.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-31.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-31.png"
+  },
+  {
+    "inputPath": "./fixtures/source/32.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 50.5,
+        "y": 197
+      },
+      "topLeft": {
+        "x": 55.5,
+        "y": 46.642857142857146
+      },
+      "topRight": {
+        "x": 184.5,
+        "y": 58
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-32.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-32.png"
+  },
+  {
+    "inputPath": "./fixtures/source/33.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 51.5,
+        "y": 200
+      },
+      "topLeft": {
+        "x": 50,
+        "y": 65
+      },
+      "topRight": {
+        "x": 184,
+        "y": 65
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-33.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-33.png"
+  },
+  {
+    "inputPath": "./fixtures/source/34.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 60,
+        "y": 176
+      },
+      "topLeft": {
+        "x": 69,
+        "y": 52.5
+      },
+      "topRight": {
+        "x": 192,
+        "y": 63
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-34.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-34.png"
+  },
+  {
+    "inputPath": "./fixtures/source/35.png",
+    "output": "Sean Owen\r\nsrowen@google.com\r\n917-364-2918\r\nhttp://awesome-thoughts.com",
+    "location": {
+      "bottomLeft": {
+        "x": 204.5,
+        "y": 180.5
+      },
+      "topLeft": {
+        "x": 393.5,
+        "y": 181
+      },
+      "topRight": {
+        "x": 392,
+        "y": 356
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-35.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-35.png"
+  },
+  {
+    "inputPath": "./fixtures/source/36.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 52,
+        "y": 208.5
+      },
+      "topLeft": {
+        "x": 65,
+        "y": 57
+      },
+      "topRight": {
+        "x": 212,
+        "y": 71.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-36.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-36.png"
+  },
+  {
+    "inputPath": "./fixtures/source/37.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 61.5,
+        "y": 183
+      },
+      "topLeft": {
+        "x": 64.5,
+        "y": 53.5
+      },
+      "topRight": {
+        "x": 191.5,
+        "y": 57.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-37.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-37.png"
+  },
+  {
+    "inputPath": "./fixtures/source/38.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 47,
+        "y": 172.5
+      },
+      "topLeft": {
+        "x": 39,
+        "y": 58.857142857142854
+      },
+      "topRight": {
+        "x": 201.75,
+        "y": 60.75
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-38.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-38.png"
+  },
+  {
+    "inputPath": "./fixtures/source/39.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 56,
+        "y": 197.5
+      },
+      "topLeft": {
+        "x": 69,
+        "y": 73
+      },
+      "topRight": {
+        "x": 193.5,
+        "y": 79.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-39.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-39.png"
+  },
+  {
+    "inputPath": "./fixtures/source/4.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 62.5,
+        "y": 183.5
+      },
+      "topLeft": {
+        "x": 62,
+        "y": 64.5
+      },
+      "topRight": {
+        "x": 179,
+        "y": 63
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-4.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-4.png"
+  },
+  {
+    "inputPath": "./fixtures/source/40.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 55.5,
+        "y": 190.5
+      },
+      "topLeft": {
+        "x": 54.5,
+        "y": 66
+      },
+      "topRight": {
+        "x": 178,
+        "y": 64
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-40.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-40.png"
+  },
+  {
+    "inputPath": "./fixtures/source/41.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 54,
+        "y": 202.5
+      },
+      "topLeft": {
+        "x": 50,
+        "y": 62.5
+      },
+      "topRight": {
+        "x": 188,
+        "y": 58
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-41.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-41.png"
+  },
+  {
+    "inputPath": "./fixtures/source/42.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 65,
+        "y": 188
+      },
+      "topLeft": {
+        "x": 51.5,
+        "y": 55.5
+      },
+      "topRight": {
+        "x": 182.5,
+        "y": 43
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-42.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-42.png"
+  },
+  {
+    "inputPath": "./fixtures/source/43.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 67.5,
+        "y": 189.5
+      },
+      "topLeft": {
+        "x": 67,
+        "y": 64
+      },
+      "topRight": {
+        "x": 191,
+        "y": 63
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-43.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-43.png"
+  },
+  {
+    "inputPath": "./fixtures/source/44.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 44,
+        "y": 188
+      },
+      "topLeft": {
+        "x": 45,
+        "y": 49
+      },
+      "topRight": {
+        "x": 176,
+        "y": 54
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-44.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-44.png"
+  },
+  {
+    "inputPath": "./fixtures/source/45.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 62,
+        "y": 183.5
+      },
+      "topLeft": {
+        "x": 66.5,
+        "y": 73
+      },
+      "topRight": {
+        "x": 179.5,
+        "y": 74
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-45.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-45.png"
+  },
+  {
+    "inputPath": "./fixtures/source/46.png",
+    "output": "Sean Owen\r\nsrowen@google.com\r\n917-364-2918\r\nhttp://awesome-thoughts.com",
+    "location": {
+      "bottomLeft": {
+        "x": 233,
+        "y": 225
+      },
+      "topLeft": {
+        "x": 391.5,
+        "y": 227.5
+      },
+      "topRight": {
+        "x": 387,
+        "y": 373.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-46.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-46.png"
+  },
+  {
+    "inputPath": "./fixtures/source/47.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 52,
+        "y": 194
+      },
+      "topLeft": {
+        "x": 49,
+        "y": 56
+      },
+      "topRight": {
+        "x": 185.5,
+        "y": 55
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-47.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-47.png"
+  },
+  {
+    "inputPath": "./fixtures/source/48.png",
+    "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
+    "location": {
+      "bottomLeft": {
+        "x": 53,
+        "y": 197.5
+      },
+      "topLeft": {
+        "x": 58,
+        "y": 54.5
+      },
+      "topRight": {
+        "x": 194.5,
+        "y": 62.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-48.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-48.png"
+  },
+  {
+    "inputPath": "./fixtures/source/49.png",
+    "output": "THROUGH THE LOOKING-GLASS\n\nBy Lewis Carroll\n\n\nCHAPTER I. Looking-Glass house\n\nOne thing was certain, that the WHITE kitten had had nothing to do with\nit:--it was the black kitten's fault entirely. For the white kitten had\nbeen having its face washed by the old cat for the last quarter of\nan hour (and bearing it pretty well, considering); so you see that it\nCOULDN'T have had any hand in the mischief.\n\nThe way Dinah washed her children's faces was this: first she held the\npoor thing down by its ear with one paw, and then with the other paw she\nrubbed its face all over, the wrong way, beginning at the nose: and\njust now, as I said, she was hard at work on the white kitten, which was\nlying quite still and trying to purr--no doubt feeling that it was all\nmeant for its good.\n\nBut the black kitten had been finished with earlier in the afternoon,\nand so, while Alice was sitting curled up in a corner of the great\narm-chair, half talking to herself and half asleep, the kitten had been\nhaving a grand game of romps with the ball of worsted Alice had been\ntrying to wind up, and had been rolling it up and down till it had all\ncome undone again; and there it was, spread over the hearth-rug, all\nknots and tangles, with the kitten running after its own tail in the\nmiddle.\n\n'Oh, you wicked little thing!' cried Alice, catching up the kitten, and\ngiving it a little kiss to make it understand that it was in disgrace.\n'Really, Dinah ought to have taught you better manners! You OUGHT,\nDinah, you know you ought!' she added, looking reproachfully at the old\ncat, and speaking in as cross a voice as she could manage--and then she\nscrambled back into the arm-chair, taking the kitten and the worsted\nwith her, and began winding up the ball again. But she didn't get on\nvery fast, as she was talking all the time, sometimes to the kitten, and\nsometimes to herself. Kitty sat very demurely on her knee, pretending to\nwatch the progress of the winding, and now and then putting out one\npaw and gently touching the ball, as if it would be glad to help, if it\nmight.\n\n'Do you know what to-morrow is, Kitty?' Alice began. 'You'd have guessed\nif you'd been up in the window with me--only Dinah was making you tidy,\nso you couldn't. I was watching the boys getting in sticks for the\nbonfire--and it wants plenty of sticks, Kitty! Only it got so cold, and\nit snowed so, they had to leave off. Never mind, Kitty, we'll go and\nsee the bonfire to-morrow.' Here Alice wound two or three turns of the\nworsted round the kitten's neck, just to see how it would look: this led\nto a scramble, in which the ball rolled down upon the floor, and yards\nand yards of it got unwound again.\n\n'Do you know, I was so angry, Kitty,' Alice went on as soon as they were\ncomfortably settled again, 'when I saw all the mischief you had been\ndoing, I was very nearly opening the window, and putting you out into\nthe snow! And you'd have deserved it, you little mischievous darling!\nWha\n",
+    "location": {
+      "bottomLeft": {
+        "x": 3.5,
+        "y": 173.5
+      },
+      "topLeft": {
+        "x": 3.5,
+        "y": 3.5
+      },
+      "topRight": {
+        "x": 173.5,
+        "y": 3.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-49.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-49.png"
+  },
+  {
+    "inputPath": "./fixtures/source/5.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 62.5,
+        "y": 177.5
+      },
+      "topLeft": {
+        "x": 63.5,
+        "y": 60.5
+      },
+      "topRight": {
+        "x": 181.5,
+        "y": 63.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-5.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-5.png"
+  },
+  {
+    "inputPath": "./fixtures/source/50.png",
+    "output": "THROUGH THE LOOKING-GLASS\n\nBy Lewis Carroll\n\n\nCHAPTER I. Looking-Glass house\n\nOne thing was certain, that the WHITE kitten had had nothing to do with\nit:--it was the black kitten's fault entirely. For the white kitten had\nbeen having its face washed by the old cat for the last quarter of\nan hour (and bearing it pretty well, considering); so you see that it\nCOULDN'T have had any hand in the mischief.\n\nThe way Dinah washed her children's faces was this: first she held the\npoor thing down by its ear with one paw, and then with the other paw she\nrubbed its face all over, the wrong way, beginning at the nose: and\njust now, as I said, she was hard at work on the white kitten, which was\nlying quite still and trying to purr--no doubt feeling that it was all\nmeant for its good.\n\nBut the black kitten had been finished with earlier in the afternoon,\nand so, while Alice was sitting curled up in a corner of the great\narm-chair, half talking to herself and half asleep, the kitten had been\nhaving a grand game of romps with the ball of worsted Alice had been\ntrying to wind up, and had been rolling it up and down till it had all\ncome undone again; and there it was, spread over the hearth-rug, all\nknots and tangles, with the kitten running after its own tail in the\nmiddle.\n\n'Oh, you wicked little thing!' cried Alice, catching up the kitten, and\ngiving it a little kiss to make it understand that it was in disgrace.\n'Really, Dinah ought to have taught you better manners! You OUGHT,\nDinah, you know you ought!' she added, looking reproachfully at the old\ncat, and speaking in as cross a voice as she could manage--and then she\nscrambled back into the arm-chair, taking the kitten and the worsted\nwith her, and began winding up the ball again. But she didn't get on\nvery fast, as she was talking all the time, sometimes to the kitten, and\nsometimes to herself. Kitty sat very demurely on her knee, pretending to\nwatch the progress of the winding, and now and then putting out one\npaw and gently touching the ball, as if it would be glad to help, if it\nmight.\n\n'Do you know what to-morrow is, Kitty?' Alice began. 'You'd have guessed\nif you'd been up in the window with me--only Dinah was making you tidy,\nso you couldn't. I was watching the boys getting in sticks for the\nbonfire--and it wants plenty of sticks, Kitty! Only it \n",
+    "location": {
+      "bottomLeft": {
+        "x": 3.5,
+        "y": 173.5
+      },
+      "topLeft": {
+        "x": 3.5,
+        "y": 3.5
+      },
+      "topRight": {
+        "x": 173.5,
+        "y": 3.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-50.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-50.png"
+  },
+  {
+    "inputPath": "./fixtures/source/51.png",
+    "output": "THROUGH THE LOOKING-GLASS\n\nBy Lewis Carroll\n\n\nCHAPTER I. Looking-Glass house\n\nOne thing was certain, that the WHITE kitten had had nothing to do with\nit:--it was the black kitten's fault entirely. For the white kitten had\nbeen having its face washed by the old cat for the last quarter of\nan hour (and bearing it pretty well, considering); so you see that it\nCOULDN'T have had any hand in the mischief.\n\nThe way Dinah washed her children's faces was this: first she held the\npoor thing down by its ear with one paw, and then with the other paw she\nrubbed its face all over, the wrong way, beginning at the nose: and\njust now, as I said, she was hard at work on the white kitten, which was\nlying quite still and trying to purr--no doubt feeling that it was all\nmeant for its good.\n\nBut the black kitten had been finished with earlier in the afternoon,\nand so, while Alice was sitting curled up in a corner of the great\narm-chair, half talking to herself and half asleep, the kitten had been\nhaving a grand game of romps with the ball of worsted Alice had been\ntrying to wind up, and had been rolling it up and down till it had all\ncome undone again; and there it was, spread over the hearth-rug, all\nknots and tangles, with the kitten running after its own tail in the\nmiddle.\n\n'Oh, you wicked little thing!' cried Alice, catching up the kitten, and\ngiving it a little kiss to make it understand that it was in disgrace.\n'Really, Dinah ought to have taught you better manners! You OUGHT,\nDinah, you know you ought!' she added, looking reproachfully at the old\ncat, and speaking in as cross a voice as she could manage--and then she\nscrambled back into the arm-ch\n\n",
+    "location": {
+      "bottomLeft": {
+        "x": 3.5,
+        "y": 173.5
+      },
+      "topLeft": {
+        "x": 3.5,
+        "y": 3.5
+      },
+      "topRight": {
+        "x": 173.5,
+        "y": 3.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-51.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-51.png"
+  },
+  {
+    "inputPath": "./fixtures/source/52.png",
+    "output": "THROUGH THE LOOKING-GLASS\n\nBy Lewis Carroll\n\n\nCHAPTER I. Looking-Glass house\n\nOne thing was certain, that the WHITE kitten had had nothing to do with\nit:--it was the black kitten's fault entirely. For the white kitten had\nbeen having its face washed by the old cat for the last quarter of\nan hour (and bearing it pretty well, considering); so you see that it\nCOULDN'T have had any hand in the mischief.\n\nThe way Dinah washed her children's faces was this: first she held the\npoor thing down by its ear with one paw, and then with the other paw she\nrubbed its face all over, the wrong way, beginning at the nose: and\njust now, as I said, she was hard at work on the white kitten, which was\nlying quite still and trying to purr--no doubt feeling that it was all\nmeant for its good.\n\nBut the black kitten had been finished with earlier in the afternoon,\nand so, while Alice was sitting curled up in a corner of the great\narm-chair, half talking to herself and half asleep, the kitten had been\nhaving a grand game of romps with the ball of worsted Alice had been\ntrying to wind up, and had been rolling it up and down till it had all\ncome undone again; and there it was, spread over the hearth-rug, all\nknots and tangles, with the kitten running after its own tail in the\nmidd\n",
+    "location": {
+      "bottomLeft": {
+        "x": 3.5,
+        "y": 173.5
+      },
+      "topLeft": {
+        "x": 3.5,
+        "y": 3.5
+      },
+      "topRight": {
+        "x": 173.5,
+        "y": 3.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-52.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-52.png"
+  },
+  {
+    "inputPath": "./fixtures/source/53.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 221.25,
+        "y": 258.75
+      },
+      "topLeft": {
+        "x": 242.5,
+        "y": 222
+      },
+      "topRight": {
+        "x": 278.3333333333333,
+        "y": 243.33333333333334
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-53.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-53.png"
+  },
+  {
+    "inputPath": "./fixtures/source/54.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 277.8333333333333,
+        "y": 241.33333333333334
+      },
+      "topLeft": {
+        "x": 257.5,
+        "y": 278
+      },
+      "topRight": {
+        "x": 221,
+        "y": 257.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-54.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-54.png"
+  },
+  {
+    "inputPath": "./fixtures/source/55.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 278.3333333333333,
+        "y": 241.66666666666666
+      },
+      "topLeft": {
+        "x": 257.5,
+        "y": 278
+      },
+      "topRight": {
+        "x": 220.83333333333334,
+        "y": 257.1666666666667
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-55.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-55.png"
+  },
+  {
+    "inputPath": "./fixtures/source/56.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 279,
+        "y": 244
+      },
+      "topLeft": {
+        "x": 255.5,
+        "y": 278.5
+      },
+      "topRight": {
+        "x": 220.5,
+        "y": 254.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-56.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-56.png"
+  },
+  {
+    "inputPath": "./fixtures/source/57.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 228,
+        "y": 358
+      },
+      "topLeft": {
+        "x": 231,
+        "y": 202.5
+      },
+      "topRight": {
+        "x": 397.5,
+        "y": 204.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-57.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-57.png"
+  },
+  {
+    "inputPath": "./fixtures/source/58.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 279.5,
+        "y": 254.5
+      },
+      "topLeft": {
+        "x": 244.5,
+        "y": 278.5
+      },
+      "topRight": {
+        "x": 220.5,
+        "y": 243.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-58.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-58.png"
+  },
+  {
+    "inputPath": "./fixtures/source/59.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 245.5,
+        "y": 279.5
+      },
+      "topLeft": {
+        "x": 221.5,
+        "y": 244.5
+      },
+      "topRight": {
+        "x": 255.5,
+        "y": 220.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-59.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-59.png"
+  },
+  {
+    "inputPath": "./fixtures/source/6.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 80.5,
+        "y": 170
+      },
+      "topLeft": {
+        "x": 77.5,
+        "y": 76.5
+      },
+      "topRight": {
+        "x": 170.5,
+        "y": 74
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-6.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-6.png"
+  },
+  {
+    "inputPath": "./fixtures/source/60.png",
+    "output": "TEST",
+    "location": {
+      "bottomLeft": {
+        "x": 654.5,
+        "y": 892.5
+      },
+      "topLeft": {
+        "x": 97.5,
+        "y": 865.5
+      },
+      "topRight": {
+        "x": 96,
+        "y": 316.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-60.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-60.png"
+  },
+  {
+    "inputPath": "./fixtures/source/61.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 220.75,
+        "y": 257.75
+      },
+      "topLeft": {
+        "x": 243.5,
+        "y": 221.5
+      },
+      "topRight": {
+        "x": 278.8333333333333,
+        "y": 244.16666666666666
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-61.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-61.png"
+  },
+  {
+    "inputPath": "./fixtures/source/62.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 221.66666666666666,
+        "y": 242
+      },
+      "topLeft": {
+        "x": 258.5,
+        "y": 222
+      },
+      "topRight": {
+        "x": 278.5,
+        "y": 259.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-62.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-62.png"
+  },
+  {
+    "inputPath": "./fixtures/source/63.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 238.5,
+        "y": 222.75
+      },
+      "topLeft": {
+        "x": 277,
+        "y": 239.66666666666666
+      },
+      "topRight": {
+        "x": 260,
+        "y": 278
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-63.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-63.png"
+  },
+  {
+    "inputPath": "./fixtures/source/64.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 239,
+        "y": 222.75
+      },
+      "topLeft": {
+        "x": 277,
+        "y": 240
+      },
+      "topRight": {
+        "x": 259,
+        "y": 278.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-64.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-64.png"
+  },
+  {
+    "inputPath": "./fixtures/source/65.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 237,
+        "y": 212.5
+      },
+      "topLeft": {
+        "x": 287.5,
+        "y": 237.125
+      },
+      "topRight": {
+        "x": 262.75,
+        "y": 288
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-65.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-65.png"
+  },
+  {
+    "inputPath": "./fixtures/source/66.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 244,
+        "y": 221
+      },
+      "topLeft": {
+        "x": 278.5,
+        "y": 244.83333333333334
+      },
+      "topRight": {
+        "x": 254,
+        "y": 280
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-66.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-66.png"
+  },
+  {
+    "inputPath": "./fixtures/source/67.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 277,
+        "y": 239
+      },
+      "topLeft": {
+        "x": 260,
+        "y": 277.1666666666667
+      },
+      "topRight": {
+        "x": 221.66666666666666,
+        "y": 260.3333333333333
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-67.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-67.png"
+  },
+  {
+    "inputPath": "./fixtures/source/68.png",
+    "output": "Sean Owen\r\nsrowen@google.com\r\n917-364-2918\r\nhttp://awesome-thoughts.com",
+    "location": {
+      "bottomLeft": {
+        "x": 210,
+        "y": 140.125
+      },
+      "topLeft": {
+        "x": 398.5,
+        "y": 167.5
+      },
+      "topRight": {
+        "x": 368.5,
+        "y": 342.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-68.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-68.png"
+  },
+  {
+    "inputPath": "./fixtures/source/69.png",
+    "output": "1234567890",
+    "location": {
+      "bottomLeft": {
+        "x": 277.5,
+        "y": 239
+      },
+      "topLeft": {
+        "x": 259.5,
+        "y": 277.75
+      },
+      "topRight": {
+        "x": 221.33333333333334,
+        "y": 259.6666666666667
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-69.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-69.png"
+  },
+  {
+    "inputPath": "./fixtures/source/7.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 74.5,
+        "y": 183.5
+      },
+      "topLeft": {
+        "x": 71.5,
+        "y": 70.5
+      },
+      "topRight": {
+        "x": 179,
+        "y": 67.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-7.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-7.png"
+  },
+  {
+    "inputPath": "./fixtures/source/70.png",
+    "output": "\u0001\u0001RÅéÐæí\u0006!-j\u0004ýý\u0019\"\u00116:í{",
+    "location": {
+      "bottomLeft": {
+        "x": 27,
+        "y": 130
+      },
+      "topLeft": {
+        "x": 27,
+        "y": 27.5
+      },
+      "topRight": {
+        "x": 129.5,
+        "y": 27.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-70.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-70.png"
+  },
+  {
+    "inputPath": "./fixtures/source/71.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 188,
+        "y": 351.5
+      },
+      "topLeft": {
+        "x": 209,
+        "y": 157.94444444444446
+      },
+      "topRight": {
+        "x": 415.5,
+        "y": 166.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-71.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-71.png"
+  },
+  {
+    "inputPath": "./fixtures/source/72.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 197.5,
+        "y": 293.5
+      },
+      "topLeft": {
+        "x": 199.5,
+        "y": 164
+      },
+      "topRight": {
+        "x": 338,
+        "y": 163
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-72.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-72.png"
+  },
+  {
+    "inputPath": "./fixtures/source/73.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 239,
+        "y": 321
+      },
+      "topLeft": {
+        "x": 239,
+        "y": 179
+      },
+      "topRight": {
+        "x": 392.5,
+        "y": 179
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-73.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-73.png"
+  },
+  {
+    "inputPath": "./fixtures/source/74.png",
+    "output": "http://if.gs/1BGIJ37",
+    "location": {
+      "bottomLeft": {
+        "x": 133,
+        "y": 92.5
+      },
+      "topLeft": {
+        "x": 138,
+        "y": 50
+      },
+      "topRight": {
+        "x": 183,
+        "y": 55.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-74.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-74.png"
+  },
+  {
+    "inputPath": "./fixtures/source/75.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 239.5,
+        "y": 336
+      },
+      "topLeft": {
+        "x": 225,
+        "y": 182
+      },
+      "topRight": {
+        "x": 387,
+        "y": 168.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-75.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-75.png"
+  },
+  {
+    "inputPath": "./fixtures/source/76.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 253.5,
+        "y": 322
+      },
+      "topLeft": {
+        "x": 260.5,
+        "y": 197.5
+      },
+      "topRight": {
+        "x": 393.5,
+        "y": 198.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-76.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-76.png"
+  },
+  {
+    "inputPath": "./fixtures/source/77.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 417.5,
+        "y": 334.5
+      },
+      "topLeft": {
+        "x": 237.5,
+        "y": 325
+      },
+      "topRight": {
+        "x": 236,
+        "y": 157
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-77.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-77.png"
+  },
+  {
+    "inputPath": "./fixtures/source/78.png",
+    "output": "MEBKM:URL:http\\://en.wikipedia.org/wiki/Main_Page;;",
+    "location": {
+      "bottomLeft": {
+        "x": 379,
+        "y": 316.5
+      },
+      "topLeft": {
+        "x": 217,
+        "y": 317.5
+      },
+      "topRight": {
+        "x": 218.5,
+        "y": 161.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-78.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-78.png"
+  },
+  {
+    "inputPath": "./fixtures/source/79.png",
+    "output": "When we at WRT talk about \\\"text,\\\" we are generally talking about a particular kind of readable information encoding - and readable is a complex proposition. Text may be stylized in a way we are unfamiliar with, as in blackletter - it may be interspersed with some markup we don\\'t understand, such as HTML - it may be be a substitution system we aren\\'t familiar with, such as braille or morse code - or it may be a system that, while technically human-readable, isn\\'t particularly optimized for reading by humans, as with barcodes (although barcodes can be read).",
+    "location": {
+      "bottomLeft": {
+        "x": 30,
+        "y": 374
+      },
+      "topLeft": {
+        "x": 30,
+        "y": 30
+      },
+      "topRight": {
+        "x": 374,
+        "y": 30
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-79.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-79.png"
+  },
+  {
+    "inputPath": "./fixtures/source/8.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 76,
+        "y": 177
+      },
+      "topLeft": {
+        "x": 76,
+        "y": 77
+      },
+      "topRight": {
+        "x": 171,
+        "y": 71
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-8.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-8.png"
+  },
+  {
+    "inputPath": "./fixtures/source/80.png",
+    "output": "Google oC\r\nhttp://google.jp",
+    "location": {
+      "bottomLeft": {
+        "x": 9,
+        "y": 68
+      },
+      "topLeft": {
+        "x": 9,
+        "y": 9
+      },
+      "topRight": {
+        "x": 68,
+        "y": 9
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-80.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-80.png"
+  },
+  {
+    "inputPath": "./fixtures/source/81.png",
+    "output": "BEGIN:VCARD\r\nN:Kennedy;Steve\r\nTEL:+44 (0)7775 755503\r\nADR;HOME:;;Flat 2, 43 Howitt Road, Belsize Park;London;;NW34LU;UK\r\nORG:NetTek Ltd;\r\nTITLE:Consultant\r\nEMAIL:steve@nettek.co.uk\r\nURL:www.nettek.co.uk\r\nEMAIL;IM:MSN:steve@gbnet.net\r\nNOTE:Testing 1 2 3\r\nBDAY:19611105\r\nEND:VCARD",
+    "location": {
+      "bottomLeft": {
+        "x": 7,
+        "y": 123
+      },
+      "topLeft": {
+        "x": 7,
+        "y": 7
+      },
+      "topRight": {
+        "x": 123,
+        "y": 7
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-81.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-81.png"
+  },
+  {
+    "inputPath": "./fixtures/source/82.png",
+    "output": "http://bbc.co.uk/programmes",
+    "location": {
+      "bottomLeft": {
+        "x": 49.5,
+        "y": 379.5
+      },
+      "topLeft": {
+        "x": 49.5,
+        "y": 49.5
+      },
+      "topRight": {
+        "x": 379.5,
+        "y": 49.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-82.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-82.png"
+  },
+  {
+    "inputPath": "./fixtures/source/83.png",
+    "output": "In 25 words or less in the comments, below, tell us how QR codes will make the world less ordinary.",
+    "location": {
+      "bottomLeft": {
+        "x": 193,
+        "y": 317.5
+      },
+      "topLeft": {
+        "x": 193,
+        "y": 65
+      },
+      "topRight": {
+        "x": 445.5,
+        "y": 65
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-83.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-83.png"
+  },
+  {
+    "inputPath": "./fixtures/source/84.png",
+    "output": "[",
+    "location": {
+      "bottomLeft": {
+        "x": 39.5,
+        "y": 218
+      },
+      "topLeft": {
+        "x": 39.5,
+        "y": 40
+      },
+      "topRight": {
+        "x": 218,
+        "y": 40
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-84.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-84.png"
+  },
+  {
+    "inputPath": "./fixtures/source/85.png",
+    "output": "http://if.gs/1V2BZMD",
+    "location": {
+      "bottomLeft": {
+        "x": 202.5,
+        "y": 98
+      },
+      "topLeft": {
+        "x": 263.5,
+        "y": 82
+      },
+      "topRight": {
+        "x": 269.5,
+        "y": 136
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-85.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-85.png"
+  },
+  {
+    "inputPath": "./fixtures/source/86.png",
+    "output": "ÃÞ»Þ²ÝQR\r\nhttp://d-qr.net/ex/",
+    "location": {
+      "bottomLeft": {
+        "x": 33.5,
+        "y": 184.5
+      },
+      "topLeft": {
+        "x": 33.5,
+        "y": 33.5
+      },
+      "topRight": {
+        "x": 184.5,
+        "y": 33.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-86.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-86.png"
+  },
+  {
+    "inputPath": "./fixtures/source/87.png",
+    "output": "*ÃÞ»Þ²ÝQR*     \r\nhttp://d-qr.net/ex/       ",
+    "location": {
+      "bottomLeft": {
+        "x": 33.5,
+        "y": 184.5
+      },
+      "topLeft": {
+        "x": 33.5,
+        "y": 33.5
+      },
+      "topRight": {
+        "x": 184.5,
+        "y": 33.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-87.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-87.png"
+  },
+  {
+    "inputPath": "./fixtures/source/88.png",
+    "output": "*ÃÞ»Þ²ÝQR*    \r\nhttp://d-qr.net/ex/         ",
+    "location": {
+      "bottomLeft": {
+        "x": 32.5,
+        "y": 184.5
+      },
+      "topLeft": {
+        "x": 32.5,
+        "y": 32.5
+      },
+      "topRight": {
+        "x": 184.5,
+        "y": 32.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-88.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-88.png"
+  },
+  {
+    "inputPath": "./fixtures/source/89.png",
+    "output": "LANDBYASCARC   PERCEPTIBLEC EEK,OOZI GITSWAYTHROU  AWILDERNESSOFBESUPPOSED,I  CANT,ORATL ASTDWARFISH.NO REESOFANYM  NITUDEARETOBESOMEMISERA  EFRAMEBUIL I GS,TENANTED, U INGSUMMER   THEFUGITIVE;BUTTHEWHO  ISLAND,WI H   EXCEPTIONOFT   W STERNPOI  ,ANDALINEOFLLIAMLEGR   .HEWASOF N    ENTHUGUENOTF    Y ANDHADON  BEENWEALTHTIONCONSE  ENTUPONH SD   STERS,HELEFTNE   LE NS,THEC   OFHISFOREOUTHCARO   A.THISISLA    AVERYSINGULARO    TCONSISTSO  ITTLEELSEDSAQUART   FAMILE. TI   PARATEDFROMTHEMA   AN BYASCAR   YPERCEPTERESORT     MARSH EN   EVEGETATION,ASMIGH   SU POSED,   CANT,ORATREMITY,      ORT OULTRIESTANDS,ANDWHEREARESOM MIS      FRAMEBUIFEVER,MAYBE      INDEED,                TO;BUTT      EISLAND,WITNYYEARSAGO,IC    ACTED                    LLIAM    AND.HEWASOFANNESHADREDUCEDHIM OWA                       IONC NSEQUENTUPONHISDSIDENCEATSULLIVA \\'S                          HC ROLINA.THISISLANOUTTHR    LESLON .        THATN  OINTE        U RTEROF    E.ITISTHROU       ERNE       DSANDSLI  ,AFAVOR        TOFT       HEN.T",
+    "location": {
+      "bottomLeft": {
+        "x": 30,
+        "y": 486
+      },
+      "topLeft": {
+        "x": 30,
+        "y": 30
+      },
+      "topRight": {
+        "x": 486,
+        "y": 30
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-89.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-89.png"
+  },
+  {
+    "inputPath": "./fixtures/source/9.png",
+    "output": "http://code.google.com",
+    "location": {
+      "bottomLeft": {
+        "x": 91,
+        "y": 160
+      },
+      "topLeft": {
+        "x": 91,
+        "y": 63.5
+      },
+      "topRight": {
+        "x": 186.5,
+        "y": 62.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-9.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-9.png"
+  },
+  {
+    "inputPath": "./fixtures/source/90.png",
+    "output": "*ÃÞ»Þ²ÝQR*\r\nhttp://d-qr.net/ex/    ",
+    "location": {
+      "bottomLeft": {
+        "x": 26.5,
+        "y": 178.5
+      },
+      "topLeft": {
+        "x": 26.5,
+        "y": 26.5
+      },
+      "topRight": {
+        "x": 178.5,
+        "y": 26.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-90.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-90.png"
+  },
+  {
+    "inputPath": "./fixtures/source/91.png",
+    "output": "*ÃÞ»Þ²ÝQR*  \r\nhttp://d-qr.net/ex/        ",
+    "location": {
+      "bottomLeft": {
+        "x": 28.5,
+        "y": 173.5
+      },
+      "topLeft": {
+        "x": 28.5,
+        "y": 27.5
+      },
+      "topRight": {
+        "x": 174.5,
+        "y": 27.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-91.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-91.png"
+  },
+  {
+    "inputPath": "./fixtures/source/92.png",
+    "output": "http://www.hotpepper.jp/mobile/cgi-bin/MBLC80100.cgi?SA=00&Z=AG&vos=hpp064&uid=NULLGWDOCOMO",
+    "location": {
+      "bottomLeft": {
+        "x": 23,
+        "y": 188.5
+      },
+      "topLeft": {
+        "x": 22,
+        "y": 21
+      },
+      "topRight": {
+        "x": 190.5,
+        "y": 20
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-92.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-92.png"
+  },
+  {
+    "inputPath": "./fixtures/source/93.png",
+    "output": "http://aniful.jp/pr/  ",
+    "location": {
+      "bottomLeft": {
+        "x": 71,
+        "y": 119
+      },
+      "topLeft": {
+        "x": 71,
+        "y": 21.5
+      },
+      "topRight": {
+        "x": 168.5,
+        "y": 21.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-93.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-93.png"
+  },
+  {
+    "inputPath": "./fixtures/source/94.png",
+    "output": "*ÃÞ»Þ²ÝQR* \r\nhttp://d-qr.net/ex/      ",
+    "location": {
+      "bottomLeft": {
+        "x": 15.5,
+        "y": 90
+      },
+      "topLeft": {
+        "x": 15.5,
+        "y": 14
+      },
+      "topRight": {
+        "x": 91,
+        "y": 14
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-94.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-94.png"
+  },
+  {
+    "inputPath": "./fixtures/source/95.png",
+    "output": "<ÃÞ»Þ²ÝQR> \r\n²×½Ä",
+    "location": {
+      "bottomLeft": {
+        "x": 18,
+        "y": 91.5
+      },
+      "topLeft": {
+        "x": 18.5,
+        "y": 17.5
+      },
+      "topRight": {
+        "x": 92.5,
+        "y": 17.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-95.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-95.png"
+  },
+  {
+    "inputPath": "./fixtures/source/96.png",
+    "output": "http://en.m.wikipedia.org",
+    "location": {
+      "bottomLeft": {
+        "x": 81.5,
+        "y": 215.5
+      },
+      "topLeft": {
+        "x": 82,
+        "y": 75.5
+      },
+      "topRight": {
+        "x": 221.5,
+        "y": 76
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-96.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-96.png"
+  },
+  {
+    "inputPath": "./fixtures/source/97.png",
+    "output": "*ÃÞ»Þ²ÝQR*   \r\nhttp://d-qr.net/ex/ ",
+    "location": {
+      "bottomLeft": {
+        "x": 16,
+        "y": 97
+      },
+      "topLeft": {
+        "x": 16,
+        "y": 18
+      },
+      "topRight": {
+        "x": 95,
+        "y": 18
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-97.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-97.png"
+  },
+  {
+    "inputPath": "./fixtures/source/98.png",
+    "output": "http://www.webtech.co.jp/k/",
+    "location": {
+      "bottomLeft": {
+        "x": 150,
+        "y": 233.5
+      },
+      "topLeft": {
+        "x": 152,
+        "y": 101.5
+      },
+      "topRight": {
+        "x": 288.5,
+        "y": 99
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-98.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-98.png"
+  },
+  {
+    "inputPath": "./fixtures/source/99.png",
+    "output": "http://live.fdgm.jp/u/event/hype/hype_top.html \r\n\r\nMEBKM:TITLE:hypeoC;URL:http\\://live.fdgm.jp/u/event/hype/hype_top.html;;",
+    "location": {
+      "bottomLeft": {
+        "x": 17.5,
+        "y": 98.5
+      },
+      "topLeft": {
+        "x": 17.5,
+        "y": 17.5
+      },
+      "topRight": {
+        "x": 98.5,
+        "y": 17.5
+      }
+    },
+    "binarizedPath": "./fixtures/AUTOGEN/binarized-99.png",
+    "extractedPath": "./fixtures/AUTOGEN/extracted-99.png"
+  }
+]
