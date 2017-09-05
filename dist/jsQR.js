@@ -87,7 +87,7 @@ var BitMatrix = /** @class */ (function () {
         this.data = data;
     }
     BitMatrix.createEmpty = function (width, height) {
-        var data = new Uint8Array(width * height);
+        var data = new Uint8ClampedArray(width * height);
         return new BitMatrix(data, width);
     };
     BitMatrix.prototype.get = function (x, y) {
