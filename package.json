@@ -34,7 +34,8 @@
   "scripts": {
     "build": "node ./node_modules/webpack/bin/webpack.js",
     "watch": "node ./node_modules/webpack/bin/webpack.js --watch",
-    "test": "node ./node_modules/.bin/jest"
+    "test": "node ./node_modules/.bin/jest",
+    "lint": "tslint --project ."
   },
   "jest": {
     "verbose": true,
