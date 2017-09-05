@@ -87,7 +87,7 @@ function quadrilateralToSquare(
   return buildAdjoint(squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3));
 }
 
-export function transformPoints(transform: PerspectiveTransform, points: number[]): number[] {
+export function transformPoints(transform: PerspectiveTransform, points: Float32Array): Float32Array {
   var max = points.length;
   var a11 = transform.a11;
   var a12 = transform.a12;

@@ -6,10 +6,10 @@ const BLOCK_SIZE = 1 << BLOCK_SIZE_POWER;
 const BLOCK_SIZE_MASK = BLOCK_SIZE - 1;
 const MIN_DYNAMIC_RANGE = 24
 
-function calculateBlackPoints(luminances: number[], subWidth: number, subHeight: number, width: number, height: number): number[][] {
-  var blackPoints = new Array(subHeight)
+function calculateBlackPoints(luminances: Uint8ClampedArray, subWidth: number, subHeight: number, width: number, height: number): Uint8ClampedArray[] {
+  var blackPoints: Uint8ClampedArray[] = new Array(subHeight)
   for (var i = 0; i < subHeight; i++) {
-    blackPoints[i] = new Array(subWidth);
+    blackPoints[i] = new Uint8ClampedArray(subWidth);
   }
 
   for (var y = 0; y < subHeight; y++) {
@@ -81,7 +81,7 @@ function calculateBlackPoints(luminances: number[], subWidth: number, subHeight:
   return blackPoints;
 }
 
-function calculateThresholdForBlock(luminances: number[], subWidth: number, subHeight: number, width: number, height: number, blackPoints: number[][]): BitMatrix {
+function calculateThresholdForBlock(luminances: Uint8ClampedArray, subWidth: number, subHeight: number, width: number, height: number, blackPoints: Uint8ClampedArray[]): BitMatrix {
   function cap(value: number, min: number, max: number): number {
     return value < min ? min : value > max ? max : value;
   }
@@ -89,7 +89,7 @@ function calculateThresholdForBlock(luminances: number[], subWidth: number, subH
   // var outArray = new Array(width * height);
   var outMatrix = BitMatrix.createEmpty(width, height);
 
-  function thresholdBlock(luminances: number[], xoffset: number, yoffset: number, threshold: number, stride: number) {
+  function thresholdBlock(luminances: Uint8ClampedArray, xoffset: number, yoffset: number, threshold: number, stride: number) {
     var offset = (yoffset * stride) + xoffset;
     for (var y = 0; y < BLOCK_SIZE; y++ , offset += stride) {
       for (var x = 0; x < BLOCK_SIZE; x++) {
@@ -131,11 +131,11 @@ function calculateThresholdForBlock(luminances: number[], subWidth: number, subH
   return outMatrix;
 }
 
-export function binarize(data: number[], width: number, height: number): BitMatrix {
+export function binarize(data: Uint8ClampedArray, width: number, height: number): BitMatrix {
   if (data.length !== width * height * 4) {
     throw new Error("Binarizer data.length != width * height * 4");
   }
-  var gsArray: number[] = new Array(width * height);
+  var gsArray: Uint8ClampedArray = new Uint8ClampedArray(width * height);
   for (var x = 0; x < width; x++) {
     for (var y = 0; y < height; y++) {
       var startIndex = (y * width + x) * 4;
