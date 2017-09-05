@@ -55,14 +55,14 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number)
         }
       }
 
-      let average = Math.floor(sum / (REGION_SIZE ** 2)); // TODO maybe round?
+      let average = sum / (REGION_SIZE ** 2);
       if (max - min <= MIN_DYNAMIC_RANGE) {
         // If variation within the block is low, assume this is a block with only light or only
         // dark pixels. In that case we do not want to use the average, as it would divide this
         // low contrast area into black and white pixels, essentially creating data out of noise.
         //
         // Default the blackpoint for these blocks to be half the min - effectively white them out
-        average = Math.floor(min / 2);
+        average = min / 2;
 
         if (verticalRegion > 0 && hortizontalRegion > 0) {
           // Correct the "white background" assumption for blocks that have neighbors by comparing
@@ -72,11 +72,11 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number)
           // the boundaries is used for the interior.
 
           // The (min < bp) is arbitrary but works better than other heuristics that were tried.
-          const averageNeighborBlackPoint = Math.floor((
+          const averageNeighborBlackPoint = (
             blackPoints.get(hortizontalRegion, verticalRegion - 1) +
             (2 * blackPoints.get(hortizontalRegion - 1, verticalRegion)) +
             blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)
-          ) / 4);
+          ) / 4;
           if (min < averageNeighborBlackPoint) {
             average = averageNeighborBlackPoint;
           }

@@ -410,14 +410,14 @@ function binarize(data, width, height) {
                     max = Math.max(max, pixelLumosity);
                 }
             }
-            var average = Math.floor(sum / (Math.pow(REGION_SIZE, 2))); // TODO maybe round?
+            var average = sum / (Math.pow(REGION_SIZE, 2));
             if (max - min <= MIN_DYNAMIC_RANGE) {
                 // If variation within the block is low, assume this is a block with only light or only
                 // dark pixels. In that case we do not want to use the average, as it would divide this
                 // low contrast area into black and white pixels, essentially creating data out of noise.
                 //
                 // Default the blackpoint for these blocks to be half the min - effectively white them out
-                average = Math.floor(min / 2);
+                average = min / 2;
                 if (verticalRegion > 0 && hortizontalRegion > 0) {
                     // Correct the "white background" assumption for blocks that have neighbors by comparing
                     // the pixels in this block to the previously calculated black points. This is based on
@@ -425,9 +425,9 @@ function binarize(data, width, height) {
                     // background for which reasonable black point estimates were made. The bp estimated at
                     // the boundaries is used for the interior.
                     // The (min < bp) is arbitrary but works better than other heuristics that were tried.
-                    var averageNeighborBlackPoint = Math.floor((blackPoints.get(hortizontalRegion, verticalRegion - 1) +
+                    var averageNeighborBlackPoint = (blackPoints.get(hortizontalRegion, verticalRegion - 1) +
                         (2 * blackPoints.get(hortizontalRegion - 1, verticalRegion)) +
-                        blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)) / 4);
+                        blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)) / 4;
                     if (min < averageNeighborBlackPoint) {
                         average = averageNeighborBlackPoint;
                     }
