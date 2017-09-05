@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="./common/types.d.ts" />
@@ -82,7 +82,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return str;
 	}
 	function createBitMatrix(data, width) {
-	    return new bitmatrix_1.BitMatrix(data, width);
+	    var intArr = new Uint8Array(data.length);
+	    for (var i = 0; i < data.length; i++) {
+	        intArr[i] = data[i] ? 1 : 0;
+	    }
+	    return new bitmatrix_1.BitMatrix(intArr, width);
 	}
 	exports.createBitMatrix = createBitMatrix;
 	function decodeQRFromImage(data, width, height) {
@@ -104,9 +108,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.decodeQRFromImageAsByteArray = decodeQRFromImageAsByteArray;
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var bitmatrix_1 = __webpack_require__(2);
@@ -118,7 +122,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function calculateBlackPoints(luminances, subWidth, subHeight, width, height) {
 	    var blackPoints = new Array(subHeight);
 	    for (var i = 0; i < subHeight; i++) {
-	        blackPoints[i] = new Array(subWidth);
+	        blackPoints[i] = new Uint8ClampedArray(subWidth);
 	    }
 	    for (var y = 0; y < subHeight; y++) {
 	        var yoffset = y << BLOCK_SIZE_POWER;
@@ -234,7 +238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (data.length !== width * height * 4) {
 	        throw new Error("Binarizer data.length != width * height * 4");
 	    }
-	    var gsArray = new Array(width * height);
+	    var gsArray = new Uint8ClampedArray(width * height);
 	    for (var x = 0; x < width; x++) {
 	        for (var y = 0; y < height; y++) {
 	            var startIndex = (y * width + x) * 4;
@@ -260,9 +264,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.binarize = binarize;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var BitMatrix = (function () {
@@ -272,17 +276,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.data = data;
 	    }
 	    BitMatrix.createEmpty = function (width, height) {
-	        var data = new Array(width * height);
-	        for (var i = 0; i < data.length; i++) {
-	            data[i] = false;
-	        }
+	        var data = new Uint8Array(width * height);
 	        return new BitMatrix(data, width);
 	    };
 	    BitMatrix.prototype.get = function (x, y) {
-	        return this.data[y * this.width + x];
+	        return !!this.data[y * this.width + x];
 	    };
 	    BitMatrix.prototype.set = function (x, y, v) {
-	        this.data[y * this.width + x] = v;
+	        this.data[y * this.width + x] = v ? 1 : 0;
 	    };
 	    BitMatrix.prototype.copyBit = function (x, y, versionBits) {
 	        return this.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
@@ -311,9 +312,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.BitMatrix = BitMatrix;
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var CENTER_QUORUM = 2;
@@ -837,9 +838,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.locate = locate;
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/// <reference path="../common/types.d.ts" />
@@ -908,7 +909,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return null;
 	    }
 	    var bits = bitmatrix_1.BitMatrix.createEmpty(dimension, dimension);
-	    var points = new Array(dimension << 1);
+	    var points = new Float32Array(dimension << 1);
 	    for (var y = 0; y < dimension; y++) {
 	        var max = points.length;
 	        var iValue = y + 0.5;
@@ -1151,9 +1152,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.extract = extract;
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var helpers_1 = __webpack_require__(6);
@@ -1348,9 +1349,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.findAlignment = findAlignment;
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var BITS_SET_IN_HALF_BYTE = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
@@ -1374,9 +1375,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.isNaN = isNaN;
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/// <reference path="../common/types.d.ts" />
 	"use strict";
@@ -1477,9 +1478,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.quadrilateralToQuadrilateral = quadrilateralToQuadrilateral;
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var helpers_1 = __webpack_require__(6);
@@ -1618,9 +1619,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.getVersionForNumber = getVersionForNumber;
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var bitmatrix_1 = __webpack_require__(2);
@@ -1681,10 +1682,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	];
 	function buildFunctionPattern(version) {
 	    var dimension = version.getDimensionForVersion();
-	    var emptyArray = new Array(dimension * dimension);
-	    for (var i = 0; i < emptyArray.length; i++) {
-	        emptyArray[i] = false;
-	    }
+	    var emptyArray = new Uint8Array(dimension * dimension);
 	    var bitMatrix = new bitmatrix_1.BitMatrix(emptyArray, dimension);
 	    ///BitMatrix bitMatrix = new BitMatrix(dimension);
 	    // Top left finder pattern + separator + format
@@ -1970,7 +1968,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    dataBlocks.forEach(function (dataBlock) {
 	        totalBytes += dataBlock.numDataCodewords;
 	    });
-	    var resultBytes = new Array(totalBytes);
+	    var resultBytes = new Uint8ClampedArray(totalBytes);
 	    var resultOffset = 0;
 	    // Error-correct and copy data blocks together into a stream of bytes
 	    for (var _i = 0, dataBlocks_1 = dataBlocks; _i < dataBlocks_1.length; _i++) {
@@ -2000,9 +1998,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.decode = decode;
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var bitstream_1 = __webpack_require__(11);
@@ -2207,7 +2205,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (count << 3 > bits.available()) {
 	        return false;
 	    }
-	    var readBytes = new Array(count);
+	    var readBytes = new Uint32Array(count);
 	    for (var i = 0; i < count; i++) {
 	        readBytes[i] = bits.readBits(8);
 	    }
@@ -2299,9 +2297,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.decodeQRdata = decodeQRdata;
 
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var BitStream = (function () {
@@ -2354,9 +2352,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.BitStream = BitStream;
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var ReedSolomonDecoder = (function () {
@@ -2719,7 +2717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}());
 
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;

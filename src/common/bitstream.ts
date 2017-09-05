@@ -1,9 +1,9 @@
 export class BitStream {
-  private bytes: number[];
+  private bytes: Uint32Array;
   private byteOffset: number = 0;
   private bitOffset: number = 0;
 
-  constructor(bytes: number[]) {
+  constructor(bytes: Uint32Array) {
     this.bytes = bytes;
   }
 

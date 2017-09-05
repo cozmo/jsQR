@@ -5,7 +5,7 @@ import {Version, getVersionForNumber} from "../common/version";
 import {BitMatrix} from "../common/bitmatrix";
 import {isNaN} from "../common/helpers";
 
-function checkAndNudgePoints(width: number, height: number, points: number[]): number[] {
+function checkAndNudgePoints(width: number, height: number, points: Float32Array): Float32Array {
   // Check and nudge points from start until we see some that are OK:
   var nudged = true;
   for (var offset = 0; offset < points.length && nudged; offset += 2) {
@@ -62,7 +62,7 @@ function bitArrayFromImage(image: BitMatrix, dimension: number, transform: Persp
     return null;
   }
   var bits = BitMatrix.createEmpty(dimension, dimension);
-  var points = new Array(dimension << 1);
+  var points = new Float32Array(dimension << 1);
   for (var y = 0; y < dimension; y++) {
     var max = points.length;
     var iValue = y + 0.5;

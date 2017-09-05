@@ -1,28 +1,25 @@
 export class BitMatrix {
   width: number;
   height: number;
-  data: boolean[];
+  data: Uint8Array;
 
-  constructor(data: boolean[], width: number) {
+  constructor(data: Uint8Array, width: number) {
     this.width = width;
     this.height = data.length / width;
     this.data = data;
   }
 
   static createEmpty(width: number, height: number) {
-    var data: boolean[] = new Array(width * height);
-    for (var i = 0; i < data.length; i++) {
-      data[i] = false;
-    }
+    var data: Uint8Array = new Uint8Array(width * height);
     return new BitMatrix(data, width);
   }
 
   get(x: number, y: number): boolean {
-    return this.data[y * this.width + x];
+    return !!this.data[y * this.width + x];
   }
 
   set(x: number, y: number, v: boolean) {
-    this.data[y * this.width + x] = v;
+    this.data[y * this.width + x] = v ? 1 : 0;
   }
 
   copyBit(x: number, y: number, versionBits: number): number {

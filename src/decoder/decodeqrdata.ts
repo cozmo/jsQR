@@ -215,7 +215,7 @@ function decodeByteSegment(bits: BitStream, result: resultByteArray, count: numb
     return false;
   }
 
-  var readBytes: number[] = new Array(count);
+  var readBytes: Uint32Array = new Uint32Array(count);
   for (var i = 0; i < count; i++) {
     readBytes[i] = bits.readBits(8);
   }
@@ -227,7 +227,7 @@ var GB2312_SUBSET = 1
 
 // Takes in a byte array, a qr version number and an error correction level.
 // Returns decoded data.
-export function decodeQRdata(data: number[], version: number, ecl: string): number[] {
+export function decodeQRdata(data: Uint8ClampedArray, version: number, ecl: string): number[] {
   var symbolSequence = -1;
   var parityData = -1;
 

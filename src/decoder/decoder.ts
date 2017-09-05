@@ -71,10 +71,7 @@ interface FormatInformation {
 
 function buildFunctionPattern(version: Version): BitMatrix {
   var dimension = version.getDimensionForVersion();
-  var emptyArray = new Array(dimension * dimension)
-  for (var i = 0; i < emptyArray.length; i++) {
-    emptyArray[i] = false
-  }
+  var emptyArray = new Uint8Array(dimension * dimension)
   var bitMatrix = new BitMatrix(emptyArray, dimension);
   ///BitMatrix bitMatrix = new BitMatrix(dimension);
 
@@ -397,7 +394,7 @@ function decodeMatrix(matrix: BitMatrix): number[] {
   dataBlocks.forEach((dataBlock) => {
     totalBytes += dataBlock.numDataCodewords;
   });
-  var resultBytes = new Array(totalBytes);
+  var resultBytes = new Uint8ClampedArray(totalBytes);
   var resultOffset = 0;
 
   // Error-correct and copy data blocks together into a stream of bytes
