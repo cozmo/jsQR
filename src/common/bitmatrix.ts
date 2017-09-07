@@ -1,16 +1,16 @@
 export class BitMatrix {
   width: number;
   height: number;
-  data: Uint8Array;
+  data: Uint8ClampedArray;
 
-  constructor(data: Uint8Array, width: number) {
+  constructor(data: Uint8ClampedArray, width: number) {
     this.width = width;
     this.height = data.length / width;
     this.data = data;
   }
 
   static createEmpty(width: number, height: number) {
-    var data: Uint8Array = new Uint8Array(width * height);
+    var data: Uint8ClampedArray = new Uint8ClampedArray(width * height);
     return new BitMatrix(data, width);
   }
 

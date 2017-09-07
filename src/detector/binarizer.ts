@@ -1,67 +1,70 @@
 import {BitMatrix} from "../common/bitmatrix";
 
-// Magic Constants
-const BLOCK_SIZE_POWER = 3;
-const BLOCK_SIZE = 1 << BLOCK_SIZE_POWER;
-const BLOCK_SIZE_MASK = BLOCK_SIZE - 1;
-const MIN_DYNAMIC_RANGE = 24
+const REGION_SIZE = 8;
+const MIN_DYNAMIC_RANGE = 24;
 
-function calculateBlackPoints(luminances: Uint8ClampedArray, subWidth: number, subHeight: number, width: number, height: number): Uint8ClampedArray[] {
-  var blackPoints: Uint8ClampedArray[] = new Array(subHeight)
-  for (var i = 0; i < subHeight; i++) {
-    blackPoints[i] = new Uint8ClampedArray(subWidth);
+function numBetween(value: number, min: number, max: number): number {
+  return value < min ? min : value > max ? max : value;
+}
+
+class Matrix {
+  private data: Uint8ClampedArray;
+  private width: number;
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.data = new Uint8ClampedArray(width * height);
   }
+  public get(x: number, y: number) {
+    return this.data[y * this.width + x];
+  }
+  public set(x: number, y: number, value: number) {
+    this.data[y * this.width + x] = value;
+  }
+}
 
-  for (var y = 0; y < subHeight; y++) {
-    var yoffset = y << BLOCK_SIZE_POWER;
-    var maxYOffset = height - BLOCK_SIZE;
-    if (yoffset > maxYOffset) {
-      yoffset = maxYOffset;
+export function binarize(data: Uint8ClampedArray, width: number, height: number): BitMatrix {
+  if (data.length !== width * height * 4) {
+    throw new Error("Malformed data passed to binarizer.");
+  }
+  // Convert image to greyscale
+  const greyscalePixels = new Matrix(width, height);
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      const r = data[((y * width + x) * 4) + 0];
+      const g = data[((y * width + x) * 4) + 1];
+      const b = data[((y * width + x) * 4) + 2];
+      greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
     }
-    for (var x = 0; x < subWidth; x++) {
-      var xoffset = x << BLOCK_SIZE_POWER;
-      var maxXOffset = width - BLOCK_SIZE;
-      if (xoffset > maxXOffset) {
-        xoffset = maxXOffset;
-      }
-      var sum = 0;
-      var min = 0xFF;
-      var max = 0;
-      for (var yy = 0, offset = yoffset * width + xoffset; yy < BLOCK_SIZE; yy++ , offset += width) {
-        for (var xx = 0; xx < BLOCK_SIZE; xx++) {
-          var pixel = luminances[offset + xx] & 0xFF;
-          // still looking for good contrast
-          sum += pixel;
-          if (pixel < min) {
-            min = pixel;
-          }
-          if (pixel > max) {
-            max = pixel;
-          }
-        }
-        // short-circuit min/max tests once dynamic range is met
-        if (max - min > MIN_DYNAMIC_RANGE) {
-          // finish the rest of the rows quickly
-          for (yy++ , offset += width; yy < BLOCK_SIZE; yy++ , offset += width) {
-            for (var xx = 0; xx < BLOCK_SIZE; xx++) {
-              sum += luminances[offset + xx] & 0xFF;
-            }
-          }
+  }
+  const horizontalRegionCount = Math.ceil(width / REGION_SIZE);
+  const verticalRegionCount = Math.ceil(height / REGION_SIZE);
+
+  const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
+  for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
+    for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
+      let sum = 0;
+      let min = Infinity;
+      let max = 0;
+      for (let y = 0; y < REGION_SIZE; y++) {
+        for (let x = 0; x < REGION_SIZE; x++) {
+          const pixelLumosity =
+            greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
+          sum += pixelLumosity;
+          min = Math.min(min, pixelLumosity);
+          max = Math.max(max, pixelLumosity);
         }
       }
 
-      // The default estimate is the average of the values in the block.
-      var average = sum >> (BLOCK_SIZE_POWER * 2);
+      let average = sum / (REGION_SIZE ** 2);
       if (max - min <= MIN_DYNAMIC_RANGE) {
         // If variation within the block is low, assume this is a block with only light or only
         // dark pixels. In that case we do not want to use the average, as it would divide this
         // low contrast area into black and white pixels, essentially creating data out of noise.
         //
-        // The default assumption is that the block is light/background. Since no estimate for
-        // the level of dark pixels exists locally, use half the min for the block.
-        average = min >> 1;
+        // Default the blackpoint for these blocks to be half the min - effectively white them out
+        average = min / 2;
 
-        if (y > 0 && x > 0) {
+        if (verticalRegion > 0 && hortizontalRegion > 0) {
           // Correct the "white background" assumption for blocks that have neighbors by comparing
           // the pixels in this block to the previously calculated black points. This is based on
           // the fact that dark barcode symbology is always surrounded by some amount of light
@@ -69,93 +72,40 @@ function calculateBlackPoints(luminances: Uint8ClampedArray, subWidth: number, s
           // the boundaries is used for the interior.
 
           // The (min < bp) is arbitrary but works better than other heuristics that were tried.
-          var averageNeighborBlackPoint = (blackPoints[y - 1][x] + (2 * blackPoints[y][x - 1]) + blackPoints[y - 1][x - 1]) >> 2;
+          const averageNeighborBlackPoint = (
+            blackPoints.get(hortizontalRegion, verticalRegion - 1) +
+            (2 * blackPoints.get(hortizontalRegion - 1, verticalRegion)) +
+            blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)
+          ) / 4;
           if (min < averageNeighborBlackPoint) {
             average = averageNeighborBlackPoint;
           }
         }
       }
-      blackPoints[y][x] = average;
+      blackPoints.set(hortizontalRegion, verticalRegion, average);
     }
   }
-  return blackPoints;
-}
 
-function calculateThresholdForBlock(luminances: Uint8ClampedArray, subWidth: number, subHeight: number, width: number, height: number, blackPoints: Uint8ClampedArray[]): BitMatrix {
-  function cap(value: number, min: number, max: number): number {
-    return value < min ? min : value > max ? max : value;
-  }
-
-  // var outArray = new Array(width * height);
-  var outMatrix = BitMatrix.createEmpty(width, height);
-
-  function thresholdBlock(luminances: Uint8ClampedArray, xoffset: number, yoffset: number, threshold: number, stride: number) {
-    var offset = (yoffset * stride) + xoffset;
-    for (var y = 0; y < BLOCK_SIZE; y++ , offset += stride) {
-      for (var x = 0; x < BLOCK_SIZE; x++) {
-        var pixel = luminances[offset + x] & 0xff;
-        // Comparison needs to be <= so that black == 0 pixels are black even if the threshold is 0.
-        outMatrix.set(xoffset + x, yoffset + y, pixel <= threshold);
+  const binarized = BitMatrix.createEmpty(width, height);
+  for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
+    for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
+      const left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
+      const top = numBetween(verticalRegion, 2, verticalRegionCount - 3);
+      let sum = 0;
+      for (let xRegion = -2; xRegion <= 2; xRegion++) {
+        for (let yRegion = -2; yRegion <= 2; yRegion++) {
+          sum += blackPoints.get(left + xRegion, top + yRegion);
+        }
+      }
+      const threshold = sum / 25;
+      for (let x = 0; x < REGION_SIZE; x++) {
+        for (let y = 0; y < REGION_SIZE; y++) {
+          const lum = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
+          binarized.set(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y, lum <= threshold);
+        }
       }
     }
   }
 
-  for (var y = 0; y < subHeight; y++) {
-    var yoffset = y << BLOCK_SIZE_POWER;
-    var maxYOffset = height - BLOCK_SIZE;
-    if (yoffset > maxYOffset) {
-      yoffset = maxYOffset;
-    }
-    for (var x = 0; x < subWidth; x++) {
-
-      var xoffset = x << BLOCK_SIZE_POWER;
-      var maxXOffset = width - BLOCK_SIZE;
-      if (xoffset > maxXOffset) {
-        xoffset = maxXOffset;
-      }
-      var left = cap(x, 2, subWidth - 3);
-      var top = cap(y, 2, subHeight - 3);
-      var sum = 0;
-      for (var z = -2; z <= 2; z++) {
-        var blackRow = blackPoints[top + z];
-        sum += blackRow[left - 2];
-        sum += blackRow[left - 1];
-        sum += blackRow[left];
-        sum += blackRow[left + 1];
-        sum += blackRow[left + 2];
-      }
-      var average = sum / 25;
-      thresholdBlock(luminances, xoffset, yoffset, average, width);
-    }
-  }
-  return outMatrix;
-}
-
-export function binarize(data: Uint8ClampedArray, width: number, height: number): BitMatrix {
-  if (data.length !== width * height * 4) {
-    throw new Error("Binarizer data.length != width * height * 4");
-  }
-  var gsArray: Uint8ClampedArray = new Uint8ClampedArray(width * height);
-  for (var x = 0; x < width; x++) {
-    for (var y = 0; y < height; y++) {
-      var startIndex = (y * width + x) * 4;
-      var r = data[startIndex];
-      var g = data[startIndex + 1];
-      var b = data[startIndex + 2];
-      // Magic lumosity constants
-      var lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      gsArray[y * width + x] = lum;
-    }
-  }
-  var subWidth = width >> BLOCK_SIZE_POWER
-  if ((width & BLOCK_SIZE_MASK) != 0) {
-    subWidth++;
-  }
-  var subHeight = height >> BLOCK_SIZE_POWER;
-  if ((height & BLOCK_SIZE_MASK) != 0) {
-    subHeight++;
-  }
-
-  var blackPoints = calculateBlackPoints(gsArray, subWidth, subHeight, width, height)
-  return calculateThresholdForBlock(gsArray, subWidth, subHeight, width, height, blackPoints);
+  return binarized;
 }

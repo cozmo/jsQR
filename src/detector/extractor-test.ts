@@ -12,9 +12,9 @@ function loadBinarized(path): Promise<BitMatrix> {
       }
       const image = png.decode(data);
       const dataArray = png.toRGBA8(image);
-      const binaryArray = [];
-      for (var i = 0; i < dataArray.length; i+=4) {
-        binaryArray.push(dataArray[i] === 0x00);
+      const binaryArray = new Uint8ClampedArray(dataArray.length / 4);
+      for (let i = 0; i < dataArray.length; i += 4) {
+        binaryArray[i / 4] = (dataArray[i] === 0x00 ? 1 : 0);
       }
       resolve(new BitMatrix(binaryArray, image.width));
     })

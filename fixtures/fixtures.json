@@ -652,8 +652,8 @@
         "y": 104.8
       },
       "topRight": {
-        "x": 141.5,
-        "y": 47.625
+        "x": 141.4,
+        "y": 47.5
       }
     },
     "binarizedPath": "./fixtures/AUTOGEN/binarized-127.png",
@@ -864,8 +864,8 @@
     "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
     "location": {
       "bottomLeft": {
-        "x": 88.6,
-        "y": 169.9
+        "x": 88.5,
+        "y": 170
       },
       "topLeft": {
         "x": 91,
@@ -1388,7 +1388,7 @@
         "y": 171.5
       },
       "topLeft": {
-        "x": 62,
+        "x": 62.5,
         "y": 56
       },
       "topRight": {
@@ -1432,7 +1432,7 @@
         "y": 65.5
       },
       "topRight": {
-        "x": 177.5,
+        "x": 178,
         "y": 65
       }
     },
@@ -1864,7 +1864,7 @@
     "output": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;",
     "location": {
       "bottomLeft": {
-        "x": 61.5,
+        "x": 62,
         "y": 183
       },
       "topLeft": {
@@ -1892,8 +1892,8 @@
         "y": 58.857142857142854
       },
       "topRight": {
-        "x": 201.75,
-        "y": 60.75
+        "x": 201.5,
+        "y": 61
       }
     },
     "binarizedPath": "./fixtures/AUTOGEN/binarized-38.png",
@@ -2008,7 +2008,7 @@
         "y": 189.5
       },
       "topLeft": {
-        "x": 67,
+        "x": 67.5,
         "y": 64
       },
       "topRight": {
@@ -2605,7 +2605,7 @@
     "location": {
       "bottomLeft": {
         "x": 27,
-        "y": 130
+        "y": 129.5
       },
       "topLeft": {
         "x": 27,
@@ -3144,7 +3144,7 @@
     "output": "<ÃÞ»Þ²ÝQR> \r\n²×½Ä",
     "location": {
       "bottomLeft": {
-        "x": 18,
+        "x": 18.5,
         "y": 91.5
       },
       "topLeft": {
