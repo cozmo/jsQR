@@ -1,31 +1,19 @@
-import { extract } from "./extractor";
+import tests from "../../test-data";
+import { loadBinarized } from "../../tests/helpers";
 import { BitMatrix } from "../common/bitmatrix";
-import * as testFixtures from "../../fixtures/fixtures.json";
-import * as png from "upng-js"
-import * as fs from "fs";
+import { extract } from "./extractor";
 
-function loadBinarized(path): Promise<BitMatrix> {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, (err, data) => {
-      if (err) {
-        return reject(err);
+describe("extract", () => {
+  tests.forEach((t) => {
+    it(t.name, async () => {
+      const binarizedImage = await loadBinarized(t.binarizedPath);
+      const expectedOutput = t.extractedPath ? await loadBinarized(t.extractedPath) : null;
+      let output: BitMatrix = null;
+      try {
+        output = extract(binarizedImage, t.location);
+      } catch (e) {
+        // error
       }
-      const image = png.decode(data);
-      const dataArray = png.toRGBA8(image);
-      const binaryArray = new Uint8ClampedArray(dataArray.length / 4);
-      for (let i = 0; i < dataArray.length; i += 4) {
-        binaryArray[i / 4] = (dataArray[i] === 0x00 ? 1 : 0);
-      }
-      resolve(new BitMatrix(binaryArray, image.width));
-    })
-  });
-}
-
-describe("Extractor E2E", () => {
-  testFixtures.forEach((f, i) => {
-    it(`Fixture #${i}`, async () => {
-      const [binarizedImage, expectedOutput] = await Promise.all([loadBinarized(f.binarizedPath), loadBinarized(f.extractedPath)]);
-      const output = extract(binarizedImage, f.location);
       expect(output).toEqual(expectedOutput);
     });
   });

@@ -5,6 +5,7 @@ import {extract} from "./detector/extractor";
 import {decode} from "./decoder/decoder";
 import {BitMatrix} from "./common/bitmatrix";
 
+
 var binarizeImage = binarize;
 var locateQRInBinaryImage = locate;
 var extractQRFromBinaryImage = extract;
