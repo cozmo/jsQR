@@ -71,7 +71,7 @@ interface FormatInformation {
 
 function buildFunctionPattern(version: Version): BitMatrix {
   var dimension = version.getDimensionForVersion();
-  var emptyArray = new Uint8Array(dimension * dimension)
+  var emptyArray = new Uint8ClampedArray(dimension * dimension);
   var bitMatrix = new BitMatrix(emptyArray, dimension);
   ///BitMatrix bitMatrix = new BitMatrix(dimension);
 

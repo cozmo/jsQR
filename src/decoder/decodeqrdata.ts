@@ -231,7 +231,7 @@ export function decodeQRdata(data: Uint8ClampedArray, version: number, ecl: stri
   var symbolSequence = -1;
   var parityData = -1;
 
-  var bits = new BitStream(data);
+  var bits = new BitStream(Uint32Array.from(data));
   var result = { val: <number[]>[] }; // Have to pass this around so functions can share a reference to a number[]
   var fc1InEffect = false;
   var mode: Mode;
@@ -302,4 +302,3 @@ export function decodeQRdata(data: Uint8ClampedArray, version: number, ecl: stri
   }
   return result.val;
 }
-
