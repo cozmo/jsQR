@@ -1,5 +1,4 @@
-/// <reference path="../common/types.d.ts" />
-import {BitMatrix} from "../common/bitmatrix";
+import BitMatrix from "../BitMatrix";
 import {isNaN} from "../common/helpers";
 
 interface EstimatedPoint extends Point {

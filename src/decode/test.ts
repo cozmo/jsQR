@@ -1,6 +1,6 @@
 import tests from "../../test-data";
 import { loadBinarized } from "../../tests/helpers";
-import { decode } from "./decoder";
+import { decode } from "./";
 
 describe("decode", () => {
   tests.filter((t) => !!t.extractedPath).forEach((t) => {

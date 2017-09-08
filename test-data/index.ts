@@ -3,10 +3,10 @@ import * as path from "path";
 
 export interface ITest {
   binarizedPath: string;
-  decodedBytes: number[] | null;
+  decodedData: number[] | null;
   extractedPath: string;
   inputPath: string;
-  location: QRLocation | null;
+  trackingPoints: any;
   name: string;
   successful: boolean;
 }

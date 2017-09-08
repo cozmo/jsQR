@@ -1,8 +1,7 @@
-/// <reference path="../common/types.d.ts" />
 import {findAlignment} from "./alignment_finder";
-import {transformPoints, quadrilateralToQuadrilateral} from "./perspective_transform";
+import {transformPoints, quadrilateralToQuadrilateral, IPerspectiveTransform} from "./perspective_transform";
 import {Version, getVersionForNumber} from "../common/version";
-import {BitMatrix} from "../common/bitmatrix";
+import BitMatrix from "../BitMatrix";
 import {isNaN} from "../common/helpers";
 
 function checkAndNudgePoints(width: number, height: number, points: Float32Array): Float32Array {
@@ -57,7 +56,7 @@ function checkAndNudgePoints(width: number, height: number, points: Float32Array
   return points;
 }
 
-function bitArrayFromImage(image: BitMatrix, dimension: number, transform: PerspectiveTransform): BitMatrix {
+function bitArrayFromImage(image: BitMatrix, dimension: number, transform: IPerspectiveTransform): BitMatrix {
   if (dimension <= 0) {
     return null;
   }
@@ -303,7 +302,7 @@ function calculateModuleSize(topLeft: Point, topRight: Point, bottomLeft: Point,
   return (calculateModuleSizeOneWay(topLeft, topRight, image) + calculateModuleSizeOneWay(topLeft, bottomLeft, image)) / 2;
 }
 
-export function extract(image: BitMatrix, location: QRLocation): BitMatrix {
+export function extract(image: BitMatrix, location: TrackingPoints): BitMatrix {
   var moduleSize = calculateModuleSize(location.topLeft, location.topRight, location.bottomLeft, image);
   if (moduleSize < 1) {
     return null;
@@ -342,4 +341,3 @@ export function extract(image: BitMatrix, location: QRLocation): BitMatrix {
   var transform = createTransform(location.topLeft, location.topRight, location.bottomLeft, alignmentPattern, dimension);
   return bitArrayFromImage(image, dimension, transform);
 }
-

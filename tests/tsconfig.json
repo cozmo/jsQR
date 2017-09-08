@@ -9,6 +9,8 @@
     ]
   },
   "files": [
+    "../src/types.d.ts",
+    "../test-data/index.ts",
     "./generate-test-data.ts"
   ]
 }

@@ -6,6 +6,7 @@
     "typeRoots": []
   },
   "files": [
-    "./src/Main.ts"
+    "./src/main.ts",
+    "./src/types.d.ts"
   ]
 }
