@@ -1,15 +1,15 @@
 import * as fs from "fs-extra";
 import * as path from "path";
-import {ITest} from "../test-data"
+import {ITest} from "../test-data";
 
 import * as png from "upng-js";
 
 import * as helpers from "./helpers";
 
-import {decode} from "../src/decoder/decoder";
-import {binarize} from "../src/detector/binarizer";
-import {extract} from "../src/detector/extractor";
-import {locate} from "../src/detector/locator";
+import {binarize} from "../src/binarize";
+import {decode} from "../src/decode";
+import {extract} from "../src/extract";
+import {locateTrackingPoints} from "../src/locateTrackingPoints";
 
 ((async () => {
   await fs.remove(path.join("test-data", "AUTOGEN"));
@@ -22,12 +22,12 @@ import {locate} from "../src/detector/locator";
   for (const imagePath of images) {
     const test: ITest = {
       binarizedPath: path.join("test-data", "AUTOGEN", "binarized", imagePath),
-      decodedBytes: null,
+      decodedData: null,
       extractedPath: "",
       inputPath: path.join("test-data", "images", imagePath),
-      location: null,
       name: imagePath,
       successful: false,
+      trackingPoints: null,
     };
 
     const imageData = png.decode(await fs.readFile(test.inputPath));
@@ -36,14 +36,14 @@ import {locate} from "../src/detector/locator";
       const binarized = binarize(png.toRGBA8(imageData), imageData.width, imageData.height);
       await fs.writeFile(test.binarizedPath, helpers.bitMatrixToPng(binarized));
 
-      test.location = locate(binarized);
+      test.trackingPoints = locateTrackingPoints(binarized);
 
-      const extracted = extract(binarized, test.location);
+      const extracted = extract(binarized, test.trackingPoints);
       test.extractedPath = path.join("test-data", "AUTOGEN", "extracted", imagePath);
       await fs.writeFile(test.extractedPath, helpers.bitMatrixToPng(extracted));
 
-      test.decodedBytes = decode(extracted);
-      test.successful = !!test.decodedBytes;
+      test.decodedData = decode(extracted);
+      test.successful = !!test.decodedData;
     } catch (e) {
       // failed to parse QR
     }

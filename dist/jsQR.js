@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,57 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 
-exports.__esModule = true;
-var BitMatrix = /** @class */ (function () {
-    function BitMatrix(data, width) {
-        this.width = width;
-        this.height = data.length / width;
-        this.data = data;
-    }
-    BitMatrix.createEmpty = function (width, height) {
-        var data = new Uint8ClampedArray(width * height);
-        return new BitMatrix(data, width);
-    };
-    BitMatrix.prototype.get = function (x, y) {
-        return !!this.data[y * this.width + x];
-    };
-    BitMatrix.prototype.set = function (x, y, v) {
-        this.data[y * this.width + x] = v ? 1 : 0;
-    };
-    BitMatrix.prototype.copyBit = function (x, y, versionBits) {
-        return this.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
-    };
-    BitMatrix.prototype.setRegion = function (left, top, width, height) {
-        var right = left + width;
-        var bottom = top + height;
-        for (var y = top; y < bottom; y++) {
-            for (var x = left; x < right; x++) {
-                this.set(x, y, true);
-            }
-        }
-    };
-    BitMatrix.prototype.mirror = function () {
-        for (var x = 0; x < this.width; x++) {
-            for (var y = x + 1; y < this.height; y++) {
-                if (this.get(x, y) != this.get(y, x)) {
-                    this.set(x, y, !this.get(x, y));
-                    this.set(y, x, !this.get(y, x));
-                }
-            }
-        }
-    };
-    return BitMatrix;
-}());
-exports.BitMatrix = BitMatrix;
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var BITS_SET_IN_HALF_BYTE = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
 function numBitsDiffering(a, b) {
     a ^= b; // a now has a 1 bit exactly where its bit differs with b's
@@ -152,13 +102,833 @@ exports.isNaN = isNaN;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var binarize_1 = __webpack_require__(2);
+var decode_1 = __webpack_require__(9);
+var extract_1 = __webpack_require__(4);
+var locateTrackingPoints_1 = __webpack_require__(8);
+function default_1(imageData, width, height) {
+    var binarized = binarize_1.binarize(imageData, width, height);
+    var trackingPoints = locateTrackingPoints_1.locateTrackingPoints(binarized);
+    if (!trackingPoints) {
+        return null;
+    }
+    var extracted = extract_1.extract(binarized, trackingPoints);
+    if (!extracted) {
+        return null;
+    }
+    var decoded = decode_1.decode(extracted);
+    if (!decoded) {
+        return null;
+    }
+    return {
+        data: decoded,
+        trackingPoints: trackingPoints,
+    };
+}
+exports.default = default_1;
+
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
-var helpers_1 = __webpack_require__(1);
+Object.defineProperty(exports, "__esModule", { value: true });
+var BitMatrix_1 = __webpack_require__(3);
+var REGION_SIZE = 8;
+var MIN_DYNAMIC_RANGE = 24;
+function numBetween(value, min, max) {
+    return value < min ? min : value > max ? max : value;
+}
+var Matrix = /** @class */ (function () {
+    function Matrix(width, height) {
+        this.width = width;
+        this.data = new Uint8ClampedArray(width * height);
+    }
+    Matrix.prototype.get = function (x, y) {
+        return this.data[y * this.width + x];
+    };
+    Matrix.prototype.set = function (x, y, value) {
+        this.data[y * this.width + x] = value;
+    };
+    return Matrix;
+}());
+function binarize(data, width, height) {
+    if (data.length !== width * height * 4) {
+        throw new Error("Malformed data passed to binarizer.");
+    }
+    // Convert image to greyscale
+    var greyscalePixels = new Matrix(width, height);
+    for (var x = 0; x < width; x++) {
+        for (var y = 0; y < height; y++) {
+            var r = data[((y * width + x) * 4) + 0];
+            var g = data[((y * width + x) * 4) + 1];
+            var b = data[((y * width + x) * 4) + 2];
+            greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
+        }
+    }
+    var horizontalRegionCount = Math.ceil(width / REGION_SIZE);
+    var verticalRegionCount = Math.ceil(height / REGION_SIZE);
+    var blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
+    for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
+        for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
+            var sum = 0;
+            var min = Infinity;
+            var max = 0;
+            for (var y = 0; y < REGION_SIZE; y++) {
+                for (var x = 0; x < REGION_SIZE; x++) {
+                    var pixelLumosity = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
+                    sum += pixelLumosity;
+                    min = Math.min(min, pixelLumosity);
+                    max = Math.max(max, pixelLumosity);
+                }
+            }
+            var average = sum / (Math.pow(REGION_SIZE, 2));
+            if (max - min <= MIN_DYNAMIC_RANGE) {
+                // If variation within the block is low, assume this is a block with only light or only
+                // dark pixels. In that case we do not want to use the average, as it would divide this
+                // low contrast area into black and white pixels, essentially creating data out of noise.
+                //
+                // Default the blackpoint for these blocks to be half the min - effectively white them out
+                average = min / 2;
+                if (verticalRegion > 0 && hortizontalRegion > 0) {
+                    // Correct the "white background" assumption for blocks that have neighbors by comparing
+                    // the pixels in this block to the previously calculated black points. This is based on
+                    // the fact that dark barcode symbology is always surrounded by some amount of light
+                    // background for which reasonable black point estimates were made. The bp estimated at
+                    // the boundaries is used for the interior.
+                    // The (min < bp) is arbitrary but works better than other heuristics that were tried.
+                    var averageNeighborBlackPoint = (blackPoints.get(hortizontalRegion, verticalRegion - 1) +
+                        (2 * blackPoints.get(hortizontalRegion - 1, verticalRegion)) +
+                        blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)) / 4;
+                    if (min < averageNeighborBlackPoint) {
+                        average = averageNeighborBlackPoint;
+                    }
+                }
+            }
+            blackPoints.set(hortizontalRegion, verticalRegion, average);
+        }
+    }
+    var binarized = BitMatrix_1.default.createEmpty(width, height);
+    for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
+        for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
+            var left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
+            var top_1 = numBetween(verticalRegion, 2, verticalRegionCount - 3);
+            var sum = 0;
+            for (var xRegion = -2; xRegion <= 2; xRegion++) {
+                for (var yRegion = -2; yRegion <= 2; yRegion++) {
+                    sum += blackPoints.get(left + xRegion, top_1 + yRegion);
+                }
+            }
+            var threshold = sum / 25;
+            for (var x = 0; x < REGION_SIZE; x++) {
+                for (var y = 0; y < REGION_SIZE; y++) {
+                    var lum = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
+                    binarized.set(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y, lum <= threshold);
+                }
+            }
+        }
+    }
+    return binarized;
+}
+exports.binarize = binarize;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var BitMatrix = /** @class */ (function () {
+    function BitMatrix(data, width) {
+        this.width = width;
+        this.height = data.length / width;
+        this.data = data;
+    }
+    BitMatrix.createEmpty = function (width, height) {
+        return new BitMatrix(new Uint8ClampedArray(width * height), width);
+    };
+    BitMatrix.prototype.get = function (x, y) {
+        return !!this.data[y * this.width + x];
+    };
+    BitMatrix.prototype.set = function (x, y, v) {
+        this.data[y * this.width + x] = v ? 1 : 0;
+    };
+    BitMatrix.prototype.setRegion = function (left, top, width, height) {
+        var right = left + width;
+        var bottom = top + height;
+        for (var y = top; y < bottom; y++) {
+            for (var x = left; x < right; x++) {
+                this.set(x, y, true);
+            }
+        }
+    };
+    // TODO - remove;
+    BitMatrix.prototype.copyBit = function (x, y, versionBits) {
+        return this.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
+    };
+    BitMatrix.prototype.mirror = function () {
+        for (var x = 0; x < this.width; x++) {
+            for (var y = x + 1; y < this.height; y++) {
+                if (this.get(x, y) !== this.get(y, x)) {
+                    this.set(x, y, !this.get(x, y));
+                    this.set(y, x, !this.get(y, x));
+                }
+            }
+        }
+    };
+    return BitMatrix;
+}());
+exports.default = BitMatrix;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var alignment_finder_1 = __webpack_require__(5);
+var perspective_transform_1 = __webpack_require__(6);
+var version_1 = __webpack_require__(7);
+var BitMatrix_1 = __webpack_require__(3);
+var helpers_1 = __webpack_require__(0);
+function checkAndNudgePoints(width, height, points) {
+    // Check and nudge points from start until we see some that are OK:
+    var nudged = true;
+    for (var offset = 0; offset < points.length && nudged; offset += 2) {
+        var x = Math.floor(points[offset]);
+        var y = Math.floor(points[offset + 1]);
+        if (x < -1 || x > width || y < -1 || y > height) {
+            throw new Error();
+        }
+        nudged = false;
+        if (x == -1) {
+            points[offset] = 0;
+            nudged = true;
+        }
+        else if (x == width) {
+            points[offset] = width - 1;
+            nudged = true;
+        }
+        if (y == -1) {
+            points[offset + 1] = 0;
+            nudged = true;
+        }
+        else if (y == height) {
+            points[offset + 1] = height - 1;
+            nudged = true;
+        }
+    }
+    // Check and nudge points from end:
+    nudged = true;
+    for (var offset = points.length - 2; offset >= 0 && nudged; offset -= 2) {
+        var x = Math.floor(points[offset]);
+        var y = Math.floor(points[offset + 1]);
+        if (x < -1 || x > width || y < -1 || y > height) {
+            throw new Error();
+        }
+        nudged = false;
+        if (x == -1) {
+            points[offset] = 0;
+            nudged = true;
+        }
+        else if (x == width) {
+            points[offset] = width - 1;
+            nudged = true;
+        }
+        if (y == -1) {
+            points[offset + 1] = 0;
+            nudged = true;
+        }
+        else if (y == height) {
+            points[offset + 1] = height - 1;
+            nudged = true;
+        }
+    }
+    return points;
+}
+function bitArrayFromImage(image, dimension, transform) {
+    if (dimension <= 0) {
+        return null;
+    }
+    var bits = BitMatrix_1.default.createEmpty(dimension, dimension);
+    var points = new Float32Array(dimension << 1);
+    for (var y = 0; y < dimension; y++) {
+        var max = points.length;
+        var iValue = y + 0.5;
+        for (var x = 0; x < max; x += 2) {
+            points[x] = (x >> 1) + 0.5;
+            points[x + 1] = iValue;
+        }
+        points = perspective_transform_1.transformPoints(transform, points);
+        // Quick check to see if points transformed to something inside the image;
+        // sufficient to check the endpoints
+        try {
+            var nudgedPoints = checkAndNudgePoints(image.width, image.height, points);
+        }
+        catch (e) {
+            return null;
+        }
+        // try {
+        for (var x = 0; x < max; x += 2) {
+            bits.set(x >> 1, y, image.get(Math.floor(nudgedPoints[x]), Math.floor(nudgedPoints[x + 1])));
+        }
+        // }
+        // catch (e) {
+        //   // This feels wrong, but, sometimes if the finder patterns are misidentified, the resulting
+        //   // transform gets "twisted" such that it maps a straight line of points to a set of points
+        //   // whose endpoints are in bounds, but others are not. There is probably some mathematical
+        //   // way to detect this about the transformation that I don't know yet.
+        //   // This results in an ugly runtime exception despite our clever checks above -- can't have
+        //   // that. We could check each point's coordinates but that feels duplicative. We settle for
+        //   // catching and wrapping ArrayIndexOutOfBoundsException.
+        //   return null;
+        // }
+    }
+    return bits;
+}
+function createTransform(topLeft, topRight, bottomLeft, alignmentPattern, dimension) {
+    var dimMinusThree = dimension - 3.5;
+    var bottomRightX;
+    var bottomRightY;
+    var sourceBottomRightX;
+    var sourceBottomRightY;
+    if (alignmentPattern != null) {
+        bottomRightX = alignmentPattern.x;
+        bottomRightY = alignmentPattern.y;
+        sourceBottomRightX = sourceBottomRightY = dimMinusThree - 3;
+    }
+    else {
+        // Don't have an alignment pattern, just make up the bottom-right point
+        bottomRightX = (topRight.x - topLeft.x) + bottomLeft.x;
+        bottomRightY = (topRight.y - topLeft.y) + bottomLeft.y;
+        sourceBottomRightX = sourceBottomRightY = dimMinusThree;
+    }
+    return perspective_transform_1.quadrilateralToQuadrilateral(3.5, 3.5, dimMinusThree, 3.5, sourceBottomRightX, sourceBottomRightY, 3.5, dimMinusThree, topLeft.x, topLeft.y, topRight.x, topRight.y, bottomRightX, bottomRightY, bottomLeft.x, bottomLeft.y);
+}
+// Taken from 6th grade algebra
+function distance(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+}
+// Attempts to locate an alignment pattern in a limited region of the image, which is guessed to contain it.
+// overallEstModuleSize - estimated module size so far
+// estAlignmentX        - coordinate of center of area probably containing alignment pattern
+// estAlignmentY        - y coordinate of above</param>
+// allowanceFactor      - number of pixels in all directions to search from the center</param>
+function findAlignmentInRegion(overallEstModuleSize, estAlignmentX, estAlignmentY, allowanceFactor, image) {
+    estAlignmentX = Math.floor(estAlignmentX);
+    estAlignmentY = Math.floor(estAlignmentY);
+    // Look for an alignment pattern (3 modules in size) around where it should be
+    var allowance = Math.floor(allowanceFactor * overallEstModuleSize);
+    var alignmentAreaLeftX = Math.max(0, estAlignmentX - allowance);
+    var alignmentAreaRightX = Math.min(image.width, estAlignmentX + allowance);
+    if (alignmentAreaRightX - alignmentAreaLeftX < overallEstModuleSize * 3) {
+        return null;
+    }
+    var alignmentAreaTopY = Math.max(0, estAlignmentY - allowance);
+    var alignmentAreaBottomY = Math.min(image.height - 1, estAlignmentY + allowance);
+    return alignment_finder_1.findAlignment(alignmentAreaLeftX, alignmentAreaTopY, alignmentAreaRightX - alignmentAreaLeftX, alignmentAreaBottomY - alignmentAreaTopY, overallEstModuleSize, image);
+}
+// Computes the dimension (number of modules on a size) of the QR Code based on the position of the finder
+// patterns and estimated module size.
+function computeDimension(topLeft, topRight, bottomLeft, moduleSize) {
+    var tltrCentersDimension = Math.round(distance(topLeft.x, topLeft.y, topRight.x, topRight.y) / moduleSize);
+    var tlblCentersDimension = Math.round(distance(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y) / moduleSize);
+    var dimension = ((tltrCentersDimension + tlblCentersDimension) >> 1) + 7;
+    switch (dimension & 0x03) {
+        // mod 4
+        case 0:
+            dimension++;
+            break;
+        // 1? do nothing
+        case 2:
+            dimension--;
+            break;
+    }
+    return dimension;
+}
+// Deduces version information purely from QR Code dimensions.
+// http://chan.catiewayne.com/z/src/131044167276.jpg
+function getProvisionalVersionForDimension(dimension) {
+    if (dimension % 4 != 1) {
+        return null;
+    }
+    var versionNumber = (dimension - 17) >> 2;
+    if (versionNumber < 1 || versionNumber > 40) {
+        return null;
+    }
+    return version_1.getVersionForNumber(versionNumber);
+}
+// This method traces a line from a point in the image, in the direction towards another point.
+// It begins in a black region, and keeps going until it finds white, then black, then white again.
+// It reports the distance from the start to this point.</p>
+//
+// This is used when figuring out how wide a finder pattern is, when the finder pattern
+// may be skewed or rotated.
+function sizeOfBlackWhiteBlackRun(fromX, fromY, toX, toY, image) {
+    fromX = Math.floor(fromX);
+    fromY = Math.floor(fromY);
+    toX = Math.floor(toX);
+    toY = Math.floor(toY);
+    // Mild variant of Bresenham's algorithm;
+    // see http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+    var steep = Math.abs(toY - fromY) > Math.abs(toX - fromX);
+    if (steep) {
+        var temp = fromX;
+        fromX = fromY;
+        fromY = temp;
+        temp = toX;
+        toX = toY;
+        toY = temp;
+    }
+    var dx = Math.abs(toX - fromX);
+    var dy = Math.abs(toY - fromY);
+    var error = -dx >> 1;
+    var xstep = fromX < toX ? 1 : -1;
+    var ystep = fromY < toY ? 1 : -1;
+    // In black pixels, looking for white, first or second time.
+    var state = 0;
+    // Loop up until x == toX, but not beyond
+    var xLimit = toX + xstep;
+    for (var x = fromX, y = fromY; x != xLimit; x += xstep) {
+        var realX = steep ? y : x;
+        var realY = steep ? x : y;
+        // Does current pixel mean we have moved white to black or vice versa?
+        // Scanning black in state 0,2 and white in state 1, so if we find the wrong
+        // color, advance to next state or end if we are in state 2 already
+        if ((state == 1) === image.get(realX, realY)) {
+            if (state == 2) {
+                return distance(x, y, fromX, fromY);
+            }
+            state++;
+        }
+        error += dy;
+        if (error > 0) {
+            if (y == toY) {
+                break;
+            }
+            y += ystep;
+            error -= dx;
+        }
+    }
+    // Found black-white-black; give the benefit of the doubt that the next pixel outside the image
+    // is "white" so this last point at (toX+xStep,toY) is the right ending. This is really a
+    // small approximation; (toX+xStep,toY+yStep) might be really correct. Ignore this.
+    if (state == 2) {
+        return distance(toX + xstep, toY, fromX, fromY);
+    }
+    // else we didn't find even black-white-black; no estimate is really possible
+    return NaN;
+}
+// Computes the total width of a finder pattern by looking for a black-white-black run from the center
+// in the direction of another point (another finder pattern center), and in the opposite direction too.
+function sizeOfBlackWhiteBlackRunBothWays(fromX, fromY, toX, toY, image) {
+    var result = sizeOfBlackWhiteBlackRun(fromX, fromY, toX, toY, image);
+    // Now count other way -- don't run off image though of course
+    var scale = 1;
+    var otherToX = fromX - (toX - fromX);
+    if (otherToX < 0) {
+        scale = fromX / (fromX - otherToX);
+        otherToX = 0;
+    }
+    else if (otherToX >= image.width) {
+        scale = (image.width - 1 - fromX) / (otherToX - fromX);
+        otherToX = image.width - 1;
+    }
+    var otherToY = (fromY - (toY - fromY) * scale);
+    scale = 1;
+    if (otherToY < 0) {
+        scale = fromY / (fromY - otherToY);
+        otherToY = 0;
+    }
+    else if (otherToY >= image.height) {
+        scale = (image.height - 1 - fromY) / (otherToY - fromY);
+        otherToY = image.height - 1;
+    }
+    otherToX = (fromX + (otherToX - fromX) * scale);
+    result += sizeOfBlackWhiteBlackRun(fromX, fromY, otherToX, otherToY, image);
+    return result - 1; // -1 because we counted the middle pixel twice
+}
+function calculateModuleSizeOneWay(pattern, otherPattern, image) {
+    var moduleSizeEst1 = sizeOfBlackWhiteBlackRunBothWays(pattern.x, pattern.y, otherPattern.x, otherPattern.y, image);
+    var moduleSizeEst2 = sizeOfBlackWhiteBlackRunBothWays(otherPattern.x, otherPattern.y, pattern.x, pattern.y, image);
+    if (helpers_1.isNaN(moduleSizeEst1)) {
+        return moduleSizeEst2 / 7;
+    }
+    if (helpers_1.isNaN(moduleSizeEst2)) {
+        return moduleSizeEst1 / 7;
+    }
+    // Average them, and divide by 7 since we've counted the width of 3 black modules,
+    // and 1 white and 1 black module on either side. Ergo, divide sum by 14.
+    return (moduleSizeEst1 + moduleSizeEst2) / 14;
+}
+// Computes an average estimated module size based on estimated derived from the positions of the three finder patterns.
+function calculateModuleSize(topLeft, topRight, bottomLeft, image) {
+    return (calculateModuleSizeOneWay(topLeft, topRight, image) + calculateModuleSizeOneWay(topLeft, bottomLeft, image)) / 2;
+}
+function extract(image, location) {
+    var moduleSize = calculateModuleSize(location.topLeft, location.topRight, location.bottomLeft, image);
+    if (moduleSize < 1) {
+        return null;
+    }
+    var dimension = computeDimension(location.topLeft, location.topRight, location.bottomLeft, moduleSize);
+    if (!dimension) {
+        return null;
+    }
+    var provisionalVersion = getProvisionalVersionForDimension(dimension);
+    if (provisionalVersion == null) {
+        return null;
+    }
+    var modulesBetweenFPCenters = provisionalVersion.getDimensionForVersion() - 7;
+    var alignmentPattern = null;
+    // Anything above version 1 has an alignment pattern
+    if (provisionalVersion.alignmentPatternCenters.length > 0) {
+        // Guess where a "bottom right" finder pattern would have been
+        var bottomRightX = location.topRight.x - location.topLeft.x + location.bottomLeft.x;
+        var bottomRightY = location.topRight.y - location.topLeft.y + location.bottomLeft.y;
+        // Estimate that alignment pattern is closer by 3 modules
+        // from "bottom right" to known top left location
+        var correctionToTopLeft = 1 - 3 / modulesBetweenFPCenters;
+        var estAlignmentX = location.topLeft.x + correctionToTopLeft * (bottomRightX - location.topLeft.x);
+        var estAlignmentY = location.topLeft.y + correctionToTopLeft * (bottomRightY - location.topLeft.y);
+        // Kind of arbitrary -- expand search radius before giving up
+        for (var i = 4; i <= 16; i <<= 1) {
+            alignmentPattern = findAlignmentInRegion(moduleSize, estAlignmentX, estAlignmentY, i, image);
+            if (!alignmentPattern) {
+                continue;
+            }
+            break;
+        }
+        // If we didn't find alignment pattern... well try anyway without it
+    }
+    var transform = createTransform(location.topLeft, location.topRight, location.bottomLeft, alignmentPattern, dimension);
+    return bitArrayFromImage(image, dimension, transform);
+}
+exports.extract = extract;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var helpers_1 = __webpack_require__(0);
+function aboutEquals(center, moduleSize, i, j) {
+    if (Math.abs(i - center.y) <= moduleSize && Math.abs(j - center.x) <= moduleSize) {
+        var moduleSizeDiff = Math.abs(moduleSize - center.estimatedModuleSize);
+        return moduleSizeDiff <= 1 || moduleSizeDiff <= center.estimatedModuleSize;
+    }
+    return false;
+}
+function combineEstimate(center, i, j, newModuleSize) {
+    var combinedX = (center.x + j) / 2;
+    var combinedY = (center.y + i) / 2;
+    var combinedModuleSize = (center.estimatedModuleSize + newModuleSize) / 2;
+    return { x: combinedX, y: combinedY, estimatedModuleSize: combinedModuleSize };
+}
+// returns true if the proportions of the counts is close enough to the 1/1/1 ratios used by alignment
+// patterns to be considered a match
+function foundPatternCross(stateCount, moduleSize) {
+    var maxVariance = moduleSize / 2;
+    for (var i = 0; i < 3; i++) {
+        if (Math.abs(moduleSize - stateCount[i]) >= maxVariance) {
+            return false;
+        }
+    }
+    return true;
+}
+// Given a count of black/white/black pixels just seen and an end position,
+// figures the location of the center of this black/white/black run.
+function centerFromEnd(stateCount, end) {
+    var result = (end - stateCount[2]) - stateCount[1] / 2;
+    if (helpers_1.isNaN(result)) {
+        return null;
+    }
+    return result;
+}
+// After a horizontal scan finds a potential alignment pattern, this method
+// "cross-checks" by scanning down vertically through the center of the possible
+// alignment pattern to see if the same proportion is detected.</p>
+//
+// startI - row where an alignment pattern was detected</param>
+// centerJ - center of the section that appears to cross an alignment pattern</param>
+// maxCount - maximum reasonable number of modules that should be observed in any reading state, based
+//   on the results of the horizontal scan</param>
+// originalStateCountTotal - The original state count total
+function crossCheckVertical(startI, centerJ, maxCount, originalStateCountTotal, moduleSize, image) {
+    var maxI = image.height;
+    var stateCount = [0, 0, 0];
+    // Start counting up from center
+    var i = startI;
+    while (i >= 0 && image.get(centerJ, i) && stateCount[1] <= maxCount) {
+        stateCount[1]++;
+        i--;
+    }
+    // If already too many modules in this state or ran off the edge:
+    if (i < 0 || stateCount[1] > maxCount) {
+        return null;
+    }
+    while (i >= 0 && !image.get(centerJ, i) && stateCount[0] <= maxCount) {
+        stateCount[0]++;
+        i--;
+    }
+    if (stateCount[0] > maxCount) {
+        return null;
+    }
+    // Now also count down from center
+    i = startI + 1;
+    while (i < maxI && image.get(centerJ, i) && stateCount[1] <= maxCount) {
+        stateCount[1]++;
+        i++;
+    }
+    if (i == maxI || stateCount[1] > maxCount) {
+        return null;
+    }
+    while (i < maxI && !image.get(centerJ, i) && stateCount[2] <= maxCount) {
+        stateCount[2]++;
+        i++;
+    }
+    if (stateCount[2] > maxCount) {
+        return null;
+    }
+    var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
+    if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= 2 * originalStateCountTotal) {
+        return null;
+    }
+    return foundPatternCross(stateCount, moduleSize) ? centerFromEnd(stateCount, i) : null;
+}
+function findAlignment(startX, startY, width, height, moduleSize, image) {
+    // Global State :(
+    var possibleCenters = [];
+    // This is called when a horizontal scan finds a possible alignment pattern. It will
+    // cross check with a vertical scan, and if successful, will see if this pattern had been
+    // found on a previous horizontal scan. If so, we consider it confirmed and conclude we have
+    // found the alignment pattern.</p>
+    //
+    // stateCount - reading state module counts from horizontal scan
+    // i - where alignment pattern may be found
+    // j - end of possible alignment pattern in row
+    function handlePossibleCenter(stateCount, i, j, moduleSize) {
+        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
+        var centerJ = centerFromEnd(stateCount, j);
+        if (centerJ == null) {
+            return null;
+        }
+        var centerI = crossCheckVertical(i, Math.floor(centerJ), 2 * stateCount[1], stateCountTotal, moduleSize, image);
+        if (centerI != null) {
+            var estimatedModuleSize = (stateCount[0] + stateCount[1] + stateCount[2]) / 3;
+            for (var i2 in possibleCenters) {
+                var center = possibleCenters[i2];
+                // Look for about the same center and module size:
+                if (aboutEquals(center, estimatedModuleSize, centerI, centerJ)) {
+                    return combineEstimate(center, centerI, centerJ, estimatedModuleSize);
+                }
+            }
+            // Hadn't found this before; save it
+            var point = { x: centerJ, y: centerI, estimatedModuleSize: estimatedModuleSize };
+            possibleCenters.push(point);
+        }
+        return null;
+    }
+    var maxJ = startX + width;
+    var middleI = startY + (height >> 1);
+    // We are looking for black/white/black modules in 1:1:1 ratio;
+    // this tracks the number of black/white/black modules seen so far
+    var stateCount = [0, 0, 0]; // WTF
+    for (var iGen = 0; iGen < height; iGen++) {
+        // Search from middle outwards
+        var i = middleI + ((iGen & 0x01) == 0 ? ((iGen + 1) >> 1) : -((iGen + 1) >> 1));
+        stateCount[0] = 0;
+        stateCount[1] = 0;
+        stateCount[2] = 0;
+        var j = startX;
+        // Burn off leading white pixels before anything else; if we start in the middle of
+        // a white run, it doesn't make sense to count its length, since we don't know if the
+        // white run continued to the left of the start point
+        while (j < maxJ && !image.get(j, i)) {
+            j++;
+        }
+        var currentState = 0;
+        while (j < maxJ) {
+            if (image.get(j, i)) {
+                // Black pixel
+                if (currentState == 1) {
+                    // Counting black pixels
+                    stateCount[currentState]++;
+                }
+                else {
+                    // Counting white pixels
+                    if (currentState == 2) {
+                        // A winner?
+                        if (foundPatternCross(stateCount, moduleSize)) {
+                            // Yes
+                            confirmed = handlePossibleCenter(stateCount, i, j, moduleSize);
+                            if (confirmed != null) {
+                                return confirmed;
+                            }
+                        }
+                        stateCount[0] = stateCount[2];
+                        stateCount[1] = 1;
+                        stateCount[2] = 0;
+                        currentState = 1;
+                    }
+                    else {
+                        stateCount[++currentState]++;
+                    }
+                }
+            }
+            else {
+                // White pixel
+                if (currentState == 1) {
+                    // Counting black pixels
+                    currentState++;
+                }
+                stateCount[currentState]++;
+            }
+            j++;
+        }
+        if (foundPatternCross(stateCount, moduleSize)) {
+            var confirmed = handlePossibleCenter(stateCount, i, moduleSize, maxJ);
+            if (confirmed != null) {
+                return confirmed;
+            }
+        }
+    }
+    // Hmm, nothing we saw was observed and confirmed twice. If we had
+    // any guess at all, return it.
+    if (possibleCenters.length != 0) {
+        return possibleCenters[0];
+    }
+    return null;
+}
+exports.findAlignment = findAlignment;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3) {
+    var dx3 = x0 - x1 + x2 - x3;
+    var dy3 = y0 - y1 + y2 - y3;
+    if (dx3 == 0 && dy3 == 0) {
+        // Affine
+        return {
+            a11: x1 - x0,
+            a21: x2 - x1,
+            a31: x0,
+            a12: y1 - y0,
+            a22: y2 - y1,
+            a32: y0,
+            a13: 0,
+            a23: 0,
+            a33: 1,
+        };
+    }
+    else {
+        var dx1 = x1 - x2;
+        var dx2 = x3 - x2;
+        var dy1 = y1 - y2;
+        var dy2 = y3 - y2;
+        var denominator = dx1 * dy2 - dx2 * dy1;
+        var a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
+        var a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
+        return {
+            a11: x1 - x0 + a13 * x1,
+            a21: x3 - x0 + a23 * x3,
+            a31: x0,
+            a12: y1 - y0 + a13 * y1,
+            a22: y3 - y0 + a23 * y3,
+            a32: y0,
+            a13: a13,
+            a23: a23,
+            a33: 1,
+        };
+    }
+}
+function buildAdjoint(i) {
+    return {
+        a11: i.a22 * i.a33 - i.a23 * i.a32,
+        a21: i.a23 * i.a31 - i.a21 * i.a33,
+        a31: i.a21 * i.a32 - i.a22 * i.a31,
+        a12: i.a13 * i.a32 - i.a12 * i.a33,
+        a22: i.a11 * i.a33 - i.a13 * i.a31,
+        a32: i.a12 * i.a31 - i.a11 * i.a32,
+        a13: i.a12 * i.a23 - i.a13 * i.a22,
+        a23: i.a13 * i.a21 - i.a11 * i.a23,
+        a33: i.a11 * i.a22 - i.a12 * i.a21
+    };
+}
+function times(a, b) {
+    return {
+        a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
+        a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
+        a31: a.a11 * b.a31 + a.a21 * b.a32 + a.a31 * b.a33,
+        a12: a.a12 * b.a11 + a.a22 * b.a12 + a.a32 * b.a13,
+        a22: a.a12 * b.a21 + a.a22 * b.a22 + a.a32 * b.a23,
+        a32: a.a12 * b.a31 + a.a22 * b.a32 + a.a32 * b.a33,
+        a13: a.a13 * b.a11 + a.a23 * b.a12 + a.a33 * b.a13,
+        a23: a.a13 * b.a21 + a.a23 * b.a22 + a.a33 * b.a23,
+        a33: a.a13 * b.a31 + a.a23 * b.a32 + a.a33 * b.a33
+    };
+}
+function quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3) {
+    // Here, the adjoint serves as the inverse:
+    return buildAdjoint(squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3));
+}
+function transformPoints(transform, points) {
+    var max = points.length;
+    var a11 = transform.a11;
+    var a12 = transform.a12;
+    var a13 = transform.a13;
+    var a21 = transform.a21;
+    var a22 = transform.a22;
+    var a23 = transform.a23;
+    var a31 = transform.a31;
+    var a32 = transform.a32;
+    var a33 = transform.a33;
+    for (var i = 0; i < max; i += 2) {
+        var x = points[i];
+        var y = points[i + 1];
+        var denominator = a13 * x + a23 * y + a33;
+        points[i] = (a11 * x + a21 * y + a31) / denominator;
+        points[i + 1] = (a12 * x + a22 * y + a32) / denominator;
+    }
+    return points;
+}
+exports.transformPoints = transformPoints;
+function quadrilateralToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3, x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p) {
+    var qToS = quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3);
+    var sToQ = squareToQuadrilateral(x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p);
+    return times(sToQ, qToS);
+}
+exports.quadrilateralToQuadrilateral = quadrilateralToQuadrilateral;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var helpers_1 = __webpack_require__(0);
 var VERSION_DECODE_INFO = [
     0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
     0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
@@ -295,179 +1065,12 @@ exports.getVersionForNumber = getVersionForNumber;
 
 
 /***/ }),
-/* 3 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
-/// <reference path="./common/types.d.ts" />
-var binarizer_1 = __webpack_require__(4);
-var locator_1 = __webpack_require__(5);
-var extractor_1 = __webpack_require__(6);
-var decoder_1 = __webpack_require__(9);
-var bitmatrix_1 = __webpack_require__(0);
-var binarizeImage = binarizer_1.binarize;
-exports.binarizeImage = binarizeImage;
-var locateQRInBinaryImage = locator_1.locate;
-exports.locateQRInBinaryImage = locateQRInBinaryImage;
-var extractQRFromBinaryImage = extractor_1.extract;
-exports.extractQRFromBinaryImage = extractQRFromBinaryImage;
-function decodeQR(matrix) {
-    return byteArrayToString(decoder_1.decode(matrix));
-}
-exports.decodeQR = decodeQR;
-// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
-function byteArrayToString(bytes) {
-    var str = "";
-    if (bytes != null && bytes != undefined) {
-        for (var i = 0; i < bytes.length; i++) {
-            str += String.fromCharCode(bytes[i]);
-        }
-    }
-    return str;
-}
-function createBitMatrix(data, width) {
-    var intArr = new Uint8Array(data.length);
-    for (var i = 0; i < data.length; i++) {
-        intArr[i] = data[i] ? 1 : 0;
-    }
-    return new bitmatrix_1.BitMatrix(intArr, width);
-}
-exports.createBitMatrix = createBitMatrix;
-function decodeQRFromImage(data, width, height) {
-    return byteArrayToString(decodeQRFromImageAsByteArray(data, width, height));
-}
-exports.decodeQRFromImage = decodeQRFromImage;
-function decodeQRFromImageAsByteArray(data, width, height) {
-    var binarizedImage = binarizeImage(data, width, height);
-    var location = locator_1.locate(binarizedImage);
-    if (!location) {
-        return null;
-    }
-    var rawQR = extractor_1.extract(binarizedImage, location);
-    if (!rawQR) {
-        return null;
-    }
-    return decoder_1.decode(rawQR);
-}
-exports.decodeQRFromImageAsByteArray = decodeQRFromImageAsByteArray;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var bitmatrix_1 = __webpack_require__(0);
-var REGION_SIZE = 8;
-var MIN_DYNAMIC_RANGE = 24;
-function numBetween(value, min, max) {
-    return value < min ? min : value > max ? max : value;
-}
-var Matrix = /** @class */ (function () {
-    function Matrix(width, height) {
-        this.width = width;
-        this.data = new Uint8ClampedArray(width * height);
-    }
-    Matrix.prototype.get = function (x, y) {
-        return this.data[y * this.width + x];
-    };
-    Matrix.prototype.set = function (x, y, value) {
-        this.data[y * this.width + x] = value;
-    };
-    return Matrix;
-}());
-function binarize(data, width, height) {
-    if (data.length !== width * height * 4) {
-        throw new Error("Malformed data passed to binarizer.");
-    }
-    // Convert image to greyscale
-    var greyscalePixels = new Matrix(width, height);
-    for (var x = 0; x < width; x++) {
-        for (var y = 0; y < height; y++) {
-            var r = data[((y * width + x) * 4) + 0];
-            var g = data[((y * width + x) * 4) + 1];
-            var b = data[((y * width + x) * 4) + 2];
-            greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
-        }
-    }
-    var horizontalRegionCount = Math.ceil(width / REGION_SIZE);
-    var verticalRegionCount = Math.ceil(height / REGION_SIZE);
-    var blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
-    for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
-        for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
-            var sum = 0;
-            var min = Infinity;
-            var max = 0;
-            for (var y = 0; y < REGION_SIZE; y++) {
-                for (var x = 0; x < REGION_SIZE; x++) {
-                    var pixelLumosity = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
-                    sum += pixelLumosity;
-                    min = Math.min(min, pixelLumosity);
-                    max = Math.max(max, pixelLumosity);
-                }
-            }
-            var average = sum / (Math.pow(REGION_SIZE, 2));
-            if (max - min <= MIN_DYNAMIC_RANGE) {
-                // If variation within the block is low, assume this is a block with only light or only
-                // dark pixels. In that case we do not want to use the average, as it would divide this
-                // low contrast area into black and white pixels, essentially creating data out of noise.
-                //
-                // Default the blackpoint for these blocks to be half the min - effectively white them out
-                average = min / 2;
-                if (verticalRegion > 0 && hortizontalRegion > 0) {
-                    // Correct the "white background" assumption for blocks that have neighbors by comparing
-                    // the pixels in this block to the previously calculated black points. This is based on
-                    // the fact that dark barcode symbology is always surrounded by some amount of light
-                    // background for which reasonable black point estimates were made. The bp estimated at
-                    // the boundaries is used for the interior.
-                    // The (min < bp) is arbitrary but works better than other heuristics that were tried.
-                    var averageNeighborBlackPoint = (blackPoints.get(hortizontalRegion, verticalRegion - 1) +
-                        (2 * blackPoints.get(hortizontalRegion - 1, verticalRegion)) +
-                        blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)) / 4;
-                    if (min < averageNeighborBlackPoint) {
-                        average = averageNeighborBlackPoint;
-                    }
-                }
-            }
-            blackPoints.set(hortizontalRegion, verticalRegion, average);
-        }
-    }
-    var binarized = bitmatrix_1.BitMatrix.createEmpty(width, height);
-    for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
-        for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
-            var left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
-            var top_1 = numBetween(verticalRegion, 2, verticalRegionCount - 3);
-            var sum = 0;
-            for (var xRegion = -2; xRegion <= 2; xRegion++) {
-                for (var yRegion = -2; yRegion <= 2; yRegion++) {
-                    sum += blackPoints.get(left + xRegion, top_1 + yRegion);
-                }
-            }
-            var threshold = sum / 25;
-            for (var x = 0; x < REGION_SIZE; x++) {
-                for (var y = 0; y < REGION_SIZE; y++) {
-                    var lum = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
-                    binarized.set(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y, lum <= threshold);
-                }
-            }
-        }
-    }
-    return binarized;
-}
-exports.binarize = binarize;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var CENTER_QUORUM = 2;
 var MIN_SKIP = 3;
 var MAX_MODULES = 57;
@@ -571,10 +1174,10 @@ function ReorderFinderPattern(patterns) {
     return {
         bottomLeft: { x: pointA.x, y: pointA.y },
         topLeft: { x: pointB.x, y: pointB.y },
-        topRight: { x: pointC.x, y: pointC.y }
+        topRight: { x: pointC.x, y: pointC.y },
     };
 }
-function locate(matrix) {
+function locateTrackingPoints(matrix) {
     // Global state :(
     var possibleCenters = [];
     var hasSkipped = false;
@@ -987,639 +1590,7 @@ function locate(matrix) {
         return null;
     return ReorderFinderPattern(patternInfo);
 }
-exports.locate = locate;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-/// <reference path="../common/types.d.ts" />
-var alignment_finder_1 = __webpack_require__(7);
-var perspective_transform_1 = __webpack_require__(8);
-var version_1 = __webpack_require__(2);
-var bitmatrix_1 = __webpack_require__(0);
-var helpers_1 = __webpack_require__(1);
-function checkAndNudgePoints(width, height, points) {
-    // Check and nudge points from start until we see some that are OK:
-    var nudged = true;
-    for (var offset = 0; offset < points.length && nudged; offset += 2) {
-        var x = Math.floor(points[offset]);
-        var y = Math.floor(points[offset + 1]);
-        if (x < -1 || x > width || y < -1 || y > height) {
-            throw new Error();
-        }
-        nudged = false;
-        if (x == -1) {
-            points[offset] = 0;
-            nudged = true;
-        }
-        else if (x == width) {
-            points[offset] = width - 1;
-            nudged = true;
-        }
-        if (y == -1) {
-            points[offset + 1] = 0;
-            nudged = true;
-        }
-        else if (y == height) {
-            points[offset + 1] = height - 1;
-            nudged = true;
-        }
-    }
-    // Check and nudge points from end:
-    nudged = true;
-    for (var offset = points.length - 2; offset >= 0 && nudged; offset -= 2) {
-        var x = Math.floor(points[offset]);
-        var y = Math.floor(points[offset + 1]);
-        if (x < -1 || x > width || y < -1 || y > height) {
-            throw new Error();
-        }
-        nudged = false;
-        if (x == -1) {
-            points[offset] = 0;
-            nudged = true;
-        }
-        else if (x == width) {
-            points[offset] = width - 1;
-            nudged = true;
-        }
-        if (y == -1) {
-            points[offset + 1] = 0;
-            nudged = true;
-        }
-        else if (y == height) {
-            points[offset + 1] = height - 1;
-            nudged = true;
-        }
-    }
-    return points;
-}
-function bitArrayFromImage(image, dimension, transform) {
-    if (dimension <= 0) {
-        return null;
-    }
-    var bits = bitmatrix_1.BitMatrix.createEmpty(dimension, dimension);
-    var points = new Float32Array(dimension << 1);
-    for (var y = 0; y < dimension; y++) {
-        var max = points.length;
-        var iValue = y + 0.5;
-        for (var x = 0; x < max; x += 2) {
-            points[x] = (x >> 1) + 0.5;
-            points[x + 1] = iValue;
-        }
-        points = perspective_transform_1.transformPoints(transform, points);
-        // Quick check to see if points transformed to something inside the image;
-        // sufficient to check the endpoints
-        try {
-            var nudgedPoints = checkAndNudgePoints(image.width, image.height, points);
-        }
-        catch (e) {
-            return null;
-        }
-        // try {
-        for (var x = 0; x < max; x += 2) {
-            bits.set(x >> 1, y, image.get(Math.floor(nudgedPoints[x]), Math.floor(nudgedPoints[x + 1])));
-        }
-        // }
-        // catch (e) {
-        //   // This feels wrong, but, sometimes if the finder patterns are misidentified, the resulting
-        //   // transform gets "twisted" such that it maps a straight line of points to a set of points
-        //   // whose endpoints are in bounds, but others are not. There is probably some mathematical
-        //   // way to detect this about the transformation that I don't know yet.
-        //   // This results in an ugly runtime exception despite our clever checks above -- can't have
-        //   // that. We could check each point's coordinates but that feels duplicative. We settle for
-        //   // catching and wrapping ArrayIndexOutOfBoundsException.
-        //   return null;
-        // }
-    }
-    return bits;
-}
-function createTransform(topLeft, topRight, bottomLeft, alignmentPattern, dimension) {
-    var dimMinusThree = dimension - 3.5;
-    var bottomRightX;
-    var bottomRightY;
-    var sourceBottomRightX;
-    var sourceBottomRightY;
-    if (alignmentPattern != null) {
-        bottomRightX = alignmentPattern.x;
-        bottomRightY = alignmentPattern.y;
-        sourceBottomRightX = sourceBottomRightY = dimMinusThree - 3;
-    }
-    else {
-        // Don't have an alignment pattern, just make up the bottom-right point
-        bottomRightX = (topRight.x - topLeft.x) + bottomLeft.x;
-        bottomRightY = (topRight.y - topLeft.y) + bottomLeft.y;
-        sourceBottomRightX = sourceBottomRightY = dimMinusThree;
-    }
-    return perspective_transform_1.quadrilateralToQuadrilateral(3.5, 3.5, dimMinusThree, 3.5, sourceBottomRightX, sourceBottomRightY, 3.5, dimMinusThree, topLeft.x, topLeft.y, topRight.x, topRight.y, bottomRightX, bottomRightY, bottomLeft.x, bottomLeft.y);
-}
-// Taken from 6th grade algebra
-function distance(x1, y1, x2, y2) {
-    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-}
-// Attempts to locate an alignment pattern in a limited region of the image, which is guessed to contain it.
-// overallEstModuleSize - estimated module size so far
-// estAlignmentX        - coordinate of center of area probably containing alignment pattern
-// estAlignmentY        - y coordinate of above</param>
-// allowanceFactor      - number of pixels in all directions to search from the center</param>
-function findAlignmentInRegion(overallEstModuleSize, estAlignmentX, estAlignmentY, allowanceFactor, image) {
-    estAlignmentX = Math.floor(estAlignmentX);
-    estAlignmentY = Math.floor(estAlignmentY);
-    // Look for an alignment pattern (3 modules in size) around where it should be
-    var allowance = Math.floor(allowanceFactor * overallEstModuleSize);
-    var alignmentAreaLeftX = Math.max(0, estAlignmentX - allowance);
-    var alignmentAreaRightX = Math.min(image.width, estAlignmentX + allowance);
-    if (alignmentAreaRightX - alignmentAreaLeftX < overallEstModuleSize * 3) {
-        return null;
-    }
-    var alignmentAreaTopY = Math.max(0, estAlignmentY - allowance);
-    var alignmentAreaBottomY = Math.min(image.height - 1, estAlignmentY + allowance);
-    return alignment_finder_1.findAlignment(alignmentAreaLeftX, alignmentAreaTopY, alignmentAreaRightX - alignmentAreaLeftX, alignmentAreaBottomY - alignmentAreaTopY, overallEstModuleSize, image);
-}
-// Computes the dimension (number of modules on a size) of the QR Code based on the position of the finder
-// patterns and estimated module size.
-function computeDimension(topLeft, topRight, bottomLeft, moduleSize) {
-    var tltrCentersDimension = Math.round(distance(topLeft.x, topLeft.y, topRight.x, topRight.y) / moduleSize);
-    var tlblCentersDimension = Math.round(distance(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y) / moduleSize);
-    var dimension = ((tltrCentersDimension + tlblCentersDimension) >> 1) + 7;
-    switch (dimension & 0x03) {
-        // mod 4
-        case 0:
-            dimension++;
-            break;
-        // 1? do nothing
-        case 2:
-            dimension--;
-            break;
-    }
-    return dimension;
-}
-// Deduces version information purely from QR Code dimensions.
-// http://chan.catiewayne.com/z/src/131044167276.jpg
-function getProvisionalVersionForDimension(dimension) {
-    if (dimension % 4 != 1) {
-        return null;
-    }
-    var versionNumber = (dimension - 17) >> 2;
-    if (versionNumber < 1 || versionNumber > 40) {
-        return null;
-    }
-    return version_1.getVersionForNumber(versionNumber);
-}
-// This method traces a line from a point in the image, in the direction towards another point.
-// It begins in a black region, and keeps going until it finds white, then black, then white again.
-// It reports the distance from the start to this point.</p>
-//
-// This is used when figuring out how wide a finder pattern is, when the finder pattern
-// may be skewed or rotated.
-function sizeOfBlackWhiteBlackRun(fromX, fromY, toX, toY, image) {
-    fromX = Math.floor(fromX);
-    fromY = Math.floor(fromY);
-    toX = Math.floor(toX);
-    toY = Math.floor(toY);
-    // Mild variant of Bresenham's algorithm;
-    // see http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-    var steep = Math.abs(toY - fromY) > Math.abs(toX - fromX);
-    if (steep) {
-        var temp = fromX;
-        fromX = fromY;
-        fromY = temp;
-        temp = toX;
-        toX = toY;
-        toY = temp;
-    }
-    var dx = Math.abs(toX - fromX);
-    var dy = Math.abs(toY - fromY);
-    var error = -dx >> 1;
-    var xstep = fromX < toX ? 1 : -1;
-    var ystep = fromY < toY ? 1 : -1;
-    // In black pixels, looking for white, first or second time.
-    var state = 0;
-    // Loop up until x == toX, but not beyond
-    var xLimit = toX + xstep;
-    for (var x = fromX, y = fromY; x != xLimit; x += xstep) {
-        var realX = steep ? y : x;
-        var realY = steep ? x : y;
-        // Does current pixel mean we have moved white to black or vice versa?
-        // Scanning black in state 0,2 and white in state 1, so if we find the wrong
-        // color, advance to next state or end if we are in state 2 already
-        if ((state == 1) === image.get(realX, realY)) {
-            if (state == 2) {
-                return distance(x, y, fromX, fromY);
-            }
-            state++;
-        }
-        error += dy;
-        if (error > 0) {
-            if (y == toY) {
-                break;
-            }
-            y += ystep;
-            error -= dx;
-        }
-    }
-    // Found black-white-black; give the benefit of the doubt that the next pixel outside the image
-    // is "white" so this last point at (toX+xStep,toY) is the right ending. This is really a
-    // small approximation; (toX+xStep,toY+yStep) might be really correct. Ignore this.
-    if (state == 2) {
-        return distance(toX + xstep, toY, fromX, fromY);
-    }
-    // else we didn't find even black-white-black; no estimate is really possible
-    return NaN;
-}
-// Computes the total width of a finder pattern by looking for a black-white-black run from the center
-// in the direction of another point (another finder pattern center), and in the opposite direction too.
-function sizeOfBlackWhiteBlackRunBothWays(fromX, fromY, toX, toY, image) {
-    var result = sizeOfBlackWhiteBlackRun(fromX, fromY, toX, toY, image);
-    // Now count other way -- don't run off image though of course
-    var scale = 1;
-    var otherToX = fromX - (toX - fromX);
-    if (otherToX < 0) {
-        scale = fromX / (fromX - otherToX);
-        otherToX = 0;
-    }
-    else if (otherToX >= image.width) {
-        scale = (image.width - 1 - fromX) / (otherToX - fromX);
-        otherToX = image.width - 1;
-    }
-    var otherToY = (fromY - (toY - fromY) * scale);
-    scale = 1;
-    if (otherToY < 0) {
-        scale = fromY / (fromY - otherToY);
-        otherToY = 0;
-    }
-    else if (otherToY >= image.height) {
-        scale = (image.height - 1 - fromY) / (otherToY - fromY);
-        otherToY = image.height - 1;
-    }
-    otherToX = (fromX + (otherToX - fromX) * scale);
-    result += sizeOfBlackWhiteBlackRun(fromX, fromY, otherToX, otherToY, image);
-    return result - 1; // -1 because we counted the middle pixel twice
-}
-function calculateModuleSizeOneWay(pattern, otherPattern, image) {
-    var moduleSizeEst1 = sizeOfBlackWhiteBlackRunBothWays(pattern.x, pattern.y, otherPattern.x, otherPattern.y, image);
-    var moduleSizeEst2 = sizeOfBlackWhiteBlackRunBothWays(otherPattern.x, otherPattern.y, pattern.x, pattern.y, image);
-    if (helpers_1.isNaN(moduleSizeEst1)) {
-        return moduleSizeEst2 / 7;
-    }
-    if (helpers_1.isNaN(moduleSizeEst2)) {
-        return moduleSizeEst1 / 7;
-    }
-    // Average them, and divide by 7 since we've counted the width of 3 black modules,
-    // and 1 white and 1 black module on either side. Ergo, divide sum by 14.
-    return (moduleSizeEst1 + moduleSizeEst2) / 14;
-}
-// Computes an average estimated module size based on estimated derived from the positions of the three finder patterns.
-function calculateModuleSize(topLeft, topRight, bottomLeft, image) {
-    return (calculateModuleSizeOneWay(topLeft, topRight, image) + calculateModuleSizeOneWay(topLeft, bottomLeft, image)) / 2;
-}
-function extract(image, location) {
-    var moduleSize = calculateModuleSize(location.topLeft, location.topRight, location.bottomLeft, image);
-    if (moduleSize < 1) {
-        return null;
-    }
-    var dimension = computeDimension(location.topLeft, location.topRight, location.bottomLeft, moduleSize);
-    if (!dimension) {
-        return null;
-    }
-    var provisionalVersion = getProvisionalVersionForDimension(dimension);
-    if (provisionalVersion == null) {
-        return null;
-    }
-    var modulesBetweenFPCenters = provisionalVersion.getDimensionForVersion() - 7;
-    var alignmentPattern = null;
-    // Anything above version 1 has an alignment pattern
-    if (provisionalVersion.alignmentPatternCenters.length > 0) {
-        // Guess where a "bottom right" finder pattern would have been
-        var bottomRightX = location.topRight.x - location.topLeft.x + location.bottomLeft.x;
-        var bottomRightY = location.topRight.y - location.topLeft.y + location.bottomLeft.y;
-        // Estimate that alignment pattern is closer by 3 modules
-        // from "bottom right" to known top left location
-        var correctionToTopLeft = 1 - 3 / modulesBetweenFPCenters;
-        var estAlignmentX = location.topLeft.x + correctionToTopLeft * (bottomRightX - location.topLeft.x);
-        var estAlignmentY = location.topLeft.y + correctionToTopLeft * (bottomRightY - location.topLeft.y);
-        // Kind of arbitrary -- expand search radius before giving up
-        for (var i = 4; i <= 16; i <<= 1) {
-            alignmentPattern = findAlignmentInRegion(moduleSize, estAlignmentX, estAlignmentY, i, image);
-            if (!alignmentPattern) {
-                continue;
-            }
-            break;
-        }
-        // If we didn't find alignment pattern... well try anyway without it
-    }
-    var transform = createTransform(location.topLeft, location.topRight, location.bottomLeft, alignmentPattern, dimension);
-    return bitArrayFromImage(image, dimension, transform);
-}
-exports.extract = extract;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var helpers_1 = __webpack_require__(1);
-function aboutEquals(center, moduleSize, i, j) {
-    if (Math.abs(i - center.y) <= moduleSize && Math.abs(j - center.x) <= moduleSize) {
-        var moduleSizeDiff = Math.abs(moduleSize - center.estimatedModuleSize);
-        return moduleSizeDiff <= 1 || moduleSizeDiff <= center.estimatedModuleSize;
-    }
-    return false;
-}
-function combineEstimate(center, i, j, newModuleSize) {
-    var combinedX = (center.x + j) / 2;
-    var combinedY = (center.y + i) / 2;
-    var combinedModuleSize = (center.estimatedModuleSize + newModuleSize) / 2;
-    return { x: combinedX, y: combinedY, estimatedModuleSize: combinedModuleSize };
-}
-// returns true if the proportions of the counts is close enough to the 1/1/1 ratios used by alignment
-// patterns to be considered a match
-function foundPatternCross(stateCount, moduleSize) {
-    var maxVariance = moduleSize / 2;
-    for (var i = 0; i < 3; i++) {
-        if (Math.abs(moduleSize - stateCount[i]) >= maxVariance) {
-            return false;
-        }
-    }
-    return true;
-}
-// Given a count of black/white/black pixels just seen and an end position,
-// figures the location of the center of this black/white/black run.
-function centerFromEnd(stateCount, end) {
-    var result = (end - stateCount[2]) - stateCount[1] / 2;
-    if (helpers_1.isNaN(result)) {
-        return null;
-    }
-    return result;
-}
-// After a horizontal scan finds a potential alignment pattern, this method
-// "cross-checks" by scanning down vertically through the center of the possible
-// alignment pattern to see if the same proportion is detected.</p>
-//
-// startI - row where an alignment pattern was detected</param>
-// centerJ - center of the section that appears to cross an alignment pattern</param>
-// maxCount - maximum reasonable number of modules that should be observed in any reading state, based
-//   on the results of the horizontal scan</param>
-// originalStateCountTotal - The original state count total
-function crossCheckVertical(startI, centerJ, maxCount, originalStateCountTotal, moduleSize, image) {
-    var maxI = image.height;
-    var stateCount = [0, 0, 0];
-    // Start counting up from center
-    var i = startI;
-    while (i >= 0 && image.get(centerJ, i) && stateCount[1] <= maxCount) {
-        stateCount[1]++;
-        i--;
-    }
-    // If already too many modules in this state or ran off the edge:
-    if (i < 0 || stateCount[1] > maxCount) {
-        return null;
-    }
-    while (i >= 0 && !image.get(centerJ, i) && stateCount[0] <= maxCount) {
-        stateCount[0]++;
-        i--;
-    }
-    if (stateCount[0] > maxCount) {
-        return null;
-    }
-    // Now also count down from center
-    i = startI + 1;
-    while (i < maxI && image.get(centerJ, i) && stateCount[1] <= maxCount) {
-        stateCount[1]++;
-        i++;
-    }
-    if (i == maxI || stateCount[1] > maxCount) {
-        return null;
-    }
-    while (i < maxI && !image.get(centerJ, i) && stateCount[2] <= maxCount) {
-        stateCount[2]++;
-        i++;
-    }
-    if (stateCount[2] > maxCount) {
-        return null;
-    }
-    var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
-    if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= 2 * originalStateCountTotal) {
-        return null;
-    }
-    return foundPatternCross(stateCount, moduleSize) ? centerFromEnd(stateCount, i) : null;
-}
-function findAlignment(startX, startY, width, height, moduleSize, image) {
-    // Global State :(
-    var possibleCenters = [];
-    // This is called when a horizontal scan finds a possible alignment pattern. It will
-    // cross check with a vertical scan, and if successful, will see if this pattern had been
-    // found on a previous horizontal scan. If so, we consider it confirmed and conclude we have
-    // found the alignment pattern.</p>
-    //
-    // stateCount - reading state module counts from horizontal scan
-    // i - where alignment pattern may be found
-    // j - end of possible alignment pattern in row
-    function handlePossibleCenter(stateCount, i, j, moduleSize) {
-        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
-        var centerJ = centerFromEnd(stateCount, j);
-        if (centerJ == null) {
-            return null;
-        }
-        var centerI = crossCheckVertical(i, Math.floor(centerJ), 2 * stateCount[1], stateCountTotal, moduleSize, image);
-        if (centerI != null) {
-            var estimatedModuleSize = (stateCount[0] + stateCount[1] + stateCount[2]) / 3;
-            for (var i2 in possibleCenters) {
-                var center = possibleCenters[i2];
-                // Look for about the same center and module size:
-                if (aboutEquals(center, estimatedModuleSize, centerI, centerJ)) {
-                    return combineEstimate(center, centerI, centerJ, estimatedModuleSize);
-                }
-            }
-            // Hadn't found this before; save it
-            var point = { x: centerJ, y: centerI, estimatedModuleSize: estimatedModuleSize };
-            possibleCenters.push(point);
-        }
-        return null;
-    }
-    var maxJ = startX + width;
-    var middleI = startY + (height >> 1);
-    // We are looking for black/white/black modules in 1:1:1 ratio;
-    // this tracks the number of black/white/black modules seen so far
-    var stateCount = [0, 0, 0]; // WTF
-    for (var iGen = 0; iGen < height; iGen++) {
-        // Search from middle outwards
-        var i = middleI + ((iGen & 0x01) == 0 ? ((iGen + 1) >> 1) : -((iGen + 1) >> 1));
-        stateCount[0] = 0;
-        stateCount[1] = 0;
-        stateCount[2] = 0;
-        var j = startX;
-        // Burn off leading white pixels before anything else; if we start in the middle of
-        // a white run, it doesn't make sense to count its length, since we don't know if the
-        // white run continued to the left of the start point
-        while (j < maxJ && !image.get(j, i)) {
-            j++;
-        }
-        var currentState = 0;
-        while (j < maxJ) {
-            if (image.get(j, i)) {
-                // Black pixel
-                if (currentState == 1) {
-                    // Counting black pixels
-                    stateCount[currentState]++;
-                }
-                else {
-                    // Counting white pixels
-                    if (currentState == 2) {
-                        // A winner?
-                        if (foundPatternCross(stateCount, moduleSize)) {
-                            // Yes
-                            confirmed = handlePossibleCenter(stateCount, i, j, moduleSize);
-                            if (confirmed != null) {
-                                return confirmed;
-                            }
-                        }
-                        stateCount[0] = stateCount[2];
-                        stateCount[1] = 1;
-                        stateCount[2] = 0;
-                        currentState = 1;
-                    }
-                    else {
-                        stateCount[++currentState]++;
-                    }
-                }
-            }
-            else {
-                // White pixel
-                if (currentState == 1) {
-                    // Counting black pixels
-                    currentState++;
-                }
-                stateCount[currentState]++;
-            }
-            j++;
-        }
-        if (foundPatternCross(stateCount, moduleSize)) {
-            var confirmed = handlePossibleCenter(stateCount, i, moduleSize, maxJ);
-            if (confirmed != null) {
-                return confirmed;
-            }
-        }
-    }
-    // Hmm, nothing we saw was observed and confirmed twice. If we had
-    // any guess at all, return it.
-    if (possibleCenters.length != 0) {
-        return possibleCenters[0];
-    }
-    return null;
-}
-exports.findAlignment = findAlignment;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/// <reference path="../common/types.d.ts" />
-exports.__esModule = true;
-function squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3) {
-    var dx3 = x0 - x1 + x2 - x3;
-    var dy3 = y0 - y1 + y2 - y3;
-    if (dx3 == 0 && dy3 == 0) {
-        // Affine
-        return {
-            a11: x1 - x0,
-            a21: x2 - x1,
-            a31: x0,
-            a12: y1 - y0,
-            a22: y2 - y1,
-            a32: y0,
-            a13: 0,
-            a23: 0,
-            a33: 1
-        };
-    }
-    else {
-        var dx1 = x1 - x2;
-        var dx2 = x3 - x2;
-        var dy1 = y1 - y2;
-        var dy2 = y3 - y2;
-        var denominator = dx1 * dy2 - dx2 * dy1;
-        var a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
-        var a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
-        return {
-            a11: x1 - x0 + a13 * x1,
-            a21: x3 - x0 + a23 * x3,
-            a31: x0,
-            a12: y1 - y0 + a13 * y1,
-            a22: y3 - y0 + a23 * y3,
-            a32: y0,
-            a13: a13,
-            a23: a23,
-            a33: 1
-        };
-    }
-}
-function buildAdjoint(i) {
-    return {
-        a11: i.a22 * i.a33 - i.a23 * i.a32,
-        a21: i.a23 * i.a31 - i.a21 * i.a33,
-        a31: i.a21 * i.a32 - i.a22 * i.a31,
-        a12: i.a13 * i.a32 - i.a12 * i.a33,
-        a22: i.a11 * i.a33 - i.a13 * i.a31,
-        a32: i.a12 * i.a31 - i.a11 * i.a32,
-        a13: i.a12 * i.a23 - i.a13 * i.a22,
-        a23: i.a13 * i.a21 - i.a11 * i.a23,
-        a33: i.a11 * i.a22 - i.a12 * i.a21
-    };
-}
-function times(a, b) {
-    return {
-        a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
-        a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
-        a31: a.a11 * b.a31 + a.a21 * b.a32 + a.a31 * b.a33,
-        a12: a.a12 * b.a11 + a.a22 * b.a12 + a.a32 * b.a13,
-        a22: a.a12 * b.a21 + a.a22 * b.a22 + a.a32 * b.a23,
-        a32: a.a12 * b.a31 + a.a22 * b.a32 + a.a32 * b.a33,
-        a13: a.a13 * b.a11 + a.a23 * b.a12 + a.a33 * b.a13,
-        a23: a.a13 * b.a21 + a.a23 * b.a22 + a.a33 * b.a23,
-        a33: a.a13 * b.a31 + a.a23 * b.a32 + a.a33 * b.a33
-    };
-}
-function quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3) {
-    // Here, the adjoint serves as the inverse:
-    return buildAdjoint(squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3));
-}
-function transformPoints(transform, points) {
-    var max = points.length;
-    var a11 = transform.a11;
-    var a12 = transform.a12;
-    var a13 = transform.a13;
-    var a21 = transform.a21;
-    var a22 = transform.a22;
-    var a23 = transform.a23;
-    var a31 = transform.a31;
-    var a32 = transform.a32;
-    var a33 = transform.a33;
-    for (var i = 0; i < max; i += 2) {
-        var x = points[i];
-        var y = points[i + 1];
-        var denominator = a13 * x + a23 * y + a33;
-        points[i] = (a11 * x + a21 * y + a31) / denominator;
-        points[i + 1] = (a12 * x + a22 * y + a32) / denominator;
-    }
-    return points;
-}
-exports.transformPoints = transformPoints;
-function quadrilateralToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3, x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p) {
-    var qToS = quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3);
-    var sToQ = squareToQuadrilateral(x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p);
-    return times(sToQ, qToS);
-}
-exports.quadrilateralToQuadrilateral = quadrilateralToQuadrilateral;
+exports.locateTrackingPoints = locateTrackingPoints;
 
 
 /***/ }),
@@ -1628,12 +1599,12 @@ exports.quadrilateralToQuadrilateral = quadrilateralToQuadrilateral;
 
 "use strict";
 
-exports.__esModule = true;
-var bitmatrix_1 = __webpack_require__(0);
+Object.defineProperty(exports, "__esModule", { value: true });
+var BitMatrix_1 = __webpack_require__(3);
 var decodeqrdata_1 = __webpack_require__(10);
-var helpers_1 = __webpack_require__(1);
+var helpers_1 = __webpack_require__(0);
 var reedsolomon_1 = __webpack_require__(12);
-var version_1 = __webpack_require__(2);
+var version_1 = __webpack_require__(7);
 var FORMAT_INFO_MASK_QR = 0x5412;
 var FORMAT_INFO_DECODE_LOOKUP = [
     [0x5412, 0x00],
@@ -1687,8 +1658,8 @@ var ERROR_CORRECTION_LEVELS = [
 ];
 function buildFunctionPattern(version) {
     var dimension = version.getDimensionForVersion();
-    var emptyArray = new Uint8Array(dimension * dimension);
-    var bitMatrix = new bitmatrix_1.BitMatrix(emptyArray, dimension);
+    var emptyArray = new Uint8ClampedArray(dimension * dimension);
+    var bitMatrix = new BitMatrix_1.default(emptyArray, dimension);
     ///BitMatrix bitMatrix = new BitMatrix(dimension);
     // Top left finder pattern + separator + format
     bitMatrix.setRegion(0, 0, 9, 9);
@@ -1800,7 +1771,7 @@ function readVersion(matrix) {
 function newFormatInformation(formatInfo) {
     return {
         errorCorrectionLevel: ERROR_CORRECTION_LEVELS[(formatInfo >> 3) & 0x03],
-        dataMask: formatInfo & 0x07
+        dataMask: formatInfo & 0x07,
     };
 }
 function doDecodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2) {
@@ -2009,7 +1980,7 @@ exports.decode = decode;
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var bitstream_1 = __webpack_require__(11);
 function toAlphaNumericByte(value) {
     var ALPHANUMERIC_CHARS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
@@ -2225,7 +2196,7 @@ var GB2312_SUBSET = 1;
 function decodeQRdata(data, version, ecl) {
     var symbolSequence = -1;
     var parityData = -1;
-    var bits = new bitstream_1.BitStream(data);
+    var bits = new bitstream_1.BitStream(Uint32Array.from(data));
     var result = { val: [] }; // Have to pass this around so functions can share a reference to a number[]
     var fc1InEffect = false;
     var mode;
@@ -2313,7 +2284,7 @@ exports.decodeQRdata = decodeQRdata;
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var BitStream = /** @class */ (function () {
     function BitStream(bytes) {
         this.byteOffset = 0;
@@ -2370,7 +2341,7 @@ exports.BitStream = BitStream;
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ReedSolomonDecoder = /** @class */ (function () {
     function ReedSolomonDecoder() {
         this.field = new GenericGF(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1

@@ -1,4 +1,14 @@
-/// <reference path="../common/types.d.ts" />
+export interface IPerspectiveTransform {
+  a11: number
+  a21: number
+  a31: number
+  a12: number
+  a22: number
+  a32: number
+  a13: number
+  a23: number
+  a33: number
+}
 
 function squareToQuadrilateral(
   x0: number,
@@ -8,7 +18,7 @@ function squareToQuadrilateral(
   x2: number,
   y2: number,
   x3: number,
-  y3: number): PerspectiveTransform {
+  y3: number): IPerspectiveTransform {
   var dx3 = x0 - x1 + x2 - x3;
   var dy3 = y0 - y1 + y2 - y3;
   if (dx3 == 0 && dy3 == 0) {
@@ -46,7 +56,7 @@ function squareToQuadrilateral(
   }
 }
 
-function buildAdjoint(i: PerspectiveTransform): PerspectiveTransform {
+function buildAdjoint(i: IPerspectiveTransform): IPerspectiveTransform {
   return {
     a11: i.a22 * i.a33 - i.a23 * i.a32,
     a21: i.a23 * i.a31 - i.a21 * i.a33,
@@ -60,7 +70,7 @@ function buildAdjoint(i: PerspectiveTransform): PerspectiveTransform {
   }
 }
 
-function times(a: PerspectiveTransform, b: PerspectiveTransform): PerspectiveTransform {
+function times(a: IPerspectiveTransform, b: IPerspectiveTransform): IPerspectiveTransform {
   return {
     a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
     a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
@@ -82,12 +92,12 @@ function quadrilateralToSquare(
   x2: number,
   y2: number,
   x3: number,
-  y3: number): PerspectiveTransform {
+  y3: number): IPerspectiveTransform {
   // Here, the adjoint serves as the inverse:
   return buildAdjoint(squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3));
 }
 
-export function transformPoints(transform: PerspectiveTransform, points: Float32Array): Float32Array {
+export function transformPoints(transform: IPerspectiveTransform, points: Float32Array): Float32Array {
   var max = points.length;
   var a11 = transform.a11;
   var a12 = transform.a12;

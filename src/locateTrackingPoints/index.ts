@@ -1,5 +1,4 @@
-/// <reference path="../common/types.d.ts" />
-import {BitMatrix} from "../common/bitmatrix";
+import BitMatrix from "../BitMatrix";
 
 const CENTER_QUORUM = 2;
 const MIN_SKIP = 3;
@@ -83,7 +82,7 @@ function crossProductZ(pointA: FinderPattern, pointB: FinderPattern, pointC: Fin
   return ((pointC.x - bX) * (pointA.y - bY)) - ((pointC.y - bY) * (pointA.x - bX));
 }
 
-function ReorderFinderPattern(patterns: FinderPattern[]): QRLocation {
+function ReorderFinderPattern(patterns: FinderPattern[]): TrackingPoints {
   // Find distances between pattern centers
   var zeroOneDistance = distance(patterns[0], patterns[1]);
   var oneTwoDistance = distance(patterns[1], patterns[2]);
@@ -124,7 +123,7 @@ function ReorderFinderPattern(patterns: FinderPattern[]): QRLocation {
   }
 }
 
-export function locate(matrix: BitMatrix): QRLocation {
+export function locateTrackingPoints(matrix: BitMatrix): TrackingPoints {
   // Global state :(
   var possibleCenters: FinderPattern[] = [];
   var hasSkipped = false;

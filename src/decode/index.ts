@@ -1,4 +1,4 @@
-import {BitMatrix} from "../common/bitmatrix";
+import BitMatrix from "../BitMatrix";
 import {decodeQRdata} from "./decodeqrdata";
 import {numBitsDiffering} from "../common/helpers";
 import {ReedSolomonDecoder} from "./reedsolomon";

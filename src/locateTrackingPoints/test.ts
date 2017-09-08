@@ -1,12 +1,12 @@
 import tests from "../../test-data";
 import { loadBinarized } from "../../tests/helpers";
-import { locate } from "./locator";
+import { locateTrackingPoints } from "./";
 
-describe("locate", () => {
+describe("locateTrackingPoints", () => {
   tests.forEach((t) => {
     it(t.name, async () => {
       const binarizedImage = await loadBinarized(t.binarizedPath);
-      const output = locate(binarizedImage);
+      const output = locateTrackingPoints(binarizedImage);
       expect(output).toEqual(t.location);
     });
   });
