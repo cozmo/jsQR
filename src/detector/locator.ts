@@ -1,83 +1,45 @@
-/// <reference path="../common/types.d.ts" />
 import { BitMatrix } from "../common/bitmatrix";
 
 class FinderPattern {
-  x: number;
-  y: number;
-  estimatedModuleSize: number;
-  count: number;
+  public x: number;
+  public y: number;
+  public estimatedModuleSize: number;
 
-  constructor(x: number, y: number, estimatedModuleSize: number, count?: number) {
+  constructor(x: number, y: number, estimatedModuleSize: number) {
     this.x = x;
     this.y = y;
     this.estimatedModuleSize = estimatedModuleSize;
-    if (count == null) {
-      this.count = 1;
-    } else {
-      this.count = count;
-    }
   }
-
-  aboutEquals(moduleSize: number, i: number, j: number): boolean {
-    if (Math.abs(i - this.y) <= moduleSize && Math.abs(j - this.x) <= moduleSize) {
-      var moduleSizeDiff = Math.abs(moduleSize - this.estimatedModuleSize);
-      return moduleSizeDiff <= 1.0 || moduleSizeDiff <= this.estimatedModuleSize;
-    }
-    return false;
-  }
-
-  combineEstimate(i: number, j: number, newModuleSize: number): FinderPattern {
-    var combinedCount = this.count + 1;
-    var combinedX = (this.count * this.x + j) / combinedCount;
-    var combinedY = (this.count * this.y + i) / combinedCount;
-    var combinedModuleSize = (this.count * this.estimatedModuleSize + newModuleSize) / combinedCount;
-    return new FinderPattern(combinedX, combinedY, combinedModuleSize, combinedCount);
-  }
-}
-
-function centerFromEnd(stateCount: number[], end: number): number {
-  var result = (end - stateCount[4] - stateCount[3]) - stateCount[2] / 2;
-  // Fix this.
-  if (result !== result) {
-    return null;
-  }
-  return result;
 }
 
 function distance(pattern1: FinderPattern, pattern2: FinderPattern): number {
-  var a = pattern1.x - pattern2.x;
-  var b = pattern1.y - pattern2.y;
+  const a = pattern1.x - pattern2.x;
+  const b = pattern1.y - pattern2.y;
   return Math.sqrt(a * a + b * b);
 }
 
 function crossProductZ(pointA: FinderPattern, pointB: FinderPattern, pointC: FinderPattern) {
-  var bX = pointB.x;
-  var bY = pointB.y;
+  const bX = pointB.x;
+  const bY = pointB.y;
   return ((pointC.x - bX) * (pointA.y - bY)) - ((pointC.y - bY) * (pointA.x - bX));
 }
 
 function ReorderFinderPattern(patterns: FinderPattern[]): QRLocation {
   // Find distances between pattern centers
-  var zeroOneDistance = distance(patterns[0], patterns[1]);
-  var oneTwoDistance = distance(patterns[1], patterns[2]);
-  var zeroTwoDistance = distance(patterns[0], patterns[2]);
+  const zeroOneDistance = distance(patterns[0], patterns[1]);
+  const oneTwoDistance = distance(patterns[1], patterns[2]);
+  const zeroTwoDistance = distance(patterns[0], patterns[2]);
 
-  var pointA: FinderPattern, pointB: FinderPattern, pointC: FinderPattern;
+  let pointA: FinderPattern;
+  let pointB: FinderPattern;
+  let pointC: FinderPattern;
   // Assume one closest to other two is B; A and C will just be guesses at first
   if (oneTwoDistance >= zeroOneDistance && oneTwoDistance >= zeroTwoDistance) {
-    pointB = patterns[0];
-    pointA = patterns[1];
-    pointC = patterns[2];
-  }
-  else if (zeroTwoDistance >= oneTwoDistance && zeroTwoDistance >= zeroOneDistance) {
-    pointB = patterns[1];
-    pointA = patterns[0];
-    pointC = patterns[2];
-  }
-  else {
-    pointB = patterns[2];
-    pointA = patterns[0];
-    pointC = patterns[1];
+    [pointA, pointB, pointC] = [patterns[1], patterns[0], patterns[2]];
+  } else if (zeroTwoDistance >= oneTwoDistance && zeroTwoDistance >= zeroOneDistance) {
+    [pointA, pointB, pointC] = [patterns[0], patterns[1], patterns[2]];
+  } else {
+    [pointA, pointB, pointC] = [patterns[0], patterns[2], patterns[1]];
   }
 
   // Use cross product to figure out whether A and C are correct or flipped.
@@ -85,20 +47,15 @@ function ReorderFinderPattern(patterns: FinderPattern[]): QRLocation {
   // we want for A, B, C. If it's negative, then we've got it flipped around and
   // should swap A and C.
   if (crossProductZ(pointA, pointB, pointC) < 0) {
-    var temp = pointA;
-    pointA = pointC;
-    pointC = temp;
+    [pointA, pointC] = [pointC, pointA];
   }
 
   return {
     bottomLeft: { x: pointA.x, y: pointA.y },
     topLeft: { x: pointB.x, y: pointB.y },
     topRight: { x: pointC.x, y: pointC.y },
-  }
+  };
 }
-
-
-
 
 function sum(values: number[]) {
   return values.reduce((a, b) => a + b);
@@ -114,8 +71,9 @@ function withinTolerance(actual: number, expected: number) {
 }
 
 function arrayFind<T>(array: T[], predicate: (t: T) => boolean): T | undefined {
-  if ((array as any).find)
+  if ((array as any).find) {
     return (array as any).find(predicate);
+  }
 
   for (const t of array) {
     if (predicate(t)) {
@@ -125,8 +83,8 @@ function arrayFind<T>(array: T[], predicate: (t: T) => boolean): T | undefined {
   return undefined;
 }
 
-function countLine(matrix: BitMatrix, startX: number, startY: number, directionX: number, directionY: number) {
-  let currentColor = matrix.get(startX, startY);
+function countLine(matrix: BitMatrix, startX: number, startY: number, directionX: number, directionY: number): number | undefined {
+  const currentColor = matrix.get(startX, startY);
   let x = startX;
   let y = startY;
   let count = 0;
@@ -141,15 +99,16 @@ function countLine(matrix: BitMatrix, startX: number, startY: number, directionX
     x += directionX;
     y += directionY;
 
-    if (x < -1 || y < -1 || x > matrix.width || y > matrix.height)
-      throw new Error("WTF!");
+    if (x < -1 || y < -1 || x > matrix.width || y > matrix.height) {
+      return null;
+    }
   }
 }
 
 function countSequence(matrix: BitMatrix, startX: number, startY: number, directionX: number, directionY: number, length: number) {
   const sequence = [];
   for (let i = 0; i < length; i++) {
-    let count = countLine(matrix, startX, startY, directionX, directionY);
+    const count = countLine(matrix, startX, startY, directionX, directionY);
     startX += directionX * count;
     startY += directionY * count;
     sequence.push(count);
@@ -185,10 +144,16 @@ function fullScore(matrix: BitMatrix, x: number, y: number) {
     const diagDownError = sizeAndError(diagDownSequence);
     const diagUpError = sizeAndError(diagUpSequence);
 
-    const error = Math.sqrt(horzError.error * horzError.error + vertError.error * vertError.error + diagDownError.error * diagDownError.error + diagUpError.error * diagUpError.error);
+    const error = Math.sqrt(horzError.error * horzError.error +
+      vertError.error * vertError.error +
+      diagDownError.error * diagDownError.error +
+      diagUpError.error * diagUpError.error);
     const avg = (horzError.average + vertError.average + diagDownError.average + diagUpError.average) / 4;
 
-    const sizeError = (Math.pow(horzError.average - avg, 2) + Math.pow(vertError.average - avg, 2) + Math.pow(diagDownError.average - avg, 2) + Math.pow(diagUpError.average - avg, 2)) / avg;
+    const sizeError = ((horzError.average - avg) ** 2 +
+      (vertError.average - avg) ** 2 +
+      (diagDownError.average - avg) ** 2 +
+      (diagUpError.average - avg) ** 2) / avg;
 
     return error + sizeError;
   } catch {
@@ -265,7 +230,7 @@ export function locate(matrix: BitMatrix): any {
   }
   quads.push(...activeQuads.filter(q => q.bottom.y - q.top.y > 2));
 
-  const candidatePoints: { score: number, x: number, y: number, size: number }[] = [];
+  const candidatePoints: Array<{ score: number, x: number, y: number, size: number }> = [];
   for (const q of quads) {
     const x = (2 * q.top.x + q.top.length + 2 * q.bottom.x + q.bottom.length) / 4;
     const y = (q.top.y + q.bottom.y) / 2;
@@ -301,8 +266,9 @@ export function locate(matrix: BitMatrix): any {
     }
   }
 
-  if (!bestGroup)
+  if (!bestGroup) {
     return null;
+  }
 
   return ReorderFinderPattern(bestGroup.map(p => new FinderPattern(p.x, p.y, p.size)));
 }
