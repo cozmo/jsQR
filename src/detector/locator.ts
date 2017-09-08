@@ -1,10 +1,5 @@
 /// <reference path="../common/types.d.ts" />
-import {BitMatrix} from "../common/bitmatrix";
-
-const CENTER_QUORUM = 2;
-const MIN_SKIP = 3;
-const MAX_MODULES = 57;
-const INTEGER_MATH_SHIFT = 8;
+import { BitMatrix } from "../common/bitmatrix";
 
 class FinderPattern {
   x: number;
@@ -38,28 +33,6 @@ class FinderPattern {
     var combinedModuleSize = (this.count * this.estimatedModuleSize + newModuleSize) / combinedCount;
     return new FinderPattern(combinedX, combinedY, combinedModuleSize, combinedCount);
   }
-}
-
-function foundPatternCross(stateCount: number[]): boolean {
-  var totalModuleSize = 0;
-  for (var i = 0; i < 5; i++) {
-    var count = stateCount[i];
-    if (count === 0)
-      return false;
-    totalModuleSize += count;
-  }
-
-  if (totalModuleSize < 7)
-    return false;
-
-  var moduleSize = (totalModuleSize << INTEGER_MATH_SHIFT) / 7;
-  var maxVariance = moduleSize / 2;
-  // Allow less than 50% variance from 1-1-3-1-1 proportions
-  return Math.abs(moduleSize - (stateCount[0] << INTEGER_MATH_SHIFT)) < maxVariance &&
-    Math.abs(moduleSize - (stateCount[1] << INTEGER_MATH_SHIFT)) < maxVariance &&
-    Math.abs(3 * moduleSize - (stateCount[2] << INTEGER_MATH_SHIFT)) < 3 * maxVariance &&
-    Math.abs(moduleSize - (stateCount[3] << INTEGER_MATH_SHIFT)) < maxVariance &&
-    Math.abs(moduleSize - (stateCount[4] << INTEGER_MATH_SHIFT)) < maxVariance;
 }
 
 function centerFromEnd(stateCount: number[], end: number): number {
@@ -124,456 +97,212 @@ function ReorderFinderPattern(patterns: FinderPattern[]): QRLocation {
   }
 }
 
-export function locate(matrix: BitMatrix): QRLocation {
-  // Global state :(
-  var possibleCenters: FinderPattern[] = [];
-  var hasSkipped = false;
-  function get(x: number, y: number): boolean {
-    x = Math.floor(x);
-    y = Math.floor(y);
-    return matrix.get(x, y);
+
+
+
+function sum(values: number[]) {
+  return values.reduce((a, b) => a + b);
+}
+
+function scoreRatio(values: number[], expectedRatios: number[]) {
+  const average = sum(values) / sum(expectedRatios);
+  return sum(values.map((v, i) => (v - expectedRatios[i] * average) ** 2));
+}
+
+function withinTolerance(actual: number, expected: number) {
+  return actual / expected >= 0.5 && actual / expected <= 1.5;
+}
+
+function arrayFind<T>(array: T[], predicate: (t: T) => boolean): T | undefined {
+  if ((array as any).find)
+    return (array as any).find(predicate);
+
+  for (const t of array) {
+    if (predicate(t)) {
+      return t;
+    }
+  }
+  return undefined;
+}
+
+function countLine(matrix: BitMatrix, startX: number, startY: number, directionX: number, directionY: number) {
+  let currentColor = matrix.get(startX, startY);
+  let x = startX;
+  let y = startY;
+  let count = 0;
+  while (true) {
+    const v = matrix.safeGet(x, y);
+    if (v === currentColor) {
+      count++;
+    } else {
+      return count;
+    }
+
+    x += directionX;
+    y += directionY;
+
+    if (x < -1 || y < -1 || x > matrix.width || y > matrix.height)
+      throw new Error("WTF!");
+  }
+}
+
+function countSequence(matrix: BitMatrix, startX: number, startY: number, directionX: number, directionY: number, length: number) {
+  const sequence = [];
+  for (let i = 0; i < length; i++) {
+    let count = countLine(matrix, startX, startY, directionX, directionY);
+    startX += directionX * count;
+    startY += directionY * count;
+    sequence.push(count);
   }
 
-  // Methods
-  function crossCheckDiagonal(startI: number, centerJ: number, maxCount: number, originalStateCountTotal: number): boolean {
-    var maxI = matrix.height;
-    var maxJ = matrix.width;
-    var stateCount = [0, 0, 0, 0, 0];
+  return sequence;
+}
 
-    // Start counting up, left from center finding black center mass
-    var i = 0;
-    while (startI - i >= 0 && get(centerJ - i, startI - i)) {
-      stateCount[2]++;
-      i++;
-    }
+function sizeAndError(scans: number[]) {
+  const average = sum(scans) / 7;
+  const error = (scans[0] - average) ** 2 + (scans[1] - average) ** 2 + (scans[2] - 3 * average) ** 2 +
+    (scans[3] - average) ** 2 + (scans[4] - average) ** 2;
 
-    if ((startI - i < 0) || (centerJ - i < 0)) {
-      return false;
-    }
+  return { average, error };
+}
 
-    // Continue up, left finding white space
-    while ((startI - i >= 0) && (centerJ - i >= 0) && !get(centerJ - i, startI - i) && stateCount[1] <= maxCount) {
-      stateCount[1]++;
-      i++;
-    }
+function fullScore(matrix: BitMatrix, x: number, y: number) {
+  try {
+    const leftStartX = x - sum(countSequence(matrix, x, y, -1, 0, 3)) + 1;
+    const topStartY = y - sum(countSequence(matrix, x, y, 0, -1, 3)) + 1;
 
-    // If already too many modules in this state or ran off the edge:
-    if ((startI - i < 0) || (centerJ - i < 0) || stateCount[1] > maxCount) {
-      return false;
-    }
+    const diagDown = sum(countSequence(matrix, x, y, -1, -1, 3));
+    const diagUp = sum(countSequence(matrix, x, y, -1, 1, 3));
 
-    // Continue up, left finding black border
-    while ((startI - i >= 0) && (centerJ - i >= 0) && get(centerJ - i, startI - i) && stateCount[0] <= maxCount) {
-      stateCount[0]++;
-      i++;
-    }
-    if (stateCount[0] > maxCount) {
-      return false;
-    }
+    const horizontalSequence = countSequence(matrix, leftStartX, y, 1, 0, 5);
+    const verticalSequence = countSequence(matrix, x, topStartY, 0, 1, 5);
 
-    // Now also count down, right from center
-    i = 1;
-    while ((startI + i < maxI) && (centerJ + i < maxJ) && get(centerJ + i, startI + i)) {
-      stateCount[2]++;
-      i++;
-    }
+    const diagDownSequence = countSequence(matrix, x - diagDown + 1, y - diagDown + 1, 1, 1, 5);
+    const diagUpSequence = countSequence(matrix, x - diagUp + 1, y + diagUp - 1, 1, -1, 5);
 
-    // Ran off the edge?
-    if ((startI + i >= maxI) || (centerJ + i >= maxJ)) {
-      return false;
-    }
+    const horzError = sizeAndError(horizontalSequence);
+    const vertError = sizeAndError(verticalSequence);
+    const diagDownError = sizeAndError(diagDownSequence);
+    const diagUpError = sizeAndError(diagUpSequence);
 
-    while ((startI + i < maxI) && (centerJ + i < maxJ) && !get(centerJ + i, startI + i) && stateCount[3] < maxCount) {
-      stateCount[3]++;
-      i++;
-    }
+    const error = Math.sqrt(horzError.error * horzError.error + vertError.error * vertError.error + diagDownError.error * diagDownError.error + diagUpError.error * diagUpError.error);
+    const avg = (horzError.average + vertError.average + diagDownError.average + diagUpError.average) / 4;
 
-    if ((startI + i >= maxI) || (centerJ + i >= maxJ) || stateCount[3] >= maxCount) {
-      return false;
-    }
+    const sizeError = (Math.pow(horzError.average - avg, 2) + Math.pow(vertError.average - avg, 2) + Math.pow(diagDownError.average - avg, 2) + Math.pow(diagUpError.average - avg, 2)) / avg;
 
-    while ((startI + i < maxI) && (centerJ + i < maxJ) && get(centerJ + i, startI + i) && stateCount[4] < maxCount) {
-      stateCount[4]++;
-      i++;
-    }
-
-    if (stateCount[4] >= maxCount) {
-      return false;
-    }
-
-    // If we found a finder-pattern-like section, but its size is more than 100% different than
-    // the original, assume it's a false positive
-    var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-    return Math.abs(stateCountTotal - originalStateCountTotal) < 2 * originalStateCountTotal &&
-      foundPatternCross(stateCount);
+    return error + sizeError;
+  } catch {
+    return Infinity;
   }
+}
 
-  function crossCheckVertical(startI: number, centerJ: number, maxCount: number, originalStateCountTotal: number): number {
-    var maxI = matrix.height;
-    var stateCount = [0, 0, 0, 0, 0];
+interface Quad {
+  top: {
+    x: number;
+    y: number;
+    length: number;
+  };
+  bottom: {
+    x: number;
+    y: number;
+    length: number;
+  };
+}
 
-    // Start counting up from center
-    var i = startI;
-    while (i >= 0 && get(centerJ, i)) {
-      stateCount[2]++;
-      i--;
-    }
-    if (i < 0) {
-      return null;
-    }
-    while (i >= 0 && !get(centerJ, i) && stateCount[1] <= maxCount) {
-      stateCount[1]++;
-      i--;
-    }
-    // If already too many modules in this state or ran off the edge:
-    if (i < 0 || stateCount[1] > maxCount) {
-      return null;
-    }
-    while (i >= 0 && get(centerJ, i) && stateCount[0] <= maxCount) {
-      stateCount[0]++;
-      i--;
-    }
-    if (stateCount[0] > maxCount) {
-      return null;
-    }
+function variance(...values: number[]): number {
+  const average = sum(values) / values.length;
+  return sum(values.map(v => (v - average) ** 2)) / values.length;
+}
 
-    // Now also count down from center
-    i = startI + 1;
-    while (i < maxI && get(centerJ, i)) {
-      stateCount[2]++;
-      i++;
-    }
-    if (i == maxI) {
-      return null;
-    }
-    while (i < maxI && !get(centerJ, i) && stateCount[3] < maxCount) {
-      stateCount[3]++;
-      i++;
-    }
-    if (i == maxI || stateCount[3] >= maxCount) {
-      return null;
-    }
-    while (i < maxI && get(centerJ, i) && stateCount[4] < maxCount) {
-      stateCount[4]++;
-      i++;
-    }
-    if (stateCount[4] >= maxCount) {
-      return null;
-    }
+export function locate(matrix: BitMatrix): any {
+  let activeQuads: Quad[] = [];
+  const quads: Quad[] = [];
 
-    // If we found a finder-pattern-like section, but its size is more than 40% different than
-    // the original, assume it's a false positive
-    var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-    if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= 2 * originalStateCountTotal) {
-      return null;
-    }
+  for (let y = 0; y <= matrix.height; y++) {
+    // const y = 14; {
+    let count = 0;
+    let lastBit = false;
+    let scans = [0, 0, 0, 0, 0];
 
-    return foundPatternCross(stateCount) ? centerFromEnd(stateCount, i) : null;
-  }
-
-  function haveMultiplyConfirmedCenters(): boolean {
-    var confirmedCount = 0;
-    var totalModuleSize = 0;
-    var max = possibleCenters.length;
-    possibleCenters.forEach((pattern) => {
-      if (pattern.count >= CENTER_QUORUM) {
-        confirmedCount++;
-        totalModuleSize += pattern.estimatedModuleSize;
-      }
-    });
-    if (confirmedCount < 3) {
-      return false;
-    }
-    // OK, we have at least 3 confirmed centers, but, it's possible that one is a "false positive"
-    // and that we need to keep looking. We detect this by asking if the estimated module sizes
-    // vary too much. We arbitrarily say that when the total deviation from average exceeds
-    // 5% of the total module size estimates, it's too much.
-    var average = totalModuleSize / max;
-    var totalDeviation = 0;
-    for (var i = 0; i < max; i++) {
-      var pattern = possibleCenters[i];
-      totalDeviation += Math.abs(pattern.estimatedModuleSize - average);
-    }
-    return totalDeviation <= 0.05 * totalModuleSize;
-  }
-
-  function crossCheckHorizontal(startJ: number, centerI: number, maxCount: number, originalStateCountTotal: number): number {
-    var maxJ = matrix.width;
-    var stateCount = [0, 0, 0, 0, 0];
-
-    var j = startJ;
-    while (j >= 0 && get(j, centerI)) {
-      stateCount[2]++;
-      j--;
-    }
-    if (j < 0) {
-      return null;
-    }
-    while (j >= 0 && !get(j, centerI) && stateCount[1] <= maxCount) {
-      stateCount[1]++;
-      j--;
-    }
-    if (j < 0 || stateCount[1] > maxCount) {
-      return null;
-    }
-    while (j >= 0 && get(j, centerI) && stateCount[0] <= maxCount) {
-      stateCount[0]++;
-      j--;
-    }
-    if (stateCount[0] > maxCount) {
-      return null;
-    }
-
-    j = startJ + 1;
-    while (j < maxJ && get(j, centerI)) {
-      stateCount[2]++;
-      j++;
-    }
-    if (j == maxJ) {
-      return null;
-    }
-    while (j < maxJ && !get(j, centerI) && stateCount[3] < maxCount) {
-      stateCount[3]++;
-      j++;
-    }
-    if (j == maxJ || stateCount[3] >= maxCount) {
-      return null;
-    }
-    while (j < maxJ && get(j, centerI) && stateCount[4] < maxCount) {
-      stateCount[4]++;
-      j++;
-    }
-    if (stateCount[4] >= maxCount) {
-      return null;
-    }
-
-    // If we found a finder-pattern-like section, but its size is significantly different than
-    // the original, assume it's a false positive
-    var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-    if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= originalStateCountTotal) {
-      return null;
-    }
-
-    return foundPatternCross(stateCount) ? centerFromEnd(stateCount, j) : null;
-  }
-
-  function handlePossibleCenter(stateCount: number[], i: number, j: number, pureBarcode: boolean): boolean {
-    var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-    var centerJ = centerFromEnd(stateCount, j);
-    if (centerJ == null)
-      return false;
-    var centerI = crossCheckVertical(i, Math.floor(centerJ), stateCount[2], stateCountTotal);
-    if (centerI != null) {
-      // Re-cross check
-      centerJ = crossCheckHorizontal(Math.floor(centerJ), Math.floor(centerI), stateCount[2], stateCountTotal);
-      if (centerJ != null && (!pureBarcode || crossCheckDiagonal(Math.floor(centerI), Math.floor(centerJ), stateCount[2], stateCountTotal))) {
-        var estimatedModuleSize = stateCountTotal / 7;
-        var found = false;
-        for (var index = 0; index < possibleCenters.length; index++) {
-          var center = possibleCenters[index];
-          // Look for about the same center and module size:
-          if (center.aboutEquals(estimatedModuleSize, centerI, centerJ)) {
-            possibleCenters.splice(index, 1, center.combineEstimate(centerI, centerJ, estimatedModuleSize));
-
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          // var point = new FinderPattern(centerJ.Value, centerI.Value, estimatedModuleSize);
-          var point = new FinderPattern(centerJ, centerI, estimatedModuleSize);
-          possibleCenters.push(point);
-        }
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function findRowSkip(): number {
-    var max = possibleCenters.length;
-    if (max <= 1) {
-      return 0;
-    }
-
-    var firstConfirmedCenter: FinderPattern = null;
-    possibleCenters.forEach((center) => {
-      if (center.count >= CENTER_QUORUM) {
-        if (firstConfirmedCenter == null) {
-          firstConfirmedCenter = center;
-        }
-        else {
-          // We have two confirmed centers
-          // How far down can we skip before resuming looking for the next
-          // pattern? In the worst case, only the difference between the
-          // difference in the x / y coordinates of the two centers.
-          // This is the case where you find top left last.
-          hasSkipped = true;
-          //UPGRADE_WARNING: Data types in Visual C# might be different.  Verify the accuracy of narrowing conversions. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1042'"
-          return Math.floor(Math.abs(firstConfirmedCenter.x - center.x) - Math.abs(firstConfirmedCenter.y - center.y)) / 2;
-          // return (int)(Math.Abs(firstConfirmedCenter.X - center.X) - Math.Abs(firstConfirmedCenter.Y - center.Y)) / 2;
-        }
-      }
-    });
-    return 0;
-  }
-
-  function selectBestPatterns(): FinderPattern[] {
-    var startSize = possibleCenters.length;
-    if (startSize < 3) {
-      // Couldn't find enough finder patterns
-      return null;
-    }
-
-    // Filter outlier possibilities whose module size is too different
-    if (startSize > 3) {
-      // But we can only afford to do so if we have at least 4 possibilities to choose from
-      var totalModuleSize = 0;
-      var square = 0;
-      possibleCenters.forEach((center) => {
-        var size = center.estimatedModuleSize;
-        totalModuleSize += size;
-        square += size * size;
-      });
-      var average = totalModuleSize / startSize;
-      var stdDev = Math.sqrt(square / startSize - average * average);
-
-      //possibleCenters.Sort(new FurthestFromAverageComparator(average));
-      possibleCenters.sort((x, y) => {
-        var dA = Math.abs(y.estimatedModuleSize - average);
-        var dB = Math.abs(x.estimatedModuleSize - average);
-        return dA < dB ? -1 : dA == dB ? 0 : 1;
-      });
-
-      var limit = Math.max(0.2 * average, stdDev);
-
-      for (var i = 0; i < possibleCenters.length && possibleCenters.length > 3; i++) {
-        var pattern = possibleCenters[i];
-        if (Math.abs(pattern.estimatedModuleSize - average) > limit) {
-          possibleCenters.splice(i, 1);
-          ///possibleCenters.RemoveAt(i);
-          i--;
-        }
-      }
-    }
-
-    if (possibleCenters.length > 3) {
-      // Throw away all but those first size candidate points we found.
-
-      var totalModuleSize = 0;
-      possibleCenters.forEach((possibleCenter) => {
-        totalModuleSize += possibleCenter.estimatedModuleSize;
-      });
-
-      var average = totalModuleSize / possibleCenters.length;
-
-      // possibleCenters.Sort(new CenterComparator(average));
-      possibleCenters.sort((x, y) => {
-        if (y.count === x.count) {
-          var dA = Math.abs(y.estimatedModuleSize - average);
-          var dB = Math.abs(x.estimatedModuleSize - average);
-          return dA < dB ? 1 : dA == dB ? 0 : -1;
-        }
-        return y.count - x.count;
-      });
-
-      //possibleCenters.subList(3, possibleCenters.Count).clear();
-      ///possibleCenters = possibleCenters.GetRange(0, 3);
-      possibleCenters = possibleCenters.slice(0, 3);
-    }
-
-    return [possibleCenters[0], possibleCenters[1], possibleCenters[2]];
-  }
-
-  var pureBarcode = false;
-  var maxI = matrix.height;
-  var maxJ = matrix.width;
-
-  var iSkip = Math.floor((3 * maxI) / (4 * MAX_MODULES));
-  if (iSkip < MIN_SKIP || false) {
-    iSkip = MIN_SKIP;
-  }
-
-  var done = false;
-  var stateCount = [0, 0, 0, 0, 0];
-  for (var i = iSkip - 1; i < maxI && !done; i += iSkip) {
-    stateCount = [0, 0, 0, 0, 0];
-    var currentState = 0;
-    for (var j = 0; j < maxJ; j++) {
-      if (get(j, i)) {
-        // Black pixel
-        if ((currentState & 1) === 1) {
-          currentState++;
-        }
-        stateCount[currentState]++;
+    for (let x = -1; x <= matrix.width; x++) {
+      const v = matrix.safeGet(x, y);
+      if (v === lastBit) {
+        count++;
       } else {
-        // White pixel
-        if ((currentState & 1) === 0) {
-          // Counting black pixels
-          if (currentState === 4) {
-            // A winner?
-            if (foundPatternCross(stateCount)) {
-              // Yes
-              var confirmed = handlePossibleCenter(stateCount, i, j, pureBarcode);
-              if (confirmed) {
-                // Start examining every other line. Checking each line turned out to be too
-                // expensive and didn't improve performance.
-                iSkip = 2;
-                if (hasSkipped) {
-                  done = haveMultiplyConfirmedCenters();
-                } else {
-                  var rowSkip = findRowSkip();
-                  if (rowSkip > stateCount[2]) {
-                    // Skip rows between row of lower confirmed center
-                    // and top of presumed third confirmed center
-                    // but back up a bit to get a full chance of detecting
-                    // it, entire width of center of finder pattern
+        scans = [scans[1], scans[2], scans[3], scans[4], count];
+        count = 1;
+        lastBit = v;
 
-                    // Skip by rowSkip, but back off by stateCount[2] (size of last center
-                    // of pattern we saw) to be conservative, and also back off by iSkip which
-                    // is about to be re-added
-                    i += rowSkip - stateCount[2] - iSkip;
-                    j = maxJ - 1;
-                  }
-                }
-              } else {
-                stateCount = [stateCount[2], stateCount[3], stateCount[4], 1, 0];
-                currentState = 3;
-                continue;
-              }
-              // Clear state to start looking again
-              stateCount = [0, 0, 0, 0, 0];
-              currentState = 0;
-            } else {
-              stateCount = [stateCount[2], stateCount[3], stateCount[4], 1, 0];
-              currentState = 3;
-            }
+        const blockSize = sum(scans) / 7;
+        // Check if each segment is within 50% of the expected ratios of 1:1:3:1:1
+        const valid = Math.abs(scans[0] - blockSize) < blockSize &&
+          Math.abs(scans[1] - blockSize) < blockSize &&
+          Math.abs(scans[2] - 3 * blockSize) < 3 * blockSize &&
+          Math.abs(scans[3] - blockSize) < blockSize &&
+          Math.abs(scans[4] - blockSize) < blockSize;
+        if (valid) {
+          // Compute the start and end x values of the large center black square (ratio 3)
+          const endX = x - scans[3] - scans[4];
+          const startX = endX - scans[2];
+
+          const line = { x: startX, y, length: scans[2] };
+          // Is there an active quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
+          // that line as the starting point.
+          const quad = arrayFind(activeQuads, q => Math.abs(q.bottom.x - startX) + Math.abs(q.bottom.x + q.bottom.length - endX) < 7);
+          if (quad) {
+            quad.bottom = line;
           } else {
-            // Should I really have copy/pasted this fuckery?
-            stateCount[++currentState]++;
+            activeQuads.push({ top: line, bottom: line });
           }
-        } else {
-          // Counting the white pixels
-          stateCount[currentState]++;
         }
       }
     }
-    if (foundPatternCross(stateCount)) {
-      var confirmed = handlePossibleCenter(stateCount, i, maxJ, pureBarcode);
-      if (confirmed) {
-        iSkip = stateCount[0];
-        if (hasSkipped) {
-          // Found a third one
-          done = haveMultiplyConfirmedCenters();
-        }
-      }
+
+    // If an active quad was not extended or created in the last loop, we've seen the entire thing. If it's height is
+    // larger than 2, it's valid so add it to the set of found quads. Either way, remove it from the active set.
+    quads.push(...activeQuads.filter(q => q.bottom.y !== y && q.bottom.y - q.top.y > 1));
+    activeQuads = activeQuads.filter(q => q.bottom.y === y);
+  }
+  quads.push(...activeQuads.filter(q => q.bottom.y - q.top.y > 2));
+
+  const candidatePoints: { score: number, x: number, y: number, size: number }[] = [];
+  for (const q of quads) {
+    const x = (2 * q.top.x + q.top.length + 2 * q.bottom.x + q.bottom.length) / 4;
+    const y = (q.top.y + q.bottom.y) / 2;
+    if (!matrix.get(Math.round(x), Math.round(y))) {
+      continue;
+    }
+
+    const lengths = [q.top.length, q.bottom.length, q.bottom.y - q.top.y];
+    const size = sum(lengths) / lengths.length;
+    const score = fullScore(matrix, Math.round(x), Math.round(y)) + variance(...lengths);
+    candidatePoints.push({ score, x, y, size });
+  }
+
+  if (candidatePoints.length < 3) {
+    return null;
+  }
+
+  candidatePoints.sort((a, b) => a.score - b.score);
+
+  let bestGroup = null;
+  let bestScore = Infinity;
+  for (let i = 0; i < Math.min(candidatePoints.length, 4); i++) {
+    const point = candidatePoints[i];
+
+    const otherPoints = candidatePoints
+      .filter((p, ii) => i !== ii)
+      .map(p => ({ x: p.x, y: p.y, score: p.score + ((p.size - point.size) ** 2) / point.size, size: p.size }));
+    otherPoints.sort((a, b) => a.score - b.score);
+    const score = point.score + otherPoints[0].score + otherPoints[1].score;
+    if (score < bestScore) {
+      bestGroup = [point, otherPoints[0], otherPoints[1]];
+      bestScore = score;
     }
   }
 
-
-  var patternInfo = selectBestPatterns();
-  if (!patternInfo)
+  if (!bestGroup)
     return null;
 
-  return ReorderFinderPattern(patternInfo);
+  return ReorderFinderPattern(bestGroup.map(p => new FinderPattern(p.x, p.y, p.size)));
 }
