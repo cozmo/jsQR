@@ -23,7 +23,7 @@ import {locate} from "../src/detector/locator";
     const test: ITest = {
       binarizedPath: path.join("test-data", "AUTOGEN", "binarized", imagePath),
       decodedBytes: null,
-      extractedPath: "",
+      extractedPath: null,
       inputPath: path.join("test-data", "images", imagePath),
       location: null,
       name: imagePath,
@@ -39,8 +39,9 @@ import {locate} from "../src/detector/locator";
       test.location = locate(binarized);
 
       const extracted = extract(binarized, test.location);
-      test.extractedPath = path.join("test-data", "AUTOGEN", "extracted", imagePath);
-      await fs.writeFile(test.extractedPath, helpers.bitMatrixToPng(extracted));
+      const extractedPath = path.join("test-data", "AUTOGEN", "extracted", imagePath);
+      await fs.writeFile(extractedPath, helpers.bitMatrixToPng(extracted));
+      test.extractedPath = extractedPath;
 
       test.decodedBytes = decode(extracted);
       test.successful = !!test.decodedBytes;

@@ -15,7 +15,7 @@ export function bitMatrixToPng(matrix: BitMatrix) {
       output[i + 3] = 0xff;
     }
   }
-  return new Buffer(png.encode(output, matrix.width, matrix.height, 0))
+  return new Buffer(png.encode(output, matrix.width, matrix.height, 0));
 }
 
 export async function loadPng(path) {
