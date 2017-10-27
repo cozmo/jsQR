@@ -20564,7 +20564,7 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/74.png",
     "decodedBytes": null,
-    "extractedPath": "",
+    "extractedPath": null,
     "inputPath": "test-data/images/74.png",
     "location": null,
     "name": "74.png",
@@ -20930,7 +20930,7 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/84.png",
     "decodedBytes": null,
-    "extractedPath": "",
+    "extractedPath": null,
     "inputPath": "test-data/images/84.png",
     "location": null,
     "name": "84.png",
@@ -20983,7 +20983,7 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/87.png",
     "decodedBytes": null,
-    "extractedPath": "",
+    "extractedPath": null,
     "inputPath": "test-data/images/87.png",
     "location": null,
     "name": "87.png",
@@ -20992,7 +20992,7 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/88.png",
     "decodedBytes": null,
-    "extractedPath": "",
+    "extractedPath": null,
     "inputPath": "test-data/images/88.png",
     "location": null,
     "name": "88.png",
@@ -21001,7 +21001,7 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/89.png",
     "decodedBytes": null,
-    "extractedPath": "",
+    "extractedPath": null,
     "inputPath": "test-data/images/89.png",
     "location": null,
     "name": "89.png",
@@ -21392,5 +21392,58 @@
     },
     "name": "99.png",
     "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/issue-14-regression.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/issue-14-regression.png",
+    "location": null,
+    "name": "issue-14-regression.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/issue-32-regression.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/issue-32-regression.png",
+    "inputPath": "test-data/images/issue-32-regression.png",
+    "location": {
+      "bottomLeft": {
+        "x": 335.5,
+        "y": 910.5
+      },
+      "topLeft": {
+        "x": 688.5,
+        "y": 626.5
+      },
+      "topRight": {
+        "x": 812.5,
+        "y": 600.5
+      }
+    },
+    "name": "issue-32-regression.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/issue-34-regression.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/issue-34-regression.png",
+    "location": {
+      "bottomLeft": {
+        "x": 399.5,
+        "y": 49.5
+      },
+      "topLeft": {
+        "x": 210.5,
+        "y": 168.5
+      },
+      "topRight": {
+        "x": 49.5,
+        "y": 49.5
+      }
+    },
+    "name": "issue-34-regression.png",
+    "successful": false
   }
 ]
