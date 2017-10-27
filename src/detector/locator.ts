@@ -24,7 +24,7 @@ function crossProductZ(pointA: FinderPattern, pointB: FinderPattern, pointC: Fin
   return ((pointC.x - bX) * (pointA.y - bY)) - ((pointC.y - bY) * (pointA.x - bX));
 }
 
-function ReorderFinderPattern(patterns: FinderPattern[]): QRLocation {
+function ReorderFinderPattern(patterns: FinderPattern[]) {
   // Find distances between pattern centers
   const zeroOneDistance = distance(patterns[0], patterns[1]);
   const oneTwoDistance = distance(patterns[1], patterns[2]);
@@ -89,7 +89,7 @@ function countLine(matrix: BitMatrix, startX: number, startY: number, directionX
   let y = startY;
   let count = 0;
   while (true) {
-    const v = matrix.safeGet(x, y);
+    const v = matrix.get(x, y);
     if (v === currentColor) {
       count++;
     } else {
@@ -184,13 +184,12 @@ export function locate(matrix: BitMatrix): any {
   const quads: Quad[] = [];
 
   for (let y = 0; y <= matrix.height; y++) {
-    // const y = 14; {
     let count = 0;
     let lastBit = false;
     let scans = [0, 0, 0, 0, 0];
 
     for (let x = -1; x <= matrix.width; x++) {
-      const v = matrix.safeGet(x, y);
+      const v = matrix.get(x, y);
       if (v === lastBit) {
         count++;
       } else {
