@@ -20929,12 +20929,32 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/84.png",
-    "decodedBytes": null,
-    "extractedPath": null,
+    "decodedBytes": [
+      119,
+      112,
+      58,
+      32,
+      107,
+      97
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/84.png",
     "inputPath": "test-data/images/84.png",
-    "location": null,
+    "location": {
+      "bottomLeft": {
+        "x": 153,
+        "y": 435
+      },
+      "topLeft": {
+        "x": 151.5,
+        "y": 323.5
+      },
+      "topRight": {
+        "x": 266.5,
+        "y": 322.5
+      }
+    },
     "name": "84.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/85.png",
