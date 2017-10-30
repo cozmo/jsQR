@@ -21414,6 +21414,1437 @@
     "successful": true
   },
   {
+    "binarizedPath": "test-data/AUTOGEN/binarized/angel-hotel.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      101,
+      110,
+      46,
+      113,
+      114,
+      119,
+      112,
+      46,
+      111,
+      114,
+      103,
+      47,
+      84,
+      104,
+      101,
+      95,
+      65,
+      110,
+      103,
+      101,
+      108,
+      95,
+      72,
+      111,
+      116,
+      101,
+      108,
+      44,
+      95,
+      77,
+      111,
+      110,
+      109,
+      111,
+      117,
+      116,
+      104
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/angel-hotel.png",
+    "inputPath": "test-data/images/angel-hotel.png",
+    "location": {
+      "bottomLeft": {
+        "x": 246,
+        "y": 377
+      },
+      "topLeft": {
+        "x": 244.5,
+        "y": 290.5
+      },
+      "topRight": {
+        "x": 337,
+        "y": 292.5
+      }
+    },
+    "name": "angel-hotel.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/battery.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      98,
+      105,
+      116,
+      46,
+      108,
+      121,
+      47,
+      110,
+      69,
+      103,
+      67,
+      83,
+      54
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/battery.png",
+    "inputPath": "test-data/images/battery.png",
+    "location": {
+      "bottomLeft": {
+        "x": 144.5,
+        "y": 522.5
+      },
+      "topLeft": {
+        "x": 144,
+        "y": 431
+      },
+      "topRight": {
+        "x": 241,
+        "y": 432.5
+      }
+    },
+    "name": "battery.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/bike-1.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      119,
+      119,
+      119,
+      46,
+      111,
+      46,
+      98,
+      105,
+      107,
+      101,
+      47,
+      100,
+      111,
+      119,
+      110,
+      108,
+      111,
+      97,
+      100,
+      47,
+      97,
+      112,
+      112,
+      46,
+      104,
+      116,
+      109,
+      108,
+      63,
+      109,
+      61,
+      56,
+      56,
+      54,
+      53,
+      48,
+      56,
+      53,
+      52,
+      55
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/bike-1.png",
+    "inputPath": "test-data/images/bike-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 312,
+        "y": 196.25
+      },
+      "topLeft": {
+        "x": 478,
+        "y": 195.5
+      },
+      "topRight": {
+        "x": 482.5,
+        "y": 363.5
+      }
+    },
+    "name": "bike-1.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/bike-2.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      119,
+      119,
+      119,
+      46,
+      111,
+      46,
+      98,
+      105,
+      107,
+      101,
+      47,
+      100,
+      111,
+      119,
+      110,
+      108,
+      111,
+      97,
+      100,
+      47,
+      97,
+      112,
+      112,
+      46,
+      104,
+      116,
+      109,
+      108,
+      63,
+      109,
+      61,
+      48,
+      54,
+      53,
+      48,
+      48,
+      50,
+      48,
+      54,
+      52
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/bike-2.png",
+    "inputPath": "test-data/images/bike-2.png",
+    "location": {
+      "bottomLeft": {
+        "x": 285,
+        "y": 442.25
+      },
+      "topLeft": {
+        "x": 318,
+        "y": 313.5
+      },
+      "topRight": {
+        "x": 439,
+        "y": 347
+      }
+    },
+    "name": "bike-2.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/billboard-1.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/billboard-1.png",
+    "location": null,
+    "name": "billboard-1.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/billboard-2.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/billboard-2.png",
+    "inputPath": "test-data/images/billboard-2.png",
+    "location": {
+      "bottomLeft": {
+        "x": 183.5,
+        "y": 90
+      },
+      "topLeft": {
+        "x": 367,
+        "y": 141
+      },
+      "topRight": {
+        "x": 237,
+        "y": 349
+      }
+    },
+    "name": "billboard-2.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/bitcoin-tag.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/bitcoin-tag.png",
+    "location": null,
+    "name": "bitcoin-tag.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/blurry-.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/blurry-.png",
+    "location": null,
+    "name": "blurry-.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/bus-stop-1.png",
+    "decodedBytes": [
+      66,
+      114,
+      105,
+      116,
+      97,
+      105,
+      110,
+      226,
+      128,
+      153,
+      115,
+      32,
+      108,
+      111,
+      110,
+      103,
+      101,
+      115,
+      116,
+      32,
+      102,
+      117,
+      110,
+      105,
+      99,
+      117,
+      108,
+      97,
+      114,
+      32,
+      114,
+      97,
+      105,
+      108,
+      119,
+      97,
+      121,
+      32,
+      111,
+      112,
+      101,
+      110,
+      101,
+      100,
+      32,
+      105,
+      110,
+      32,
+      49,
+      57,
+      48,
+      50,
+      46,
+      32,
+      84,
+      114,
+      97,
+      109,
+      99,
+      97,
+      114,
+      115,
+      32,
+      114,
+      117,
+      110,
+      32,
+      102,
+      114,
+      111,
+      109,
+      32,
+      76,
+      108,
+      97,
+      110,
+      100,
+      117,
+      100,
+      110,
+      111,
+      32,
+      116,
+      111,
+      32,
+      116,
+      104,
+      101,
+      32,
+      115,
+      117,
+      109,
+      109,
+      105,
+      116,
+      32,
+      111,
+      102,
+      32,
+      116,
+      104,
+      101,
+      32,
+      71,
+      114,
+      101,
+      97,
+      116,
+      32,
+      79,
+      114,
+      109,
+      101
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/bus-stop-1.png",
+    "inputPath": "test-data/images/bus-stop-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 118.5,
+        "y": 231
+      },
+      "topLeft": {
+        "x": 114,
+        "y": 138.5
+      },
+      "topRight": {
+        "x": 205,
+        "y": 136
+      }
+    },
+    "name": "bus-stop-1.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/bus-stop-2.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      104,
+      105,
+      115,
+      116,
+      111,
+      114,
+      121,
+      112,
+      111,
+      105,
+      110,
+      116,
+      115,
+      46,
+      111,
+      114,
+      103,
+      47,
+      105,
+      110,
+      100,
+      101,
+      120,
+      46,
+      112,
+      104,
+      112,
+      63,
+      112,
+      97,
+      103,
+      101,
+      61,
+      103,
+      114,
+      101,
+      97,
+      116,
+      45,
+      111,
+      114,
+      109,
+      101,
+      45,
+      116,
+      114,
+      97,
+      109,
+      119,
+      97,
+      121
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/bus-stop-2.png",
+    "inputPath": "test-data/images/bus-stop-2.png",
+    "location": {
+      "bottomLeft": {
+        "x": 195.5,
+        "y": 192
+      },
+      "topLeft": {
+        "x": 192,
+        "y": 113.5
+      },
+      "topRight": {
+        "x": 270.75,
+        "y": 107.75
+      }
+    },
+    "name": "bus-stop-2.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/bus-stop.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      79,
+      72,
+      65,
+      73,
+      80,
+      85,
+      90,
+      90,
+      76,
+      69,
+      46,
+      67,
+      79,
+      77
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/bus-stop.png",
+    "inputPath": "test-data/images/bus-stop.png",
+    "location": {
+      "bottomLeft": {
+        "x": 92,
+        "y": 162
+      },
+      "topLeft": {
+        "x": 90.5,
+        "y": 106
+      },
+      "topRight": {
+        "x": 148.5,
+        "y": 103.5
+      }
+    },
+    "name": "bus-stop.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/business-card-1.png",
+    "decodedBytes": [
+      77,
+      69,
+      67,
+      65,
+      82,
+      68,
+      58,
+      78,
+      58,
+      84,
+      111,
+      109,
+      32,
+      83,
+      116,
+      97,
+      115,
+      105,
+      117,
+      107,
+      59,
+      84,
+      69,
+      76,
+      58,
+      55,
+      49,
+      57,
+      45,
+      51,
+      53,
+      55,
+      45,
+      55,
+      48,
+      57,
+      57,
+      59,
+      85,
+      82,
+      76,
+      58,
+      112,
+      108,
+      97,
+      110,
+      101,
+      116,
+      49,
+      48,
+      116,
+      101,
+      99,
+      104,
+      46,
+      99,
+      111,
+      109,
+      59,
+      69,
+      77,
+      65,
+      73,
+      76,
+      58,
+      116,
+      111,
+      109,
+      64,
+      112,
+      108,
+      97,
+      110,
+      101,
+      116,
+      49,
+      48,
+      116,
+      101,
+      99,
+      104,
+      46,
+      99,
+      111,
+      109,
+      59,
+      78,
+      79,
+      84,
+      69,
+      58,
+      71,
+      111,
+      32,
+      80,
+      97,
+      112,
+      101,
+      114,
+      108,
+      101,
+      115,
+      115,
+      45,
+      87,
+      111,
+      114,
+      107,
+      32,
+      65,
+      110,
+      121,
+      119,
+      104,
+      101,
+      114,
+      101,
+      45,
+      72,
+      97,
+      114,
+      110,
+      101,
+      115,
+      115,
+      32,
+      83,
+      111,
+      99,
+      105,
+      97,
+      108,
+      32,
+      77,
+      101,
+      100,
+      105,
+      97,
+      59,
+      59
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/business-card-1.png",
+    "inputPath": "test-data/images/business-card-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 241.5,
+        "y": 513.5
+      },
+      "topLeft": {
+        "x": 245.5,
+        "y": 423.5
+      },
+      "topRight": {
+        "x": 331.5,
+        "y": 422.5
+      }
+    },
+    "name": "business-card-1.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/business-card-3.png",
+    "decodedBytes": [
+      66,
+      69,
+      71,
+      73,
+      78,
+      58,
+      86,
+      67,
+      65,
+      82,
+      68,
+      10,
+      78,
+      58,
+      87,
+      105,
+      108,
+      107,
+      105,
+      110,
+      115,
+      111,
+      110,
+      59,
+      80,
+      97,
+      117,
+      108,
+      10,
+      84,
+      69,
+      76,
+      58,
+      48,
+      50,
+      48,
+      32,
+      56,
+      56,
+      53,
+      56,
+      32,
+      49,
+      49,
+      48,
+      52,
+      10,
+      69,
+      77,
+      65,
+      73,
+      76,
+      58,
+      112,
+      97,
+      117,
+      108,
+      46,
+      119,
+      105,
+      108,
+      107,
+      105,
+      110,
+      115,
+      111,
+      110,
+      64,
+      112,
+      119,
+      99,
+      111,
+      109,
+      46,
+      99,
+      111,
+      46,
+      117,
+      107,
+      10,
+      79,
+      82,
+      71,
+      58,
+      112,
+      119,
+      99,
+      111,
+      109,
+      46,
+      99,
+      111,
+      46,
+      117,
+      107,
+      32,
+      76,
+      105,
+      109,
+      105,
+      116,
+      101,
+      100,
+      10,
+      84,
+      73,
+      84,
+      76,
+      69,
+      58,
+      68,
+      114,
+      10,
+      65,
+      68,
+      82,
+      58,
+      51,
+      51,
+      32,
+      71,
+      108,
+      101,
+      110,
+      108,
+      117,
+      99,
+      101,
+      32,
+      82,
+      111,
+      97,
+      100,
+      44,
+      32,
+      76,
+      111,
+      110,
+      100,
+      111,
+      110,
+      32,
+      83,
+      69,
+      51,
+      32,
+      55,
+      83,
+      68,
+      10,
+      85,
+      82,
+      76,
+      58,
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      119,
+      119,
+      119,
+      46,
+      112,
+      119,
+      99,
+      111,
+      109,
+      46,
+      99,
+      111,
+      46,
+      117,
+      107,
+      10,
+      86,
+      69,
+      82,
+      83,
+      73,
+      79,
+      78,
+      58,
+      51,
+      46,
+      48,
+      10,
+      69,
+      78,
+      68,
+      58,
+      86,
+      67,
+      65,
+      82,
+      68
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/business-card-3.png",
+    "inputPath": "test-data/images/business-card-3.png",
+    "location": {
+      "bottomLeft": {
+        "x": 647,
+        "y": 190
+      },
+      "topLeft": {
+        "x": 642,
+        "y": 402
+      },
+      "topRight": {
+        "x": 431,
+        "y": 399
+      }
+    },
+    "name": "business-card-3.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/businss-card-2.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/businss-card-2.png",
+    "inputPath": "test-data/images/businss-card-2.png",
+    "location": {
+      "bottomLeft": {
+        "x": 175.5,
+        "y": 479.5
+      },
+      "topLeft": {
+        "x": 83.5,
+        "y": 445.5
+      },
+      "topRight": {
+        "x": 95.5,
+        "y": 372.5
+      }
+    },
+    "name": "businss-card-2.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/cache-flyer.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      99,
+      97,
+      99,
+      104,
+      101,
+      46,
+      111,
+      114,
+      103,
+      46,
+      104,
+      107,
+      47,
+      98,
+      108,
+      111,
+      103,
+      47,
+      115,
+      121,
+      112,
+      95,
+      115,
+      99,
+      104,
+      111,
+      111,
+      108,
+      95,
+      115,
+      116,
+      108,
+      111,
+      117,
+      105,
+      115,
+      47
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/cache-flyer.png",
+    "inputPath": "test-data/images/cache-flyer.png",
+    "location": {
+      "bottomLeft": {
+        "x": 92.5,
+        "y": 474
+      },
+      "topLeft": {
+        "x": 95,
+        "y": 345
+      },
+      "topRight": {
+        "x": 227,
+        "y": 345.5
+      }
+    },
+    "name": "cache-flyer.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/cgi.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      119,
+      119,
+      119,
+      46,
+      110,
+      111,
+      114,
+      101,
+      98,
+      98,
+      111,
+      46,
+      99,
+      111,
+      109
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/cgi.png",
+    "inputPath": "test-data/images/cgi.png",
+    "location": {
+      "bottomLeft": {
+        "x": 210,
+        "y": 335.5
+      },
+      "topLeft": {
+        "x": 210,
+        "y": 167.5
+      },
+      "topRight": {
+        "x": 367.5,
+        "y": 164
+      }
+    },
+    "name": "cgi.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/chevy-ad.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      98,
+      105,
+      116,
+      46,
+      108,
+      121,
+      47,
+      99,
+      122,
+      97,
+      105,
+      114,
+      98,
+      97,
+      103,
+      115
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/chevy-ad.png",
+    "inputPath": "test-data/images/chevy-ad.png",
+    "location": {
+      "bottomLeft": {
+        "x": 40,
+        "y": 230.5
+      },
+      "topLeft": {
+        "x": 28.5,
+        "y": 63
+      },
+      "topRight": {
+        "x": 205.5,
+        "y": 61.5
+      }
+    },
+    "name": "chevy-ad.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/cupake-5.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/cupake-5.png",
+    "location": null,
+    "name": "cupake-5.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/cupcake-1.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      101,
+      111,
+      108,
+      111,
+      113,
+      105,
+      46,
+      99,
+      111,
+      109,
+      47
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/cupcake-1.png",
+    "inputPath": "test-data/images/cupcake-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 160,
+        "y": 89.5
+      },
+      "topLeft": {
+        "x": 117,
+        "y": 153.9
+      },
+      "topRight": {
+        "x": 68.5,
+        "y": 110.625
+      }
+    },
+    "name": "cupcake-1.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/cupcake-2.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      101,
+      111,
+      108,
+      111,
+      113,
+      105,
+      46,
+      99,
+      111,
+      109,
+      47
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/cupcake-2.png",
+    "inputPath": "test-data/images/cupcake-2.png",
+    "location": {
+      "bottomLeft": {
+        "x": 104.5,
+        "y": 155.25
+      },
+      "topLeft": {
+        "x": 62.7,
+        "y": 104.5
+      },
+      "topRight": {
+        "x": 125.33333333333333,
+        "y": 51.666666666666664
+      }
+    },
+    "name": "cupcake-2.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/cupcake-3.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      101,
+      111,
+      108,
+      111,
+      113,
+      105,
+      46,
+      99,
+      111,
+      109,
+      47
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/cupcake-3.png",
+    "inputPath": "test-data/images/cupcake-3.png",
+    "location": {
+      "bottomLeft": {
+        "x": 75.5,
+        "y": 147
+      },
+      "topLeft": {
+        "x": 112.33333333333333,
+        "y": 63.666666666666664
+      },
+      "topRight": {
+        "x": 191.5,
+        "y": 86.16666666666667
+      }
+    },
+    "name": "cupcake-3.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/cupcake-4.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      101,
+      111,
+      108,
+      111,
+      113,
+      105,
+      46,
+      99,
+      111,
+      109,
+      47,
+      116
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/cupcake-4.png",
+    "inputPath": "test-data/images/cupcake-4.png",
+    "location": {
+      "bottomLeft": {
+        "x": 89.5,
+        "y": 139.5
+      },
+      "topLeft": {
+        "x": 180,
+        "y": 90.7
+      },
+      "topRight": {
+        "x": 220.625,
+        "y": 190.6875
+      }
+    },
+    "name": "cupcake-4.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/damaged.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/damaged.png",
+    "location": {
+      "bottomLeft": {
+        "x": 340.5,
+        "y": 8.5
+      },
+      "topLeft": {
+        "x": 706,
+        "y": 294
+      },
+      "topRight": {
+        "x": 586,
+        "y": 702.5
+      }
+    },
+    "name": "damaged.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/emblem-patch.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      112,
+      56,
+      116,
+      46,
+      99,
+      104,
+      47,
+      50,
+      53,
+      113,
+      54,
+      107
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/emblem-patch.png",
+    "inputPath": "test-data/images/emblem-patch.png",
+    "location": {
+      "bottomLeft": {
+        "x": 189.5,
+        "y": 587.75
+      },
+      "topLeft": {
+        "x": 192,
+        "y": 427.14285714285717
+      },
+      "topRight": {
+        "x": 348,
+        "y": 428.5
+      }
+    },
+    "name": "emblem-patch.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/hk-ikea.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/hk-ikea.png",
+    "location": {
+      "bottomLeft": {
+        "x": 258,
+        "y": 390.5
+      },
+      "topLeft": {
+        "x": 378.5,
+        "y": 177.5
+      },
+      "topRight": {
+        "x": 417,
+        "y": 135.5
+      }
+    },
+    "name": "hk-ikea.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/hudson-highlands-state-park.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      111,
+      111,
+      46,
+      98,
+      121,
+      47,
+      119,
+      107,
+      69,
+      116,
+      99,
+      111
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/hudson-highlands-state-park.png",
+    "inputPath": "test-data/images/hudson-highlands-state-park.png",
+    "location": {
+      "bottomLeft": {
+        "x": 218.5,
+        "y": 438
+      },
+      "topLeft": {
+        "x": 216,
+        "y": 276
+      },
+      "topRight": {
+        "x": 389.5,
+        "y": 268
+      }
+    },
+    "name": "hudson-highlands-state-park.png",
+    "successful": true
+  },
+  {
     "binarizedPath": "test-data/AUTOGEN/binarized/issue-14-regression.png",
     "decodedBytes": null,
     "extractedPath": null,
@@ -21465,5 +22896,1216 @@
     },
     "name": "issue-34-regression.png",
     "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/japan-visa.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/japan-visa.png",
+    "location": null,
+    "name": "japan-visa.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/japanese-jean-ad.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/japanese-jean-ad.png",
+    "location": null,
+    "name": "japanese-jean-ad.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/key-flyer.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/key-flyer.png",
+    "inputPath": "test-data/images/key-flyer.png",
+    "location": {
+      "bottomLeft": {
+        "x": 416,
+        "y": 222
+      },
+      "topLeft": {
+        "x": 455,
+        "y": 50.5
+      },
+      "topRight": {
+        "x": 657,
+        "y": 102
+      }
+    },
+    "name": "key-flyer.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/museum-1.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      98,
+      105,
+      116,
+      46,
+      108,
+      121,
+      47,
+      100,
+      73,
+      101,
+      98,
+      83,
+      120,
+      63,
+      114,
+      61,
+      113,
+      114
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/museum-1.png",
+    "inputPath": "test-data/images/museum-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 614.5,
+        "y": 424.5
+      },
+      "topLeft": {
+        "x": 613,
+        "y": 363
+      },
+      "topRight": {
+        "x": 676.5,
+        "y": 361
+      }
+    },
+    "name": "museum-1.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/museum-2.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/museum-2.png",
+    "location": null,
+    "name": "museum-2.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/paper-flyer.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      98,
+      105,
+      116,
+      46,
+      108,
+      121,
+      47,
+      103,
+      108,
+      52,
+      88,
+      74,
+      73,
+      63,
+      114,
+      61,
+      113,
+      114
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/paper-flyer.png",
+    "inputPath": "test-data/images/paper-flyer.png",
+    "location": {
+      "bottomLeft": {
+        "x": 256.5,
+        "y": 652
+      },
+      "topLeft": {
+        "x": 257.5,
+        "y": 598.5
+      },
+      "topRight": {
+        "x": 312,
+        "y": 601.5
+      }
+    },
+    "name": "paper-flyer.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/pepsi-bottle.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/pepsi-bottle.png",
+    "location": null,
+    "name": "pepsi-bottle.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/ring.png",
+    "decodedBytes": [
+      81,
+      82,
+      105,
+      110,
+      103,
+      32,
+      111,
+      110,
+      32,
+      119,
+      119,
+      119,
+      46,
+      102,
+      108,
+      117,
+      105,
+      100,
+      45,
+      102,
+      111,
+      114,
+      109,
+      115,
+      46,
+      99,
+      111,
+      109
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/ring.png",
+    "inputPath": "test-data/images/ring.png",
+    "location": {
+      "bottomLeft": {
+        "x": 414.5,
+        "y": 407
+      },
+      "topLeft": {
+        "x": 309.8125,
+        "y": 356.4375
+      },
+      "topRight": {
+        "x": 391.7,
+        "y": 238.1
+      }
+    },
+    "name": "ring.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/schiller-denkmal.png",
+    "decodedBytes": [
+      119,
+      119,
+      119,
+      46,
+      107,
+      117,
+      110,
+      115,
+      116,
+      45,
+      105,
+      110,
+      45,
+      102,
+      102,
+      109,
+      46,
+      100,
+      101,
+      47,
+      109,
+      111,
+      98,
+      105,
+      108,
+      101,
+      47,
+      111,
+      98,
+      106,
+      50,
+      57,
+      56,
+      46,
+      104,
+      116,
+      109,
+      108
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/schiller-denkmal.png",
+    "inputPath": "test-data/images/schiller-denkmal.png",
+    "location": {
+      "bottomLeft": {
+        "x": 536.5,
+        "y": 343
+      },
+      "topLeft": {
+        "x": 536,
+        "y": 260.5
+      },
+      "topRight": {
+        "x": 632,
+        "y": 260.5
+      }
+    },
+    "name": "schiller-denkmal.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/school-flyer.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/school-flyer.png",
+    "location": {
+      "bottomLeft": {
+        "x": 218.5,
+        "y": 552
+      },
+      "topLeft": {
+        "x": 192.5,
+        "y": 308
+      },
+      "topRight": {
+        "x": 715.5,
+        "y": 140.5
+      }
+    },
+    "name": "school-flyer.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/sd-card-1.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      105,
+      102,
+      46,
+      103,
+      115,
+      47,
+      49,
+      66,
+      71,
+      73,
+      74,
+      51,
+      55
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/sd-card-1.png",
+    "inputPath": "test-data/images/sd-card-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 300,
+        "y": 362.5
+      },
+      "topLeft": {
+        "x": 209.21428571428572,
+        "y": 261.42857142857144
+      },
+      "topRight": {
+        "x": 309.8,
+        "y": 169.8
+      }
+    },
+    "name": "sd-card-1.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/sd-card-2.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      105,
+      102,
+      46,
+      103,
+      115,
+      47,
+      49,
+      66,
+      71,
+      73,
+      74,
+      51,
+      55
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/sd-card-2.png",
+    "inputPath": "test-data/images/sd-card-2.png",
+    "location": {
+      "bottomLeft": {
+        "x": 229,
+        "y": 265.5
+      },
+      "topLeft": {
+        "x": 232,
+        "y": 205
+      },
+      "topRight": {
+        "x": 302,
+        "y": 205.5
+      }
+    },
+    "name": "sd-card-2.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/sheep.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/sheep.png",
+    "inputPath": "test-data/images/sheep.png",
+    "location": {
+      "bottomLeft": {
+        "x": 69,
+        "y": 103
+      },
+      "topLeft": {
+        "x": 69,
+        "y": 77.5
+      },
+      "topRight": {
+        "x": 98,
+        "y": 77.5
+      }
+    },
+    "name": "sheep.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/sidewalk.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/sidewalk.png",
+    "location": null,
+    "name": "sidewalk.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/square-des-fusilles.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      108,
+      45,
+      51,
+      56,
+      46,
+      102,
+      114,
+      47,
+      108,
+      53
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/square-des-fusilles.png",
+    "inputPath": "test-data/images/square-des-fusilles.png",
+    "location": {
+      "bottomLeft": {
+        "x": 551.5,
+        "y": 354.5
+      },
+      "topLeft": {
+        "x": 551,
+        "y": 272.5
+      },
+      "topRight": {
+        "x": 634,
+        "y": 272
+      }
+    },
+    "name": "square-des-fusilles.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/starbucks-app.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/starbucks-app.png",
+    "location": null,
+    "name": "starbucks-app.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-1.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/stickerbook-1.png",
+    "location": null,
+    "name": "stickerbook-1.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-2.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/stickerbook-2.png",
+    "location": null,
+    "name": "stickerbook-2.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-3.png",
+    "decodedBytes": [
+      68,
+      97,
+      110,
+      32,
+      66,
+      117,
+      114,
+      122,
+      121,
+      110,
+      115,
+      107,
+      105,
+      32,
+      60,
+      99,
+      111,
+      110,
+      116,
+      97,
+      120,
+      64,
+      112,
+      104,
+      114,
+      101,
+      110,
+      101,
+      116,
+      105,
+      99,
+      46,
+      111,
+      114,
+      103,
+      62
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-3.png",
+    "inputPath": "test-data/images/stickerbook-3.png",
+    "location": {
+      "bottomLeft": {
+        "x": 209,
+        "y": 414.6666666666667
+      },
+      "topLeft": {
+        "x": 192,
+        "y": 368.5
+      },
+      "topRight": {
+        "x": 243,
+        "y": 352.5
+      }
+    },
+    "name": "stickerbook-3.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-4.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/stickerbook-4.png",
+    "location": null,
+    "name": "stickerbook-4.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-5.png",
+    "decodedBytes": [
+      68,
+      97,
+      110,
+      32,
+      66,
+      117,
+      114,
+      122,
+      121,
+      110,
+      115,
+      107,
+      105,
+      32,
+      60,
+      99,
+      111,
+      110,
+      116,
+      97,
+      120,
+      64,
+      112,
+      104,
+      114,
+      101,
+      110,
+      101,
+      116,
+      105,
+      99,
+      46,
+      111,
+      114,
+      103,
+      62
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-5.png",
+    "inputPath": "test-data/images/stickerbook-5.png",
+    "location": {
+      "bottomLeft": {
+        "x": 272,
+        "y": 308
+      },
+      "topLeft": {
+        "x": 254.75,
+        "y": 268.75
+      },
+      "topRight": {
+        "x": 300.5,
+        "y": 256
+      }
+    },
+    "name": "stickerbook-5.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-6.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/stickerbook-6.png",
+    "location": null,
+    "name": "stickerbook-6.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/subway-station.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/subway-station.png",
+    "location": {
+      "bottomLeft": {
+        "x": 223,
+        "y": 200
+      },
+      "topLeft": {
+        "x": 335.5,
+        "y": 86.5
+      },
+      "topRight": {
+        "x": 741,
+        "y": 209.5
+      }
+    },
+    "name": "subway-station.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/tattoo-scan.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      119,
+      119,
+      119,
+      46,
+      98,
+      97,
+      114,
+      99,
+      111,
+      100,
+      101,
+      97,
+      114,
+      116,
+      46,
+      99,
+      111,
+      109
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/tattoo-scan.png",
+    "inputPath": "test-data/images/tattoo-scan.png",
+    "location": {
+      "bottomLeft": {
+        "x": 141,
+        "y": 165.5
+      },
+      "topLeft": {
+        "x": 134.5,
+        "y": 98.5
+      },
+      "topRight": {
+        "x": 201.5,
+        "y": 92.5
+      }
+    },
+    "name": "tattoo-scan.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-1.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-1.png",
+    "inputPath": "test-data/images/trackable-book-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 457.375,
+        "y": 168.75
+      },
+      "topLeft": {
+        "x": 411.5,
+        "y": 206.5
+      },
+      "topRight": {
+        "x": 399,
+        "y": 149.5
+      }
+    },
+    "name": "trackable-book-1.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-2.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/trackable-book-2.png",
+    "location": null,
+    "name": "trackable-book-2.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-3.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      105,
+      102,
+      46,
+      103,
+      115,
+      47,
+      49,
+      80,
+      71,
+      50,
+      82,
+      57,
+      67
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-3.png",
+    "inputPath": "test-data/images/trackable-book-3.png",
+    "location": {
+      "bottomLeft": {
+        "x": 135,
+        "y": 259
+      },
+      "topLeft": {
+        "x": 146.5,
+        "y": 217.5
+      },
+      "topRight": {
+        "x": 198.5,
+        "y": 238
+      }
+    },
+    "name": "trackable-book-3.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-4.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/trackable-book-4.png",
+    "location": null,
+    "name": "trackable-book-4.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-5.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/trackable-book-5.png",
+    "location": null,
+    "name": "trackable-book-5.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-6.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      105,
+      102,
+      46,
+      103,
+      115,
+      47,
+      51,
+      88,
+      65,
+      74,
+      75,
+      86,
+      71
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-6.png",
+    "inputPath": "test-data/images/trackable-book-6.png",
+    "location": {
+      "bottomLeft": {
+        "x": 104.5,
+        "y": 368.1666666666667
+      },
+      "topLeft": {
+        "x": 117,
+        "y": 321
+      },
+      "topRight": {
+        "x": 172.5,
+        "y": 342.25
+      }
+    },
+    "name": "trackable-book-6.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/tree-1.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      110,
+      108,
+      46,
+      113,
+      114,
+      119,
+      112,
+      46,
+      111,
+      114,
+      103,
+      47,
+      86,
+      108,
+      101,
+      99,
+      104,
+      116,
+      104,
+      101,
+      103,
+      37,
+      48,
+      65
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/tree-1.png",
+    "inputPath": "test-data/images/tree-1.png",
+    "location": {
+      "bottomLeft": {
+        "x": 282,
+        "y": 449.5
+      },
+      "topLeft": {
+        "x": 285.5,
+        "y": 386
+      },
+      "topRight": {
+        "x": 350,
+        "y": 390.5
+      }
+    },
+    "name": "tree-1.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/tree-2.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/tree-2.png",
+    "location": null,
+    "name": "tree-2.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/videogame-frame.png",
+    "decodedBytes": null,
+    "extractedPath": null,
+    "inputPath": "test-data/images/videogame-frame.png",
+    "location": {
+      "bottomLeft": {
+        "x": 183,
+        "y": 315
+      },
+      "topLeft": {
+        "x": 170.5,
+        "y": 102
+      },
+      "topRight": {
+        "x": 381,
+        "y": 91
+      }
+    },
+    "name": "videogame-frame.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/weekend-tirana-2016-agenda.png",
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      115,
+      58,
+      47,
+      47,
+      115,
+      113,
+      46,
+      119,
+      105,
+      107,
+      105,
+      112,
+      101,
+      100,
+      105,
+      97,
+      46,
+      111,
+      114,
+      103,
+      47,
+      119,
+      105,
+      107,
+      105,
+      47,
+      87,
+      105,
+      107,
+      105,
+      112,
+      101,
+      100,
+      105,
+      97,
+      58,
+      87,
+      105,
+      107,
+      105,
+      95,
+      87,
+      101,
+      101,
+      107,
+      101,
+      110,
+      100,
+      95,
+      84,
+      105,
+      114,
+      97,
+      110,
+      97,
+      95,
+      50,
+      48,
+      49,
+      54,
+      47,
+      80,
+      114,
+      111,
+      103,
+      114,
+      97,
+      109,
+      105
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/weekend-tirana-2016-agenda.png",
+    "inputPath": "test-data/images/weekend-tirana-2016-agenda.png",
+    "location": {
+      "bottomLeft": {
+        "x": 360,
+        "y": 363
+      },
+      "topLeft": {
+        "x": 355.5,
+        "y": 208
+      },
+      "topRight": {
+        "x": 483,
+        "y": 207
+      }
+    },
+    "name": "weekend-tirana-2016-agenda.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/windows-screenshot.png",
+    "decodedBytes": [
+      87,
+      101,
+      108,
+      108,
+      32,
+      100,
+      111,
+      110,
+      101,
+      44,
+      32,
+      121,
+      111,
+      117,
+      32,
+      104,
+      97,
+      118,
+      101,
+      32,
+      102,
+      111,
+      117,
+      110,
+      100,
+      32,
+      111,
+      110,
+      101,
+      32,
+      111,
+      102,
+      32,
+      109,
+      97,
+      110,
+      121,
+      32,
+      115,
+      101,
+      99,
+      114,
+      101,
+      116,
+      115,
+      46,
+      32,
+      71,
+      111,
+      32,
+      116,
+      111,
+      32,
+      119,
+      119,
+      119,
+      46,
+      97,
+      114,
+      107,
+      97,
+      100,
+      105,
+      97,
+      102,
+      111,
+      114,
+      117,
+      109,
+      46,
+      99,
+      111,
+      109,
+      32,
+      97,
+      110,
+      100,
+      32,
+      113,
+      117,
+      111,
+      116,
+      101,
+      32,
+      34,
+      73,
+      32,
+      102,
+      111,
+      117,
+      110,
+      100,
+      32,
+      116,
+      104,
+      101,
+      32,
+      115,
+      101,
+      99,
+      114,
+      101,
+      116,
+      32,
+      97,
+      110,
+      100,
+      32,
+      109,
+      121,
+      32,
+      97,
+      100,
+      118,
+      101,
+      110,
+      116,
+      117,
+      114,
+      101,
+      32,
+      115,
+      116,
+      97,
+      114,
+      116,
+      115,
+      32,
+      110,
+      111,
+      119,
+      34,
+      46,
+      32,
+      68,
+      79,
+      32,
+      78,
+      79,
+      84,
+      32,
+      83,
+      72,
+      65,
+      82,
+      69,
+      32,
+      87,
+      73,
+      84,
+      72,
+      32,
+      65,
+      78,
+      89,
+      79,
+      78,
+      69,
+      32,
+      65,
+      84,
+      32,
+      87,
+      72,
+      69,
+      82,
+      69,
+      32,
+      89,
+      79,
+      85,
+      32,
+      70,
+      79,
+      85,
+      78,
+      68,
+      32,
+      84,
+      72,
+      73,
+      83,
+      32,
+      77,
+      69,
+      83,
+      83,
+      65,
+      71,
+      69,
+      33,
+      10,
+      10
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/windows-screenshot.png",
+    "inputPath": "test-data/images/windows-screenshot.png",
+    "location": {
+      "bottomLeft": {
+        "x": 77,
+        "y": 558
+      },
+      "topLeft": {
+        "x": 69,
+        "y": 150
+      },
+      "topRight": {
+        "x": 484,
+        "y": 153
+      }
+    },
+    "name": "windows-screenshot.png",
+    "successful": true
   }
 ]
