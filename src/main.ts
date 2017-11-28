@@ -1,4 +1,3 @@
-/// <reference path="./common/types.d.ts" />
 import {binarize} from "./detector/binarizer";
 import {locate} from "./detector/locator";
 import {extract} from "./detector/extractor";

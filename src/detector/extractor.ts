@@ -1,345 +1,110 @@
-/// <reference path="../common/types.d.ts" />
-import {findAlignment} from "./alignment_finder";
-import {transformPoints, quadrilateralToQuadrilateral} from "./perspective_transform";
-import {Version, getVersionForNumber} from "../common/version";
 import {BitMatrix} from "../common/bitmatrix";
-import {isNaN} from "../common/helpers";
+import { QRLocation } from "./locator";
 
-function checkAndNudgePoints(width: number, height: number, points: Float32Array): Float32Array {
-  // Check and nudge points from start until we see some that are OK:
-  var nudged = true;
-  for (var offset = 0; offset < points.length && nudged; offset += 2) {
-    var x = Math.floor(points[offset]);
-    var y = Math.floor(points[offset + 1]);
-    if (x < -1 || x > width || y < -1 || y > height) {
-      throw new Error();
-    }
-    nudged = false;
-    if (x == -1) {
-      points[offset] = 0;
-      nudged = true;
-    } else if (x == width) {
-      points[offset] = width - 1;
-      nudged = true;
-    }
-    if (y == -1) {
-      points[offset + 1] = 0;
-      nudged = true;
-    } else if (y == height) {
-      points[offset + 1] = height - 1;
-      nudged = true;
-    }
-  }
-  // Check and nudge points from end:
-  nudged = true;
-  for (var offset = points.length - 2; offset >= 0 && nudged; offset -= 2) {
-    var x = Math.floor(points[offset]);
-    var y = Math.floor(points[offset + 1]);
-    if (x < -1 || x > width || y < -1 || y > height) {
-      throw new Error();
-    }
-    nudged = false;
-    if (x == -1) {
-      points[offset] = 0
-      nudged = true;
-    } else if (x == width) {
-      points[offset] = width - 1;
-      nudged = true;
-    }
-    if (y == -1) {
-      points[offset + 1] = 0;
-      nudged = true;
-    } else if (y == height) {
-      points[offset + 1] = height - 1;
-      nudged = true;
-    }
-  }
-  return points;
+interface Point {
+  x: number;
+  y: number;
 }
 
-function bitArrayFromImage(image: BitMatrix, dimension: number, transform: PerspectiveTransform): BitMatrix {
-  if (dimension <= 0) {
-    return null;
-  }
-  var bits = BitMatrix.createEmpty(dimension, dimension);
-  var points = new Float32Array(dimension << 1);
-  for (var y = 0; y < dimension; y++) {
-    var max = points.length;
-    var iValue = y + 0.5;
-    for (var x = 0; x < max; x += 2) {
-      points[x] = (x >> 1) + 0.5;
-      points[x + 1] = iValue;
-    }
-    points = transformPoints(transform, points);
-    // Quick check to see if points transformed to something inside the image;
-    // sufficient to check the endpoints
-    try {
-      var nudgedPoints = checkAndNudgePoints(image.width, image.height, points)
-    } catch (e) {
-      return null;
-    }
-    // try {
-    for (var x = 0; x < max; x += 2) {
-      bits.set(x >> 1, y, image.get(Math.floor(nudgedPoints[x]), Math.floor(nudgedPoints[x + 1])));
-    }
-    // }
-    // catch (e) {
-    //   // This feels wrong, but, sometimes if the finder patterns are misidentified, the resulting
-    //   // transform gets "twisted" such that it maps a straight line of points to a set of points
-    //   // whose endpoints are in bounds, but others are not. There is probably some mathematical
-    //   // way to detect this about the transformation that I don't know yet.
-    //   // This results in an ugly runtime exception despite our clever checks above -- can't have
-    //   // that. We could check each point's coordinates but that feels duplicative. We settle for
-    //   // catching and wrapping ArrayIndexOutOfBoundsException.
-    //   return null;
-    // }
-  }
-  return bits;
+interface PerspectiveTransform {
+  a11: number;
+  a21: number;
+  a31: number;
+  a12: number;
+  a22: number;
+  a32: number;
+  a13: number;
+  a23: number;
+  a33: number;
 }
 
-function createTransform(topLeft: Point, topRight: Point, bottomLeft: Point, alignmentPattern: Point, dimension: number) {
-  var dimMinusThree = dimension - 3.5;
-  var bottomRightX: number;
-  var bottomRightY: number;
-  var sourceBottomRightX: number;
-  var sourceBottomRightY: number;
-  if (alignmentPattern != null) {
-    bottomRightX = alignmentPattern.x;
-    bottomRightY = alignmentPattern.y;
-    sourceBottomRightX = sourceBottomRightY = dimMinusThree - 3;
+function squareToQuadrilateral(p1: Point, p2: Point, p3: Point, p4: Point): PerspectiveTransform {
+  const dx3 = p1.x - p2.x + p3.x - p4.x;
+  const dy3 = p1.y - p2.y + p3.y - p4.y;
+  if (dx3 === 0 && dy3 === 0) { // Affine
+    return {
+      a11: p2.x - p1.x,
+      a12: p2.y - p1.y,
+      a13: 0,
+      a21: p3.x - p2.x,
+      a22: p3.y - p2.y,
+      a23: 0,
+      a31: p1.x,
+      a32: p1.y,
+      a33: 1,
+    };
   } else {
-    // Don't have an alignment pattern, just make up the bottom-right point
-    bottomRightX = (topRight.x - topLeft.x) + bottomLeft.x;
-    bottomRightY = (topRight.y - topLeft.y) + bottomLeft.y;
-    sourceBottomRightX = sourceBottomRightY = dimMinusThree;
+    const dx1 = p2.x - p3.x;
+    const dx2 = p4.x - p3.x;
+    const dy1 = p2.y - p3.y;
+    const dy2 = p4.y - p3.y;
+    const denominator = dx1 * dy2 - dx2 * dy1;
+    const a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
+    const a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
+    return {
+      a11: p2.x - p1.x + a13 * p2.x,
+      a12: p2.y - p1.y + a13 * p2.y,
+      a13,
+      a21: p4.x - p1.x + a23 * p4.x,
+      a22: p4.y - p1.y + a23 * p4.y,
+      a23,
+      a31: p1.x,
+      a32: p1.y,
+      a33: 1,
+    };
   }
-
-  return quadrilateralToQuadrilateral(
-    3.5,
-    3.5,
-    dimMinusThree,
-    3.5,
-    sourceBottomRightX,
-    sourceBottomRightY,
-    3.5,
-    dimMinusThree,
-    topLeft.x,
-    topLeft.y,
-    topRight.x,
-    topRight.y,
-    bottomRightX,
-    bottomRightY,
-    bottomLeft.x,
-    bottomLeft.y
-  );
 }
 
-// Taken from 6th grade algebra
-function distance(x1: number, y1: number, x2: number, y2: number) {
-  return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+function quadrilateralToSquare(p1: Point, p2: Point, p3: Point, p4: Point): PerspectiveTransform {
+  // Here, the adjoint serves as the inverse:
+  const sToQ = squareToQuadrilateral(p1, p2, p3, p4);
+  return {
+    a11: sToQ.a22 * sToQ.a33 - sToQ.a23 * sToQ.a32,
+    a12: sToQ.a13 * sToQ.a32 - sToQ.a12 * sToQ.a33,
+    a13: sToQ.a12 * sToQ.a23 - sToQ.a13 * sToQ.a22,
+    a21: sToQ.a23 * sToQ.a31 - sToQ.a21 * sToQ.a33,
+    a22: sToQ.a11 * sToQ.a33 - sToQ.a13 * sToQ.a31,
+    a23: sToQ.a13 * sToQ.a21 - sToQ.a11 * sToQ.a23,
+    a31: sToQ.a21 * sToQ.a32 - sToQ.a22 * sToQ.a31,
+    a32: sToQ.a12 * sToQ.a31 - sToQ.a11 * sToQ.a32,
+    a33: sToQ.a11 * sToQ.a22 - sToQ.a12 * sToQ.a21,
+  };
 }
 
-// Attempts to locate an alignment pattern in a limited region of the image, which is guessed to contain it.
-// overallEstModuleSize - estimated module size so far
-// estAlignmentX        - coordinate of center of area probably containing alignment pattern
-// estAlignmentY        - y coordinate of above</param>
-// allowanceFactor      - number of pixels in all directions to search from the center</param>
-function findAlignmentInRegion(overallEstModuleSize: number, estAlignmentX: number, estAlignmentY: number, allowanceFactor: number, image: BitMatrix) {
-  estAlignmentX = Math.floor(estAlignmentX)
-  estAlignmentY = Math.floor(estAlignmentY)
-  // Look for an alignment pattern (3 modules in size) around where it should be
-  var allowance = Math.floor(allowanceFactor * overallEstModuleSize);
-  var alignmentAreaLeftX = Math.max(0, estAlignmentX - allowance);
-  var alignmentAreaRightX = Math.min(image.width, estAlignmentX + allowance);
-  if (alignmentAreaRightX - alignmentAreaLeftX < overallEstModuleSize * 3) {
-    return null;
-  }
-
-  var alignmentAreaTopY = Math.max(0, estAlignmentY - allowance);
-  var alignmentAreaBottomY = Math.min(image.height - 1, estAlignmentY + allowance);
-
-  return findAlignment(alignmentAreaLeftX, alignmentAreaTopY, alignmentAreaRightX - alignmentAreaLeftX, alignmentAreaBottomY - alignmentAreaTopY, overallEstModuleSize, image);
-}
-
-// Computes the dimension (number of modules on a size) of the QR Code based on the position of the finder
-// patterns and estimated module size.
-function computeDimension(topLeft: Point, topRight: Point, bottomLeft: Point, moduleSize: number) {
-  var tltrCentersDimension = Math.round(distance(topLeft.x, topLeft.y, topRight.x, topRight.y) / moduleSize);
-  var tlblCentersDimension = Math.round(distance(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y) / moduleSize);
-  var dimension = ((tltrCentersDimension + tlblCentersDimension) >> 1) + 7;
-  switch (dimension & 0x03) {
-    // mod 4
-    case 0:
-      dimension++;
-      break;
-    // 1? do nothing
-    case 2:
-      dimension--;
-      break;
-  }
-  return dimension;
-}
-
-// Deduces version information purely from QR Code dimensions.
-// http://chan.catiewayne.com/z/src/131044167276.jpg
-function getProvisionalVersionForDimension(dimension: number) {
-  if (dimension % 4 != 1) {
-    return null;
-  }
-  var versionNumber = (dimension - 17) >> 2;
-  if (versionNumber < 1 || versionNumber > 40) {
-    return null;
-  }
-  return getVersionForNumber(versionNumber);
-}
-
-// This method traces a line from a point in the image, in the direction towards another point.
-// It begins in a black region, and keeps going until it finds white, then black, then white again.
-// It reports the distance from the start to this point.</p>
-//
-// This is used when figuring out how wide a finder pattern is, when the finder pattern
-// may be skewed or rotated.
-function sizeOfBlackWhiteBlackRun(fromX: number, fromY: number, toX: number, toY: number, image: BitMatrix) {
-  fromX = Math.floor(fromX)
-  fromY = Math.floor(fromY)
-  toX = Math.floor(toX)
-  toY = Math.floor(toY)
-  // Mild variant of Bresenham's algorithm;
-  // see http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-  var steep = Math.abs(toY - fromY) > Math.abs(toX - fromX);
-  if (steep) {
-    var temp = fromX;
-    fromX = fromY;
-    fromY = temp;
-    temp = toX;
-    toX = toY;
-    toY = temp;
-  }
-  var dx = Math.abs(toX - fromX);
-  var dy = Math.abs(toY - fromY);
-  var error = -dx >> 1;
-  var xstep = fromX < toX ? 1 : -1;
-  var ystep = fromY < toY ? 1 : -1;
-
-  // In black pixels, looking for white, first or second time.
-  var state = 0;
-  // Loop up until x == toX, but not beyond
-  var xLimit = toX + xstep;
-  for (var x = fromX, y = fromY; x != xLimit; x += xstep) {
-    var realX = steep ? y : x;
-    var realY = steep ? x : y;
-    // Does current pixel mean we have moved white to black or vice versa?
-    // Scanning black in state 0,2 and white in state 1, so if we find the wrong
-    // color, advance to next state or end if we are in state 2 already
-    if ((state == 1) === image.get(realX, realY)) {
-      if (state == 2) {
-        return distance(x, y, fromX, fromY);
-      }
-      state++;
-    }
-    error += dy;
-    if (error > 0) {
-      if (y == toY) {
-        break;
-      }
-      y += ystep;
-      error -= dx;
-    }
-  }
-  // Found black-white-black; give the benefit of the doubt that the next pixel outside the image
-  // is "white" so this last point at (toX+xStep,toY) is the right ending. This is really a
-  // small approximation; (toX+xStep,toY+yStep) might be really correct. Ignore this.
-  if (state == 2) {
-    return distance(toX + xstep, toY, fromX, fromY);
-  }
-  // else we didn't find even black-white-black; no estimate is really possible
-  return NaN;
-}
-
-// Computes the total width of a finder pattern by looking for a black-white-black run from the center
-// in the direction of another point (another finder pattern center), and in the opposite direction too.
-function sizeOfBlackWhiteBlackRunBothWays(fromX: number, fromY: number, toX: number, toY: number, image: BitMatrix) {
-  var result = sizeOfBlackWhiteBlackRun(fromX, fromY, toX, toY, image);
-  // Now count other way -- don't run off image though of course
-  var scale = 1;
-  var otherToX = fromX - (toX - fromX);
-  if (otherToX < 0) {
-    scale = fromX / (fromX - otherToX);
-    otherToX = 0;
-  } else if (otherToX >= image.width) {
-    scale = (image.width - 1 - fromX) / (otherToX - fromX);
-    otherToX = image.width - 1;
-  }
-  var otherToY = (fromY - (toY - fromY) * scale);
-  scale = 1;
-  if (otherToY < 0) {
-    scale = fromY / (fromY - otherToY);
-    otherToY = 0;
-  } else if (otherToY >= image.height) {
-    scale = (image.height - 1 - fromY) / (otherToY - fromY);
-    otherToY = image.height - 1;
-  }
-  otherToX = (fromX + (otherToX - fromX) * scale);
-  result += sizeOfBlackWhiteBlackRun(fromX, fromY, otherToX, otherToY, image);
-  return result - 1 // -1 because we counted the middle pixel twice
-}
-
-function calculateModuleSizeOneWay(pattern: Point, otherPattern: Point, image: BitMatrix) {
-  var moduleSizeEst1 = sizeOfBlackWhiteBlackRunBothWays(pattern.x, pattern.y, otherPattern.x, otherPattern.y, image);
-  var moduleSizeEst2 = sizeOfBlackWhiteBlackRunBothWays(otherPattern.x, otherPattern.y, pattern.x, pattern.y, image);
-  if (isNaN(moduleSizeEst1)) {
-    return moduleSizeEst2 / 7;
-  }
-  if (isNaN(moduleSizeEst2)) {
-    return moduleSizeEst1 / 7;
-  }
-  // Average them, and divide by 7 since we've counted the width of 3 black modules,
-  // and 1 white and 1 black module on either side. Ergo, divide sum by 14.
-  return (moduleSizeEst1 + moduleSizeEst2) / 14;
-}
-
-// Computes an average estimated module size based on estimated derived from the positions of the three finder patterns.
-function calculateModuleSize(topLeft: Point, topRight: Point, bottomLeft: Point, image: BitMatrix) {
-  return (calculateModuleSizeOneWay(topLeft, topRight, image) + calculateModuleSizeOneWay(topLeft, bottomLeft, image)) / 2;
+function times(a: PerspectiveTransform, b: PerspectiveTransform): PerspectiveTransform {
+  return {
+    a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
+    a12: a.a12 * b.a11 + a.a22 * b.a12 + a.a32 * b.a13,
+    a13: a.a13 * b.a11 + a.a23 * b.a12 + a.a33 * b.a13,
+    a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
+    a22: a.a12 * b.a21 + a.a22 * b.a22 + a.a32 * b.a23,
+    a23: a.a13 * b.a21 + a.a23 * b.a22 + a.a33 * b.a23,
+    a31: a.a11 * b.a31 + a.a21 * b.a32 + a.a31 * b.a33,
+    a32: a.a12 * b.a31 + a.a22 * b.a32 + a.a32 * b.a33,
+    a33: a.a13 * b.a31 + a.a23 * b.a32 + a.a33 * b.a33,
+  };
 }
 
 export function extract(image: BitMatrix, location: QRLocation): BitMatrix {
-  var moduleSize = calculateModuleSize(location.topLeft, location.topRight, location.bottomLeft, image);
-  if (moduleSize < 1) {
-    return null;
-  }
-  var dimension = computeDimension(location.topLeft, location.topRight, location.bottomLeft, moduleSize)
-  if (!dimension) {
-    return null;
-  }
-  var provisionalVersion = getProvisionalVersionForDimension(dimension);
-  if (provisionalVersion == null) {
-    return null;
-  }
-  var modulesBetweenFPCenters = provisionalVersion.getDimensionForVersion() - 7;
-  var alignmentPattern: Point = null;
-  // Anything above version 1 has an alignment pattern
-  if (provisionalVersion.alignmentPatternCenters.length > 0) {
-    // Guess where a "bottom right" finder pattern would have been
-    var bottomRightX = location.topRight.x - location.topLeft.x + location.bottomLeft.x;
-    var bottomRightY = location.topRight.y - location.topLeft.y + location.bottomLeft.y;
+  const qToS = quadrilateralToSquare(
+    {x: 3.5, y: 3.5},
+    {x: location.dimension - 3.5, y: 3.5},
+    {x: location.dimension - 6.5, y: location.dimension - 6.5},
+    {x: 3.5, y: location.dimension - 3.5},
+  );
+  const sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
+  const transform = times(sToQ, qToS);
 
-    // Estimate that alignment pattern is closer by 3 modules
-    // from "bottom right" to known top left location
-    var correctionToTopLeft = 1 - 3 / modulesBetweenFPCenters;
-    var estAlignmentX = location.topLeft.x + correctionToTopLeft * (bottomRightX - location.topLeft.x);
-    var estAlignmentY = location.topLeft.y + correctionToTopLeft * (bottomRightY - location.topLeft.y);
-    // Kind of arbitrary -- expand search radius before giving up
-    for (var i = 4; i <= 16; i <<= 1) {
-      alignmentPattern = findAlignmentInRegion(moduleSize, estAlignmentX, estAlignmentY, i, image);
-      if (!alignmentPattern) {
-        continue;
-      }
-      break;
+  const output = BitMatrix.createEmpty(location.dimension, location.dimension);
+  for (let y = 0; y < location.dimension; y++) {
+    for (let x = 0; x < location.dimension; x++) {
+      const xValue = x + 0.5;
+      const yValue = y + 0.5;
+      const denominator = transform.a13 * xValue + transform.a23 * yValue + transform.a33;
+      const sourceX = Math.floor((transform.a11 * xValue + transform.a21 * yValue + transform.a31) / denominator);
+      const sourceY = Math.floor((transform.a12 * xValue + transform.a22 * yValue + transform.a32) / denominator);
+      output.set(x, y, image.get(sourceX, sourceY));
     }
-    // If we didn't find alignment pattern... well try anyway without it
   }
-  var transform = createTransform(location.topLeft, location.topRight, location.bottomLeft, alignmentPattern, dimension);
-  return bitArrayFromImage(image, dimension, transform);
+  return output;
 }
-
