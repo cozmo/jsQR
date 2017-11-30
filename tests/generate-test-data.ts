@@ -18,6 +18,7 @@ import {locate} from "../src/detector/locator";
   const images = (await fs.readdir(path.join("test-data", "images"))).filter((n) => n.includes(".png"));
 
   const testCases: ITest[] = [];
+  const summary: { [key: string]: boolean } = {};
 
   for (const imagePath of images) {
     const test: ITest = {
@@ -48,8 +49,16 @@ import {locate} from "../src/detector/locator";
     } catch (e) {
       // failed to parse QR
     }
+    summary[test.name] = test.successful;
     testCases.push(test);
   }
+  await fs.writeFile(path.join("test-data", "AUTOGEN", "summary.json"), JSON.stringify({
+    counts: {
+      failed: testCases.filter((t) => !t.successful).length,
+      successful: testCases.filter((t) => t.successful).length,
+    },
+    tests: summary,
+  }, null, 2));
   await fs.writeFile(path.join("test-data", "AUTOGEN", "tests.json"), JSON.stringify(testCases, null, 2));
 })()).then(() => process.exit(0))
 .catch((e) => { throw e; });
