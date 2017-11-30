@@ -15682,54 +15682,6 @@
     "successful": true
   },
   {
-    "binarizedPath": "test-data/AUTOGEN/binarized/183.png",
-    "decodedBytes": [
-      104,
-      116,
-      116,
-      112,
-      58,
-      47,
-      47,
-      101,
-      110,
-      46,
-      109,
-      46,
-      119,
-      105,
-      107,
-      105,
-      112,
-      101,
-      100,
-      105,
-      97,
-      46,
-      111,
-      114,
-      103
-    ],
-    "extractedPath": "test-data/AUTOGEN/extracted/183.png",
-    "inputPath": "test-data/images/183.png",
-    "location": {
-      "bottomLeft": {
-        "x": 81.5,
-        "y": 215.5
-      },
-      "topLeft": {
-        "x": 82,
-        "y": 75.5
-      },
-      "topRight": {
-        "x": 221.5,
-        "y": 76
-      }
-    },
-    "name": "183.png",
-    "successful": true
-  },
-  {
     "binarizedPath": "test-data/AUTOGEN/binarized/184.png",
     "decodedBytes": [
       42,
@@ -22664,25 +22616,51 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/damaged.png",
-    "decodedBytes": null,
-    "extractedPath": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      101,
+      110,
+      46,
+      109,
+      46,
+      119,
+      105,
+      107,
+      105,
+      112,
+      101,
+      100,
+      105,
+      97,
+      46,
+      111,
+      114,
+      103
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/damaged.png",
     "inputPath": "test-data/images/damaged.png",
     "location": {
       "bottomLeft": {
-        "x": 340.5,
-        "y": 8.5
+        "x": 81.5,
+        "y": 215.5
       },
       "topLeft": {
-        "x": 706,
-        "y": 294
+        "x": 82,
+        "y": 75.5
       },
       "topRight": {
-        "x": 586,
-        "y": 702.5
+        "x": 221.5,
+        "y": 76
       }
     },
     "name": "damaged.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/emblem-patch.png",
