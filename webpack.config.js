@@ -1,12 +1,12 @@
 module.exports = {
-  entry: './src/Main.ts',
+  entry: './src/index.ts',
   output: {
     filename: './dist/jsQR.js',
     libraryTarget: 'umd',
     library: 'jsQR'
   },
   resolve: {
-    extensions: [".js", ".json", ".ts"]
+    extensions: [".ts"]
   },
   module: {
     rules: [

@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -87,8 +87,7 @@ var BitMatrix = /** @class */ (function () {
         this.data = data;
     }
     BitMatrix.createEmpty = function (width, height) {
-        var data = new Uint8ClampedArray(width * height);
-        return new BitMatrix(data, width);
+        return new BitMatrix(new Uint8ClampedArray(width * height), width);
     };
     BitMatrix.prototype.get = function (x, y) {
         if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
@@ -99,25 +98,10 @@ var BitMatrix = /** @class */ (function () {
     BitMatrix.prototype.set = function (x, y, v) {
         this.data[y * this.width + x] = v ? 1 : 0;
     };
-    BitMatrix.prototype.copyBit = function (x, y, versionBits) {
-        return this.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
-    };
-    BitMatrix.prototype.setRegion = function (left, top, width, height) {
-        var right = left + width;
-        var bottom = top + height;
-        for (var y = top; y < bottom; y++) {
-            for (var x = left; x < right; x++) {
-                this.set(x, y, true);
-            }
-        }
-    };
-    BitMatrix.prototype.mirror = function () {
-        for (var x = 0; x < this.width; x++) {
-            for (var y = x + 1; y < this.height; y++) {
-                if (this.get(x, y) != this.get(y, x)) {
-                    this.set(x, y, !this.get(x, y));
-                    this.set(y, x, !this.get(y, x));
-                }
+    BitMatrix.prototype.setRegion = function (left, top, width, height, v) {
+        for (var y = top; y < top + height; y++) {
+            for (var x = left; x < left + width; x++) {
+                this.set(x, y, !!v);
             }
         }
     };
@@ -133,88 +117,26 @@ exports.BitMatrix = BitMatrix;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var BITS_SET_IN_HALF_BYTE = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
-function numBitsDiffering(a, b) {
-    a ^= b; // a now has a 1 bit exactly where its bit differs with b's
-    // Count bits set quickly with a series of lookups:
-    return BITS_SET_IN_HALF_BYTE[a & 0x0F] +
-        BITS_SET_IN_HALF_BYTE[((a >> 4) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 8) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 12) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 16) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 20) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 24) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 28) & 0x0F)];
+var binarizer_1 = __webpack_require__(2);
+var decoder_1 = __webpack_require__(3);
+var extractor_1 = __webpack_require__(8);
+var locator_1 = __webpack_require__(9);
+// TODO - is this the name we want?
+function readQR(data, width, height) {
+    var binarized = binarizer_1.binarize(data, width, height);
+    var location = locator_1.locate(binarized);
+    if (!location) {
+        return null;
+    }
+    var extracted = extractor_1.extract(binarized, location);
+    var decoded = decoder_1.decode(extracted);
+    return null;
 }
-exports.numBitsDiffering = numBitsDiffering;
-// Taken from underscore JS
-function isNaN(obj) {
-    return Object.prototype.toString.call(obj) === '[object Number]' && obj !== +obj;
-}
-exports.isNaN = isNaN;
+exports.default = readQR;
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var binarizer_1 = __webpack_require__(3);
-var locator_1 = __webpack_require__(4);
-var extractor_1 = __webpack_require__(5);
-var decoder_1 = __webpack_require__(6);
-var bitmatrix_1 = __webpack_require__(0);
-var binarizeImage = binarizer_1.binarize;
-exports.binarizeImage = binarizeImage;
-var locateQRInBinaryImage = locator_1.locate;
-exports.locateQRInBinaryImage = locateQRInBinaryImage;
-var extractQRFromBinaryImage = extractor_1.extract;
-exports.extractQRFromBinaryImage = extractQRFromBinaryImage;
-function decodeQR(matrix) {
-    return byteArrayToString(decoder_1.decode(matrix));
-}
-exports.decodeQR = decodeQR;
-// return bytes.reduce((p, b) => p + String.fromCharCode(b), "");
-function byteArrayToString(bytes) {
-    var str = "";
-    if (bytes != null && bytes != undefined) {
-        for (var i = 0; i < bytes.length; i++) {
-            str += String.fromCharCode(bytes[i]);
-        }
-    }
-    return str;
-}
-function createBitMatrix(data, width) {
-    var intArr = new Uint8Array(data.length);
-    for (var i = 0; i < data.length; i++) {
-        intArr[i] = data[i] ? 1 : 0;
-    }
-    return new bitmatrix_1.BitMatrix(intArr, width);
-}
-exports.createBitMatrix = createBitMatrix;
-function decodeQRFromImage(data, width, height) {
-    return byteArrayToString(decodeQRFromImageAsByteArray(data, width, height));
-}
-exports.decodeQRFromImage = decodeQRFromImage;
-function decodeQRFromImageAsByteArray(data, width, height) {
-    var binarizedImage = binarizeImage(data, width, height);
-    var location = locator_1.locate(binarizedImage);
-    if (!location) {
-        return null;
-    }
-    var rawQR = extractor_1.extract(binarizedImage, location);
-    if (!rawQR) {
-        return null;
-    }
-    return decoder_1.decode(rawQR);
-}
-exports.decodeQRFromImageAsByteArray = decodeQRFromImageAsByteArray;
-
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -226,6 +148,7 @@ var MIN_DYNAMIC_RANGE = 24;
 function numBetween(value, min, max) {
     return value < min ? min : value > max ? max : value;
 }
+// Like BitMatrix but accepts arbitry Uint8 values
 var Matrix = /** @class */ (function () {
     function Matrix(width, height) {
         this.width = width;
@@ -321,455 +244,16 @@ exports.binarize = binarize;
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var MAX_FINDERPATTERNS_TO_SEARCH = 4;
-var MIN_QUAD_RATIO = 0.5;
-var MAX_QUAD_RATIO = 1.5;
-var distance = function (a, b) { return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2)); };
-function sum(values) {
-    return values.reduce(function (a, b) { return a + b; });
-}
-// Takes three finder patterns and organizes them into topLeft, topRight, etc
-function reorderFinderPatterns(pattern1, pattern2, pattern3) {
-    // Find distances between pattern centers
-    var oneTwoDistance = distance(pattern1, pattern2);
-    var twoThreeDistance = distance(pattern2, pattern3);
-    var oneThreeDistance = distance(pattern1, pattern3);
-    var bottomLeft;
-    var topLeft;
-    var topRight;
-    // Assume one closest to other two is B; A and C will just be guesses at first
-    if (twoThreeDistance >= oneTwoDistance && twoThreeDistance >= oneThreeDistance) {
-        _a = [pattern2, pattern1, pattern3], bottomLeft = _a[0], topLeft = _a[1], topRight = _a[2];
-    }
-    else if (oneThreeDistance >= twoThreeDistance && oneThreeDistance >= oneTwoDistance) {
-        _b = [pattern1, pattern2, pattern3], bottomLeft = _b[0], topLeft = _b[1], topRight = _b[2];
-    }
-    else {
-        _c = [pattern1, pattern3, pattern2], bottomLeft = _c[0], topLeft = _c[1], topRight = _c[2];
-    }
-    // Use cross product to figure out whether bottomLeft (A) and topRight (C) are correct or flipped in relation to topLeft (B)
-    // This asks whether BC x BA has a positive z component, which is the arrangement we want. If it's negative, then
-    // we've got it flipped around and should swap topRight and bottomLeft.
-    if (((topRight.x - topLeft.x) * (bottomLeft.y - topLeft.y)) - ((topRight.y - topLeft.y) * (bottomLeft.x - topLeft.x)) < 0) {
-        _d = [topRight, bottomLeft], bottomLeft = _d[0], topRight = _d[1];
-    }
-    return { bottomLeft: bottomLeft, topLeft: topLeft, topRight: topRight };
-    var _a, _b, _c, _d;
-}
-// Computes the dimension (number of modules on a side) of the QR Code based on the position of the finder patterns
-function computeDimension(topLeft, topRight, bottomLeft, matrix) {
-    var moduleSize = (sum(countBlackWhiteRun(topLeft, bottomLeft, matrix, 5)) / 7 + // Divide by 7 since the ratio is 1:1:3:1:1
-        sum(countBlackWhiteRun(topLeft, topRight, matrix, 5)) / 7 +
-        sum(countBlackWhiteRun(bottomLeft, topLeft, matrix, 5)) / 7 +
-        sum(countBlackWhiteRun(topRight, topLeft, matrix, 5)) / 7) / 4;
-    var topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
-    var sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
-    var dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
-    switch (dimension % 4) {
-        case 0:
-            dimension++;
-            break;
-        case 2:
-            dimension--;
-            break;
-    }
-    return { dimension: dimension, moduleSize: moduleSize };
-}
-// Takes an origin point and an end point and counts the sizes of the black white run from the origin towards the end point.
-// Returns an array of elements, representing the pixel size of the black white run.
-// Uses a variant of http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
-    var switchPoints = [{ x: Math.floor(origin.x), y: Math.floor(origin.y) }];
-    var steep = Math.abs(end.y - origin.y) > Math.abs(end.x - origin.x);
-    var fromX;
-    var fromY;
-    var toX;
-    var toY;
-    if (steep) {
-        fromX = Math.floor(origin.y);
-        fromY = Math.floor(origin.x);
-        toX = Math.floor(end.y);
-        toY = Math.floor(end.x);
-    }
-    else {
-        fromX = Math.floor(origin.x);
-        fromY = Math.floor(origin.y);
-        toX = Math.floor(end.x);
-        toY = Math.floor(end.y);
-    }
-    var dx = Math.abs(toX - fromX);
-    var dy = Math.abs(toY - fromY);
-    var error = Math.floor(-dx / 2);
-    var xStep = fromX < toX ? 1 : -1;
-    var yStep = fromY < toY ? 1 : -1;
-    var currentPixel = true;
-    // Loop up until x == toX, but not beyond
-    for (var x = fromX, y = fromY; x !== toX + xStep; x += xStep) {
-        // Does current pixel mean we have moved white to black or vice versa?
-        // Scanning black in state 0,2 and white in state 1, so if we find the wrong
-        // color, advance to next state or end if we are in state 2 already
-        var realX = steep ? y : x;
-        var realY = steep ? x : y;
-        if (matrix.get(realX, realY) !== currentPixel) {
-            currentPixel = !currentPixel;
-            switchPoints.push({ x: realX, y: realY });
-            if (switchPoints.length === length + 1) {
-                break;
-            }
-        }
-        error += dy;
-        if (error > 0) {
-            if (y === toY) {
-                break;
-            }
-            y += yStep;
-            error -= dx;
-        }
-    }
-    var distances = [];
-    for (var i = 0; i < length; i++) {
-        if (switchPoints[i] && switchPoints[i + 1]) {
-            distances.push(distance(switchPoints[i], switchPoints[i + 1]));
-        }
-        else {
-            distances.push(0);
-        }
-    }
-    return distances;
-}
-exports.countBlackWhiteRunTowardsPoint = countBlackWhiteRunTowardsPoint;
-// Takes an origin point and an end point and counts the sizes of the black white run in the origin point
-// along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
-// of the black white run. Takes a length which represents the number of switches from black to white to look for.
-function countBlackWhiteRun(origin, end, matrix, length) {
-    var rise = end.y - origin.y;
-    var run = end.x - origin.x;
-    var towardsEnd = countBlackWhiteRunTowardsPoint(origin, end, matrix, Math.ceil(length / 2));
-    var awayFromEnd = countBlackWhiteRunTowardsPoint(origin, { x: origin.x - run, y: origin.y - rise }, matrix, Math.ceil(length / 2));
-    var middleValue = towardsEnd.shift() + awayFromEnd.shift() - 1; // Substract one so we don't double count a pixel
-    return (_a = awayFromEnd.concat(middleValue)).concat.apply(_a, towardsEnd);
-    var _a;
-}
-exports.countBlackWhiteRun = countBlackWhiteRun;
-// Takes in a black white run and an array of expected ratios. Returns the average size of the run as well as the "error" -
-// that is the amount the run diverges from the expected ratio
-function scoreBlackWhiteRun(sequence, ratios) {
-    var averageSize = sum(sequence) / sum(ratios);
-    var error = 0;
-    ratios.forEach(function (ratio, i) {
-        error += Math.pow((sequence[i] - ratio * averageSize), 2);
-    });
-    return { averageSize: averageSize, error: error };
-}
-// Takes an X,Y point and an array of sizes and scores the point against those ratios.
-// For example for a finder pattern takes the ratio list of 1:1:3:1:1 and checks horizontal, vertical and diagonal ratios
-// against that.
-function scorePattern(point, ratios, matrix) {
-    try {
-        var horizontalRun = countBlackWhiteRun(point, { x: -1, y: point.y }, matrix, ratios.length);
-        var verticalRun = countBlackWhiteRun(point, { x: point.x, y: -1 }, matrix, ratios.length);
-        var topLeftPoint = {
-            x: Math.max(0, point.x - point.y) - 1,
-            y: Math.max(0, point.y - point.x) - 1,
-        };
-        var topLeftBottomRightRun = countBlackWhiteRun(point, topLeftPoint, matrix, ratios.length);
-        var bottomLeftPoint = {
-            x: Math.min(matrix.width, point.x + point.y) + 1,
-            y: Math.min(matrix.height, point.y + point.x) + 1,
-        };
-        var bottomLeftTopRightRun = countBlackWhiteRun(point, bottomLeftPoint, matrix, ratios.length);
-        var horzError = scoreBlackWhiteRun(horizontalRun, ratios);
-        var vertError = scoreBlackWhiteRun(verticalRun, ratios);
-        var diagDownError = scoreBlackWhiteRun(topLeftBottomRightRun, ratios);
-        var diagUpError = scoreBlackWhiteRun(bottomLeftTopRightRun, ratios);
-        var ratioError = Math.sqrt(horzError.error * horzError.error +
-            vertError.error * vertError.error +
-            diagDownError.error * diagDownError.error +
-            diagUpError.error * diagUpError.error);
-        var avgSize = (horzError.averageSize + vertError.averageSize + diagDownError.averageSize + diagUpError.averageSize) / 4;
-        var sizeError = (Math.pow((horzError.averageSize - avgSize), 2) +
-            Math.pow((vertError.averageSize - avgSize), 2) +
-            Math.pow((diagDownError.averageSize - avgSize), 2) +
-            Math.pow((diagUpError.averageSize - avgSize), 2)) / avgSize;
-        return ratioError + sizeError;
-    }
-    catch (_a) {
-        return Infinity;
-    }
-}
-function locate(matrix) {
-    var finderPatternQuads = [];
-    var activeFinderPatternQuads = [];
-    var alignmentPatternQuads = [];
-    var activeAlignmentPatternQuads = [];
-    var _loop_1 = function (y) {
-        var length_1 = 0;
-        var lastBit = false;
-        var scans = [0, 0, 0, 0, 0];
-        var _loop_2 = function (x) {
-            var v = matrix.get(x, y);
-            if (v === lastBit) {
-                length_1++;
-            }
-            else {
-                scans = [scans[1], scans[2], scans[3], scans[4], length_1];
-                length_1 = 1;
-                lastBit = v;
-                // Do the last 5 color changes ~ match the expected ratio for a finder pattern? 1:1:3:1:1 of b:w:b:w:b
-                var averageFinderPatternBlocksize = sum(scans) / 7;
-                var validFinderPattern = Math.abs(scans[0] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
-                    Math.abs(scans[1] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
-                    Math.abs(scans[2] - 3 * averageFinderPatternBlocksize) < 3 * averageFinderPatternBlocksize &&
-                    Math.abs(scans[3] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
-                    Math.abs(scans[4] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
-                    !v; // And make sure the current pixel is white since finder patterns are bordered in white
-                // Do the last 3 color changes ~ match the expected ratio for an alignment pattern? 1:1:1 of w:b:w
-                var averageAlignmentPatternBlocksize = sum(scans.slice(-3)) / 3;
-                var validAlignmentPattern = Math.abs(scans[2] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
-                    Math.abs(scans[3] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
-                    Math.abs(scans[4] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
-                    v; // Is the current pixel black since alignment patterns are bordered in black
-                if (validFinderPattern) {
-                    // Compute the start and end x values of the large center black square
-                    var endX_1 = x - scans[3] - scans[4];
-                    var startX_1 = endX_1 - scans[2];
-                    var line = { startX: startX_1, endX: endX_1, y: y };
-                    // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
-                    // that line as the starting point.
-                    var matchingQuads = activeFinderPatternQuads.filter(function (q) {
-                        return (startX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
-                            (endX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
-                            (startX_1 <= q.bottom.startX && endX_1 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
-                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
-                    });
-                    if (matchingQuads.length > 0) {
-                        matchingQuads[0].bottom = line;
-                    }
-                    else {
-                        activeFinderPatternQuads.push({ top: line, bottom: line });
-                    }
-                }
-                if (validAlignmentPattern) {
-                    // Compute the start and end x values of the center black square
-                    var endX_2 = x - scans[4];
-                    var startX_2 = endX_2 - scans[3];
-                    var line = { startX: startX_2, y: y, endX: endX_2 };
-                    // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
-                    // that line as the starting point.
-                    var matchingQuads = activeAlignmentPatternQuads.filter(function (q) {
-                        return (startX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
-                            (endX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
-                            (startX_2 <= q.bottom.startX && endX_2 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
-                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
-                    });
-                    if (matchingQuads.length > 0) {
-                        matchingQuads[0].bottom = line;
-                    }
-                    else {
-                        activeAlignmentPatternQuads.push({ top: line, bottom: line });
-                    }
-                }
-            }
-        };
-        for (var x = -1; x <= matrix.width; x++) {
-            _loop_2(x);
-        }
-        finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads.filter(function (q) { return q.bottom.y !== y; }));
-        activeFinderPatternQuads = activeFinderPatternQuads.filter(function (q) { return q.bottom.y === y; });
-        alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y !== y; }));
-        activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y === y; });
-    };
-    for (var y = 0; y <= matrix.height; y++) {
-        _loop_1(y);
-    }
-    finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads);
-    alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads);
-    var finderPatternGroups = finderPatternQuads
-        .filter(function (q) { return q.bottom.y - q.top.y >= 2; }) // All quads must be at least 2px tall since the center square is larger than a block
-        .map(function (q) {
-        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
-        var y = (q.top.y + q.bottom.y + 1) / 2;
-        if (!matrix.get(Math.round(x), Math.round(y))) {
-            return;
-        }
-        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, q.bottom.y - q.top.y + 1];
-        var size = sum(lengths) / lengths.length;
-        var score = scorePattern({ x: Math.round(x), y: Math.round(y) }, [1, 1, 3, 1, 1], matrix);
-        return { score: score, x: x, y: y, size: size };
-    })
-        .filter(function (q) { return !!q; }) // Filter out any rejected quads from above
-        .sort(function (a, b) { return a.score - b.score; })
-        .map(function (point, i, finderPatterns) {
-        if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
-            return null;
-        }
-        var otherPoints = finderPatterns
-            .filter(function (p, ii) { return i !== ii; })
-            .map(function (p) { return ({ x: p.x, y: p.y, score: p.score + (Math.pow((p.size - point.size), 2)) / point.size, size: p.size }); })
-            .sort(function (a, b) { return a.score - b.score; });
-        var score = point.score + otherPoints[0].score + otherPoints[1].score;
-        return { points: [point].concat(otherPoints.slice(0, 2)), score: score };
-    })
-        .filter(function (q) { return !!q; }) // Filter out any rejected finder patterns from above
-        .sort(function (a, b) { return a.score - b.score; });
-    if (finderPatternGroups.length === 0) {
-        return null;
-    }
-    var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
-    // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
-    // We'll use these to help find the alignment pattern but also later when we do the extraction.
-    var _b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize;
-    // Now find the alignment pattern
-    var bottomRightFinderPattern = {
-        x: topRight.x - topLeft.x + bottomLeft.x,
-        y: topRight.y - topLeft.y + bottomLeft.y,
-    };
-    var modulesBetweenFinderPatterns = ((distance(topLeft, bottomLeft) + distance(topLeft, topRight)) / 2 / moduleSize);
-    var correctionToTopLeft = 1 - (3 / modulesBetweenFinderPatterns);
-    var expectedAlignmentPattern = {
-        x: topLeft.x + correctionToTopLeft * (bottomRightFinderPattern.x - topLeft.x),
-        y: topLeft.y + correctionToTopLeft * (bottomRightFinderPattern.y - topLeft.y),
-    };
-    var alignmentPatterns = alignmentPatternQuads
-        .map(function (q) {
-        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
-        var y = (q.top.y + q.bottom.y + 1) / 2;
-        if (!matrix.get(Math.floor(x), Math.floor(y))) {
-            return;
-        }
-        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, (q.bottom.y - q.top.y + 1)];
-        var size = sum(lengths) / lengths.length;
-        var sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
-        var score = sizeScore + distance({ x: x, y: y }, expectedAlignmentPattern);
-        return { x: x, y: y, score: score };
-    })
-        .filter(function (v) { return !!v; })
-        .sort(function (a, b) { return a.score - b.score; });
-    // If there are less than 15 modules between finder patterns it's a version 1 QR code and as such has no alignmemnt pattern
-    // so we can only use our best guess.
-    var alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
-    return {
-        alignmentPattern: { x: alignmentPattern.x, y: alignmentPattern.y },
-        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
-        dimension: dimension,
-        topLeft: { x: topLeft.x, y: topLeft.y },
-        topRight: { x: topRight.x, y: topRight.y },
-    };
-}
-exports.locate = locate;
-
-
-/***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var bitmatrix_1 = __webpack_require__(0);
-function squareToQuadrilateral(p1, p2, p3, p4) {
-    var dx3 = p1.x - p2.x + p3.x - p4.x;
-    var dy3 = p1.y - p2.y + p3.y - p4.y;
-    if (dx3 === 0 && dy3 === 0) {
-        return {
-            a11: p2.x - p1.x,
-            a12: p2.y - p1.y,
-            a13: 0,
-            a21: p3.x - p2.x,
-            a22: p3.y - p2.y,
-            a23: 0,
-            a31: p1.x,
-            a32: p1.y,
-            a33: 1,
-        };
-    }
-    else {
-        var dx1 = p2.x - p3.x;
-        var dx2 = p4.x - p3.x;
-        var dy1 = p2.y - p3.y;
-        var dy2 = p4.y - p3.y;
-        var denominator = dx1 * dy2 - dx2 * dy1;
-        var a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
-        var a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
-        return {
-            a11: p2.x - p1.x + a13 * p2.x,
-            a12: p2.y - p1.y + a13 * p2.y,
-            a13: a13,
-            a21: p4.x - p1.x + a23 * p4.x,
-            a22: p4.y - p1.y + a23 * p4.y,
-            a23: a23,
-            a31: p1.x,
-            a32: p1.y,
-            a33: 1,
-        };
-    }
-}
-function quadrilateralToSquare(p1, p2, p3, p4) {
-    // Here, the adjoint serves as the inverse:
-    var sToQ = squareToQuadrilateral(p1, p2, p3, p4);
-    return {
-        a11: sToQ.a22 * sToQ.a33 - sToQ.a23 * sToQ.a32,
-        a12: sToQ.a13 * sToQ.a32 - sToQ.a12 * sToQ.a33,
-        a13: sToQ.a12 * sToQ.a23 - sToQ.a13 * sToQ.a22,
-        a21: sToQ.a23 * sToQ.a31 - sToQ.a21 * sToQ.a33,
-        a22: sToQ.a11 * sToQ.a33 - sToQ.a13 * sToQ.a31,
-        a23: sToQ.a13 * sToQ.a21 - sToQ.a11 * sToQ.a23,
-        a31: sToQ.a21 * sToQ.a32 - sToQ.a22 * sToQ.a31,
-        a32: sToQ.a12 * sToQ.a31 - sToQ.a11 * sToQ.a32,
-        a33: sToQ.a11 * sToQ.a22 - sToQ.a12 * sToQ.a21,
-    };
-}
-function times(a, b) {
-    return {
-        a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
-        a12: a.a12 * b.a11 + a.a22 * b.a12 + a.a32 * b.a13,
-        a13: a.a13 * b.a11 + a.a23 * b.a12 + a.a33 * b.a13,
-        a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
-        a22: a.a12 * b.a21 + a.a22 * b.a22 + a.a32 * b.a23,
-        a23: a.a13 * b.a21 + a.a23 * b.a22 + a.a33 * b.a23,
-        a31: a.a11 * b.a31 + a.a21 * b.a32 + a.a31 * b.a33,
-        a32: a.a12 * b.a31 + a.a22 * b.a32 + a.a32 * b.a33,
-        a33: a.a13 * b.a31 + a.a23 * b.a32 + a.a33 * b.a33,
-    };
-}
-function extract(image, location) {
-    var qToS = quadrilateralToSquare({ x: 3.5, y: 3.5 }, { x: location.dimension - 3.5, y: 3.5 }, { x: location.dimension - 6.5, y: location.dimension - 6.5 }, { x: 3.5, y: location.dimension - 3.5 });
-    var sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
-    var transform = times(sToQ, qToS);
-    var output = bitmatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
-    for (var y = 0; y < location.dimension; y++) {
-        for (var x = 0; x < location.dimension; x++) {
-            var xValue = x + 0.5;
-            var yValue = y + 0.5;
-            var denominator = transform.a13 * xValue + transform.a23 * yValue + transform.a33;
-            var sourceX = Math.floor((transform.a11 * xValue + transform.a21 * yValue + transform.a31) / denominator);
-            var sourceY = Math.floor((transform.a12 * xValue + transform.a22 * yValue + transform.a32) / denominator);
-            output.set(x, y, image.get(sourceX, sourceY));
-        }
-    }
-    return output;
-}
-exports.extract = extract;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var bitmatrix_1 = __webpack_require__(0);
-var decodeqrdata_1 = __webpack_require__(7);
-var helpers_1 = __webpack_require__(1);
-var reedsolomon_1 = __webpack_require__(9);
-var version_1 = __webpack_require__(10);
+var decodeqrdata_1 = __webpack_require__(4);
+var reedsolomon_1 = __webpack_require__(6);
+var version_1 = __webpack_require__(7);
 var FORMAT_INFO_MASK_QR = 0x5412;
 var FORMAT_INFO_DECODE_LOOKUP = [
     [0x5412, 0x00],
@@ -821,17 +305,20 @@ var ERROR_CORRECTION_LEVELS = [
     { ordinal: 3, bits: 0x02, name: "H" },
     { ordinal: 2, bits: 0x03, name: "Q" },
 ];
+function copyBit(matrix, x, y, versionBits) {
+    return matrix.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
+}
 function buildFunctionPattern(version) {
     var dimension = version.getDimensionForVersion();
     var emptyArray = new Uint8ClampedArray(dimension * dimension);
     var bitMatrix = new bitmatrix_1.BitMatrix(emptyArray, dimension);
     ///BitMatrix bitMatrix = new BitMatrix(dimension);
     // Top left finder pattern + separator + format
-    bitMatrix.setRegion(0, 0, 9, 9);
+    bitMatrix.setRegion(0, 0, 9, 9, true);
     // Top right finder pattern + separator + format
-    bitMatrix.setRegion(dimension - 8, 0, 8, 9);
+    bitMatrix.setRegion(dimension - 8, 0, 8, 9, true);
     // Bottom left finder pattern + separator + format
-    bitMatrix.setRegion(0, dimension - 8, 9, 8);
+    bitMatrix.setRegion(0, dimension - 8, 9, 8, true);
     // Alignment patterns
     var max = version.alignmentPatternCenters.length;
     for (var x = 0; x < max; x++) {
@@ -841,18 +328,18 @@ function buildFunctionPattern(version) {
                 // No alignment patterns near the three finder paterns
                 continue;
             }
-            bitMatrix.setRegion(version.alignmentPatternCenters[y] - 2, i, 5, 5);
+            bitMatrix.setRegion(version.alignmentPatternCenters[y] - 2, i, 5, 5, true);
         }
     }
     // Vertical timing pattern
-    bitMatrix.setRegion(6, 9, 1, dimension - 17);
+    bitMatrix.setRegion(6, 9, 1, dimension - 17, true);
     // Horizontal timing pattern
-    bitMatrix.setRegion(9, 6, dimension - 17, 1);
+    bitMatrix.setRegion(9, 6, dimension - 17, 1, true);
     if (version.versionNumber > 6) {
         // Version info, top right
-        bitMatrix.setRegion(dimension - 11, 0, 3, 6);
+        bitMatrix.setRegion(dimension - 11, 0, 3, 6, true);
         // Version info, bottom left
-        bitMatrix.setRegion(0, dimension - 11, 6, 3);
+        bitMatrix.setRegion(0, dimension - 11, 6, 3, true);
     }
     return bitMatrix;
 }
@@ -913,7 +400,7 @@ function readVersion(matrix) {
     var ijMin = dimension - 11;
     for (var j = 5; j >= 0; j--) {
         for (var i = dimension - 9; i >= ijMin; i--) {
-            versionBits = matrix.copyBit(i, j, versionBits);
+            versionBits = copyBit(matrix, i, j, versionBits);
         }
     }
     var parsedVersion = version_1.Version.decodeVersionInformation(versionBits);
@@ -924,7 +411,7 @@ function readVersion(matrix) {
     versionBits = 0;
     for (var i = 5; i >= 0; i--) {
         for (var j = dimension - 9; j >= ijMin; j--) {
-            versionBits = matrix.copyBit(i, j, versionBits);
+            versionBits = copyBit(matrix, i, j, versionBits);
         }
     }
     parsedVersion = version_1.Version.decodeVersionInformation(versionBits);
@@ -950,14 +437,14 @@ function doDecodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2) {
             // Found an exact match
             return newFormatInformation(decodeInfo[1]);
         }
-        var bitsDifference = helpers_1.numBitsDiffering(maskedFormatInfo1, targetInfo);
+        var bitsDifference = version_1.numBitsDiffering(maskedFormatInfo1, targetInfo);
         if (bitsDifference < bestDifference) {
             bestFormatInfo = decodeInfo[1];
             bestDifference = bitsDifference;
         }
         if (maskedFormatInfo1 != maskedFormatInfo2) {
             // also try the other option
-            bitsDifference = helpers_1.numBitsDiffering(maskedFormatInfo2, targetInfo);
+            bitsDifference = version_1.numBitsDiffering(maskedFormatInfo2, targetInfo);
             if (bitsDifference < bestDifference) {
                 bestFormatInfo = decodeInfo[1];
                 bestDifference = bitsDifference;
@@ -984,25 +471,25 @@ function readFormatInformation(matrix) {
     // Read top-left format info bits
     var formatInfoBits1 = 0;
     for (var i = 0; i < 6; i++) {
-        formatInfoBits1 = matrix.copyBit(i, 8, formatInfoBits1);
+        formatInfoBits1 = copyBit(matrix, i, 8, formatInfoBits1);
     }
     // .. and skip a bit in the timing pattern ...
-    formatInfoBits1 = matrix.copyBit(7, 8, formatInfoBits1);
-    formatInfoBits1 = matrix.copyBit(8, 8, formatInfoBits1);
-    formatInfoBits1 = matrix.copyBit(8, 7, formatInfoBits1);
+    formatInfoBits1 = copyBit(matrix, 7, 8, formatInfoBits1);
+    formatInfoBits1 = copyBit(matrix, 8, 8, formatInfoBits1);
+    formatInfoBits1 = copyBit(matrix, 8, 7, formatInfoBits1);
     // .. and skip a bit in the timing pattern ...
     for (var j = 5; j >= 0; j--) {
-        formatInfoBits1 = matrix.copyBit(8, j, formatInfoBits1);
+        formatInfoBits1 = copyBit(matrix, 8, j, formatInfoBits1);
     }
     // Read the top-right/bottom-left pattern too
     var dimension = matrix.height;
     var formatInfoBits2 = 0;
     var jMin = dimension - 7;
     for (var j = dimension - 1; j >= jMin; j--) {
-        formatInfoBits2 = matrix.copyBit(8, j, formatInfoBits2);
+        formatInfoBits2 = copyBit(matrix, 8, j, formatInfoBits2);
     }
     for (var i = dimension - 8; i < dimension; i++) {
-        formatInfoBits2 = matrix.copyBit(i, 8, formatInfoBits2);
+        formatInfoBits2 = copyBit(matrix, i, 8, formatInfoBits2);
     }
     // parsedFormatInfo = FormatInformation.decodeFormatInformation(formatInfoBits1, formatInfoBits2);
     var parsedFormatInfo = decodeFormatInformation(formatInfoBits1, formatInfoBits2);
@@ -1132,21 +619,29 @@ function decode(matrix) {
     if (result) {
         return result;
     }
-    // Decoding didn't work, try mirroring the QR
-    matrix.mirror();
+    // Decoding didn't work, try mirroring the QR across the topLeft -> bottomRight line.
+    // TODO - unclear if this is actually needed?
+    for (var x = 0; x < matrix.width; x++) {
+        for (var y = x + 1; y < matrix.height; y++) {
+            if (matrix.get(x, y) !== matrix.get(y, x)) {
+                matrix.set(x, y, !matrix.get(x, y));
+                matrix.set(y, x, !matrix.get(y, x));
+            }
+        }
+    }
     return decodeMatrix(matrix);
 }
 exports.decode = decode;
 
 
 /***/ }),
-/* 7 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bitstream_1 = __webpack_require__(8);
+var bitstream_1 = __webpack_require__(5);
 function toAlphaNumericByte(value) {
     var ALPHANUMERIC_CHARS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
         'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
@@ -1444,7 +939,7 @@ exports.decodeQRdata = decodeQRdata;
 
 
 /***/ }),
-/* 8 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1501,7 +996,7 @@ exports.BitStream = BitStream;
 
 
 /***/ }),
-/* 9 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1870,13 +1365,26 @@ var GenericGF = /** @class */ (function () {
 
 
 /***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var helpers_1 = __webpack_require__(1);
+function numBitsDiffering(a, b) {
+    var BITS_SET_IN_HALF_BYTE = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
+    a ^= b; // a now has a 1 bit exactly where its bit differs with b's
+    // Count bits set quickly with a series of lookups:
+    return BITS_SET_IN_HALF_BYTE[a & 0x0F] +
+        BITS_SET_IN_HALF_BYTE[((a >> 4) & 0x0F)] +
+        BITS_SET_IN_HALF_BYTE[((a >> 8) & 0x0F)] +
+        BITS_SET_IN_HALF_BYTE[((a >> 12) & 0x0F)] +
+        BITS_SET_IN_HALF_BYTE[((a >> 16) & 0x0F)] +
+        BITS_SET_IN_HALF_BYTE[((a >> 20) & 0x0F)] +
+        BITS_SET_IN_HALF_BYTE[((a >> 24) & 0x0F)] +
+        BITS_SET_IN_HALF_BYTE[((a >> 28) & 0x0F)];
+}
+exports.numBitsDiffering = numBitsDiffering;
 var VERSION_DECODE_INFO = [
     0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
     0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
@@ -1944,7 +1452,7 @@ var Version = /** @class */ (function () {
             }
             // Otherwise see if this is the closest to a real version info bit string
             // we have seen so far
-            var bitsDifference = helpers_1.numBitsDiffering(versionBits, targetVersion);
+            var bitsDifference = numBitsDiffering(versionBits, targetVersion);
             if (bitsDifference < bestDifference) {
                 bestVersion = i + 7;
                 bestDifference = bitsDifference;
@@ -2010,6 +1518,444 @@ function getVersionForNumber(versionNumber) {
     return VERSIONS[versionNumber - 1];
 }
 exports.getVersionForNumber = getVersionForNumber;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var bitmatrix_1 = __webpack_require__(0);
+function squareToQuadrilateral(p1, p2, p3, p4) {
+    var dx3 = p1.x - p2.x + p3.x - p4.x;
+    var dy3 = p1.y - p2.y + p3.y - p4.y;
+    if (dx3 === 0 && dy3 === 0) {
+        return {
+            a11: p2.x - p1.x,
+            a12: p2.y - p1.y,
+            a13: 0,
+            a21: p3.x - p2.x,
+            a22: p3.y - p2.y,
+            a23: 0,
+            a31: p1.x,
+            a32: p1.y,
+            a33: 1,
+        };
+    }
+    else {
+        var dx1 = p2.x - p3.x;
+        var dx2 = p4.x - p3.x;
+        var dy1 = p2.y - p3.y;
+        var dy2 = p4.y - p3.y;
+        var denominator = dx1 * dy2 - dx2 * dy1;
+        var a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
+        var a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
+        return {
+            a11: p2.x - p1.x + a13 * p2.x,
+            a12: p2.y - p1.y + a13 * p2.y,
+            a13: a13,
+            a21: p4.x - p1.x + a23 * p4.x,
+            a22: p4.y - p1.y + a23 * p4.y,
+            a23: a23,
+            a31: p1.x,
+            a32: p1.y,
+            a33: 1,
+        };
+    }
+}
+function quadrilateralToSquare(p1, p2, p3, p4) {
+    // Here, the adjoint serves as the inverse:
+    var sToQ = squareToQuadrilateral(p1, p2, p3, p4);
+    return {
+        a11: sToQ.a22 * sToQ.a33 - sToQ.a23 * sToQ.a32,
+        a12: sToQ.a13 * sToQ.a32 - sToQ.a12 * sToQ.a33,
+        a13: sToQ.a12 * sToQ.a23 - sToQ.a13 * sToQ.a22,
+        a21: sToQ.a23 * sToQ.a31 - sToQ.a21 * sToQ.a33,
+        a22: sToQ.a11 * sToQ.a33 - sToQ.a13 * sToQ.a31,
+        a23: sToQ.a13 * sToQ.a21 - sToQ.a11 * sToQ.a23,
+        a31: sToQ.a21 * sToQ.a32 - sToQ.a22 * sToQ.a31,
+        a32: sToQ.a12 * sToQ.a31 - sToQ.a11 * sToQ.a32,
+        a33: sToQ.a11 * sToQ.a22 - sToQ.a12 * sToQ.a21,
+    };
+}
+function times(a, b) {
+    return {
+        a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
+        a12: a.a12 * b.a11 + a.a22 * b.a12 + a.a32 * b.a13,
+        a13: a.a13 * b.a11 + a.a23 * b.a12 + a.a33 * b.a13,
+        a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
+        a22: a.a12 * b.a21 + a.a22 * b.a22 + a.a32 * b.a23,
+        a23: a.a13 * b.a21 + a.a23 * b.a22 + a.a33 * b.a23,
+        a31: a.a11 * b.a31 + a.a21 * b.a32 + a.a31 * b.a33,
+        a32: a.a12 * b.a31 + a.a22 * b.a32 + a.a32 * b.a33,
+        a33: a.a13 * b.a31 + a.a23 * b.a32 + a.a33 * b.a33,
+    };
+}
+function extract(image, location) {
+    var qToS = quadrilateralToSquare({ x: 3.5, y: 3.5 }, { x: location.dimension - 3.5, y: 3.5 }, { x: location.dimension - 6.5, y: location.dimension - 6.5 }, { x: 3.5, y: location.dimension - 3.5 });
+    var sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
+    var transform = times(sToQ, qToS);
+    var output = bitmatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
+    for (var y = 0; y < location.dimension; y++) {
+        for (var x = 0; x < location.dimension; x++) {
+            var xValue = x + 0.5;
+            var yValue = y + 0.5;
+            var denominator = transform.a13 * xValue + transform.a23 * yValue + transform.a33;
+            var sourceX = Math.floor((transform.a11 * xValue + transform.a21 * yValue + transform.a31) / denominator);
+            var sourceY = Math.floor((transform.a12 * xValue + transform.a22 * yValue + transform.a32) / denominator);
+            output.set(x, y, image.get(sourceX, sourceY));
+        }
+    }
+    return output;
+}
+exports.extract = extract;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var MAX_FINDERPATTERNS_TO_SEARCH = 4;
+var MIN_QUAD_RATIO = 0.5;
+var MAX_QUAD_RATIO = 1.5;
+var distance = function (a, b) { return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2)); };
+function sum(values) {
+    return values.reduce(function (a, b) { return a + b; });
+}
+// Takes three finder patterns and organizes them into topLeft, topRight, etc
+function reorderFinderPatterns(pattern1, pattern2, pattern3) {
+    // Find distances between pattern centers
+    var oneTwoDistance = distance(pattern1, pattern2);
+    var twoThreeDistance = distance(pattern2, pattern3);
+    var oneThreeDistance = distance(pattern1, pattern3);
+    var bottomLeft;
+    var topLeft;
+    var topRight;
+    // Assume one closest to other two is B; A and C will just be guesses at first
+    if (twoThreeDistance >= oneTwoDistance && twoThreeDistance >= oneThreeDistance) {
+        _a = [pattern2, pattern1, pattern3], bottomLeft = _a[0], topLeft = _a[1], topRight = _a[2];
+    }
+    else if (oneThreeDistance >= twoThreeDistance && oneThreeDistance >= oneTwoDistance) {
+        _b = [pattern1, pattern2, pattern3], bottomLeft = _b[0], topLeft = _b[1], topRight = _b[2];
+    }
+    else {
+        _c = [pattern1, pattern3, pattern2], bottomLeft = _c[0], topLeft = _c[1], topRight = _c[2];
+    }
+    // Use cross product to figure out whether bottomLeft (A) and topRight (C) are correct or flipped in relation to topLeft (B)
+    // This asks whether BC x BA has a positive z component, which is the arrangement we want. If it's negative, then
+    // we've got it flipped around and should swap topRight and bottomLeft.
+    if (((topRight.x - topLeft.x) * (bottomLeft.y - topLeft.y)) - ((topRight.y - topLeft.y) * (bottomLeft.x - topLeft.x)) < 0) {
+        _d = [topRight, bottomLeft], bottomLeft = _d[0], topRight = _d[1];
+    }
+    return { bottomLeft: bottomLeft, topLeft: topLeft, topRight: topRight };
+    var _a, _b, _c, _d;
+}
+// Computes the dimension (number of modules on a side) of the QR Code based on the position of the finder patterns
+function computeDimension(topLeft, topRight, bottomLeft, matrix) {
+    var moduleSize = (sum(countBlackWhiteRun(topLeft, bottomLeft, matrix, 5)) / 7 + // Divide by 7 since the ratio is 1:1:3:1:1
+        sum(countBlackWhiteRun(topLeft, topRight, matrix, 5)) / 7 +
+        sum(countBlackWhiteRun(bottomLeft, topLeft, matrix, 5)) / 7 +
+        sum(countBlackWhiteRun(topRight, topLeft, matrix, 5)) / 7) / 4;
+    var topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
+    var sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
+    var dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
+    switch (dimension % 4) {
+        case 0:
+            dimension++;
+            break;
+        case 2:
+            dimension--;
+            break;
+    }
+    return { dimension: dimension, moduleSize: moduleSize };
+}
+// Takes an origin point and an end point and counts the sizes of the black white run from the origin towards the end point.
+// Returns an array of elements, representing the pixel size of the black white run.
+// Uses a variant of http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
+    var switchPoints = [{ x: Math.floor(origin.x), y: Math.floor(origin.y) }];
+    var steep = Math.abs(end.y - origin.y) > Math.abs(end.x - origin.x);
+    var fromX;
+    var fromY;
+    var toX;
+    var toY;
+    if (steep) {
+        fromX = Math.floor(origin.y);
+        fromY = Math.floor(origin.x);
+        toX = Math.floor(end.y);
+        toY = Math.floor(end.x);
+    }
+    else {
+        fromX = Math.floor(origin.x);
+        fromY = Math.floor(origin.y);
+        toX = Math.floor(end.x);
+        toY = Math.floor(end.y);
+    }
+    var dx = Math.abs(toX - fromX);
+    var dy = Math.abs(toY - fromY);
+    var error = Math.floor(-dx / 2);
+    var xStep = fromX < toX ? 1 : -1;
+    var yStep = fromY < toY ? 1 : -1;
+    var currentPixel = true;
+    // Loop up until x == toX, but not beyond
+    for (var x = fromX, y = fromY; x !== toX + xStep; x += xStep) {
+        // Does current pixel mean we have moved white to black or vice versa?
+        // Scanning black in state 0,2 and white in state 1, so if we find the wrong
+        // color, advance to next state or end if we are in state 2 already
+        var realX = steep ? y : x;
+        var realY = steep ? x : y;
+        if (matrix.get(realX, realY) !== currentPixel) {
+            currentPixel = !currentPixel;
+            switchPoints.push({ x: realX, y: realY });
+            if (switchPoints.length === length + 1) {
+                break;
+            }
+        }
+        error += dy;
+        if (error > 0) {
+            if (y === toY) {
+                break;
+            }
+            y += yStep;
+            error -= dx;
+        }
+    }
+    var distances = [];
+    for (var i = 0; i < length; i++) {
+        if (switchPoints[i] && switchPoints[i + 1]) {
+            distances.push(distance(switchPoints[i], switchPoints[i + 1]));
+        }
+        else {
+            distances.push(0);
+        }
+    }
+    return distances;
+}
+exports.countBlackWhiteRunTowardsPoint = countBlackWhiteRunTowardsPoint;
+// Takes an origin point and an end point and counts the sizes of the black white run in the origin point
+// along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
+// of the black white run. Takes a length which represents the number of switches from black to white to look for.
+function countBlackWhiteRun(origin, end, matrix, length) {
+    var rise = end.y - origin.y;
+    var run = end.x - origin.x;
+    var towardsEnd = countBlackWhiteRunTowardsPoint(origin, end, matrix, Math.ceil(length / 2));
+    var awayFromEnd = countBlackWhiteRunTowardsPoint(origin, { x: origin.x - run, y: origin.y - rise }, matrix, Math.ceil(length / 2));
+    var middleValue = towardsEnd.shift() + awayFromEnd.shift() - 1; // Substract one so we don't double count a pixel
+    return (_a = awayFromEnd.concat(middleValue)).concat.apply(_a, towardsEnd);
+    var _a;
+}
+exports.countBlackWhiteRun = countBlackWhiteRun;
+// Takes in a black white run and an array of expected ratios. Returns the average size of the run as well as the "error" -
+// that is the amount the run diverges from the expected ratio
+function scoreBlackWhiteRun(sequence, ratios) {
+    var averageSize = sum(sequence) / sum(ratios);
+    var error = 0;
+    ratios.forEach(function (ratio, i) {
+        error += Math.pow((sequence[i] - ratio * averageSize), 2);
+    });
+    return { averageSize: averageSize, error: error };
+}
+// Takes an X,Y point and an array of sizes and scores the point against those ratios.
+// For example for a finder pattern takes the ratio list of 1:1:3:1:1 and checks horizontal, vertical and diagonal ratios
+// against that.
+function scorePattern(point, ratios, matrix) {
+    try {
+        var horizontalRun = countBlackWhiteRun(point, { x: -1, y: point.y }, matrix, ratios.length);
+        var verticalRun = countBlackWhiteRun(point, { x: point.x, y: -1 }, matrix, ratios.length);
+        var topLeftPoint = {
+            x: Math.max(0, point.x - point.y) - 1,
+            y: Math.max(0, point.y - point.x) - 1,
+        };
+        var topLeftBottomRightRun = countBlackWhiteRun(point, topLeftPoint, matrix, ratios.length);
+        var bottomLeftPoint = {
+            x: Math.min(matrix.width, point.x + point.y) + 1,
+            y: Math.min(matrix.height, point.y + point.x) + 1,
+        };
+        var bottomLeftTopRightRun = countBlackWhiteRun(point, bottomLeftPoint, matrix, ratios.length);
+        var horzError = scoreBlackWhiteRun(horizontalRun, ratios);
+        var vertError = scoreBlackWhiteRun(verticalRun, ratios);
+        var diagDownError = scoreBlackWhiteRun(topLeftBottomRightRun, ratios);
+        var diagUpError = scoreBlackWhiteRun(bottomLeftTopRightRun, ratios);
+        var ratioError = Math.sqrt(horzError.error * horzError.error +
+            vertError.error * vertError.error +
+            diagDownError.error * diagDownError.error +
+            diagUpError.error * diagUpError.error);
+        var avgSize = (horzError.averageSize + vertError.averageSize + diagDownError.averageSize + diagUpError.averageSize) / 4;
+        var sizeError = (Math.pow((horzError.averageSize - avgSize), 2) +
+            Math.pow((vertError.averageSize - avgSize), 2) +
+            Math.pow((diagDownError.averageSize - avgSize), 2) +
+            Math.pow((diagUpError.averageSize - avgSize), 2)) / avgSize;
+        return ratioError + sizeError;
+    }
+    catch (_a) {
+        return Infinity;
+    }
+}
+function locate(matrix) {
+    var finderPatternQuads = [];
+    var activeFinderPatternQuads = [];
+    var alignmentPatternQuads = [];
+    var activeAlignmentPatternQuads = [];
+    var _loop_1 = function (y) {
+        var length_1 = 0;
+        var lastBit = false;
+        var scans = [0, 0, 0, 0, 0];
+        var _loop_2 = function (x) {
+            var v = matrix.get(x, y);
+            if (v === lastBit) {
+                length_1++;
+            }
+            else {
+                scans = [scans[1], scans[2], scans[3], scans[4], length_1];
+                length_1 = 1;
+                lastBit = v;
+                // Do the last 5 color changes ~ match the expected ratio for a finder pattern? 1:1:3:1:1 of b:w:b:w:b
+                var averageFinderPatternBlocksize = sum(scans) / 7;
+                var validFinderPattern = Math.abs(scans[0] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    Math.abs(scans[1] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    Math.abs(scans[2] - 3 * averageFinderPatternBlocksize) < 3 * averageFinderPatternBlocksize &&
+                    Math.abs(scans[3] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    Math.abs(scans[4] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    !v; // And make sure the current pixel is white since finder patterns are bordered in white
+                // Do the last 3 color changes ~ match the expected ratio for an alignment pattern? 1:1:1 of w:b:w
+                var averageAlignmentPatternBlocksize = sum(scans.slice(-3)) / 3;
+                var validAlignmentPattern = Math.abs(scans[2] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
+                    Math.abs(scans[3] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
+                    Math.abs(scans[4] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
+                    v; // Is the current pixel black since alignment patterns are bordered in black
+                if (validFinderPattern) {
+                    // Compute the start and end x values of the large center black square
+                    var endX_1 = x - scans[3] - scans[4];
+                    var startX_1 = endX_1 - scans[2];
+                    var line = { startX: startX_1, endX: endX_1, y: y };
+                    // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
+                    // that line as the starting point.
+                    var matchingQuads = activeFinderPatternQuads.filter(function (q) {
+                        return (startX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
+                            (endX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
+                            (startX_1 <= q.bottom.startX && endX_1 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
+                    });
+                    if (matchingQuads.length > 0) {
+                        matchingQuads[0].bottom = line;
+                    }
+                    else {
+                        activeFinderPatternQuads.push({ top: line, bottom: line });
+                    }
+                }
+                if (validAlignmentPattern) {
+                    // Compute the start and end x values of the center black square
+                    var endX_2 = x - scans[4];
+                    var startX_2 = endX_2 - scans[3];
+                    var line = { startX: startX_2, y: y, endX: endX_2 };
+                    // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
+                    // that line as the starting point.
+                    var matchingQuads = activeAlignmentPatternQuads.filter(function (q) {
+                        return (startX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
+                            (endX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
+                            (startX_2 <= q.bottom.startX && endX_2 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
+                    });
+                    if (matchingQuads.length > 0) {
+                        matchingQuads[0].bottom = line;
+                    }
+                    else {
+                        activeAlignmentPatternQuads.push({ top: line, bottom: line });
+                    }
+                }
+            }
+        };
+        for (var x = -1; x <= matrix.width; x++) {
+            _loop_2(x);
+        }
+        finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads.filter(function (q) { return q.bottom.y !== y; }));
+        activeFinderPatternQuads = activeFinderPatternQuads.filter(function (q) { return q.bottom.y === y; });
+        alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y !== y; }));
+        activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y === y; });
+    };
+    for (var y = 0; y <= matrix.height; y++) {
+        _loop_1(y);
+    }
+    finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads);
+    alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads);
+    var finderPatternGroups = finderPatternQuads
+        .filter(function (q) { return q.bottom.y - q.top.y >= 2; }) // All quads must be at least 2px tall since the center square is larger than a block
+        .map(function (q) {
+        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
+        var y = (q.top.y + q.bottom.y + 1) / 2;
+        if (!matrix.get(Math.round(x), Math.round(y))) {
+            return;
+        }
+        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, q.bottom.y - q.top.y + 1];
+        var size = sum(lengths) / lengths.length;
+        var score = scorePattern({ x: Math.round(x), y: Math.round(y) }, [1, 1, 3, 1, 1], matrix);
+        return { score: score, x: x, y: y, size: size };
+    })
+        .filter(function (q) { return !!q; }) // Filter out any rejected quads from above
+        .sort(function (a, b) { return a.score - b.score; })
+        .map(function (point, i, finderPatterns) {
+        if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
+            return null;
+        }
+        var otherPoints = finderPatterns
+            .filter(function (p, ii) { return i !== ii; })
+            .map(function (p) { return ({ x: p.x, y: p.y, score: p.score + (Math.pow((p.size - point.size), 2)) / point.size, size: p.size }); })
+            .sort(function (a, b) { return a.score - b.score; });
+        var score = point.score + otherPoints[0].score + otherPoints[1].score;
+        return { points: [point].concat(otherPoints.slice(0, 2)), score: score };
+    })
+        .filter(function (q) { return !!q; }) // Filter out any rejected finder patterns from above
+        .sort(function (a, b) { return a.score - b.score; });
+    if (finderPatternGroups.length === 0) {
+        return null;
+    }
+    var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
+    // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
+    // We'll use these to help find the alignment pattern but also later when we do the extraction.
+    var _b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize;
+    // Now find the alignment pattern
+    var bottomRightFinderPattern = {
+        x: topRight.x - topLeft.x + bottomLeft.x,
+        y: topRight.y - topLeft.y + bottomLeft.y,
+    };
+    var modulesBetweenFinderPatterns = ((distance(topLeft, bottomLeft) + distance(topLeft, topRight)) / 2 / moduleSize);
+    var correctionToTopLeft = 1 - (3 / modulesBetweenFinderPatterns);
+    var expectedAlignmentPattern = {
+        x: topLeft.x + correctionToTopLeft * (bottomRightFinderPattern.x - topLeft.x),
+        y: topLeft.y + correctionToTopLeft * (bottomRightFinderPattern.y - topLeft.y),
+    };
+    var alignmentPatterns = alignmentPatternQuads
+        .map(function (q) {
+        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
+        var y = (q.top.y + q.bottom.y + 1) / 2;
+        if (!matrix.get(Math.floor(x), Math.floor(y))) {
+            return;
+        }
+        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, (q.bottom.y - q.top.y + 1)];
+        var size = sum(lengths) / lengths.length;
+        var sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
+        var score = sizeScore + distance({ x: x, y: y }, expectedAlignmentPattern);
+        return { x: x, y: y, score: score };
+    })
+        .filter(function (v) { return !!v; })
+        .sort(function (a, b) { return a.score - b.score; });
+    // If there are less than 15 modules between finder patterns it's a version 1 QR code and as such has no alignmemnt pattern
+    // so we can only use our best guess.
+    var alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
+    return {
+        alignmentPattern: { x: alignmentPattern.x, y: alignmentPattern.y },
+        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
+        dimension: dimension,
+        topLeft: { x: topLeft.x, y: topLeft.y },
+        topRight: { x: topRight.x, y: topRight.y },
+    };
+}
+exports.locate = locate;
 
 
 /***/ })
