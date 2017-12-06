@@ -1,4 +1,4 @@
-import {BitMatrix} from "../common/bitmatrix";
+import {BitMatrix} from "../bitmatrix";
 
 const REGION_SIZE = 8;
 const MIN_DYNAMIC_RANGE = 24;
@@ -7,6 +7,7 @@ function numBetween(value: number, min: number, max: number): number {
   return value < min ? min : value > max ? max : value;
 }
 
+// Like BitMatrix but accepts arbitry Uint8 values
 class Matrix {
   private data: Uint8ClampedArray;
   private width: number;

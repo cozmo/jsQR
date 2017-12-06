@@ -1,4 +1,4 @@
-import { BitMatrix } from "../common/bitmatrix";
+import { BitMatrix } from "../bitmatrix";
 
 const MAX_FINDERPATTERNS_TO_SEARCH = 4;
 const MIN_QUAD_RATIO = 0.5;

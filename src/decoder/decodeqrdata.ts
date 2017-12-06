@@ -1,4 +1,4 @@
-import {BitStream} from "../common/bitstream";
+import {BitStream} from "./bitstream";
 
 function toAlphaNumericByte(value: number): number {
   var ALPHANUMERIC_CHARS: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',

@@ -1,5 +1,5 @@
-import {BitMatrix} from "../common/bitmatrix";
-import { QRLocation } from "./locator";
+import {BitMatrix} from "../bitmatrix";
+import {QRLocation} from "../locator";
 
 interface Point {
   x: number;

@@ -1,8 +1,7 @@
-import {BitMatrix} from "../common/bitmatrix";
+import {BitMatrix} from "../bitmatrix";
 import {decodeQRdata} from "./decodeqrdata";
-import {numBitsDiffering} from "../common/helpers";
 import {ReedSolomonDecoder} from "./reedsolomon";
-import {Version, ErrorCorrectionLevel, getVersionForNumber} from "../common/version";
+import {ErrorCorrectionLevel, getVersionForNumber, numBitsDiffering, Version} from "./version";
 
 const FORMAT_INFO_MASK_QR = 0x5412;
 
@@ -69,6 +68,10 @@ interface FormatInformation {
   dataMask: number
 }
 
+function copyBit(matrix: BitMatrix, x: number, y: number, versionBits: number): number {
+  return matrix.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
+}
+
 function buildFunctionPattern(version: Version): BitMatrix {
   var dimension = version.getDimensionForVersion();
   var emptyArray = new Uint8ClampedArray(dimension * dimension);
@@ -76,11 +79,11 @@ function buildFunctionPattern(version: Version): BitMatrix {
   ///BitMatrix bitMatrix = new BitMatrix(dimension);
 
   // Top left finder pattern + separator + format
-  bitMatrix.setRegion(0, 0, 9, 9);
+  bitMatrix.setRegion(0, 0, 9, 9, true);
   // Top right finder pattern + separator + format
-  bitMatrix.setRegion(dimension - 8, 0, 8, 9);
+  bitMatrix.setRegion(dimension - 8, 0, 8, 9, true);
   // Bottom left finder pattern + separator + format
-  bitMatrix.setRegion(0, dimension - 8, 9, 8);
+  bitMatrix.setRegion(0, dimension - 8, 9, 8, true);
 
   // Alignment patterns
   var max = version.alignmentPatternCenters.length;
@@ -91,20 +94,20 @@ function buildFunctionPattern(version: Version): BitMatrix {
         // No alignment patterns near the three finder paterns
         continue;
       }
-      bitMatrix.setRegion(version.alignmentPatternCenters[y] - 2, i, 5, 5);
+      bitMatrix.setRegion(version.alignmentPatternCenters[y] - 2, i, 5, 5, true);
     }
   }
 
   // Vertical timing pattern
-  bitMatrix.setRegion(6, 9, 1, dimension - 17);
+  bitMatrix.setRegion(6, 9, 1, dimension - 17, true);
   // Horizontal timing pattern
-  bitMatrix.setRegion(9, 6, dimension - 17, 1);
+  bitMatrix.setRegion(9, 6, dimension - 17, 1, true);
 
   if (version.versionNumber > 6) {
     // Version info, top right
-    bitMatrix.setRegion(dimension - 11, 0, 3, 6);
+    bitMatrix.setRegion(dimension - 11, 0, 3, 6, true);
     // Version info, bottom left
-    bitMatrix.setRegion(0, dimension - 11, 6, 3);
+    bitMatrix.setRegion(0, dimension - 11, 6, 3, true);
   }
 
   return bitMatrix;
@@ -172,7 +175,7 @@ function readVersion(matrix: BitMatrix): Version {
   var ijMin = dimension - 11;
   for (var j = 5; j >= 0; j--) {
     for (var i = dimension - 9; i >= ijMin; i--) {
-      versionBits = matrix.copyBit(i, j, versionBits);
+      versionBits = copyBit(matrix, i, j, versionBits);
     }
   }
 
@@ -185,7 +188,7 @@ function readVersion(matrix: BitMatrix): Version {
   versionBits = 0;
   for (var i = 5; i >= 0; i--) {
     for (var j = dimension - 9; j >= ijMin; j--) {
-      versionBits = matrix.copyBit(i, j, versionBits);
+      versionBits = copyBit(matrix, i, j, versionBits);
     }
   }
 
@@ -252,25 +255,25 @@ function readFormatInformation(matrix: BitMatrix): FormatInformation {
   // Read top-left format info bits
   var formatInfoBits1 = 0;
   for (var i = 0; i < 6; i++) {
-    formatInfoBits1 = matrix.copyBit(i, 8, formatInfoBits1);
+    formatInfoBits1 = copyBit(matrix, i, 8, formatInfoBits1);
   }
   // .. and skip a bit in the timing pattern ...
-  formatInfoBits1 = matrix.copyBit(7, 8, formatInfoBits1);
-  formatInfoBits1 = matrix.copyBit(8, 8, formatInfoBits1);
-  formatInfoBits1 = matrix.copyBit(8, 7, formatInfoBits1);
+  formatInfoBits1 = copyBit(matrix, 7, 8, formatInfoBits1);
+  formatInfoBits1 = copyBit(matrix, 8, 8, formatInfoBits1);
+  formatInfoBits1 = copyBit(matrix, 8, 7, formatInfoBits1);
   // .. and skip a bit in the timing pattern ...
   for (var j = 5; j >= 0; j--) {
-    formatInfoBits1 = matrix.copyBit(8, j, formatInfoBits1);
+    formatInfoBits1 = copyBit(matrix, 8, j, formatInfoBits1);
   }
   // Read the top-right/bottom-left pattern too
   var dimension = matrix.height;
   var formatInfoBits2 = 0;
   var jMin = dimension - 7;
   for (var j = dimension - 1; j >= jMin; j--) {
-    formatInfoBits2 = matrix.copyBit(8, j, formatInfoBits2);
+    formatInfoBits2 = copyBit(matrix, 8, j, formatInfoBits2);
   }
   for (var i = dimension - 8; i < dimension; i++) {
-    formatInfoBits2 = matrix.copyBit(i, 8, formatInfoBits2);
+    formatInfoBits2 = copyBit(matrix, i, 8, formatInfoBits2);
   }
 
   // parsedFormatInfo = FormatInformation.decodeFormatInformation(formatInfoBits1, formatInfoBits2);
@@ -419,7 +422,15 @@ export function decode(matrix: BitMatrix): number[] {
   if (result) {
     return result;
   }
-  // Decoding didn't work, try mirroring the QR
-  matrix.mirror();
+  // Decoding didn't work, try mirroring the QR across the topLeft -> bottomRight line.
+  // TODO - unclear if this is actually needed?
+  for (let x = 0; x < matrix.width; x++) {
+    for (let y = x + 1; y < matrix.height; y++) {
+      if (matrix.get(x, y) !== matrix.get(y, x)) {
+        matrix.set(x, y, !matrix.get(x, y));
+        matrix.set(y, x, !matrix.get(y, x));
+      }
+    }
+  }
   return decodeMatrix(matrix);
 }
