@@ -22036,6 +22036,28 @@
     "successful": true
   },
   {
+    "binarizedPath": "test-data/AUTOGEN/binarized/business-card-2.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/business-card-2.png",
+    "inputPath": "test-data/images/business-card-2.png",
+    "location": {
+      "bottomLeft": {
+        "x": 175.5,
+        "y": 479.5
+      },
+      "topLeft": {
+        "x": 83.5,
+        "y": 445.5
+      },
+      "topRight": {
+        "x": 95.5,
+        "y": 372.5
+      }
+    },
+    "name": "business-card-2.png",
+    "successful": false
+  },
+  {
     "binarizedPath": "test-data/AUTOGEN/binarized/business-card-3.png",
     "decodedBytes": [
       66,
@@ -22255,28 +22277,6 @@
     },
     "name": "business-card-3.png",
     "successful": true
-  },
-  {
-    "binarizedPath": "test-data/AUTOGEN/binarized/businss-card-2.png",
-    "decodedBytes": null,
-    "extractedPath": "test-data/AUTOGEN/extracted/businss-card-2.png",
-    "inputPath": "test-data/images/businss-card-2.png",
-    "location": {
-      "bottomLeft": {
-        "x": 175.5,
-        "y": 479.5
-      },
-      "topLeft": {
-        "x": 83.5,
-        "y": 445.5
-      },
-      "topRight": {
-        "x": 95.5,
-        "y": 372.5
-      }
-    },
-    "name": "businss-card-2.png",
-    "successful": false
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/cache-flyer.png",
