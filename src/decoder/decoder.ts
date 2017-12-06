@@ -414,13 +414,21 @@ function decodeMatrix(matrix: BitMatrix): number[] {
   return decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
 }
 
-export function decode(matrix: BitMatrix): number[] {
+function numberArrayToUInt8(array: number[]): Uint8ClampedArray {
+  const clamped = new Uint8ClampedArray(array.length);
+  for (let i = 0; i < array.length; i++) {
+    clamped[i] = array[i];
+  }
+  return clamped;
+}
+
+export function decode(matrix: BitMatrix): Uint8ClampedArray {
   if(matrix == null) {
     return null
   }
   var result = decodeMatrix(matrix);
   if (result) {
-    return result;
+    return numberArrayToUInt8(result);
   }
   // Decoding didn't work, try mirroring the QR across the topLeft -> bottomRight line.
   // TODO - unclear if this is actually needed?
@@ -432,5 +440,8 @@ export function decode(matrix: BitMatrix): number[] {
       }
     }
   }
-  return decodeMatrix(matrix);
+  if (!result) {
+    return null;
+  }
+  return numberArrayToUInt8(decodeMatrix(matrix));
 }

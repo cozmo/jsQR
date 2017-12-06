@@ -5,7 +5,7 @@ export interface Point {
 export interface QRCode {
     binaryData: Uint8ClampedArray;
     text: string;
-    encodingType: "numeric" | "alphanumeric" | "byte" | "structured_append" | "eci" | "kanji";
+    encodingType: "numeric" | "alphanumeric" | "byte" | "structured_append" | "eci" | "kanji" | "TODO";
     location: {
         topRightCorner: Point;
         topLeftCorner: Point;
@@ -18,4 +18,4 @@ export interface QRCode {
     };
     errorRate: number;
 }
-export default function readQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null;
+export declare function readQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null;

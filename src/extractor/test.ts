@@ -1,6 +1,6 @@
 import tests from "../../test-data";
 import { loadBinarized } from "../../tests/helpers";
-import { BitMatrix } from "../common/bitmatrix";
+import { BitMatrix } from "../bitmatrix";
 import { extract } from "./extractor";
 
 describe("extract", () => {

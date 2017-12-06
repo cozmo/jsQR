@@ -85,7 +85,7 @@ function times(a: PerspectiveTransform, b: PerspectiveTransform): PerspectiveTra
   };
 }
 
-export function extract(image: BitMatrix, location: QRLocation): BitMatrix {
+export function extract(image: BitMatrix, location: QRLocation) {
   const qToS = quadrilateralToSquare(
     {x: 3.5, y: 3.5},
     {x: location.dimension - 3.5, y: 3.5},
@@ -95,16 +95,26 @@ export function extract(image: BitMatrix, location: QRLocation): BitMatrix {
   const sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
   const transform = times(sToQ, qToS);
 
-  const output = BitMatrix.createEmpty(location.dimension, location.dimension);
+  const matrix = BitMatrix.createEmpty(location.dimension, location.dimension);
+  const mappingFunction = (x: number, y: number) => {
+    const denominator = transform.a13 * x + transform.a23 * y + transform.a33;
+    return {
+      x: (transform.a11 * x + transform.a21 * y + transform.a31) / denominator,
+      y: (transform.a12 * x + transform.a22 * y + transform.a32) / denominator,
+    }
+  }
+
   for (let y = 0; y < location.dimension; y++) {
     for (let x = 0; x < location.dimension; x++) {
       const xValue = x + 0.5;
       const yValue = y + 0.5;
-      const denominator = transform.a13 * xValue + transform.a23 * yValue + transform.a33;
-      const sourceX = Math.floor((transform.a11 * xValue + transform.a21 * yValue + transform.a31) / denominator);
-      const sourceY = Math.floor((transform.a12 * xValue + transform.a22 * yValue + transform.a32) / denominator);
-      output.set(x, y, image.get(sourceX, sourceY));
+      const sourcePixel = mappingFunction(xValue, yValue);
+      matrix.set(x, y, image.get(Math.floor(sourcePixel.x), Math.floor(sourcePixel.y)));
     }
   }
-  return output;
+
+  return {
+    matrix,
+    mappingFunction
+  };
 }

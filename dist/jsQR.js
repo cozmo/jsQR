@@ -121,6 +121,13 @@ var binarizer_1 = __webpack_require__(2);
 var decoder_1 = __webpack_require__(3);
 var extractor_1 = __webpack_require__(8);
 var locator_1 = __webpack_require__(9);
+function byteArrayToString(bytes) {
+    var str = "";
+    for (var i = 0; i < bytes.length; i++) {
+        str += String.fromCharCode(bytes[i]);
+    }
+    return str;
+}
 // TODO - is this the name we want?
 function readQR(data, width, height) {
     var binarized = binarizer_1.binarize(data, width, height);
@@ -129,10 +136,29 @@ function readQR(data, width, height) {
         return null;
     }
     var extracted = extractor_1.extract(binarized, location);
-    var decoded = decoder_1.decode(extracted);
-    return null;
+    var decoded = decoder_1.decode(extracted.matrix);
+    if (!decoded) {
+        return null;
+    }
+    var decodedString = byteArrayToString(decoded);
+    return {
+        binaryData: decoded,
+        encodingType: "TODO",
+        text: decodedString,
+        location: {
+            topRightCorner: extracted.mappingFunction(0, location.dimension),
+            topLeftCorner: extracted.mappingFunction(0, 0),
+            bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
+            bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
+            topRightFinderPattern: location.topRight,
+            topLeftFinderPattern: location.topLeft,
+            bottomLeftFinderPattern: location.bottomLeft,
+            bottomRightAlignmentPattern: location.alignmentPattern,
+        },
+        errorRate: 0,
+    };
 }
-exports.default = readQR;
+exports.readQR = readQR;
 
 
 /***/ }),
@@ -611,13 +637,20 @@ function decodeMatrix(matrix) {
     }
     return decodeqrdata_1.decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
 }
+function numberArrayToUInt8(array) {
+    var clamped = new Uint8ClampedArray(array.length);
+    for (var i = 0; i < array.length; i++) {
+        clamped[i] = array[i];
+    }
+    return clamped;
+}
 function decode(matrix) {
     if (matrix == null) {
         return null;
     }
     var result = decodeMatrix(matrix);
     if (result) {
-        return result;
+        return numberArrayToUInt8(result);
     }
     // Decoding didn't work, try mirroring the QR across the topLeft -> bottomRight line.
     // TODO - unclear if this is actually needed?
@@ -629,7 +662,10 @@ function decode(matrix) {
             }
         }
     }
-    return decodeMatrix(matrix);
+    if (!result) {
+        return null;
+    }
+    return numberArrayToUInt8(decodeMatrix(matrix));
 }
 exports.decode = decode;
 
@@ -1597,18 +1633,26 @@ function extract(image, location) {
     var qToS = quadrilateralToSquare({ x: 3.5, y: 3.5 }, { x: location.dimension - 3.5, y: 3.5 }, { x: location.dimension - 6.5, y: location.dimension - 6.5 }, { x: 3.5, y: location.dimension - 3.5 });
     var sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
     var transform = times(sToQ, qToS);
-    var output = bitmatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
+    var matrix = bitmatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
+    var mappingFunction = function (x, y) {
+        var denominator = transform.a13 * x + transform.a23 * y + transform.a33;
+        return {
+            x: (transform.a11 * x + transform.a21 * y + transform.a31) / denominator,
+            y: (transform.a12 * x + transform.a22 * y + transform.a32) / denominator,
+        };
+    };
     for (var y = 0; y < location.dimension; y++) {
         for (var x = 0; x < location.dimension; x++) {
             var xValue = x + 0.5;
             var yValue = y + 0.5;
-            var denominator = transform.a13 * xValue + transform.a23 * yValue + transform.a33;
-            var sourceX = Math.floor((transform.a11 * xValue + transform.a21 * yValue + transform.a31) / denominator);
-            var sourceY = Math.floor((transform.a12 * xValue + transform.a22 * yValue + transform.a32) / denominator);
-            output.set(x, y, image.get(sourceX, sourceY));
+            var sourcePixel = mappingFunction(xValue, yValue);
+            matrix.set(x, y, image.get(Math.floor(sourcePixel.x), Math.floor(sourcePixel.y)));
         }
     }
-    return output;
+    return {
+        matrix: matrix,
+        mappingFunction: mappingFunction
+    };
 }
 exports.extract = extract;
 
