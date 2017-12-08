@@ -144,7 +144,7 @@ const VERSIONS = [
 
 export function getVersionForNumber(versionNumber: number): Version {
   if (versionNumber < 1 || versionNumber > 40) {
-    throw new Error("Invalid version number " + versionNumber);
+    return null;
   }
   return VERSIONS[versionNumber - 1];
 }
