@@ -168,7 +168,7 @@ exports.readQR = readQR;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bitmatrix_1 = __webpack_require__(0);
+var BitMatrix_1 = __webpack_require__(0);
 var REGION_SIZE = 8;
 var MIN_DYNAMIC_RANGE = 24;
 function numBetween(value, min, max) {
@@ -244,7 +244,7 @@ function binarize(data, width, height) {
             blackPoints.set(hortizontalRegion, verticalRegion, average);
         }
     }
-    var binarized = bitmatrix_1.BitMatrix.createEmpty(width, height);
+    var binarized = BitMatrix_1.BitMatrix.createEmpty(width, height);
     for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
         for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
             var left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
@@ -276,7 +276,7 @@ exports.binarize = binarize;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bitmatrix_1 = __webpack_require__(0);
+var BitMatrix_1 = __webpack_require__(0);
 var decodeqrdata_1 = __webpack_require__(4);
 var reedsolomon_1 = __webpack_require__(6);
 var version_1 = __webpack_require__(7);
@@ -337,7 +337,7 @@ function copyBit(matrix, x, y, versionBits) {
 function buildFunctionPattern(version) {
     var dimension = version.getDimensionForVersion();
     var emptyArray = new Uint8ClampedArray(dimension * dimension);
-    var bitMatrix = new bitmatrix_1.BitMatrix(emptyArray, dimension);
+    var bitMatrix = new BitMatrix_1.BitMatrix(emptyArray, dimension);
     ///BitMatrix bitMatrix = new BitMatrix(dimension);
     // Top left finder pattern + separator + format
     bitMatrix.setRegion(0, 0, 9, 9, true);
@@ -662,6 +662,7 @@ function decode(matrix) {
             }
         }
     }
+    result = decodeMatrix(matrix);
     if (!result) {
         return null;
     }
@@ -1563,7 +1564,7 @@ exports.getVersionForNumber = getVersionForNumber;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bitmatrix_1 = __webpack_require__(0);
+var BitMatrix_1 = __webpack_require__(0);
 function squareToQuadrilateral(p1, p2, p3, p4) {
     var dx3 = p1.x - p2.x + p3.x - p4.x;
     var dy3 = p1.y - p2.y + p3.y - p4.y;
@@ -1633,7 +1634,7 @@ function extract(image, location) {
     var qToS = quadrilateralToSquare({ x: 3.5, y: 3.5 }, { x: location.dimension - 3.5, y: 3.5 }, { x: location.dimension - 6.5, y: location.dimension - 6.5 }, { x: 3.5, y: location.dimension - 3.5 });
     var sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
     var transform = times(sToQ, qToS);
-    var matrix = bitmatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
+    var matrix = BitMatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
     var mappingFunction = function (x, y) {
         var denominator = transform.a13 * x + transform.a23 * y + transform.a33;
         return {
@@ -1780,7 +1781,6 @@ function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
     }
     return distances;
 }
-exports.countBlackWhiteRunTowardsPoint = countBlackWhiteRunTowardsPoint;
 // Takes an origin point and an end point and counts the sizes of the black white run in the origin point
 // along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
 // of the black white run. Takes a length which represents the number of switches from black to white to look for.
@@ -1793,7 +1793,6 @@ function countBlackWhiteRun(origin, end, matrix, length) {
     return (_a = awayFromEnd.concat(middleValue)).concat.apply(_a, towardsEnd);
     var _a;
 }
-exports.countBlackWhiteRun = countBlackWhiteRun;
 // Takes in a black white run and an array of expected ratios. Returns the average size of the run as well as the "error" -
 // that is the amount the run diverges from the expected ratio
 function scoreBlackWhiteRun(sequence, ratios) {

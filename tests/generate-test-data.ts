@@ -7,9 +7,9 @@ import * as png from "upng-js";
 import * as helpers from "./helpers";
 
 import {decode} from "../src/decoder/decoder";
-import {binarize} from "../src/detector/binarizer";
-import {extract} from "../src/detector/extractor";
-import {locate} from "../src/detector/locator";
+import {binarize} from "../src/binarizer";
+import {extract} from "../src/extractor";
+import {locate} from "../src/locator";
 
 ((async () => {
   await fs.remove(path.join("test-data", "AUTOGEN"));
@@ -41,10 +41,10 @@ import {locate} from "../src/detector/locator";
 
       const extracted = extract(binarized, test.location);
       const extractedPath = path.join("test-data", "AUTOGEN", "extracted", imagePath);
-      await fs.writeFile(extractedPath, helpers.bitMatrixToPng(extracted));
+      await fs.writeFile(extractedPath, helpers.bitMatrixToPng(extracted.matrix));
       test.extractedPath = extractedPath;
 
-      test.decodedBytes = decode(extracted);
+      test.decodedBytes = decode(extracted.matrix);
       test.successful = !!test.decodedBytes;
     } catch (e) {
       // failed to parse QR
@@ -59,6 +59,8 @@ import {locate} from "../src/detector/locator";
     },
     tests: summary,
   }, null, 2));
-  await fs.writeFile(path.join("test-data", "AUTOGEN", "tests.json"), JSON.stringify(testCases, null, 2));
+  await fs.writeFile(path.join("test-data", "AUTOGEN", "tests.json"), JSON.stringify(testCases.map(t =>
+    Object.assign(t, {decodedBytes: t.decodedBytes ? Array.from(t.decodedBytes) : null})
+  ), null, 2));
 })()).then(() => process.exit(0))
 .catch((e) => { throw e; });

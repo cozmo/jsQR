@@ -1,12 +1,12 @@
-import { BitMatrix } from "../bitmatrix";
+import { BitMatrix } from "../BitMatrix";
 
 const MAX_FINDERPATTERNS_TO_SEARCH = 4;
 const MIN_QUAD_RATIO = 0.5;
 const MAX_QUAD_RATIO = 1.5;
 
-interface Point {
-  x: number;
-  y: number;
+export interface Point {
+  x: number,
+  y: number,
 }
 
 export interface QRLocation {
@@ -79,7 +79,7 @@ function computeDimension(topLeft: Point, topRight: Point, bottomLeft: Point, ma
 // Takes an origin point and an end point and counts the sizes of the black white run from the origin towards the end point.
 // Returns an array of elements, representing the pixel size of the black white run.
 // Uses a variant of http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-export function countBlackWhiteRunTowardsPoint(origin: Point, end: Point, matrix: BitMatrix, length: number) {
+function countBlackWhiteRunTowardsPoint(origin: Point, end: Point, matrix: BitMatrix, length: number) {
   const switchPoints: Point[] = [{x: Math.floor(origin.x), y: Math.floor(origin.y)}];
   const steep = Math.abs(end.y - origin.y) > Math.abs(end.x - origin.x);
 
@@ -143,7 +143,7 @@ export function countBlackWhiteRunTowardsPoint(origin: Point, end: Point, matrix
 // Takes an origin point and an end point and counts the sizes of the black white run in the origin point
 // along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
 // of the black white run. Takes a length which represents the number of switches from black to white to look for.
-export function countBlackWhiteRun(origin: Point, end: Point, matrix: BitMatrix, length: number) {
+function countBlackWhiteRun(origin: Point, end: Point, matrix: BitMatrix, length: number) {
   const rise = end.y - origin.y;
   const run = end.x - origin.x;
 

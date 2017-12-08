@@ -1,13 +1,8 @@
+import {BitMatrix} from "./BitMatrix";
 import {binarize} from "./binarizer";
-import {BitMatrix} from "./bitmatrix";
 import {decode} from "./decoder/decoder";
 import {extract} from "./extractor";
-import {locate} from "./locator";
-
-export interface Point {
-  x: number;
-  y: number;
-}
+import {locate, Point} from "./locator";
 
 function byteArrayToString(bytes: Uint8ClampedArray): string {
   let str = "";

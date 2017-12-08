@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 import * as png from "upng-js";
 
-import { BitMatrix } from "../src/common/bitmatrix";
+import { BitMatrix } from "../src/BitMatrix";
 
 export function bitMatrixToPng(matrix: BitMatrix) {
   const output = new Uint8ClampedArray(matrix.width * matrix.height * 4);

@@ -1,6 +1,6 @@
 import tests from "../../test-data";
-import { loadBinarized } from "../../tests/helpers";
-import { locate } from "./locator";
+import {loadBinarized} from "../../tests/helpers";
+import {locate} from "./";
 
 describe("locate", () => {
   tests.forEach((t) => {

@@ -1,6 +1,6 @@
 import tests from "../../test-data";
-import { loadBinarized, loadPng } from "../../tests/helpers";
-import { binarize } from "./binarizer";
+import {loadBinarized, loadPng} from "../../tests/helpers";
+import {binarize} from "./";
 
 describe("binarize", () => {
   tests.forEach((t) => {

@@ -1,7 +1,7 @@
 import tests from "../../test-data";
 import { loadBinarized } from "../../tests/helpers";
-import { BitMatrix } from "../bitmatrix";
-import { extract } from "./extractor";
+import { BitMatrix } from "../BitMatrix";
+import { extract } from "./";
 
 describe("extract", () => {
   tests.forEach((t) => {
@@ -10,7 +10,7 @@ describe("extract", () => {
       const expectedOutput = t.extractedPath ? await loadBinarized(t.extractedPath) : null;
       let output: BitMatrix = null;
       try {
-        output = extract(binarizedImage, t.location);
+        output = extract(binarizedImage, t.location).matrix;
       } catch (e) {
         // error
       }

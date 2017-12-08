@@ -1,4 +1,4 @@
-import {BitMatrix} from "../bitmatrix";
+import {BitMatrix} from "../BitMatrix";
 import {decodeQRdata} from "./decodeqrdata";
 import {ReedSolomonDecoder} from "./reedsolomon";
 import {ErrorCorrectionLevel, getVersionForNumber, numBitsDiffering, Version} from "./version";
@@ -440,6 +440,7 @@ export function decode(matrix: BitMatrix): Uint8ClampedArray {
       }
     }
   }
+  result = decodeMatrix(matrix);
   if (!result) {
     return null;
   }

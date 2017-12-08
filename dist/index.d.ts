@@ -1,7 +1,4 @@
-export interface Point {
-    x: number;
-    y: number;
-}
+import { Point } from "./locator";
 export interface QRCode {
     binaryData: Uint8ClampedArray;
     text: string;
