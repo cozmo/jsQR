@@ -146,7 +146,7 @@ function readQR(data, width, height) {
         encodingType: "TODO",
         text: decodedString,
         location: {
-            topRightCorner: extracted.mappingFunction(0, location.dimension),
+            topRightCorner: extracted.mappingFunction(location.dimension, 0),
             topLeftCorner: extracted.mappingFunction(0, 0),
             bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
             bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
