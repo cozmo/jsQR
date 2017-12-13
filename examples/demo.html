@@ -1,0 +1,135 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>jsQR Demo</title>
+  <script src="../dist/jsQR.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Ropa+Sans" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Ropa Sans', sans-serif;
+      color: #333;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 10px 0;
+      font-size: 40px;
+    }
+
+    #videoContainer {
+      position: relative;
+      width:640px;
+      height:480px;
+      margin: 0 auto;
+      background: #eee;
+    }
+
+    #message {
+      position:absolute;
+      top: 50%;
+      margin-top: -8px;
+      text-align: center;
+      width: 100%;
+    }
+
+    #video {
+      border: 10px solid #eee;
+      width: 100%;
+      box-sizing: border-box;
+      left: 0;
+      top: 0;
+      position: absolute;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      background: #eee;
+    }
+
+    #encodingType {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>jsQR</h1>
+  <div id="videoContainer">
+    <div id="message">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+    <video id="video" hidden></video>
+    <canvas id="canvas" width=640 height=480 style="left: 0; top: 0; position: absolute; width: 640; height: 480;"></canvas>
+  </div>
+  <div id="output">
+    <div id="encodingType" hidden><b>Encoding Type:</b> TODO</div>
+    <div id="QRData" hidden><b>Data:</b> https://wikimedia.com</div>
+    <div id="noCodeFound">No QR code found.</div>
+  </div>
+  <script>
+    var message = document.getElementById("message");
+    var video = document.getElementById("video");
+    var framebuffer = document.createElement("canvas");
+
+    var outputNoCodeFound = document.getElementById("noCodeFound");
+    var outputEncodingType = document.getElementById("encodingType");
+    var outputData = document.getElementById("QRData");
+
+    framebuffer.width = 640;
+    framebuffer.height = 480;
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+
+    function drawLine(begin, end, color) {
+      context.beginPath();
+      context.moveTo(begin.x, begin.y);
+      context.lineTo(end.x, end.y);
+      context.lineWidth = 4;
+      context.strokeStyle = color;
+      context.stroke();
+    }
+
+    function drawPoint(point, color, radius) {
+      context.beginPath();
+      context.arc(point.x, point.y, radius, 0, 2 * Math.PI, false);
+      context.fillStyle = color;
+      context.fill();
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+      video.srcObject = stream;
+      video.play();
+      requestAnimationFrame(tick);
+    });
+
+    function tick() {
+      message.innerText = "⌛ Loading video..."
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        video.hidden = false;
+        message.innerText = ""
+      }
+      context.clearRect(0, 0, 640, 480)
+      requestAnimationFrame(tick);
+      var framebufferContext = framebuffer.getContext("2d");
+      framebufferContext.drawImage(video, 0, 0, 640, 480);
+      var imageData = framebufferContext.getImageData(0, 0, 640, 480);
+      var code = jsQR.readQR(imageData.data, imageData.width, imageData.height);
+      if (code) {
+        drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+        drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+        drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+        drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+
+        outputNoCodeFound.hidden = true;
+        outputData.hidden = false;
+        outputData.innerText = code.text;
+        outputEncodingType.hidden = false;
+        outputEncodingType.innerText = code.encodingType;
+      } else {
+        outputNoCodeFound.hidden = false;
+        outputData.hidden = true;
+        outputEncodingType.hidden = true;
+      }
+    }
+  </script>
+</body>
+</html>
