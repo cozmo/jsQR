@@ -223,7 +223,9 @@ interface Quad {
 
 export function locate(matrix: BitMatrix): QRLocation {
   const finderPatternQuads: Quad[] = [];
+  let activeFinderPatternQuads: Quad[] = [];
   const alignmentPatternQuads: Quad[] = [];
+  let activeAlignmentPatternQuads: Quad[] = [];
 
   for (let y = 0; y <= matrix.height; y++) {
     let length = 0;
@@ -265,20 +267,18 @@ export function locate(matrix: BitMatrix): QRLocation {
           const line = { startX, endX, y };
           // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
           // that line as the starting point.
-          const matchingQuads = finderPatternQuads.filter(q =>
-            q.bottom.y + 1 === y && (
-              (startX >= q.bottom.startX && startX <= q.bottom.endX) ||
-              (endX >= q.bottom.startX && startX <= q.bottom.endX) ||
-              (startX <= q.bottom.startX && endX >= q.bottom.endX && (
-                (scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
-                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO
-              ))
-            ),
+          const matchingQuads = activeFinderPatternQuads.filter(q =>
+            (startX >= q.bottom.startX && startX <= q.bottom.endX) ||
+            (endX >= q.bottom.startX && startX <= q.bottom.endX) ||
+            (startX <= q.bottom.startX && endX >= q.bottom.endX && (
+              (scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+              (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO
+            )),
           );
           if (matchingQuads.length > 0) {
             matchingQuads[0].bottom = line;
           } else {
-            finderPatternQuads.push({ top: line, bottom: line });
+            activeFinderPatternQuads.push({ top: line, bottom: line });
           }
         }
         if (validAlignmentPattern) {
@@ -289,25 +289,32 @@ export function locate(matrix: BitMatrix): QRLocation {
           const line = { startX, y, endX };
           // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
           // that line as the starting point.
-          const matchingQuads = alignmentPatternQuads.filter(q =>
-            q.bottom.y + 1 === y && (
-              (startX >= q.bottom.startX && startX <= q.bottom.endX) ||
-              (endX >= q.bottom.startX && startX <= q.bottom.endX) ||
-              (startX <= q.bottom.startX && endX >= q.bottom.endX && (
-                (scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
-                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO
-              ))
-            ),
+          const matchingQuads = activeAlignmentPatternQuads.filter(q =>
+            (startX >= q.bottom.startX && startX <= q.bottom.endX) ||
+            (endX >= q.bottom.startX && startX <= q.bottom.endX) ||
+            (startX <= q.bottom.startX && endX >= q.bottom.endX && (
+              (scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+              (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO
+            )),
           );
           if (matchingQuads.length > 0) {
             matchingQuads[0].bottom = line;
           } else {
-            alignmentPatternQuads.push({ top: line, bottom: line });
+            activeAlignmentPatternQuads.push({ top: line, bottom: line });
           }
         }
       }
     }
+    finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y !== y))
+    activeFinderPatternQuads = activeFinderPatternQuads.filter(q => q.bottom.y === y)
+
+    alignmentPatternQuads.push(...activeAlignmentPatternQuads.filter(q => q.bottom.y !== y))
+    activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(q => q.bottom.y === y)
+
   }
+
+  finderPatternQuads.push(...activeFinderPatternQuads);
+  alignmentPatternQuads.push(...activeAlignmentPatternQuads);
 
   const finderPatternGroups = finderPatternQuads
     .filter(q => q.bottom.y - q.top.y >= 2) // All quads must be at least 2px tall since the center square is larger than a block

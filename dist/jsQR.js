@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var BitMatrix = /** @class */ (function () {
     function BitMatrix(data, width) {
         this.width = width;
@@ -91,6 +91,9 @@ var BitMatrix = /** @class */ (function () {
         return new BitMatrix(data, width);
     };
     BitMatrix.prototype.get = function (x, y) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+            return false;
+        }
         return !!this.data[y * this.width + x];
     };
     BitMatrix.prototype.set = function (x, y, v) {
@@ -129,7 +132,7 @@ exports.BitMatrix = BitMatrix;
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var BITS_SET_IN_HALF_BYTE = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
 function numBitsDiffering(a, b) {
     a ^= b; // a now has a 1 bit exactly where its bit differs with b's
@@ -157,155 +160,11 @@ exports.isNaN = isNaN;
 
 "use strict";
 
-exports.__esModule = true;
-var helpers_1 = __webpack_require__(1);
-var VERSION_DECODE_INFO = [
-    0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
-    0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
-    0x1145D, 0x12A17, 0x13532, 0x149A6, 0x15683,
-    0x168C9, 0x177EC, 0x18EC4, 0x191E1, 0x1AFAB,
-    0x1B08E, 0x1CC1A, 0x1D33F, 0x1ED75, 0x1F250,
-    0x209D5, 0x216F0, 0x228BA, 0x2379F, 0x24B0B,
-    0x2542E, 0x26A64, 0x27541, 0x28C69,
-];
-var ECB = /** @class */ (function () {
-    function ECB(_count, _dataCodewords) {
-        this.count = _count;
-        this.dataCodewords = _dataCodewords;
-    }
-    return ECB;
-}());
-var ECBlocks = /** @class */ (function () {
-    function ECBlocks(_ecCodewordsPerBlock) {
-        var _ecBlocks = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            _ecBlocks[_i - 1] = arguments[_i];
-        }
-        this.ecCodewordsPerBlock = _ecCodewordsPerBlock;
-        this.ecBlocks = _ecBlocks;
-    }
-    ECBlocks.prototype.getNumBlocks = function () {
-        return this.ecBlocks.reduce(function (a, b) { return (a + b.count); }, 0);
-    };
-    ECBlocks.prototype.getTotalECCodewords = function () {
-        return this.ecCodewordsPerBlock * this.getNumBlocks();
-    };
-    return ECBlocks;
-}());
-var Version = /** @class */ (function () {
-    function Version(_versionNumber, _alignmentPatternCenters) {
-        var _ecBlocks = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            _ecBlocks[_i - 2] = arguments[_i];
-        }
-        this.versionNumber = _versionNumber;
-        this.alignmentPatternCenters = _alignmentPatternCenters;
-        this.ecBlocks = _ecBlocks;
-        var total = 0;
-        var ecCodewords = this.ecBlocks[0].ecCodewordsPerBlock;
-        var ecbArray = this.ecBlocks[0].ecBlocks;
-        ecbArray.forEach(function (ecBlock) {
-            total += ecBlock.count * (ecBlock.dataCodewords + ecCodewords);
-        });
-        this.totalCodewords = total;
-    }
-    Version.prototype.getDimensionForVersion = function () {
-        return 17 + 4 * this.versionNumber;
-    };
-    Version.prototype.getECBlocksForLevel = function (ecLevel) {
-        return this.ecBlocks[ecLevel.ordinal];
-    };
-    Version.decodeVersionInformation = function (versionBits) {
-        var bestDifference = Infinity;
-        var bestVersion = 0;
-        for (var i = 0; i < VERSION_DECODE_INFO.length; i++) {
-            var targetVersion = VERSION_DECODE_INFO[i];
-            // Do the version info bits match exactly? done.
-            if (targetVersion == versionBits) {
-                return getVersionForNumber(i + 7);
-            }
-            // Otherwise see if this is the closest to a real version info bit string
-            // we have seen so far
-            var bitsDifference = helpers_1.numBitsDiffering(versionBits, targetVersion);
-            if (bitsDifference < bestDifference) {
-                bestVersion = i + 7;
-                bestDifference = bitsDifference;
-            }
-        }
-        // We can tolerate up to 3 bits of error since no two version info codewords will
-        // differ in less than 8 bits.
-        if (bestDifference <= 3) {
-            return getVersionForNumber(bestVersion);
-        }
-        // If we didn't find a close enough match, fail
-        return null;
-    };
-    return Version;
-}());
-exports.Version = Version;
-var VERSIONS = [
-    new Version(1, [], new ECBlocks(7, new ECB(1, 19)), new ECBlocks(10, new ECB(1, 16)), new ECBlocks(13, new ECB(1, 13)), new ECBlocks(17, new ECB(1, 9))),
-    new Version(2, [6, 18], new ECBlocks(10, new ECB(1, 34)), new ECBlocks(16, new ECB(1, 28)), new ECBlocks(22, new ECB(1, 22)), new ECBlocks(28, new ECB(1, 16))),
-    new Version(3, [6, 22], new ECBlocks(15, new ECB(1, 55)), new ECBlocks(26, new ECB(1, 44)), new ECBlocks(18, new ECB(2, 17)), new ECBlocks(22, new ECB(2, 13))),
-    new Version(4, [6, 26], new ECBlocks(20, new ECB(1, 80)), new ECBlocks(18, new ECB(2, 32)), new ECBlocks(26, new ECB(2, 24)), new ECBlocks(16, new ECB(4, 9))),
-    new Version(5, [6, 30], new ECBlocks(26, new ECB(1, 108)), new ECBlocks(24, new ECB(2, 43)), new ECBlocks(18, new ECB(2, 15), new ECB(2, 16)), new ECBlocks(22, new ECB(2, 11), new ECB(2, 12))),
-    new Version(6, [6, 34], new ECBlocks(18, new ECB(2, 68)), new ECBlocks(16, new ECB(4, 27)), new ECBlocks(24, new ECB(4, 19)), new ECBlocks(28, new ECB(4, 15))),
-    new Version(7, [6, 22, 38], new ECBlocks(20, new ECB(2, 78)), new ECBlocks(18, new ECB(4, 31)), new ECBlocks(18, new ECB(2, 14), new ECB(4, 15)), new ECBlocks(26, new ECB(4, 13), new ECB(1, 14))),
-    new Version(8, [6, 24, 42], new ECBlocks(24, new ECB(2, 97)), new ECBlocks(22, new ECB(2, 38), new ECB(2, 39)), new ECBlocks(22, new ECB(4, 18), new ECB(2, 19)), new ECBlocks(26, new ECB(4, 14), new ECB(2, 15))),
-    new Version(9, [6, 26, 46], new ECBlocks(30, new ECB(2, 116)), new ECBlocks(22, new ECB(3, 36), new ECB(2, 37)), new ECBlocks(20, new ECB(4, 16), new ECB(4, 17)), new ECBlocks(24, new ECB(4, 12), new ECB(4, 13))),
-    new Version(10, [6, 28, 50], new ECBlocks(18, new ECB(2, 68), new ECB(2, 69)), new ECBlocks(26, new ECB(4, 43), new ECB(1, 44)), new ECBlocks(24, new ECB(6, 19), new ECB(2, 20)), new ECBlocks(28, new ECB(6, 15), new ECB(2, 16))),
-    new Version(11, [6, 30, 54], new ECBlocks(20, new ECB(4, 81)), new ECBlocks(30, new ECB(1, 50), new ECB(4, 51)), new ECBlocks(28, new ECB(4, 22), new ECB(4, 23)), new ECBlocks(24, new ECB(3, 12), new ECB(8, 13))),
-    new Version(12, [6, 32, 58], new ECBlocks(24, new ECB(2, 92), new ECB(2, 93)), new ECBlocks(22, new ECB(6, 36), new ECB(2, 37)), new ECBlocks(26, new ECB(4, 20), new ECB(6, 21)), new ECBlocks(28, new ECB(7, 14), new ECB(4, 15))),
-    new Version(13, [6, 34, 62], new ECBlocks(26, new ECB(4, 107)), new ECBlocks(22, new ECB(8, 37), new ECB(1, 38)), new ECBlocks(24, new ECB(8, 20), new ECB(4, 21)), new ECBlocks(22, new ECB(12, 11), new ECB(4, 12))),
-    new Version(14, [6, 26, 46, 66], new ECBlocks(30, new ECB(3, 115), new ECB(1, 116)), new ECBlocks(24, new ECB(4, 40), new ECB(5, 41)), new ECBlocks(20, new ECB(11, 16), new ECB(5, 17)), new ECBlocks(24, new ECB(11, 12), new ECB(5, 13))),
-    new Version(15, [6, 26, 48, 70], new ECBlocks(22, new ECB(5, 87), new ECB(1, 88)), new ECBlocks(24, new ECB(5, 41), new ECB(5, 42)), new ECBlocks(30, new ECB(5, 24), new ECB(7, 25)), new ECBlocks(24, new ECB(11, 12), new ECB(7, 13))),
-    new Version(16, [6, 26, 50, 74], new ECBlocks(24, new ECB(5, 98), new ECB(1, 99)), new ECBlocks(28, new ECB(7, 45), new ECB(3, 46)), new ECBlocks(24, new ECB(15, 19), new ECB(2, 20)), new ECBlocks(30, new ECB(3, 15), new ECB(13, 16))),
-    new Version(17, [6, 30, 54, 78], new ECBlocks(28, new ECB(1, 107), new ECB(5, 108)), new ECBlocks(28, new ECB(10, 46), new ECB(1, 47)), new ECBlocks(28, new ECB(1, 22), new ECB(15, 23)), new ECBlocks(28, new ECB(2, 14), new ECB(17, 15))),
-    new Version(18, [6, 30, 56, 82], new ECBlocks(30, new ECB(5, 120), new ECB(1, 121)), new ECBlocks(26, new ECB(9, 43), new ECB(4, 44)), new ECBlocks(28, new ECB(17, 22), new ECB(1, 23)), new ECBlocks(28, new ECB(2, 14), new ECB(19, 15))),
-    new Version(19, [6, 30, 58, 86], new ECBlocks(28, new ECB(3, 113), new ECB(4, 114)), new ECBlocks(26, new ECB(3, 44), new ECB(11, 45)), new ECBlocks(26, new ECB(17, 21), new ECB(4, 22)), new ECBlocks(26, new ECB(9, 13), new ECB(16, 14))),
-    new Version(20, [6, 34, 62, 90], new ECBlocks(28, new ECB(3, 107), new ECB(5, 108)), new ECBlocks(26, new ECB(3, 41), new ECB(13, 42)), new ECBlocks(30, new ECB(15, 24), new ECB(5, 25)), new ECBlocks(28, new ECB(15, 15), new ECB(10, 16))),
-    new Version(21, [6, 28, 50, 72, 94], new ECBlocks(28, new ECB(4, 116), new ECB(4, 117)), new ECBlocks(26, new ECB(17, 42)), new ECBlocks(28, new ECB(17, 22), new ECB(6, 23)), new ECBlocks(30, new ECB(19, 16), new ECB(6, 17))),
-    new Version(22, [6, 26, 50, 74, 98], new ECBlocks(28, new ECB(2, 111), new ECB(7, 112)), new ECBlocks(28, new ECB(17, 46)), new ECBlocks(30, new ECB(7, 24), new ECB(16, 25)), new ECBlocks(24, new ECB(34, 13))),
-    new Version(23, [6, 30, 54, 74, 102], new ECBlocks(30, new ECB(4, 121), new ECB(5, 122)), new ECBlocks(28, new ECB(4, 47), new ECB(14, 48)), new ECBlocks(30, new ECB(11, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(16, 15), new ECB(14, 16))),
-    new Version(24, [6, 28, 54, 80, 106], new ECBlocks(30, new ECB(6, 117), new ECB(4, 118)), new ECBlocks(28, new ECB(6, 45), new ECB(14, 46)), new ECBlocks(30, new ECB(11, 24), new ECB(16, 25)), new ECBlocks(30, new ECB(30, 16), new ECB(2, 17))),
-    new Version(25, [6, 32, 58, 84, 110], new ECBlocks(26, new ECB(8, 106), new ECB(4, 107)), new ECBlocks(28, new ECB(8, 47), new ECB(13, 48)), new ECBlocks(30, new ECB(7, 24), new ECB(22, 25)), new ECBlocks(30, new ECB(22, 15), new ECB(13, 16))),
-    new Version(26, [6, 30, 58, 86, 114], new ECBlocks(28, new ECB(10, 114), new ECB(2, 115)), new ECBlocks(28, new ECB(19, 46), new ECB(4, 47)), new ECBlocks(28, new ECB(28, 22), new ECB(6, 23)), new ECBlocks(30, new ECB(33, 16), new ECB(4, 17))),
-    new Version(27, [6, 34, 62, 90, 118], new ECBlocks(30, new ECB(8, 122), new ECB(4, 123)), new ECBlocks(28, new ECB(22, 45), new ECB(3, 46)), new ECBlocks(30, new ECB(8, 23), new ECB(26, 24)), new ECBlocks(30, new ECB(12, 15), new ECB(28, 16))),
-    new Version(28, [6, 26, 50, 74, 98, 122], new ECBlocks(30, new ECB(3, 117), new ECB(10, 118)), new ECBlocks(28, new ECB(3, 45), new ECB(23, 46)), new ECBlocks(30, new ECB(4, 24), new ECB(31, 25)), new ECBlocks(30, new ECB(11, 15), new ECB(31, 16))),
-    new Version(29, [6, 30, 54, 78, 102, 126], new ECBlocks(30, new ECB(7, 116), new ECB(7, 117)), new ECBlocks(28, new ECB(21, 45), new ECB(7, 46)), new ECBlocks(30, new ECB(1, 23), new ECB(37, 24)), new ECBlocks(30, new ECB(19, 15), new ECB(26, 16))),
-    new Version(30, [6, 26, 52, 78, 104, 130], new ECBlocks(30, new ECB(5, 115), new ECB(10, 116)), new ECBlocks(28, new ECB(19, 47), new ECB(10, 48)), new ECBlocks(30, new ECB(15, 24), new ECB(25, 25)), new ECBlocks(30, new ECB(23, 15), new ECB(25, 16))),
-    new Version(31, [6, 30, 56, 82, 108, 134], new ECBlocks(30, new ECB(13, 115), new ECB(3, 116)), new ECBlocks(28, new ECB(2, 46), new ECB(29, 47)), new ECBlocks(30, new ECB(42, 24), new ECB(1, 25)), new ECBlocks(30, new ECB(23, 15), new ECB(28, 16))),
-    new Version(32, [6, 34, 60, 86, 112, 138], new ECBlocks(30, new ECB(17, 115)), new ECBlocks(28, new ECB(10, 46), new ECB(23, 47)), new ECBlocks(30, new ECB(10, 24), new ECB(35, 25)), new ECBlocks(30, new ECB(19, 15), new ECB(35, 16))),
-    new Version(33, [6, 30, 58, 86, 114, 142], new ECBlocks(30, new ECB(17, 115), new ECB(1, 116)), new ECBlocks(28, new ECB(14, 46), new ECB(21, 47)), new ECBlocks(30, new ECB(29, 24), new ECB(19, 25)), new ECBlocks(30, new ECB(11, 15), new ECB(46, 16))),
-    new Version(34, [6, 34, 62, 90, 118, 146], new ECBlocks(30, new ECB(13, 115), new ECB(6, 116)), new ECBlocks(28, new ECB(14, 46), new ECB(23, 47)), new ECBlocks(30, new ECB(44, 24), new ECB(7, 25)), new ECBlocks(30, new ECB(59, 16), new ECB(1, 17))),
-    new Version(35, [6, 30, 54, 78, 102, 126, 150], new ECBlocks(30, new ECB(12, 121), new ECB(7, 122)), new ECBlocks(28, new ECB(12, 47), new ECB(26, 48)), new ECBlocks(30, new ECB(39, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(22, 15), new ECB(41, 16))),
-    new Version(36, [6, 24, 50, 76, 102, 128, 154], new ECBlocks(30, new ECB(6, 121), new ECB(14, 122)), new ECBlocks(28, new ECB(6, 47), new ECB(34, 48)), new ECBlocks(30, new ECB(46, 24), new ECB(10, 25)), new ECBlocks(30, new ECB(2, 15), new ECB(64, 16))),
-    new Version(37, [6, 28, 54, 80, 106, 132, 158], new ECBlocks(30, new ECB(17, 122), new ECB(4, 123)), new ECBlocks(28, new ECB(29, 46), new ECB(14, 47)), new ECBlocks(30, new ECB(49, 24), new ECB(10, 25)), new ECBlocks(30, new ECB(24, 15), new ECB(46, 16))),
-    new Version(38, [6, 32, 58, 84, 110, 136, 162], new ECBlocks(30, new ECB(4, 122), new ECB(18, 123)), new ECBlocks(28, new ECB(13, 46), new ECB(32, 47)), new ECBlocks(30, new ECB(48, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(42, 15), new ECB(32, 16))),
-    new Version(39, [6, 26, 54, 82, 110, 138, 166], new ECBlocks(30, new ECB(20, 117), new ECB(4, 118)), new ECBlocks(28, new ECB(40, 47), new ECB(7, 48)), new ECBlocks(30, new ECB(43, 24), new ECB(22, 25)), new ECBlocks(30, new ECB(10, 15), new ECB(67, 16))),
-    new Version(40, [6, 30, 58, 86, 114, 142, 170], new ECBlocks(30, new ECB(19, 118), new ECB(6, 119)), new ECBlocks(28, new ECB(18, 47), new ECB(31, 48)), new ECBlocks(30, new ECB(34, 24), new ECB(34, 25)), new ECBlocks(30, new ECB(20, 15), new ECB(61, 16))),
-];
-function getVersionForNumber(versionNumber) {
-    if (versionNumber < 1 || versionNumber > 40) {
-        throw new Error("Invalid version number " + versionNumber);
-    }
-    return VERSIONS[versionNumber - 1];
-}
-exports.getVersionForNumber = getVersionForNumber;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-/// <reference path="./common/types.d.ts" />
-var binarizer_1 = __webpack_require__(4);
-var locator_1 = __webpack_require__(5);
-var extractor_1 = __webpack_require__(6);
-var decoder_1 = __webpack_require__(9);
+Object.defineProperty(exports, "__esModule", { value: true });
+var binarizer_1 = __webpack_require__(3);
+var locator_1 = __webpack_require__(4);
+var extractor_1 = __webpack_require__(5);
+var decoder_1 = __webpack_require__(6);
 var bitmatrix_1 = __webpack_require__(0);
 var binarizeImage = binarizer_1.binarize;
 exports.binarizeImage = binarizeImage;
@@ -355,12 +214,12 @@ exports.decodeQRFromImageAsByteArray = decodeQRFromImageAsByteArray;
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var bitmatrix_1 = __webpack_require__(0);
 var REGION_SIZE = 8;
 var MIN_DYNAMIC_RANGE = 24;
@@ -462,532 +321,441 @@ exports.binarize = binarize;
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var MAX_FINDERPATTERNS_TO_SEARCH = 4;
+var MIN_QUAD_RATIO = 0.5;
+var MAX_QUAD_RATIO = 1.5;
+var distance = function (a, b) { return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2)); };
+function sum(values) {
+    return values.reduce(function (a, b) { return a + b; });
+}
+// Takes three finder patterns and organizes them into topLeft, topRight, etc
+function reorderFinderPatterns(pattern1, pattern2, pattern3) {
+    // Find distances between pattern centers
+    var oneTwoDistance = distance(pattern1, pattern2);
+    var twoThreeDistance = distance(pattern2, pattern3);
+    var oneThreeDistance = distance(pattern1, pattern3);
+    var bottomLeft;
+    var topLeft;
+    var topRight;
+    // Assume one closest to other two is B; A and C will just be guesses at first
+    if (twoThreeDistance >= oneTwoDistance && twoThreeDistance >= oneThreeDistance) {
+        _a = [pattern2, pattern1, pattern3], bottomLeft = _a[0], topLeft = _a[1], topRight = _a[2];
+    }
+    else if (oneThreeDistance >= twoThreeDistance && oneThreeDistance >= oneTwoDistance) {
+        _b = [pattern1, pattern2, pattern3], bottomLeft = _b[0], topLeft = _b[1], topRight = _b[2];
+    }
+    else {
+        _c = [pattern1, pattern3, pattern2], bottomLeft = _c[0], topLeft = _c[1], topRight = _c[2];
+    }
+    // Use cross product to figure out whether bottomLeft (A) and topRight (C) are correct or flipped in relation to topLeft (B)
+    // This asks whether BC x BA has a positive z component, which is the arrangement we want. If it's negative, then
+    // we've got it flipped around and should swap topRight and bottomLeft.
+    if (((topRight.x - topLeft.x) * (bottomLeft.y - topLeft.y)) - ((topRight.y - topLeft.y) * (bottomLeft.x - topLeft.x)) < 0) {
+        _d = [topRight, bottomLeft], bottomLeft = _d[0], topRight = _d[1];
+    }
+    return { bottomLeft: bottomLeft, topLeft: topLeft, topRight: topRight };
+    var _a, _b, _c, _d;
+}
+// Computes the dimension (number of modules on a side) of the QR Code based on the position of the finder patterns
+function computeDimension(topLeft, topRight, bottomLeft, matrix) {
+    var moduleSize = (sum(countBlackWhiteRun(topLeft, bottomLeft, matrix, 5)) / 7 + // Divide by 7 since the ratio is 1:1:3:1:1
+        sum(countBlackWhiteRun(topLeft, topRight, matrix, 5)) / 7 +
+        sum(countBlackWhiteRun(bottomLeft, topLeft, matrix, 5)) / 7 +
+        sum(countBlackWhiteRun(topRight, topLeft, matrix, 5)) / 7) / 4;
+    var topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
+    var sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
+    var dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
+    switch (dimension % 4) {
+        case 0:
+            dimension++;
+            break;
+        case 2:
+            dimension--;
+            break;
+    }
+    return { dimension: dimension, moduleSize: moduleSize };
+}
+// Takes an origin point and an end point and counts the sizes of the black white run from the origin towards the end point.
+// Returns an array of elements, representing the pixel size of the black white run.
+// Uses a variant of http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
+    var switchPoints = [{ x: Math.floor(origin.x), y: Math.floor(origin.y) }];
+    var steep = Math.abs(end.y - origin.y) > Math.abs(end.x - origin.x);
+    var fromX;
+    var fromY;
+    var toX;
+    var toY;
+    if (steep) {
+        fromX = Math.floor(origin.y);
+        fromY = Math.floor(origin.x);
+        toX = Math.floor(end.y);
+        toY = Math.floor(end.x);
+    }
+    else {
+        fromX = Math.floor(origin.x);
+        fromY = Math.floor(origin.y);
+        toX = Math.floor(end.x);
+        toY = Math.floor(end.y);
+    }
+    var dx = Math.abs(toX - fromX);
+    var dy = Math.abs(toY - fromY);
+    var error = Math.floor(-dx / 2);
+    var xStep = fromX < toX ? 1 : -1;
+    var yStep = fromY < toY ? 1 : -1;
+    var currentPixel = true;
+    // Loop up until x == toX, but not beyond
+    for (var x = fromX, y = fromY; x !== toX + xStep; x += xStep) {
+        // Does current pixel mean we have moved white to black or vice versa?
+        // Scanning black in state 0,2 and white in state 1, so if we find the wrong
+        // color, advance to next state or end if we are in state 2 already
+        var realX = steep ? y : x;
+        var realY = steep ? x : y;
+        if (matrix.get(realX, realY) !== currentPixel) {
+            currentPixel = !currentPixel;
+            switchPoints.push({ x: realX, y: realY });
+            if (switchPoints.length === length + 1) {
+                break;
+            }
+        }
+        error += dy;
+        if (error > 0) {
+            if (y === toY) {
+                break;
+            }
+            y += yStep;
+            error -= dx;
+        }
+    }
+    var distances = [];
+    for (var i = 0; i < length; i++) {
+        if (switchPoints[i] && switchPoints[i + 1]) {
+            distances.push(distance(switchPoints[i], switchPoints[i + 1]));
+        }
+        else {
+            distances.push(0);
+        }
+    }
+    return distances;
+}
+exports.countBlackWhiteRunTowardsPoint = countBlackWhiteRunTowardsPoint;
+// Takes an origin point and an end point and counts the sizes of the black white run in the origin point
+// along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
+// of the black white run. Takes a length which represents the number of switches from black to white to look for.
+function countBlackWhiteRun(origin, end, matrix, length) {
+    var rise = end.y - origin.y;
+    var run = end.x - origin.x;
+    var towardsEnd = countBlackWhiteRunTowardsPoint(origin, end, matrix, Math.ceil(length / 2));
+    var awayFromEnd = countBlackWhiteRunTowardsPoint(origin, { x: origin.x - run, y: origin.y - rise }, matrix, Math.ceil(length / 2));
+    var middleValue = towardsEnd.shift() + awayFromEnd.shift() - 1; // Substract one so we don't double count a pixel
+    return (_a = awayFromEnd.concat(middleValue)).concat.apply(_a, towardsEnd);
+    var _a;
+}
+exports.countBlackWhiteRun = countBlackWhiteRun;
+// Takes in a black white run and an array of expected ratios. Returns the average size of the run as well as the "error" -
+// that is the amount the run diverges from the expected ratio
+function scoreBlackWhiteRun(sequence, ratios) {
+    var averageSize = sum(sequence) / sum(ratios);
+    var error = 0;
+    ratios.forEach(function (ratio, i) {
+        error += Math.pow((sequence[i] - ratio * averageSize), 2);
+    });
+    return { averageSize: averageSize, error: error };
+}
+// Takes an X,Y point and an array of sizes and scores the point against those ratios.
+// For example for a finder pattern takes the ratio list of 1:1:3:1:1 and checks horizontal, vertical and diagonal ratios
+// against that.
+function scorePattern(point, ratios, matrix) {
+    try {
+        var horizontalRun = countBlackWhiteRun(point, { x: -1, y: point.y }, matrix, ratios.length);
+        var verticalRun = countBlackWhiteRun(point, { x: point.x, y: -1 }, matrix, ratios.length);
+        var topLeftPoint = {
+            x: Math.max(0, point.x - point.y) - 1,
+            y: Math.max(0, point.y - point.x) - 1,
+        };
+        var topLeftBottomRightRun = countBlackWhiteRun(point, topLeftPoint, matrix, ratios.length);
+        var bottomLeftPoint = {
+            x: Math.min(matrix.width, point.x + point.y) + 1,
+            y: Math.min(matrix.height, point.y + point.x) + 1,
+        };
+        var bottomLeftTopRightRun = countBlackWhiteRun(point, bottomLeftPoint, matrix, ratios.length);
+        var horzError = scoreBlackWhiteRun(horizontalRun, ratios);
+        var vertError = scoreBlackWhiteRun(verticalRun, ratios);
+        var diagDownError = scoreBlackWhiteRun(topLeftBottomRightRun, ratios);
+        var diagUpError = scoreBlackWhiteRun(bottomLeftTopRightRun, ratios);
+        var ratioError = Math.sqrt(horzError.error * horzError.error +
+            vertError.error * vertError.error +
+            diagDownError.error * diagDownError.error +
+            diagUpError.error * diagUpError.error);
+        var avgSize = (horzError.averageSize + vertError.averageSize + diagDownError.averageSize + diagUpError.averageSize) / 4;
+        var sizeError = (Math.pow((horzError.averageSize - avgSize), 2) +
+            Math.pow((vertError.averageSize - avgSize), 2) +
+            Math.pow((diagDownError.averageSize - avgSize), 2) +
+            Math.pow((diagUpError.averageSize - avgSize), 2)) / avgSize;
+        return ratioError + sizeError;
+    }
+    catch (_a) {
+        return Infinity;
+    }
+}
+function locate(matrix) {
+    var finderPatternQuads = [];
+    var activeFinderPatternQuads = [];
+    var alignmentPatternQuads = [];
+    var activeAlignmentPatternQuads = [];
+    var _loop_1 = function (y) {
+        var length_1 = 0;
+        var lastBit = false;
+        var scans = [0, 0, 0, 0, 0];
+        var _loop_2 = function (x) {
+            var v = matrix.get(x, y);
+            if (v === lastBit) {
+                length_1++;
+            }
+            else {
+                scans = [scans[1], scans[2], scans[3], scans[4], length_1];
+                length_1 = 1;
+                lastBit = v;
+                // Do the last 5 color changes ~ match the expected ratio for a finder pattern? 1:1:3:1:1 of b:w:b:w:b
+                var averageFinderPatternBlocksize = sum(scans) / 7;
+                var validFinderPattern = Math.abs(scans[0] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    Math.abs(scans[1] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    Math.abs(scans[2] - 3 * averageFinderPatternBlocksize) < 3 * averageFinderPatternBlocksize &&
+                    Math.abs(scans[3] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    Math.abs(scans[4] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                    !v; // And make sure the current pixel is white since finder patterns are bordered in white
+                // Do the last 3 color changes ~ match the expected ratio for an alignment pattern? 1:1:1 of w:b:w
+                var averageAlignmentPatternBlocksize = sum(scans.slice(-3)) / 3;
+                var validAlignmentPattern = Math.abs(scans[2] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
+                    Math.abs(scans[3] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
+                    Math.abs(scans[4] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
+                    v; // Is the current pixel black since alignment patterns are bordered in black
+                if (validFinderPattern) {
+                    // Compute the start and end x values of the large center black square
+                    var endX_1 = x - scans[3] - scans[4];
+                    var startX_1 = endX_1 - scans[2];
+                    var line = { startX: startX_1, endX: endX_1, y: y };
+                    // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
+                    // that line as the starting point.
+                    var matchingQuads = activeFinderPatternQuads.filter(function (q) {
+                        return (startX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
+                            (endX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
+                            (startX_1 <= q.bottom.startX && endX_1 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
+                    });
+                    if (matchingQuads.length > 0) {
+                        matchingQuads[0].bottom = line;
+                    }
+                    else {
+                        activeFinderPatternQuads.push({ top: line, bottom: line });
+                    }
+                }
+                if (validAlignmentPattern) {
+                    // Compute the start and end x values of the center black square
+                    var endX_2 = x - scans[4];
+                    var startX_2 = endX_2 - scans[3];
+                    var line = { startX: startX_2, y: y, endX: endX_2 };
+                    // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
+                    // that line as the starting point.
+                    var matchingQuads = activeAlignmentPatternQuads.filter(function (q) {
+                        return (startX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
+                            (endX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
+                            (startX_2 <= q.bottom.startX && endX_2 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
+                    });
+                    if (matchingQuads.length > 0) {
+                        matchingQuads[0].bottom = line;
+                    }
+                    else {
+                        activeAlignmentPatternQuads.push({ top: line, bottom: line });
+                    }
+                }
+            }
+        };
+        for (var x = -1; x <= matrix.width; x++) {
+            _loop_2(x);
+        }
+        finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads.filter(function (q) { return q.bottom.y !== y; }));
+        activeFinderPatternQuads = activeFinderPatternQuads.filter(function (q) { return q.bottom.y === y; });
+        alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y !== y; }));
+        activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y === y; });
+    };
+    for (var y = 0; y <= matrix.height; y++) {
+        _loop_1(y);
+    }
+    finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads);
+    alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads);
+    var finderPatternGroups = finderPatternQuads
+        .filter(function (q) { return q.bottom.y - q.top.y >= 2; }) // All quads must be at least 2px tall since the center square is larger than a block
+        .map(function (q) {
+        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
+        var y = (q.top.y + q.bottom.y + 1) / 2;
+        if (!matrix.get(Math.round(x), Math.round(y))) {
+            return;
+        }
+        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, q.bottom.y - q.top.y + 1];
+        var size = sum(lengths) / lengths.length;
+        var score = scorePattern({ x: Math.round(x), y: Math.round(y) }, [1, 1, 3, 1, 1], matrix);
+        return { score: score, x: x, y: y, size: size };
+    })
+        .filter(function (q) { return !!q; }) // Filter out any rejected quads from above
+        .sort(function (a, b) { return a.score - b.score; })
+        .map(function (point, i, finderPatterns) {
+        if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
+            return null;
+        }
+        var otherPoints = finderPatterns
+            .filter(function (p, ii) { return i !== ii; })
+            .map(function (p) { return ({ x: p.x, y: p.y, score: p.score + (Math.pow((p.size - point.size), 2)) / point.size, size: p.size }); })
+            .sort(function (a, b) { return a.score - b.score; });
+        var score = point.score + otherPoints[0].score + otherPoints[1].score;
+        return { points: [point].concat(otherPoints.slice(0, 2)), score: score };
+    })
+        .filter(function (q) { return !!q; }) // Filter out any rejected finder patterns from above
+        .sort(function (a, b) { return a.score - b.score; });
+    if (finderPatternGroups.length === 0) {
+        return null;
+    }
+    var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
+    // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
+    // We'll use these to help find the alignment pattern but also later when we do the extraction.
+    var _b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize;
+    // Now find the alignment pattern
+    var bottomRightFinderPattern = {
+        x: topRight.x - topLeft.x + bottomLeft.x,
+        y: topRight.y - topLeft.y + bottomLeft.y,
+    };
+    var modulesBetweenFinderPatterns = ((distance(topLeft, bottomLeft) + distance(topLeft, topRight)) / 2 / moduleSize);
+    var correctionToTopLeft = 1 - (3 / modulesBetweenFinderPatterns);
+    var expectedAlignmentPattern = {
+        x: topLeft.x + correctionToTopLeft * (bottomRightFinderPattern.x - topLeft.x),
+        y: topLeft.y + correctionToTopLeft * (bottomRightFinderPattern.y - topLeft.y),
+    };
+    var alignmentPatterns = alignmentPatternQuads
+        .map(function (q) {
+        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
+        var y = (q.top.y + q.bottom.y + 1) / 2;
+        if (!matrix.get(Math.floor(x), Math.floor(y))) {
+            return;
+        }
+        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, (q.bottom.y - q.top.y + 1)];
+        var size = sum(lengths) / lengths.length;
+        var sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
+        var score = sizeScore + distance({ x: x, y: y }, expectedAlignmentPattern);
+        return { x: x, y: y, score: score };
+    })
+        .filter(function (v) { return !!v; })
+        .sort(function (a, b) { return a.score - b.score; });
+    // If there are less than 15 modules between finder patterns it's a version 1 QR code and as such has no alignmemnt pattern
+    // so we can only use our best guess.
+    var alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
+    return {
+        alignmentPattern: { x: alignmentPattern.x, y: alignmentPattern.y },
+        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
+        dimension: dimension,
+        topLeft: { x: topLeft.x, y: topLeft.y },
+        topRight: { x: topRight.x, y: topRight.y },
+    };
+}
+exports.locate = locate;
+
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
-var CENTER_QUORUM = 2;
-var MIN_SKIP = 3;
-var MAX_MODULES = 57;
-var INTEGER_MATH_SHIFT = 8;
-var FinderPattern = /** @class */ (function () {
-    function FinderPattern(x, y, estimatedModuleSize, count) {
-        this.x = x;
-        this.y = y;
-        this.estimatedModuleSize = estimatedModuleSize;
-        if (count == null) {
-            this.count = 1;
-        }
-        else {
-            this.count = count;
-        }
-    }
-    FinderPattern.prototype.aboutEquals = function (moduleSize, i, j) {
-        if (Math.abs(i - this.y) <= moduleSize && Math.abs(j - this.x) <= moduleSize) {
-            var moduleSizeDiff = Math.abs(moduleSize - this.estimatedModuleSize);
-            return moduleSizeDiff <= 1.0 || moduleSizeDiff <= this.estimatedModuleSize;
-        }
-        return false;
-    };
-    FinderPattern.prototype.combineEstimate = function (i, j, newModuleSize) {
-        var combinedCount = this.count + 1;
-        var combinedX = (this.count * this.x + j) / combinedCount;
-        var combinedY = (this.count * this.y + i) / combinedCount;
-        var combinedModuleSize = (this.count * this.estimatedModuleSize + newModuleSize) / combinedCount;
-        return new FinderPattern(combinedX, combinedY, combinedModuleSize, combinedCount);
-    };
-    return FinderPattern;
-}());
-function foundPatternCross(stateCount) {
-    var totalModuleSize = 0;
-    for (var i = 0; i < 5; i++) {
-        var count = stateCount[i];
-        if (count === 0)
-            return false;
-        totalModuleSize += count;
-    }
-    if (totalModuleSize < 7)
-        return false;
-    var moduleSize = (totalModuleSize << INTEGER_MATH_SHIFT) / 7;
-    var maxVariance = moduleSize / 2;
-    // Allow less than 50% variance from 1-1-3-1-1 proportions
-    return Math.abs(moduleSize - (stateCount[0] << INTEGER_MATH_SHIFT)) < maxVariance &&
-        Math.abs(moduleSize - (stateCount[1] << INTEGER_MATH_SHIFT)) < maxVariance &&
-        Math.abs(3 * moduleSize - (stateCount[2] << INTEGER_MATH_SHIFT)) < 3 * maxVariance &&
-        Math.abs(moduleSize - (stateCount[3] << INTEGER_MATH_SHIFT)) < maxVariance &&
-        Math.abs(moduleSize - (stateCount[4] << INTEGER_MATH_SHIFT)) < maxVariance;
-}
-function centerFromEnd(stateCount, end) {
-    var result = (end - stateCount[4] - stateCount[3]) - stateCount[2] / 2;
-    // Fix this.
-    if (result !== result) {
-        return null;
-    }
-    return result;
-}
-function distance(pattern1, pattern2) {
-    var a = pattern1.x - pattern2.x;
-    var b = pattern1.y - pattern2.y;
-    return Math.sqrt(a * a + b * b);
-}
-function crossProductZ(pointA, pointB, pointC) {
-    var bX = pointB.x;
-    var bY = pointB.y;
-    return ((pointC.x - bX) * (pointA.y - bY)) - ((pointC.y - bY) * (pointA.x - bX));
-}
-function ReorderFinderPattern(patterns) {
-    // Find distances between pattern centers
-    var zeroOneDistance = distance(patterns[0], patterns[1]);
-    var oneTwoDistance = distance(patterns[1], patterns[2]);
-    var zeroTwoDistance = distance(patterns[0], patterns[2]);
-    var pointA, pointB, pointC;
-    // Assume one closest to other two is B; A and C will just be guesses at first
-    if (oneTwoDistance >= zeroOneDistance && oneTwoDistance >= zeroTwoDistance) {
-        pointB = patterns[0];
-        pointA = patterns[1];
-        pointC = patterns[2];
-    }
-    else if (zeroTwoDistance >= oneTwoDistance && zeroTwoDistance >= zeroOneDistance) {
-        pointB = patterns[1];
-        pointA = patterns[0];
-        pointC = patterns[2];
+Object.defineProperty(exports, "__esModule", { value: true });
+var bitmatrix_1 = __webpack_require__(0);
+function squareToQuadrilateral(p1, p2, p3, p4) {
+    var dx3 = p1.x - p2.x + p3.x - p4.x;
+    var dy3 = p1.y - p2.y + p3.y - p4.y;
+    if (dx3 === 0 && dy3 === 0) {
+        return {
+            a11: p2.x - p1.x,
+            a12: p2.y - p1.y,
+            a13: 0,
+            a21: p3.x - p2.x,
+            a22: p3.y - p2.y,
+            a23: 0,
+            a31: p1.x,
+            a32: p1.y,
+            a33: 1,
+        };
     }
     else {
-        pointB = patterns[2];
-        pointA = patterns[0];
-        pointC = patterns[1];
+        var dx1 = p2.x - p3.x;
+        var dx2 = p4.x - p3.x;
+        var dy1 = p2.y - p3.y;
+        var dy2 = p4.y - p3.y;
+        var denominator = dx1 * dy2 - dx2 * dy1;
+        var a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
+        var a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
+        return {
+            a11: p2.x - p1.x + a13 * p2.x,
+            a12: p2.y - p1.y + a13 * p2.y,
+            a13: a13,
+            a21: p4.x - p1.x + a23 * p4.x,
+            a22: p4.y - p1.y + a23 * p4.y,
+            a23: a23,
+            a31: p1.x,
+            a32: p1.y,
+            a33: 1,
+        };
     }
-    // Use cross product to figure out whether A and C are correct or flipped.
-    // This asks whether BC x BA has a positive z component, which is the arrangement
-    // we want for A, B, C. If it's negative, then we've got it flipped around and
-    // should swap A and C.
-    if (crossProductZ(pointA, pointB, pointC) < 0) {
-        var temp = pointA;
-        pointA = pointC;
-        pointC = temp;
-    }
+}
+function quadrilateralToSquare(p1, p2, p3, p4) {
+    // Here, the adjoint serves as the inverse:
+    var sToQ = squareToQuadrilateral(p1, p2, p3, p4);
     return {
-        bottomLeft: { x: pointA.x, y: pointA.y },
-        topLeft: { x: pointB.x, y: pointB.y },
-        topRight: { x: pointC.x, y: pointC.y }
+        a11: sToQ.a22 * sToQ.a33 - sToQ.a23 * sToQ.a32,
+        a12: sToQ.a13 * sToQ.a32 - sToQ.a12 * sToQ.a33,
+        a13: sToQ.a12 * sToQ.a23 - sToQ.a13 * sToQ.a22,
+        a21: sToQ.a23 * sToQ.a31 - sToQ.a21 * sToQ.a33,
+        a22: sToQ.a11 * sToQ.a33 - sToQ.a13 * sToQ.a31,
+        a23: sToQ.a13 * sToQ.a21 - sToQ.a11 * sToQ.a23,
+        a31: sToQ.a21 * sToQ.a32 - sToQ.a22 * sToQ.a31,
+        a32: sToQ.a12 * sToQ.a31 - sToQ.a11 * sToQ.a32,
+        a33: sToQ.a11 * sToQ.a22 - sToQ.a12 * sToQ.a21,
     };
 }
-function locate(matrix) {
-    // Global state :(
-    var possibleCenters = [];
-    var hasSkipped = false;
-    function get(x, y) {
-        x = Math.floor(x);
-        y = Math.floor(y);
-        return matrix.get(x, y);
-    }
-    // Methods
-    function crossCheckDiagonal(startI, centerJ, maxCount, originalStateCountTotal) {
-        var maxI = matrix.height;
-        var maxJ = matrix.width;
-        var stateCount = [0, 0, 0, 0, 0];
-        // Start counting up, left from center finding black center mass
-        var i = 0;
-        while (startI - i >= 0 && get(centerJ - i, startI - i)) {
-            stateCount[2]++;
-            i++;
-        }
-        if ((startI - i < 0) || (centerJ - i < 0)) {
-            return false;
-        }
-        // Continue up, left finding white space
-        while ((startI - i >= 0) && (centerJ - i >= 0) && !get(centerJ - i, startI - i) && stateCount[1] <= maxCount) {
-            stateCount[1]++;
-            i++;
-        }
-        // If already too many modules in this state or ran off the edge:
-        if ((startI - i < 0) || (centerJ - i < 0) || stateCount[1] > maxCount) {
-            return false;
-        }
-        // Continue up, left finding black border
-        while ((startI - i >= 0) && (centerJ - i >= 0) && get(centerJ - i, startI - i) && stateCount[0] <= maxCount) {
-            stateCount[0]++;
-            i++;
-        }
-        if (stateCount[0] > maxCount) {
-            return false;
-        }
-        // Now also count down, right from center
-        i = 1;
-        while ((startI + i < maxI) && (centerJ + i < maxJ) && get(centerJ + i, startI + i)) {
-            stateCount[2]++;
-            i++;
-        }
-        // Ran off the edge?
-        if ((startI + i >= maxI) || (centerJ + i >= maxJ)) {
-            return false;
-        }
-        while ((startI + i < maxI) && (centerJ + i < maxJ) && !get(centerJ + i, startI + i) && stateCount[3] < maxCount) {
-            stateCount[3]++;
-            i++;
-        }
-        if ((startI + i >= maxI) || (centerJ + i >= maxJ) || stateCount[3] >= maxCount) {
-            return false;
-        }
-        while ((startI + i < maxI) && (centerJ + i < maxJ) && get(centerJ + i, startI + i) && stateCount[4] < maxCount) {
-            stateCount[4]++;
-            i++;
-        }
-        if (stateCount[4] >= maxCount) {
-            return false;
-        }
-        // If we found a finder-pattern-like section, but its size is more than 100% different than
-        // the original, assume it's a false positive
-        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-        return Math.abs(stateCountTotal - originalStateCountTotal) < 2 * originalStateCountTotal &&
-            foundPatternCross(stateCount);
-    }
-    function crossCheckVertical(startI, centerJ, maxCount, originalStateCountTotal) {
-        var maxI = matrix.height;
-        var stateCount = [0, 0, 0, 0, 0];
-        // Start counting up from center
-        var i = startI;
-        while (i >= 0 && get(centerJ, i)) {
-            stateCount[2]++;
-            i--;
-        }
-        if (i < 0) {
-            return null;
-        }
-        while (i >= 0 && !get(centerJ, i) && stateCount[1] <= maxCount) {
-            stateCount[1]++;
-            i--;
-        }
-        // If already too many modules in this state or ran off the edge:
-        if (i < 0 || stateCount[1] > maxCount) {
-            return null;
-        }
-        while (i >= 0 && get(centerJ, i) && stateCount[0] <= maxCount) {
-            stateCount[0]++;
-            i--;
-        }
-        if (stateCount[0] > maxCount) {
-            return null;
-        }
-        // Now also count down from center
-        i = startI + 1;
-        while (i < maxI && get(centerJ, i)) {
-            stateCount[2]++;
-            i++;
-        }
-        if (i == maxI) {
-            return null;
-        }
-        while (i < maxI && !get(centerJ, i) && stateCount[3] < maxCount) {
-            stateCount[3]++;
-            i++;
-        }
-        if (i == maxI || stateCount[3] >= maxCount) {
-            return null;
-        }
-        while (i < maxI && get(centerJ, i) && stateCount[4] < maxCount) {
-            stateCount[4]++;
-            i++;
-        }
-        if (stateCount[4] >= maxCount) {
-            return null;
-        }
-        // If we found a finder-pattern-like section, but its size is more than 40% different than
-        // the original, assume it's a false positive
-        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-        if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= 2 * originalStateCountTotal) {
-            return null;
-        }
-        return foundPatternCross(stateCount) ? centerFromEnd(stateCount, i) : null;
-    }
-    function haveMultiplyConfirmedCenters() {
-        var confirmedCount = 0;
-        var totalModuleSize = 0;
-        var max = possibleCenters.length;
-        possibleCenters.forEach(function (pattern) {
-            if (pattern.count >= CENTER_QUORUM) {
-                confirmedCount++;
-                totalModuleSize += pattern.estimatedModuleSize;
-            }
-        });
-        if (confirmedCount < 3) {
-            return false;
-        }
-        // OK, we have at least 3 confirmed centers, but, it's possible that one is a "false positive"
-        // and that we need to keep looking. We detect this by asking if the estimated module sizes
-        // vary too much. We arbitrarily say that when the total deviation from average exceeds
-        // 5% of the total module size estimates, it's too much.
-        var average = totalModuleSize / max;
-        var totalDeviation = 0;
-        for (var i = 0; i < max; i++) {
-            var pattern = possibleCenters[i];
-            totalDeviation += Math.abs(pattern.estimatedModuleSize - average);
-        }
-        return totalDeviation <= 0.05 * totalModuleSize;
-    }
-    function crossCheckHorizontal(startJ, centerI, maxCount, originalStateCountTotal) {
-        var maxJ = matrix.width;
-        var stateCount = [0, 0, 0, 0, 0];
-        var j = startJ;
-        while (j >= 0 && get(j, centerI)) {
-            stateCount[2]++;
-            j--;
-        }
-        if (j < 0) {
-            return null;
-        }
-        while (j >= 0 && !get(j, centerI) && stateCount[1] <= maxCount) {
-            stateCount[1]++;
-            j--;
-        }
-        if (j < 0 || stateCount[1] > maxCount) {
-            return null;
-        }
-        while (j >= 0 && get(j, centerI) && stateCount[0] <= maxCount) {
-            stateCount[0]++;
-            j--;
-        }
-        if (stateCount[0] > maxCount) {
-            return null;
-        }
-        j = startJ + 1;
-        while (j < maxJ && get(j, centerI)) {
-            stateCount[2]++;
-            j++;
-        }
-        if (j == maxJ) {
-            return null;
-        }
-        while (j < maxJ && !get(j, centerI) && stateCount[3] < maxCount) {
-            stateCount[3]++;
-            j++;
-        }
-        if (j == maxJ || stateCount[3] >= maxCount) {
-            return null;
-        }
-        while (j < maxJ && get(j, centerI) && stateCount[4] < maxCount) {
-            stateCount[4]++;
-            j++;
-        }
-        if (stateCount[4] >= maxCount) {
-            return null;
-        }
-        // If we found a finder-pattern-like section, but its size is significantly different than
-        // the original, assume it's a false positive
-        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-        if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= originalStateCountTotal) {
-            return null;
-        }
-        return foundPatternCross(stateCount) ? centerFromEnd(stateCount, j) : null;
-    }
-    function handlePossibleCenter(stateCount, i, j, pureBarcode) {
-        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] + stateCount[4];
-        var centerJ = centerFromEnd(stateCount, j);
-        if (centerJ == null)
-            return false;
-        var centerI = crossCheckVertical(i, Math.floor(centerJ), stateCount[2], stateCountTotal);
-        if (centerI != null) {
-            // Re-cross check
-            centerJ = crossCheckHorizontal(Math.floor(centerJ), Math.floor(centerI), stateCount[2], stateCountTotal);
-            if (centerJ != null && (!pureBarcode || crossCheckDiagonal(Math.floor(centerI), Math.floor(centerJ), stateCount[2], stateCountTotal))) {
-                var estimatedModuleSize = stateCountTotal / 7;
-                var found = false;
-                for (var index = 0; index < possibleCenters.length; index++) {
-                    var center = possibleCenters[index];
-                    // Look for about the same center and module size:
-                    if (center.aboutEquals(estimatedModuleSize, centerI, centerJ)) {
-                        possibleCenters.splice(index, 1, center.combineEstimate(centerI, centerJ, estimatedModuleSize));
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    // var point = new FinderPattern(centerJ.Value, centerI.Value, estimatedModuleSize);
-                    var point = new FinderPattern(centerJ, centerI, estimatedModuleSize);
-                    possibleCenters.push(point);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-    function findRowSkip() {
-        var max = possibleCenters.length;
-        if (max <= 1) {
-            return 0;
-        }
-        var firstConfirmedCenter = null;
-        possibleCenters.forEach(function (center) {
-            if (center.count >= CENTER_QUORUM) {
-                if (firstConfirmedCenter == null) {
-                    firstConfirmedCenter = center;
-                }
-                else {
-                    // We have two confirmed centers
-                    // How far down can we skip before resuming looking for the next
-                    // pattern? In the worst case, only the difference between the
-                    // difference in the x / y coordinates of the two centers.
-                    // This is the case where you find top left last.
-                    hasSkipped = true;
-                    //UPGRADE_WARNING: Data types in Visual C# might be different.  Verify the accuracy of narrowing conversions. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1042'"
-                    return Math.floor(Math.abs(firstConfirmedCenter.x - center.x) - Math.abs(firstConfirmedCenter.y - center.y)) / 2;
-                    // return (int)(Math.Abs(firstConfirmedCenter.X - center.X) - Math.Abs(firstConfirmedCenter.Y - center.Y)) / 2;
-                }
-            }
-        });
-        return 0;
-    }
-    function selectBestPatterns() {
-        var startSize = possibleCenters.length;
-        if (startSize < 3) {
-            // Couldn't find enough finder patterns
-            return null;
-        }
-        // Filter outlier possibilities whose module size is too different
-        if (startSize > 3) {
-            // But we can only afford to do so if we have at least 4 possibilities to choose from
-            var totalModuleSize = 0;
-            var square = 0;
-            possibleCenters.forEach(function (center) {
-                var size = center.estimatedModuleSize;
-                totalModuleSize += size;
-                square += size * size;
-            });
-            var average = totalModuleSize / startSize;
-            var stdDev = Math.sqrt(square / startSize - average * average);
-            //possibleCenters.Sort(new FurthestFromAverageComparator(average));
-            possibleCenters.sort(function (x, y) {
-                var dA = Math.abs(y.estimatedModuleSize - average);
-                var dB = Math.abs(x.estimatedModuleSize - average);
-                return dA < dB ? -1 : dA == dB ? 0 : 1;
-            });
-            var limit = Math.max(0.2 * average, stdDev);
-            for (var i = 0; i < possibleCenters.length && possibleCenters.length > 3; i++) {
-                var pattern = possibleCenters[i];
-                if (Math.abs(pattern.estimatedModuleSize - average) > limit) {
-                    possibleCenters.splice(i, 1);
-                    ///possibleCenters.RemoveAt(i);
-                    i--;
-                }
-            }
-        }
-        if (possibleCenters.length > 3) {
-            // Throw away all but those first size candidate points we found.
-            var totalModuleSize = 0;
-            possibleCenters.forEach(function (possibleCenter) {
-                totalModuleSize += possibleCenter.estimatedModuleSize;
-            });
-            var average = totalModuleSize / possibleCenters.length;
-            // possibleCenters.Sort(new CenterComparator(average));
-            possibleCenters.sort(function (x, y) {
-                if (y.count === x.count) {
-                    var dA = Math.abs(y.estimatedModuleSize - average);
-                    var dB = Math.abs(x.estimatedModuleSize - average);
-                    return dA < dB ? 1 : dA == dB ? 0 : -1;
-                }
-                return y.count - x.count;
-            });
-            //possibleCenters.subList(3, possibleCenters.Count).clear();
-            ///possibleCenters = possibleCenters.GetRange(0, 3);
-            possibleCenters = possibleCenters.slice(0, 3);
-        }
-        return [possibleCenters[0], possibleCenters[1], possibleCenters[2]];
-    }
-    var pureBarcode = false;
-    var maxI = matrix.height;
-    var maxJ = matrix.width;
-    var iSkip = Math.floor((3 * maxI) / (4 * MAX_MODULES));
-    if (iSkip < MIN_SKIP || false) {
-        iSkip = MIN_SKIP;
-    }
-    var done = false;
-    var stateCount = [0, 0, 0, 0, 0];
-    for (var i = iSkip - 1; i < maxI && !done; i += iSkip) {
-        stateCount = [0, 0, 0, 0, 0];
-        var currentState = 0;
-        for (var j = 0; j < maxJ; j++) {
-            if (get(j, i)) {
-                // Black pixel
-                if ((currentState & 1) === 1) {
-                    currentState++;
-                }
-                stateCount[currentState]++;
-            }
-            else {
-                // White pixel
-                if ((currentState & 1) === 0) {
-                    // Counting black pixels
-                    if (currentState === 4) {
-                        // A winner?
-                        if (foundPatternCross(stateCount)) {
-                            // Yes
-                            var confirmed = handlePossibleCenter(stateCount, i, j, pureBarcode);
-                            if (confirmed) {
-                                // Start examining every other line. Checking each line turned out to be too
-                                // expensive and didn't improve performance.
-                                iSkip = 2;
-                                if (hasSkipped) {
-                                    done = haveMultiplyConfirmedCenters();
-                                }
-                                else {
-                                    var rowSkip = findRowSkip();
-                                    if (rowSkip > stateCount[2]) {
-                                        // Skip rows between row of lower confirmed center
-                                        // and top of presumed third confirmed center
-                                        // but back up a bit to get a full chance of detecting
-                                        // it, entire width of center of finder pattern
-                                        // Skip by rowSkip, but back off by stateCount[2] (size of last center
-                                        // of pattern we saw) to be conservative, and also back off by iSkip which
-                                        // is about to be re-added
-                                        i += rowSkip - stateCount[2] - iSkip;
-                                        j = maxJ - 1;
-                                    }
-                                }
-                            }
-                            else {
-                                stateCount = [stateCount[2], stateCount[3], stateCount[4], 1, 0];
-                                currentState = 3;
-                                continue;
-                            }
-                            // Clear state to start looking again
-                            stateCount = [0, 0, 0, 0, 0];
-                            currentState = 0;
-                        }
-                        else {
-                            stateCount = [stateCount[2], stateCount[3], stateCount[4], 1, 0];
-                            currentState = 3;
-                        }
-                    }
-                    else {
-                        // Should I really have copy/pasted this fuckery?
-                        stateCount[++currentState]++;
-                    }
-                }
-                else {
-                    // Counting the white pixels
-                    stateCount[currentState]++;
-                }
-            }
-        }
-        if (foundPatternCross(stateCount)) {
-            var confirmed = handlePossibleCenter(stateCount, i, maxJ, pureBarcode);
-            if (confirmed) {
-                iSkip = stateCount[0];
-                if (hasSkipped) {
-                    // Found a third one
-                    done = haveMultiplyConfirmedCenters();
-                }
-            }
-        }
-    }
-    var patternInfo = selectBestPatterns();
-    if (!patternInfo)
-        return null;
-    return ReorderFinderPattern(patternInfo);
+function times(a, b) {
+    return {
+        a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
+        a12: a.a12 * b.a11 + a.a22 * b.a12 + a.a32 * b.a13,
+        a13: a.a13 * b.a11 + a.a23 * b.a12 + a.a33 * b.a13,
+        a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
+        a22: a.a12 * b.a21 + a.a22 * b.a22 + a.a32 * b.a23,
+        a23: a.a13 * b.a21 + a.a23 * b.a22 + a.a33 * b.a23,
+        a31: a.a11 * b.a31 + a.a21 * b.a32 + a.a31 * b.a33,
+        a32: a.a12 * b.a31 + a.a22 * b.a32 + a.a32 * b.a33,
+        a33: a.a13 * b.a31 + a.a23 * b.a32 + a.a33 * b.a33,
+    };
 }
-exports.locate = locate;
+function extract(image, location) {
+    var qToS = quadrilateralToSquare({ x: 3.5, y: 3.5 }, { x: location.dimension - 3.5, y: 3.5 }, { x: location.dimension - 6.5, y: location.dimension - 6.5 }, { x: 3.5, y: location.dimension - 3.5 });
+    var sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
+    var transform = times(sToQ, qToS);
+    var output = bitmatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
+    for (var y = 0; y < location.dimension; y++) {
+        for (var x = 0; x < location.dimension; x++) {
+            var xValue = x + 0.5;
+            var yValue = y + 0.5;
+            var denominator = transform.a13 * xValue + transform.a23 * yValue + transform.a33;
+            var sourceX = Math.floor((transform.a11 * xValue + transform.a21 * yValue + transform.a31) / denominator);
+            var sourceY = Math.floor((transform.a12 * xValue + transform.a22 * yValue + transform.a32) / denominator);
+            output.set(x, y, image.get(sourceX, sourceY));
+        }
+    }
+    return output;
+}
+exports.extract = extract;
 
 
 /***/ }),
@@ -996,644 +764,12 @@ exports.locate = locate;
 
 "use strict";
 
-exports.__esModule = true;
-/// <reference path="../common/types.d.ts" />
-var alignment_finder_1 = __webpack_require__(7);
-var perspective_transform_1 = __webpack_require__(8);
-var version_1 = __webpack_require__(2);
+Object.defineProperty(exports, "__esModule", { value: true });
 var bitmatrix_1 = __webpack_require__(0);
+var decodeqrdata_1 = __webpack_require__(7);
 var helpers_1 = __webpack_require__(1);
-function checkAndNudgePoints(width, height, points) {
-    // Check and nudge points from start until we see some that are OK:
-    var nudged = true;
-    for (var offset = 0; offset < points.length && nudged; offset += 2) {
-        var x = Math.floor(points[offset]);
-        var y = Math.floor(points[offset + 1]);
-        if (x < -1 || x > width || y < -1 || y > height) {
-            throw new Error();
-        }
-        nudged = false;
-        if (x == -1) {
-            points[offset] = 0;
-            nudged = true;
-        }
-        else if (x == width) {
-            points[offset] = width - 1;
-            nudged = true;
-        }
-        if (y == -1) {
-            points[offset + 1] = 0;
-            nudged = true;
-        }
-        else if (y == height) {
-            points[offset + 1] = height - 1;
-            nudged = true;
-        }
-    }
-    // Check and nudge points from end:
-    nudged = true;
-    for (var offset = points.length - 2; offset >= 0 && nudged; offset -= 2) {
-        var x = Math.floor(points[offset]);
-        var y = Math.floor(points[offset + 1]);
-        if (x < -1 || x > width || y < -1 || y > height) {
-            throw new Error();
-        }
-        nudged = false;
-        if (x == -1) {
-            points[offset] = 0;
-            nudged = true;
-        }
-        else if (x == width) {
-            points[offset] = width - 1;
-            nudged = true;
-        }
-        if (y == -1) {
-            points[offset + 1] = 0;
-            nudged = true;
-        }
-        else if (y == height) {
-            points[offset + 1] = height - 1;
-            nudged = true;
-        }
-    }
-    return points;
-}
-function bitArrayFromImage(image, dimension, transform) {
-    if (dimension <= 0) {
-        return null;
-    }
-    var bits = bitmatrix_1.BitMatrix.createEmpty(dimension, dimension);
-    var points = new Float32Array(dimension << 1);
-    for (var y = 0; y < dimension; y++) {
-        var max = points.length;
-        var iValue = y + 0.5;
-        for (var x = 0; x < max; x += 2) {
-            points[x] = (x >> 1) + 0.5;
-            points[x + 1] = iValue;
-        }
-        points = perspective_transform_1.transformPoints(transform, points);
-        // Quick check to see if points transformed to something inside the image;
-        // sufficient to check the endpoints
-        try {
-            var nudgedPoints = checkAndNudgePoints(image.width, image.height, points);
-        }
-        catch (e) {
-            return null;
-        }
-        // try {
-        for (var x = 0; x < max; x += 2) {
-            bits.set(x >> 1, y, image.get(Math.floor(nudgedPoints[x]), Math.floor(nudgedPoints[x + 1])));
-        }
-        // }
-        // catch (e) {
-        //   // This feels wrong, but, sometimes if the finder patterns are misidentified, the resulting
-        //   // transform gets "twisted" such that it maps a straight line of points to a set of points
-        //   // whose endpoints are in bounds, but others are not. There is probably some mathematical
-        //   // way to detect this about the transformation that I don't know yet.
-        //   // This results in an ugly runtime exception despite our clever checks above -- can't have
-        //   // that. We could check each point's coordinates but that feels duplicative. We settle for
-        //   // catching and wrapping ArrayIndexOutOfBoundsException.
-        //   return null;
-        // }
-    }
-    return bits;
-}
-function createTransform(topLeft, topRight, bottomLeft, alignmentPattern, dimension) {
-    var dimMinusThree = dimension - 3.5;
-    var bottomRightX;
-    var bottomRightY;
-    var sourceBottomRightX;
-    var sourceBottomRightY;
-    if (alignmentPattern != null) {
-        bottomRightX = alignmentPattern.x;
-        bottomRightY = alignmentPattern.y;
-        sourceBottomRightX = sourceBottomRightY = dimMinusThree - 3;
-    }
-    else {
-        // Don't have an alignment pattern, just make up the bottom-right point
-        bottomRightX = (topRight.x - topLeft.x) + bottomLeft.x;
-        bottomRightY = (topRight.y - topLeft.y) + bottomLeft.y;
-        sourceBottomRightX = sourceBottomRightY = dimMinusThree;
-    }
-    return perspective_transform_1.quadrilateralToQuadrilateral(3.5, 3.5, dimMinusThree, 3.5, sourceBottomRightX, sourceBottomRightY, 3.5, dimMinusThree, topLeft.x, topLeft.y, topRight.x, topRight.y, bottomRightX, bottomRightY, bottomLeft.x, bottomLeft.y);
-}
-// Taken from 6th grade algebra
-function distance(x1, y1, x2, y2) {
-    return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-}
-// Attempts to locate an alignment pattern in a limited region of the image, which is guessed to contain it.
-// overallEstModuleSize - estimated module size so far
-// estAlignmentX        - coordinate of center of area probably containing alignment pattern
-// estAlignmentY        - y coordinate of above</param>
-// allowanceFactor      - number of pixels in all directions to search from the center</param>
-function findAlignmentInRegion(overallEstModuleSize, estAlignmentX, estAlignmentY, allowanceFactor, image) {
-    estAlignmentX = Math.floor(estAlignmentX);
-    estAlignmentY = Math.floor(estAlignmentY);
-    // Look for an alignment pattern (3 modules in size) around where it should be
-    var allowance = Math.floor(allowanceFactor * overallEstModuleSize);
-    var alignmentAreaLeftX = Math.max(0, estAlignmentX - allowance);
-    var alignmentAreaRightX = Math.min(image.width, estAlignmentX + allowance);
-    if (alignmentAreaRightX - alignmentAreaLeftX < overallEstModuleSize * 3) {
-        return null;
-    }
-    var alignmentAreaTopY = Math.max(0, estAlignmentY - allowance);
-    var alignmentAreaBottomY = Math.min(image.height - 1, estAlignmentY + allowance);
-    return alignment_finder_1.findAlignment(alignmentAreaLeftX, alignmentAreaTopY, alignmentAreaRightX - alignmentAreaLeftX, alignmentAreaBottomY - alignmentAreaTopY, overallEstModuleSize, image);
-}
-// Computes the dimension (number of modules on a size) of the QR Code based on the position of the finder
-// patterns and estimated module size.
-function computeDimension(topLeft, topRight, bottomLeft, moduleSize) {
-    var tltrCentersDimension = Math.round(distance(topLeft.x, topLeft.y, topRight.x, topRight.y) / moduleSize);
-    var tlblCentersDimension = Math.round(distance(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y) / moduleSize);
-    var dimension = ((tltrCentersDimension + tlblCentersDimension) >> 1) + 7;
-    switch (dimension & 0x03) {
-        // mod 4
-        case 0:
-            dimension++;
-            break;
-        // 1? do nothing
-        case 2:
-            dimension--;
-            break;
-    }
-    return dimension;
-}
-// Deduces version information purely from QR Code dimensions.
-// http://chan.catiewayne.com/z/src/131044167276.jpg
-function getProvisionalVersionForDimension(dimension) {
-    if (dimension % 4 != 1) {
-        return null;
-    }
-    var versionNumber = (dimension - 17) >> 2;
-    if (versionNumber < 1 || versionNumber > 40) {
-        return null;
-    }
-    return version_1.getVersionForNumber(versionNumber);
-}
-// This method traces a line from a point in the image, in the direction towards another point.
-// It begins in a black region, and keeps going until it finds white, then black, then white again.
-// It reports the distance from the start to this point.</p>
-//
-// This is used when figuring out how wide a finder pattern is, when the finder pattern
-// may be skewed or rotated.
-function sizeOfBlackWhiteBlackRun(fromX, fromY, toX, toY, image) {
-    fromX = Math.floor(fromX);
-    fromY = Math.floor(fromY);
-    toX = Math.floor(toX);
-    toY = Math.floor(toY);
-    // Mild variant of Bresenham's algorithm;
-    // see http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-    var steep = Math.abs(toY - fromY) > Math.abs(toX - fromX);
-    if (steep) {
-        var temp = fromX;
-        fromX = fromY;
-        fromY = temp;
-        temp = toX;
-        toX = toY;
-        toY = temp;
-    }
-    var dx = Math.abs(toX - fromX);
-    var dy = Math.abs(toY - fromY);
-    var error = -dx >> 1;
-    var xstep = fromX < toX ? 1 : -1;
-    var ystep = fromY < toY ? 1 : -1;
-    // In black pixels, looking for white, first or second time.
-    var state = 0;
-    // Loop up until x == toX, but not beyond
-    var xLimit = toX + xstep;
-    for (var x = fromX, y = fromY; x != xLimit; x += xstep) {
-        var realX = steep ? y : x;
-        var realY = steep ? x : y;
-        // Does current pixel mean we have moved white to black or vice versa?
-        // Scanning black in state 0,2 and white in state 1, so if we find the wrong
-        // color, advance to next state or end if we are in state 2 already
-        if ((state == 1) === image.get(realX, realY)) {
-            if (state == 2) {
-                return distance(x, y, fromX, fromY);
-            }
-            state++;
-        }
-        error += dy;
-        if (error > 0) {
-            if (y == toY) {
-                break;
-            }
-            y += ystep;
-            error -= dx;
-        }
-    }
-    // Found black-white-black; give the benefit of the doubt that the next pixel outside the image
-    // is "white" so this last point at (toX+xStep,toY) is the right ending. This is really a
-    // small approximation; (toX+xStep,toY+yStep) might be really correct. Ignore this.
-    if (state == 2) {
-        return distance(toX + xstep, toY, fromX, fromY);
-    }
-    // else we didn't find even black-white-black; no estimate is really possible
-    return NaN;
-}
-// Computes the total width of a finder pattern by looking for a black-white-black run from the center
-// in the direction of another point (another finder pattern center), and in the opposite direction too.
-function sizeOfBlackWhiteBlackRunBothWays(fromX, fromY, toX, toY, image) {
-    var result = sizeOfBlackWhiteBlackRun(fromX, fromY, toX, toY, image);
-    // Now count other way -- don't run off image though of course
-    var scale = 1;
-    var otherToX = fromX - (toX - fromX);
-    if (otherToX < 0) {
-        scale = fromX / (fromX - otherToX);
-        otherToX = 0;
-    }
-    else if (otherToX >= image.width) {
-        scale = (image.width - 1 - fromX) / (otherToX - fromX);
-        otherToX = image.width - 1;
-    }
-    var otherToY = (fromY - (toY - fromY) * scale);
-    scale = 1;
-    if (otherToY < 0) {
-        scale = fromY / (fromY - otherToY);
-        otherToY = 0;
-    }
-    else if (otherToY >= image.height) {
-        scale = (image.height - 1 - fromY) / (otherToY - fromY);
-        otherToY = image.height - 1;
-    }
-    otherToX = (fromX + (otherToX - fromX) * scale);
-    result += sizeOfBlackWhiteBlackRun(fromX, fromY, otherToX, otherToY, image);
-    return result - 1; // -1 because we counted the middle pixel twice
-}
-function calculateModuleSizeOneWay(pattern, otherPattern, image) {
-    var moduleSizeEst1 = sizeOfBlackWhiteBlackRunBothWays(pattern.x, pattern.y, otherPattern.x, otherPattern.y, image);
-    var moduleSizeEst2 = sizeOfBlackWhiteBlackRunBothWays(otherPattern.x, otherPattern.y, pattern.x, pattern.y, image);
-    if (helpers_1.isNaN(moduleSizeEst1)) {
-        return moduleSizeEst2 / 7;
-    }
-    if (helpers_1.isNaN(moduleSizeEst2)) {
-        return moduleSizeEst1 / 7;
-    }
-    // Average them, and divide by 7 since we've counted the width of 3 black modules,
-    // and 1 white and 1 black module on either side. Ergo, divide sum by 14.
-    return (moduleSizeEst1 + moduleSizeEst2) / 14;
-}
-// Computes an average estimated module size based on estimated derived from the positions of the three finder patterns.
-function calculateModuleSize(topLeft, topRight, bottomLeft, image) {
-    return (calculateModuleSizeOneWay(topLeft, topRight, image) + calculateModuleSizeOneWay(topLeft, bottomLeft, image)) / 2;
-}
-function extract(image, location) {
-    var moduleSize = calculateModuleSize(location.topLeft, location.topRight, location.bottomLeft, image);
-    if (moduleSize < 1) {
-        return null;
-    }
-    var dimension = computeDimension(location.topLeft, location.topRight, location.bottomLeft, moduleSize);
-    if (!dimension) {
-        return null;
-    }
-    var provisionalVersion = getProvisionalVersionForDimension(dimension);
-    if (provisionalVersion == null) {
-        return null;
-    }
-    var modulesBetweenFPCenters = provisionalVersion.getDimensionForVersion() - 7;
-    var alignmentPattern = null;
-    // Anything above version 1 has an alignment pattern
-    if (provisionalVersion.alignmentPatternCenters.length > 0) {
-        // Guess where a "bottom right" finder pattern would have been
-        var bottomRightX = location.topRight.x - location.topLeft.x + location.bottomLeft.x;
-        var bottomRightY = location.topRight.y - location.topLeft.y + location.bottomLeft.y;
-        // Estimate that alignment pattern is closer by 3 modules
-        // from "bottom right" to known top left location
-        var correctionToTopLeft = 1 - 3 / modulesBetweenFPCenters;
-        var estAlignmentX = location.topLeft.x + correctionToTopLeft * (bottomRightX - location.topLeft.x);
-        var estAlignmentY = location.topLeft.y + correctionToTopLeft * (bottomRightY - location.topLeft.y);
-        // Kind of arbitrary -- expand search radius before giving up
-        for (var i = 4; i <= 16; i <<= 1) {
-            alignmentPattern = findAlignmentInRegion(moduleSize, estAlignmentX, estAlignmentY, i, image);
-            if (!alignmentPattern) {
-                continue;
-            }
-            break;
-        }
-        // If we didn't find alignment pattern... well try anyway without it
-    }
-    var transform = createTransform(location.topLeft, location.topRight, location.bottomLeft, alignmentPattern, dimension);
-    return bitArrayFromImage(image, dimension, transform);
-}
-exports.extract = extract;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var helpers_1 = __webpack_require__(1);
-function aboutEquals(center, moduleSize, i, j) {
-    if (Math.abs(i - center.y) <= moduleSize && Math.abs(j - center.x) <= moduleSize) {
-        var moduleSizeDiff = Math.abs(moduleSize - center.estimatedModuleSize);
-        return moduleSizeDiff <= 1 || moduleSizeDiff <= center.estimatedModuleSize;
-    }
-    return false;
-}
-function combineEstimate(center, i, j, newModuleSize) {
-    var combinedX = (center.x + j) / 2;
-    var combinedY = (center.y + i) / 2;
-    var combinedModuleSize = (center.estimatedModuleSize + newModuleSize) / 2;
-    return { x: combinedX, y: combinedY, estimatedModuleSize: combinedModuleSize };
-}
-// returns true if the proportions of the counts is close enough to the 1/1/1 ratios used by alignment
-// patterns to be considered a match
-function foundPatternCross(stateCount, moduleSize) {
-    var maxVariance = moduleSize / 2;
-    for (var i = 0; i < 3; i++) {
-        if (Math.abs(moduleSize - stateCount[i]) >= maxVariance) {
-            return false;
-        }
-    }
-    return true;
-}
-// Given a count of black/white/black pixels just seen and an end position,
-// figures the location of the center of this black/white/black run.
-function centerFromEnd(stateCount, end) {
-    var result = (end - stateCount[2]) - stateCount[1] / 2;
-    if (helpers_1.isNaN(result)) {
-        return null;
-    }
-    return result;
-}
-// After a horizontal scan finds a potential alignment pattern, this method
-// "cross-checks" by scanning down vertically through the center of the possible
-// alignment pattern to see if the same proportion is detected.</p>
-//
-// startI - row where an alignment pattern was detected</param>
-// centerJ - center of the section that appears to cross an alignment pattern</param>
-// maxCount - maximum reasonable number of modules that should be observed in any reading state, based
-//   on the results of the horizontal scan</param>
-// originalStateCountTotal - The original state count total
-function crossCheckVertical(startI, centerJ, maxCount, originalStateCountTotal, moduleSize, image) {
-    var maxI = image.height;
-    var stateCount = [0, 0, 0];
-    // Start counting up from center
-    var i = startI;
-    while (i >= 0 && image.get(centerJ, i) && stateCount[1] <= maxCount) {
-        stateCount[1]++;
-        i--;
-    }
-    // If already too many modules in this state or ran off the edge:
-    if (i < 0 || stateCount[1] > maxCount) {
-        return null;
-    }
-    while (i >= 0 && !image.get(centerJ, i) && stateCount[0] <= maxCount) {
-        stateCount[0]++;
-        i--;
-    }
-    if (stateCount[0] > maxCount) {
-        return null;
-    }
-    // Now also count down from center
-    i = startI + 1;
-    while (i < maxI && image.get(centerJ, i) && stateCount[1] <= maxCount) {
-        stateCount[1]++;
-        i++;
-    }
-    if (i == maxI || stateCount[1] > maxCount) {
-        return null;
-    }
-    while (i < maxI && !image.get(centerJ, i) && stateCount[2] <= maxCount) {
-        stateCount[2]++;
-        i++;
-    }
-    if (stateCount[2] > maxCount) {
-        return null;
-    }
-    var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
-    if (5 * Math.abs(stateCountTotal - originalStateCountTotal) >= 2 * originalStateCountTotal) {
-        return null;
-    }
-    return foundPatternCross(stateCount, moduleSize) ? centerFromEnd(stateCount, i) : null;
-}
-function findAlignment(startX, startY, width, height, moduleSize, image) {
-    // Global State :(
-    var possibleCenters = [];
-    // This is called when a horizontal scan finds a possible alignment pattern. It will
-    // cross check with a vertical scan, and if successful, will see if this pattern had been
-    // found on a previous horizontal scan. If so, we consider it confirmed and conclude we have
-    // found the alignment pattern.</p>
-    //
-    // stateCount - reading state module counts from horizontal scan
-    // i - where alignment pattern may be found
-    // j - end of possible alignment pattern in row
-    function handlePossibleCenter(stateCount, i, j, moduleSize) {
-        var stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
-        var centerJ = centerFromEnd(stateCount, j);
-        if (centerJ == null) {
-            return null;
-        }
-        var centerI = crossCheckVertical(i, Math.floor(centerJ), 2 * stateCount[1], stateCountTotal, moduleSize, image);
-        if (centerI != null) {
-            var estimatedModuleSize = (stateCount[0] + stateCount[1] + stateCount[2]) / 3;
-            for (var i2 in possibleCenters) {
-                var center = possibleCenters[i2];
-                // Look for about the same center and module size:
-                if (aboutEquals(center, estimatedModuleSize, centerI, centerJ)) {
-                    return combineEstimate(center, centerI, centerJ, estimatedModuleSize);
-                }
-            }
-            // Hadn't found this before; save it
-            var point = { x: centerJ, y: centerI, estimatedModuleSize: estimatedModuleSize };
-            possibleCenters.push(point);
-        }
-        return null;
-    }
-    var maxJ = startX + width;
-    var middleI = startY + (height >> 1);
-    // We are looking for black/white/black modules in 1:1:1 ratio;
-    // this tracks the number of black/white/black modules seen so far
-    var stateCount = [0, 0, 0]; // WTF
-    for (var iGen = 0; iGen < height; iGen++) {
-        // Search from middle outwards
-        var i = middleI + ((iGen & 0x01) == 0 ? ((iGen + 1) >> 1) : -((iGen + 1) >> 1));
-        stateCount[0] = 0;
-        stateCount[1] = 0;
-        stateCount[2] = 0;
-        var j = startX;
-        // Burn off leading white pixels before anything else; if we start in the middle of
-        // a white run, it doesn't make sense to count its length, since we don't know if the
-        // white run continued to the left of the start point
-        while (j < maxJ && !image.get(j, i)) {
-            j++;
-        }
-        var currentState = 0;
-        while (j < maxJ) {
-            if (image.get(j, i)) {
-                // Black pixel
-                if (currentState == 1) {
-                    // Counting black pixels
-                    stateCount[currentState]++;
-                }
-                else {
-                    // Counting white pixels
-                    if (currentState == 2) {
-                        // A winner?
-                        if (foundPatternCross(stateCount, moduleSize)) {
-                            // Yes
-                            confirmed = handlePossibleCenter(stateCount, i, j, moduleSize);
-                            if (confirmed != null) {
-                                return confirmed;
-                            }
-                        }
-                        stateCount[0] = stateCount[2];
-                        stateCount[1] = 1;
-                        stateCount[2] = 0;
-                        currentState = 1;
-                    }
-                    else {
-                        stateCount[++currentState]++;
-                    }
-                }
-            }
-            else {
-                // White pixel
-                if (currentState == 1) {
-                    // Counting black pixels
-                    currentState++;
-                }
-                stateCount[currentState]++;
-            }
-            j++;
-        }
-        if (foundPatternCross(stateCount, moduleSize)) {
-            var confirmed = handlePossibleCenter(stateCount, i, moduleSize, maxJ);
-            if (confirmed != null) {
-                return confirmed;
-            }
-        }
-    }
-    // Hmm, nothing we saw was observed and confirmed twice. If we had
-    // any guess at all, return it.
-    if (possibleCenters.length != 0) {
-        return possibleCenters[0];
-    }
-    return null;
-}
-exports.findAlignment = findAlignment;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/// <reference path="../common/types.d.ts" />
-exports.__esModule = true;
-function squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3) {
-    var dx3 = x0 - x1 + x2 - x3;
-    var dy3 = y0 - y1 + y2 - y3;
-    if (dx3 == 0 && dy3 == 0) {
-        // Affine
-        return {
-            a11: x1 - x0,
-            a21: x2 - x1,
-            a31: x0,
-            a12: y1 - y0,
-            a22: y2 - y1,
-            a32: y0,
-            a13: 0,
-            a23: 0,
-            a33: 1
-        };
-    }
-    else {
-        var dx1 = x1 - x2;
-        var dx2 = x3 - x2;
-        var dy1 = y1 - y2;
-        var dy2 = y3 - y2;
-        var denominator = dx1 * dy2 - dx2 * dy1;
-        var a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
-        var a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
-        return {
-            a11: x1 - x0 + a13 * x1,
-            a21: x3 - x0 + a23 * x3,
-            a31: x0,
-            a12: y1 - y0 + a13 * y1,
-            a22: y3 - y0 + a23 * y3,
-            a32: y0,
-            a13: a13,
-            a23: a23,
-            a33: 1
-        };
-    }
-}
-function buildAdjoint(i) {
-    return {
-        a11: i.a22 * i.a33 - i.a23 * i.a32,
-        a21: i.a23 * i.a31 - i.a21 * i.a33,
-        a31: i.a21 * i.a32 - i.a22 * i.a31,
-        a12: i.a13 * i.a32 - i.a12 * i.a33,
-        a22: i.a11 * i.a33 - i.a13 * i.a31,
-        a32: i.a12 * i.a31 - i.a11 * i.a32,
-        a13: i.a12 * i.a23 - i.a13 * i.a22,
-        a23: i.a13 * i.a21 - i.a11 * i.a23,
-        a33: i.a11 * i.a22 - i.a12 * i.a21
-    };
-}
-function times(a, b) {
-    return {
-        a11: a.a11 * b.a11 + a.a21 * b.a12 + a.a31 * b.a13,
-        a21: a.a11 * b.a21 + a.a21 * b.a22 + a.a31 * b.a23,
-        a31: a.a11 * b.a31 + a.a21 * b.a32 + a.a31 * b.a33,
-        a12: a.a12 * b.a11 + a.a22 * b.a12 + a.a32 * b.a13,
-        a22: a.a12 * b.a21 + a.a22 * b.a22 + a.a32 * b.a23,
-        a32: a.a12 * b.a31 + a.a22 * b.a32 + a.a32 * b.a33,
-        a13: a.a13 * b.a11 + a.a23 * b.a12 + a.a33 * b.a13,
-        a23: a.a13 * b.a21 + a.a23 * b.a22 + a.a33 * b.a23,
-        a33: a.a13 * b.a31 + a.a23 * b.a32 + a.a33 * b.a33
-    };
-}
-function quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3) {
-    // Here, the adjoint serves as the inverse:
-    return buildAdjoint(squareToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3));
-}
-function transformPoints(transform, points) {
-    var max = points.length;
-    var a11 = transform.a11;
-    var a12 = transform.a12;
-    var a13 = transform.a13;
-    var a21 = transform.a21;
-    var a22 = transform.a22;
-    var a23 = transform.a23;
-    var a31 = transform.a31;
-    var a32 = transform.a32;
-    var a33 = transform.a33;
-    for (var i = 0; i < max; i += 2) {
-        var x = points[i];
-        var y = points[i + 1];
-        var denominator = a13 * x + a23 * y + a33;
-        points[i] = (a11 * x + a21 * y + a31) / denominator;
-        points[i + 1] = (a12 * x + a22 * y + a32) / denominator;
-    }
-    return points;
-}
-exports.transformPoints = transformPoints;
-function quadrilateralToQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3, x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p) {
-    var qToS = quadrilateralToSquare(x0, y0, x1, y1, x2, y2, x3, y3);
-    var sToQ = squareToQuadrilateral(x0p, y0p, x1p, y1p, x2p, y2p, x3p, y3p);
-    return times(sToQ, qToS);
-}
-exports.quadrilateralToQuadrilateral = quadrilateralToQuadrilateral;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var bitmatrix_1 = __webpack_require__(0);
-var decodeqrdata_1 = __webpack_require__(10);
-var helpers_1 = __webpack_require__(1);
-var reedsolomon_1 = __webpack_require__(12);
-var version_1 = __webpack_require__(2);
+var reedsolomon_1 = __webpack_require__(9);
+var version_1 = __webpack_require__(10);
 var FORMAT_INFO_MASK_QR = 0x5412;
 var FORMAT_INFO_DECODE_LOOKUP = [
     [0x5412, 0x00],
@@ -1687,7 +823,7 @@ var ERROR_CORRECTION_LEVELS = [
 ];
 function buildFunctionPattern(version) {
     var dimension = version.getDimensionForVersion();
-    var emptyArray = new Uint8Array(dimension * dimension);
+    var emptyArray = new Uint8ClampedArray(dimension * dimension);
     var bitMatrix = new bitmatrix_1.BitMatrix(emptyArray, dimension);
     ///BitMatrix bitMatrix = new BitMatrix(dimension);
     // Top left finder pattern + separator + format
@@ -1800,7 +936,7 @@ function readVersion(matrix) {
 function newFormatInformation(formatInfo) {
     return {
         errorCorrectionLevel: ERROR_CORRECTION_LEVELS[(formatInfo >> 3) & 0x03],
-        dataMask: formatInfo & 0x07
+        dataMask: formatInfo & 0x07,
     };
 }
 function doDecodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2) {
@@ -2004,13 +1140,13 @@ exports.decode = decode;
 
 
 /***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
-var bitstream_1 = __webpack_require__(11);
+Object.defineProperty(exports, "__esModule", { value: true });
+var bitstream_1 = __webpack_require__(8);
 function toAlphaNumericByte(value) {
     var ALPHANUMERIC_CHARS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
         'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
@@ -2225,7 +1361,7 @@ var GB2312_SUBSET = 1;
 function decodeQRdata(data, version, ecl) {
     var symbolSequence = -1;
     var parityData = -1;
-    var bits = new bitstream_1.BitStream(data);
+    var bits = new bitstream_1.BitStream(Uint32Array.from(data));
     var result = { val: [] }; // Have to pass this around so functions can share a reference to a number[]
     var fc1InEffect = false;
     var mode;
@@ -2308,12 +1444,12 @@ exports.decodeQRdata = decodeQRdata;
 
 
 /***/ }),
-/* 11 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var BitStream = /** @class */ (function () {
     function BitStream(bytes) {
         this.byteOffset = 0;
@@ -2365,12 +1501,12 @@ exports.BitStream = BitStream;
 
 
 /***/ }),
-/* 12 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ReedSolomonDecoder = /** @class */ (function () {
     function ReedSolomonDecoder() {
         this.field = new GenericGF(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
@@ -2731,6 +1867,149 @@ var GenericGF = /** @class */ (function () {
     };
     return GenericGF;
 }());
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var helpers_1 = __webpack_require__(1);
+var VERSION_DECODE_INFO = [
+    0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
+    0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
+    0x1145D, 0x12A17, 0x13532, 0x149A6, 0x15683,
+    0x168C9, 0x177EC, 0x18EC4, 0x191E1, 0x1AFAB,
+    0x1B08E, 0x1CC1A, 0x1D33F, 0x1ED75, 0x1F250,
+    0x209D5, 0x216F0, 0x228BA, 0x2379F, 0x24B0B,
+    0x2542E, 0x26A64, 0x27541, 0x28C69,
+];
+var ECB = /** @class */ (function () {
+    function ECB(_count, _dataCodewords) {
+        this.count = _count;
+        this.dataCodewords = _dataCodewords;
+    }
+    return ECB;
+}());
+var ECBlocks = /** @class */ (function () {
+    function ECBlocks(_ecCodewordsPerBlock) {
+        var _ecBlocks = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            _ecBlocks[_i - 1] = arguments[_i];
+        }
+        this.ecCodewordsPerBlock = _ecCodewordsPerBlock;
+        this.ecBlocks = _ecBlocks;
+    }
+    ECBlocks.prototype.getNumBlocks = function () {
+        return this.ecBlocks.reduce(function (a, b) { return (a + b.count); }, 0);
+    };
+    ECBlocks.prototype.getTotalECCodewords = function () {
+        return this.ecCodewordsPerBlock * this.getNumBlocks();
+    };
+    return ECBlocks;
+}());
+var Version = /** @class */ (function () {
+    function Version(_versionNumber, _alignmentPatternCenters) {
+        var _ecBlocks = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            _ecBlocks[_i - 2] = arguments[_i];
+        }
+        this.versionNumber = _versionNumber;
+        this.alignmentPatternCenters = _alignmentPatternCenters;
+        this.ecBlocks = _ecBlocks;
+        var total = 0;
+        var ecCodewords = this.ecBlocks[0].ecCodewordsPerBlock;
+        var ecbArray = this.ecBlocks[0].ecBlocks;
+        ecbArray.forEach(function (ecBlock) {
+            total += ecBlock.count * (ecBlock.dataCodewords + ecCodewords);
+        });
+        this.totalCodewords = total;
+    }
+    Version.prototype.getDimensionForVersion = function () {
+        return 17 + 4 * this.versionNumber;
+    };
+    Version.prototype.getECBlocksForLevel = function (ecLevel) {
+        return this.ecBlocks[ecLevel.ordinal];
+    };
+    Version.decodeVersionInformation = function (versionBits) {
+        var bestDifference = Infinity;
+        var bestVersion = 0;
+        for (var i = 0; i < VERSION_DECODE_INFO.length; i++) {
+            var targetVersion = VERSION_DECODE_INFO[i];
+            // Do the version info bits match exactly? done.
+            if (targetVersion == versionBits) {
+                return getVersionForNumber(i + 7);
+            }
+            // Otherwise see if this is the closest to a real version info bit string
+            // we have seen so far
+            var bitsDifference = helpers_1.numBitsDiffering(versionBits, targetVersion);
+            if (bitsDifference < bestDifference) {
+                bestVersion = i + 7;
+                bestDifference = bitsDifference;
+            }
+        }
+        // We can tolerate up to 3 bits of error since no two version info codewords will
+        // differ in less than 8 bits.
+        if (bestDifference <= 3) {
+            return getVersionForNumber(bestVersion);
+        }
+        // If we didn't find a close enough match, fail
+        return null;
+    };
+    return Version;
+}());
+exports.Version = Version;
+var VERSIONS = [
+    new Version(1, [], new ECBlocks(7, new ECB(1, 19)), new ECBlocks(10, new ECB(1, 16)), new ECBlocks(13, new ECB(1, 13)), new ECBlocks(17, new ECB(1, 9))),
+    new Version(2, [6, 18], new ECBlocks(10, new ECB(1, 34)), new ECBlocks(16, new ECB(1, 28)), new ECBlocks(22, new ECB(1, 22)), new ECBlocks(28, new ECB(1, 16))),
+    new Version(3, [6, 22], new ECBlocks(15, new ECB(1, 55)), new ECBlocks(26, new ECB(1, 44)), new ECBlocks(18, new ECB(2, 17)), new ECBlocks(22, new ECB(2, 13))),
+    new Version(4, [6, 26], new ECBlocks(20, new ECB(1, 80)), new ECBlocks(18, new ECB(2, 32)), new ECBlocks(26, new ECB(2, 24)), new ECBlocks(16, new ECB(4, 9))),
+    new Version(5, [6, 30], new ECBlocks(26, new ECB(1, 108)), new ECBlocks(24, new ECB(2, 43)), new ECBlocks(18, new ECB(2, 15), new ECB(2, 16)), new ECBlocks(22, new ECB(2, 11), new ECB(2, 12))),
+    new Version(6, [6, 34], new ECBlocks(18, new ECB(2, 68)), new ECBlocks(16, new ECB(4, 27)), new ECBlocks(24, new ECB(4, 19)), new ECBlocks(28, new ECB(4, 15))),
+    new Version(7, [6, 22, 38], new ECBlocks(20, new ECB(2, 78)), new ECBlocks(18, new ECB(4, 31)), new ECBlocks(18, new ECB(2, 14), new ECB(4, 15)), new ECBlocks(26, new ECB(4, 13), new ECB(1, 14))),
+    new Version(8, [6, 24, 42], new ECBlocks(24, new ECB(2, 97)), new ECBlocks(22, new ECB(2, 38), new ECB(2, 39)), new ECBlocks(22, new ECB(4, 18), new ECB(2, 19)), new ECBlocks(26, new ECB(4, 14), new ECB(2, 15))),
+    new Version(9, [6, 26, 46], new ECBlocks(30, new ECB(2, 116)), new ECBlocks(22, new ECB(3, 36), new ECB(2, 37)), new ECBlocks(20, new ECB(4, 16), new ECB(4, 17)), new ECBlocks(24, new ECB(4, 12), new ECB(4, 13))),
+    new Version(10, [6, 28, 50], new ECBlocks(18, new ECB(2, 68), new ECB(2, 69)), new ECBlocks(26, new ECB(4, 43), new ECB(1, 44)), new ECBlocks(24, new ECB(6, 19), new ECB(2, 20)), new ECBlocks(28, new ECB(6, 15), new ECB(2, 16))),
+    new Version(11, [6, 30, 54], new ECBlocks(20, new ECB(4, 81)), new ECBlocks(30, new ECB(1, 50), new ECB(4, 51)), new ECBlocks(28, new ECB(4, 22), new ECB(4, 23)), new ECBlocks(24, new ECB(3, 12), new ECB(8, 13))),
+    new Version(12, [6, 32, 58], new ECBlocks(24, new ECB(2, 92), new ECB(2, 93)), new ECBlocks(22, new ECB(6, 36), new ECB(2, 37)), new ECBlocks(26, new ECB(4, 20), new ECB(6, 21)), new ECBlocks(28, new ECB(7, 14), new ECB(4, 15))),
+    new Version(13, [6, 34, 62], new ECBlocks(26, new ECB(4, 107)), new ECBlocks(22, new ECB(8, 37), new ECB(1, 38)), new ECBlocks(24, new ECB(8, 20), new ECB(4, 21)), new ECBlocks(22, new ECB(12, 11), new ECB(4, 12))),
+    new Version(14, [6, 26, 46, 66], new ECBlocks(30, new ECB(3, 115), new ECB(1, 116)), new ECBlocks(24, new ECB(4, 40), new ECB(5, 41)), new ECBlocks(20, new ECB(11, 16), new ECB(5, 17)), new ECBlocks(24, new ECB(11, 12), new ECB(5, 13))),
+    new Version(15, [6, 26, 48, 70], new ECBlocks(22, new ECB(5, 87), new ECB(1, 88)), new ECBlocks(24, new ECB(5, 41), new ECB(5, 42)), new ECBlocks(30, new ECB(5, 24), new ECB(7, 25)), new ECBlocks(24, new ECB(11, 12), new ECB(7, 13))),
+    new Version(16, [6, 26, 50, 74], new ECBlocks(24, new ECB(5, 98), new ECB(1, 99)), new ECBlocks(28, new ECB(7, 45), new ECB(3, 46)), new ECBlocks(24, new ECB(15, 19), new ECB(2, 20)), new ECBlocks(30, new ECB(3, 15), new ECB(13, 16))),
+    new Version(17, [6, 30, 54, 78], new ECBlocks(28, new ECB(1, 107), new ECB(5, 108)), new ECBlocks(28, new ECB(10, 46), new ECB(1, 47)), new ECBlocks(28, new ECB(1, 22), new ECB(15, 23)), new ECBlocks(28, new ECB(2, 14), new ECB(17, 15))),
+    new Version(18, [6, 30, 56, 82], new ECBlocks(30, new ECB(5, 120), new ECB(1, 121)), new ECBlocks(26, new ECB(9, 43), new ECB(4, 44)), new ECBlocks(28, new ECB(17, 22), new ECB(1, 23)), new ECBlocks(28, new ECB(2, 14), new ECB(19, 15))),
+    new Version(19, [6, 30, 58, 86], new ECBlocks(28, new ECB(3, 113), new ECB(4, 114)), new ECBlocks(26, new ECB(3, 44), new ECB(11, 45)), new ECBlocks(26, new ECB(17, 21), new ECB(4, 22)), new ECBlocks(26, new ECB(9, 13), new ECB(16, 14))),
+    new Version(20, [6, 34, 62, 90], new ECBlocks(28, new ECB(3, 107), new ECB(5, 108)), new ECBlocks(26, new ECB(3, 41), new ECB(13, 42)), new ECBlocks(30, new ECB(15, 24), new ECB(5, 25)), new ECBlocks(28, new ECB(15, 15), new ECB(10, 16))),
+    new Version(21, [6, 28, 50, 72, 94], new ECBlocks(28, new ECB(4, 116), new ECB(4, 117)), new ECBlocks(26, new ECB(17, 42)), new ECBlocks(28, new ECB(17, 22), new ECB(6, 23)), new ECBlocks(30, new ECB(19, 16), new ECB(6, 17))),
+    new Version(22, [6, 26, 50, 74, 98], new ECBlocks(28, new ECB(2, 111), new ECB(7, 112)), new ECBlocks(28, new ECB(17, 46)), new ECBlocks(30, new ECB(7, 24), new ECB(16, 25)), new ECBlocks(24, new ECB(34, 13))),
+    new Version(23, [6, 30, 54, 74, 102], new ECBlocks(30, new ECB(4, 121), new ECB(5, 122)), new ECBlocks(28, new ECB(4, 47), new ECB(14, 48)), new ECBlocks(30, new ECB(11, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(16, 15), new ECB(14, 16))),
+    new Version(24, [6, 28, 54, 80, 106], new ECBlocks(30, new ECB(6, 117), new ECB(4, 118)), new ECBlocks(28, new ECB(6, 45), new ECB(14, 46)), new ECBlocks(30, new ECB(11, 24), new ECB(16, 25)), new ECBlocks(30, new ECB(30, 16), new ECB(2, 17))),
+    new Version(25, [6, 32, 58, 84, 110], new ECBlocks(26, new ECB(8, 106), new ECB(4, 107)), new ECBlocks(28, new ECB(8, 47), new ECB(13, 48)), new ECBlocks(30, new ECB(7, 24), new ECB(22, 25)), new ECBlocks(30, new ECB(22, 15), new ECB(13, 16))),
+    new Version(26, [6, 30, 58, 86, 114], new ECBlocks(28, new ECB(10, 114), new ECB(2, 115)), new ECBlocks(28, new ECB(19, 46), new ECB(4, 47)), new ECBlocks(28, new ECB(28, 22), new ECB(6, 23)), new ECBlocks(30, new ECB(33, 16), new ECB(4, 17))),
+    new Version(27, [6, 34, 62, 90, 118], new ECBlocks(30, new ECB(8, 122), new ECB(4, 123)), new ECBlocks(28, new ECB(22, 45), new ECB(3, 46)), new ECBlocks(30, new ECB(8, 23), new ECB(26, 24)), new ECBlocks(30, new ECB(12, 15), new ECB(28, 16))),
+    new Version(28, [6, 26, 50, 74, 98, 122], new ECBlocks(30, new ECB(3, 117), new ECB(10, 118)), new ECBlocks(28, new ECB(3, 45), new ECB(23, 46)), new ECBlocks(30, new ECB(4, 24), new ECB(31, 25)), new ECBlocks(30, new ECB(11, 15), new ECB(31, 16))),
+    new Version(29, [6, 30, 54, 78, 102, 126], new ECBlocks(30, new ECB(7, 116), new ECB(7, 117)), new ECBlocks(28, new ECB(21, 45), new ECB(7, 46)), new ECBlocks(30, new ECB(1, 23), new ECB(37, 24)), new ECBlocks(30, new ECB(19, 15), new ECB(26, 16))),
+    new Version(30, [6, 26, 52, 78, 104, 130], new ECBlocks(30, new ECB(5, 115), new ECB(10, 116)), new ECBlocks(28, new ECB(19, 47), new ECB(10, 48)), new ECBlocks(30, new ECB(15, 24), new ECB(25, 25)), new ECBlocks(30, new ECB(23, 15), new ECB(25, 16))),
+    new Version(31, [6, 30, 56, 82, 108, 134], new ECBlocks(30, new ECB(13, 115), new ECB(3, 116)), new ECBlocks(28, new ECB(2, 46), new ECB(29, 47)), new ECBlocks(30, new ECB(42, 24), new ECB(1, 25)), new ECBlocks(30, new ECB(23, 15), new ECB(28, 16))),
+    new Version(32, [6, 34, 60, 86, 112, 138], new ECBlocks(30, new ECB(17, 115)), new ECBlocks(28, new ECB(10, 46), new ECB(23, 47)), new ECBlocks(30, new ECB(10, 24), new ECB(35, 25)), new ECBlocks(30, new ECB(19, 15), new ECB(35, 16))),
+    new Version(33, [6, 30, 58, 86, 114, 142], new ECBlocks(30, new ECB(17, 115), new ECB(1, 116)), new ECBlocks(28, new ECB(14, 46), new ECB(21, 47)), new ECBlocks(30, new ECB(29, 24), new ECB(19, 25)), new ECBlocks(30, new ECB(11, 15), new ECB(46, 16))),
+    new Version(34, [6, 34, 62, 90, 118, 146], new ECBlocks(30, new ECB(13, 115), new ECB(6, 116)), new ECBlocks(28, new ECB(14, 46), new ECB(23, 47)), new ECBlocks(30, new ECB(44, 24), new ECB(7, 25)), new ECBlocks(30, new ECB(59, 16), new ECB(1, 17))),
+    new Version(35, [6, 30, 54, 78, 102, 126, 150], new ECBlocks(30, new ECB(12, 121), new ECB(7, 122)), new ECBlocks(28, new ECB(12, 47), new ECB(26, 48)), new ECBlocks(30, new ECB(39, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(22, 15), new ECB(41, 16))),
+    new Version(36, [6, 24, 50, 76, 102, 128, 154], new ECBlocks(30, new ECB(6, 121), new ECB(14, 122)), new ECBlocks(28, new ECB(6, 47), new ECB(34, 48)), new ECBlocks(30, new ECB(46, 24), new ECB(10, 25)), new ECBlocks(30, new ECB(2, 15), new ECB(64, 16))),
+    new Version(37, [6, 28, 54, 80, 106, 132, 158], new ECBlocks(30, new ECB(17, 122), new ECB(4, 123)), new ECBlocks(28, new ECB(29, 46), new ECB(14, 47)), new ECBlocks(30, new ECB(49, 24), new ECB(10, 25)), new ECBlocks(30, new ECB(24, 15), new ECB(46, 16))),
+    new Version(38, [6, 32, 58, 84, 110, 136, 162], new ECBlocks(30, new ECB(4, 122), new ECB(18, 123)), new ECBlocks(28, new ECB(13, 46), new ECB(32, 47)), new ECBlocks(30, new ECB(48, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(42, 15), new ECB(32, 16))),
+    new Version(39, [6, 26, 54, 82, 110, 138, 166], new ECBlocks(30, new ECB(20, 117), new ECB(4, 118)), new ECBlocks(28, new ECB(40, 47), new ECB(7, 48)), new ECBlocks(30, new ECB(43, 24), new ECB(22, 25)), new ECBlocks(30, new ECB(10, 15), new ECB(67, 16))),
+    new Version(40, [6, 30, 58, 86, 114, 142, 170], new ECBlocks(30, new ECB(19, 118), new ECB(6, 119)), new ECBlocks(28, new ECB(18, 47), new ECB(31, 48)), new ECBlocks(30, new ECB(34, 24), new ECB(34, 25)), new ECBlocks(30, new ECB(20, 15), new ECB(61, 16))),
+];
+function getVersionForNumber(versionNumber) {
+    if (versionNumber < 1 || versionNumber > 40) {
+        return null;
+    }
+    return VERSIONS[versionNumber - 1];
+}
+exports.getVersionForNumber = getVersionForNumber;
 
 
 /***/ })
