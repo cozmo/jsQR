@@ -12,10 +12,8 @@ function byteArrayToString(bytes: Uint8ClampedArray): string {
   return str;
 }
 
-export interface QRCode {
+export interface QRInfo {
   binaryData: Uint8ClampedArray;
-  text: string;
-  encodingType: "numeric" | "alphanumeric" | "byte" | "structured_append" | "eci" | "kanji" | "TODO";
   location: {
     topRightCorner: Point;
     topLeftCorner: Point;
@@ -32,8 +30,23 @@ export interface QRCode {
   errorRate: number; // TODO is this the right field name?
 }
 
-// TODO - is this the name we want?
-export function readQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
+export interface NumericCode extends QRInfo {
+  data: number;
+  encodingType: "numeric";
+};
+
+export interface AlphaNumericCode extends QRInfo {
+  encodingType: "alphanumeric" | "kanji" | "TODO";
+  data: string;
+}
+
+export interface BinaryCode extends QRInfo {
+  encodingType: "byte" | "structured_append" | "eci";
+}
+
+export type QRCode = NumericCode | AlphaNumericCode | BinaryCode;
+
+export default function x(data: Uint8ClampedArray, width: number, height: number):  QRCode | null {
   const binarized = binarize(data, width, height);
   const location = locate(binarized);
   if (!location) {
@@ -51,7 +64,7 @@ export function readQR(data: Uint8ClampedArray, width: number, height: number): 
   return {
     binaryData: decoded,
     encodingType: "TODO",
-    text: decodedString,
+    data: decodedString,
     location: {
       topRightCorner: extracted.mappingFunction(location.dimension, 0),
       topLeftCorner: extracted.mappingFunction(0, 0),

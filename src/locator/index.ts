@@ -305,7 +305,7 @@ export function locate(matrix: BitMatrix): QRLocation {
         }
       }
     }
-    finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y !== y))
+    finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y !== y && q.bottom.y - q.top.y >= 2))
     activeFinderPatternQuads = activeFinderPatternQuads.filter(q => q.bottom.y === y)
 
     alignmentPatternQuads.push(...activeAlignmentPatternQuads.filter(q => q.bottom.y !== y))
@@ -313,7 +313,7 @@ export function locate(matrix: BitMatrix): QRLocation {
 
   }
 
-  finderPatternQuads.push(...activeFinderPatternQuads);
+  finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y - q.top.y >= 2));
   alignmentPatternQuads.push(...activeAlignmentPatternQuads);
 
   const finderPatternGroups = finderPatternQuads

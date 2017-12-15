@@ -1,8 +1,6 @@
 import { Point } from "./locator";
-export interface QRCode {
+export interface QRInfo {
     binaryData: Uint8ClampedArray;
-    text: string;
-    encodingType: "numeric" | "alphanumeric" | "byte" | "structured_append" | "eci" | "kanji" | "TODO";
     location: {
         topRightCorner: Point;
         topLeftCorner: Point;
@@ -15,4 +13,16 @@ export interface QRCode {
     };
     errorRate: number;
 }
-export declare function readQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null;
+export interface NumericCode extends QRInfo {
+    data: number;
+    encodingType: "numeric";
+}
+export interface AlphaNumericCode extends QRInfo {
+    encodingType: "alphanumeric" | "kanji" | "TODO";
+    data: string;
+}
+export interface BinaryCode extends QRInfo {
+    encodingType: "byte" | "structured_append" | "eci";
+}
+export declare type QRCode = NumericCode | AlphaNumericCode | BinaryCode;
+export default function x(data: Uint8ClampedArray, width: number, height: number): QRCode | null;
