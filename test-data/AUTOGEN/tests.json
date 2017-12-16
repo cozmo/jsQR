@@ -60,17 +60,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/0.png",
     "inputPath": "test-data/images/0.png",
     "location": {
+      "alignmentPattern": {
+        "x": 106.5,
+        "y": 58.5
+      },
       "bottomLeft": {
         "x": 191.25,
-        "y": 53.5
+        "y": 54
       },
+      "dimension": 41,
       "topLeft": {
         "x": 189.25,
-        "y": 145.5
+        "y": 146
       },
       "topRight": {
         "x": 95.75,
-        "y": 143
+        "y": 143.5
       }
     },
     "name": "0.png",
@@ -78,25 +83,59 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/1.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      97,
+      100,
+      115,
+      105,
+      116,
+      101,
+      115,
+      46,
+      99,
+      111,
+      109,
+      46,
+      97,
+      117,
+      47,
+      63,
+      69,
+      61,
+      50,
+      56,
+      48
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/1.png",
     "inputPath": "test-data/images/1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 103,
+        "y": 147.5
+      },
       "bottomLeft": {
         "x": 73.5,
-        "y": 150.5
+        "y": 152
       },
+      "dimension": 29,
       "topLeft": {
         "x": 74,
-        "y": 117
+        "y": 117.5
       },
       "topRight": {
         "x": 108,
-        "y": 117.5
+        "y": 118
       }
     },
     "name": "1.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/10.png",
@@ -125,17 +164,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/10.png",
     "inputPath": "test-data/images/10.png",
     "location": {
+      "alignmentPattern": {
+        "x": 132.5,
+        "y": 148.5
+      },
       "bottomLeft": {
         "x": 80.25,
-        "y": 161
+        "y": 161.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 79.25,
-        "y": 101.5
+        "y": 102
       },
       "topRight": {
         "x": 142.75,
-        "y": 98.5
+        "y": 99
       }
     },
     "name": "10.png",
@@ -179,17 +223,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/100.png",
     "inputPath": "test-data/images/100.png",
     "location": {
+      "alignmentPattern": {
+        "x": 160.25,
+        "y": 154
+      },
       "bottomLeft": {
         "x": 73,
-        "y": 168
+        "y": 168.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 75.5,
-        "y": 65
+        "y": 65.5
       },
       "topRight": {
         "x": 177.5,
-        "y": 67
+        "y": 67.5
       }
     },
     "name": "100.png",
@@ -233,17 +282,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/101.png",
     "inputPath": "test-data/images/101.png",
     "location": {
+      "alignmentPattern": {
+        "x": 138,
+        "y": 144.5
+      },
       "bottomLeft": {
         "x": 84,
-        "y": 154
+        "y": 154.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 84,
-        "y": 90
+        "y": 90.5
       },
       "topRight": {
         "x": 147.5,
-        "y": 90
+        "y": 90.5
       }
     },
     "name": "101.png",
@@ -287,17 +341,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/102.png",
     "inputPath": "test-data/images/102.png",
     "location": {
+      "alignmentPattern": {
+        "x": 133,
+        "y": 162.5
+      },
       "bottomLeft": {
         "x": 81.25,
-        "y": 177
+        "y": 177.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 75.75,
-        "y": 112
+        "y": 112.5
       },
       "topRight": {
         "x": 138.25,
-        "y": 108.5
+        "y": 109
       }
     },
     "name": "102.png",
@@ -341,17 +400,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/103.png",
     "inputPath": "test-data/images/103.png",
     "location": {
+      "alignmentPattern": {
+        "x": 149.75,
+        "y": 139
+      },
       "bottomLeft": {
         "x": 88.25,
-        "y": 149
+        "y": 149.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 91.25,
-        "y": 74
+        "y": 74.5
       },
       "topRight": {
         "x": 166.75,
-        "y": 77.5
+        "y": 78
       }
     },
     "name": "103.png",
@@ -435,17 +499,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/104.png",
     "inputPath": "test-data/images/104.png",
     "location": {
+      "alignmentPattern": {
+        "x": 191.25,
+        "y": 342.5
+      },
       "bottomLeft": {
         "x": 176.25,
-        "y": 125.5
+        "y": 126
       },
+      "dimension": 57,
       "topLeft": {
         "x": 424.25,
-        "y": 127.5
+        "y": 128
       },
       "topRight": {
         "x": 418,
-        "y": 356.5
+        "y": 357
       }
     },
     "name": "104.png",
@@ -489,17 +558,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/105.png",
     "inputPath": "test-data/images/105.png",
     "location": {
+      "alignmentPattern": {
+        "x": 130.75,
+        "y": 123.5
+      },
       "bottomLeft": {
         "x": 72,
-        "y": 125
+        "y": 125.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 78.25,
-        "y": 56
+        "y": 56.5
       },
       "topRight": {
         "x": 150,
-        "y": 67
+        "y": 67.5
       }
     },
     "name": "105.png",
@@ -543,17 +617,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/106.png",
     "inputPath": "test-data/images/106.png",
     "location": {
+      "alignmentPattern": {
+        "x": 160,
+        "y": 144.5
+      },
       "bottomLeft": {
         "x": 100,
-        "y": 158.5
+        "y": 159
       },
+      "dimension": 25,
       "topLeft": {
         "x": 98.5,
-        "y": 88.5
+        "y": 89
       },
       "topRight": {
         "x": 173.25,
-        "y": 84
+        "y": 84.5
       }
     },
     "name": "106.png",
@@ -597,17 +676,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/107.png",
     "inputPath": "test-data/images/107.png",
     "location": {
+      "alignmentPattern": {
+        "x": 144.5,
+        "y": 139.5
+      },
       "bottomLeft": {
         "x": 85.25,
-        "y": 152.5
+        "y": 153
       },
+      "dimension": 25,
       "topLeft": {
         "x": 81.5,
-        "y": 85
+        "y": 85.5
       },
       "topRight": {
         "x": 154.75,
-        "y": 80.5
+        "y": 81
       }
     },
     "name": "107.png",
@@ -651,17 +735,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/108.png",
     "inputPath": "test-data/images/108.png",
     "location": {
+      "alignmentPattern": {
+        "x": 145.25,
+        "y": 139
+      },
       "bottomLeft": {
         "x": 86.5,
-        "y": 151.5
+        "y": 152
       },
+      "dimension": 25,
       "topLeft": {
         "x": 85.75,
-        "y": 80
+        "y": 80.5
       },
       "topRight": {
         "x": 156.75,
-        "y": 78.5
+        "y": 79
       }
     },
     "name": "108.png",
@@ -705,17 +794,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/109.png",
     "inputPath": "test-data/images/109.png",
     "location": {
+      "alignmentPattern": {
+        "x": 142.25,
+        "y": 149
+      },
       "bottomLeft": {
         "x": 75.25,
-        "y": 151.5
+        "y": 152
       },
+      "dimension": 25,
       "topLeft": {
         "x": 89.25,
-        "y": 70.5
+        "y": 71
       },
       "topRight": {
         "x": 168,
-        "y": 85.5
+        "y": 86
       }
     },
     "name": "109.png",
@@ -828,17 +922,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/11.png",
     "inputPath": "test-data/images/11.png",
     "location": {
+      "alignmentPattern": {
+        "x": 168,
+        "y": 338
+      },
       "bottomLeft": {
         "x": 41.5,
-        "y": 350
+        "y": 350.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 41.5,
-        "y": 211
+        "y": 211.5
       },
       "topRight": {
         "x": 180.5,
-        "y": 211
+        "y": 211.5
       }
     },
     "name": "11.png",
@@ -873,17 +972,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/110.png",
     "inputPath": "test-data/images/110.png",
     "location": {
+      "alignmentPattern": {
+        "x": 154,
+        "y": 180
+      },
       "bottomLeft": {
         "x": 58.5,
-        "y": 195.5
+        "y": 196
       },
+      "dimension": 29,
       "topLeft": {
         "x": 56,
-        "y": 83.5
+        "y": 84
       },
       "topRight": {
         "x": 173,
-        "y": 83
+        "y": 83.5
       }
     },
     "name": "110.png",
@@ -927,17 +1031,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/111.png",
     "inputPath": "test-data/images/111.png",
     "location": {
+      "alignmentPattern": {
+        "x": 147.5,
+        "y": 141
+      },
       "bottomLeft": {
         "x": 85.25,
-        "y": 163
+        "y": 163.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 74.75,
-        "y": 84
+        "y": 84.5
       },
       "topRight": {
         "x": 153.75,
-        "y": 74
+        "y": 74.5
       }
     },
     "name": "111.png",
@@ -981,17 +1090,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/112.png",
     "inputPath": "test-data/images/112.png",
     "location": {
+      "alignmentPattern": {
+        "x": 149.25,
+        "y": 129
+      },
       "bottomLeft": {
         "x": 85.25,
-        "y": 141
+        "y": 141.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 83.75,
-        "y": 64.5
+        "y": 65
       },
       "topRight": {
         "x": 159,
-        "y": 64.5
+        "y": 65
       }
     },
     "name": "112.png",
@@ -1065,17 +1179,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/113.png",
     "inputPath": "test-data/images/113.png",
     "location": {
+      "alignmentPattern": {
+        "x": 167.25,
+        "y": 177.5
+      },
       "bottomLeft": {
         "x": 50,
-        "y": 196.5
+        "y": 197
       },
+      "dimension": 33,
       "topLeft": {
         "x": 54.5,
-        "y": 46
+        "y": 46.5
       },
       "topRight": {
         "x": 184.5,
-        "y": 58
+        "y": 58.5
       }
     },
     "name": "113.png",
@@ -1149,17 +1268,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/114.png",
     "inputPath": "test-data/images/114.png",
     "location": {
+      "alignmentPattern": {
+        "x": 169.75,
+        "y": 183.5
+      },
       "bottomLeft": {
         "x": 52.75,
-        "y": 199.5
+        "y": 200
       },
+      "dimension": 33,
       "topLeft": {
         "x": 50,
-        "y": 64.5
+        "y": 65
       },
       "topRight": {
         "x": 184,
-        "y": 64.5
+        "y": 65
       }
     },
     "name": "114.png",
@@ -1233,17 +1357,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/115.png",
     "inputPath": "test-data/images/115.png",
     "location": {
+      "alignmentPattern": {
+        "x": 167.75,
+        "y": 169
+      },
       "bottomLeft": {
         "x": 61,
-        "y": 175.5
+        "y": 176
       },
+      "dimension": 33,
       "topLeft": {
         "x": 69.25,
-        "y": 52.5
+        "y": 53
       },
       "topRight": {
         "x": 191.5,
-        "y": 62.5
+        "y": 63
       }
     },
     "name": "115.png",
@@ -1327,17 +1456,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/116.png",
     "inputPath": "test-data/images/116.png",
     "location": {
+      "alignmentPattern": {
+        "x": 217.5,
+        "y": 347
+      },
       "bottomLeft": {
         "x": 204.25,
-        "y": 180
+        "y": 180.5
       },
+      "dimension": 57,
       "topLeft": {
         "x": 393.75,
-        "y": 180.5
+        "y": 181
       },
       "topRight": {
         "x": 392.25,
-        "y": 355.5
+        "y": 356
       }
     },
     "name": "116.png",
@@ -1411,17 +1545,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/117.png",
     "inputPath": "test-data/images/117.png",
     "location": {
+      "alignmentPattern": {
+        "x": 182.25,
+        "y": 198.5
+      },
       "bottomLeft": {
         "x": 52.5,
-        "y": 208
+        "y": 208.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 65,
-        "y": 56
+        "y": 56.5
       },
       "topRight": {
         "x": 211.75,
-        "y": 70.5
+        "y": 71
       }
     },
     "name": "117.png",
@@ -1495,17 +1634,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/118.png",
     "inputPath": "test-data/images/118.png",
     "location": {
+      "alignmentPattern": {
+        "x": 179,
+        "y": 168.5
+      },
       "bottomLeft": {
         "x": 61.75,
-        "y": 182.5
+        "y": 183
       },
+      "dimension": 33,
       "topLeft": {
         "x": 65,
-        "y": 53
+        "y": 53.5
       },
       "topRight": {
         "x": 191.5,
-        "y": 57
+        "y": 57.5
       }
     },
     "name": "118.png",
@@ -1579,17 +1723,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/119.png",
     "inputPath": "test-data/images/119.png",
     "location": {
+      "alignmentPattern": {
+        "x": 169.25,
+        "y": 164
+      },
       "bottomLeft": {
         "x": 47,
-        "y": 172
+        "y": 172.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 38.75,
-        "y": 58
+        "y": 58.5
       },
       "topRight": {
         "x": 202,
-        "y": 60
+        "y": 60.5
       }
     },
     "name": "119.png",
@@ -1626,17 +1775,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/12.png",
     "inputPath": "test-data/images/12.png",
     "location": {
+      "alignmentPattern": {
+        "x": 206,
+        "y": 180.5
+      },
       "bottomLeft": {
         "x": 116.75,
-        "y": 194
+        "y": 194.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 116.75,
-        "y": 91
+        "y": 91.5
       },
       "topRight": {
         "x": 221,
-        "y": 91
+        "y": 91.5
       }
     },
     "name": "12.png",
@@ -1710,17 +1864,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/120.png",
     "inputPath": "test-data/images/120.png",
     "location": {
+      "alignmentPattern": {
+        "x": 171.75,
+        "y": 190.5
+      },
       "bottomLeft": {
         "x": 56,
-        "y": 197.5
+        "y": 198
       },
+      "dimension": 33,
       "topLeft": {
         "x": 69.25,
-        "y": 72.5
+        "y": 73
       },
       "topRight": {
         "x": 193.5,
-        "y": 78.5
+        "y": 79
       }
     },
     "name": "120.png",
@@ -1755,17 +1914,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/121.png",
     "inputPath": "test-data/images/121.png",
     "location": {
+      "alignmentPattern": {
+        "x": 159.75,
+        "y": 162
+      },
       "bottomLeft": {
         "x": 62.5,
-        "y": 182.5
+        "y": 183
       },
+      "dimension": 29,
       "topLeft": {
         "x": 62,
-        "y": 64
+        "y": 64.5
       },
       "topRight": {
         "x": 179.25,
-        "y": 62.5
+        "y": 63
       }
     },
     "name": "121.png",
@@ -1839,17 +2003,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/122.png",
     "inputPath": "test-data/images/122.png",
     "location": {
+      "alignmentPattern": {
+        "x": 168.5,
+        "y": 173
+      },
       "bottomLeft": {
         "x": 55.5,
-        "y": 190
+        "y": 190.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 54.75,
-        "y": 65.5
+        "y": 66
       },
       "topRight": {
         "x": 177.75,
-        "y": 63.5
+        "y": 64
       }
     },
     "name": "122.png",
@@ -1923,17 +2092,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/123.png",
     "inputPath": "test-data/images/123.png",
     "location": {
+      "alignmentPattern": {
+        "x": 181.75,
+        "y": 179
+      },
       "bottomLeft": {
         "x": 54,
-        "y": 201.5
+        "y": 202
       },
+      "dimension": 33,
       "topLeft": {
         "x": 50.75,
-        "y": 62
+        "y": 62.5
       },
       "topRight": {
         "x": 187,
-        "y": 57.5
+        "y": 58
       }
     },
     "name": "123.png",
@@ -2007,17 +2181,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/124.png",
     "inputPath": "test-data/images/124.png",
     "location": {
+      "alignmentPattern": {
+        "x": 186.5,
+        "y": 157.5
+      },
       "bottomLeft": {
         "x": 64,
-        "y": 187.5
+        "y": 188
       },
+      "dimension": 33,
       "topLeft": {
         "x": 51.5,
-        "y": 55
+        "y": 55.5
       },
       "topRight": {
         "x": 183,
-        "y": 42.5
+        "y": 43
       }
     },
     "name": "124.png",
@@ -2091,17 +2270,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/125.png",
     "inputPath": "test-data/images/125.png",
     "location": {
+      "alignmentPattern": {
+        "x": 182,
+        "y": 172.5
+      },
       "bottomLeft": {
         "x": 67,
-        "y": 189
+        "y": 189.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 67.25,
-        "y": 63.5
+        "y": 64
       },
       "topRight": {
         "x": 191.5,
-        "y": 62.5
+        "y": 63
       }
     },
     "name": "125.png",
@@ -2175,17 +2359,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/126.png",
     "inputPath": "test-data/images/126.png",
     "location": {
+      "alignmentPattern": {
+        "x": 161.75,
+        "y": 170
+      },
       "bottomLeft": {
         "x": 43.75,
-        "y": 187.5
+        "y": 188
       },
+      "dimension": 33,
       "topLeft": {
         "x": 45,
-        "y": 48
+        "y": 48.5
       },
       "topRight": {
         "x": 176.25,
-        "y": 53.5
+        "y": 54
       }
     },
     "name": "126.png",
@@ -2259,17 +2448,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/127.png",
     "inputPath": "test-data/images/127.png",
     "location": {
+      "alignmentPattern": {
+        "x": 170.5,
+        "y": 169
+      },
       "bottomLeft": {
-        "x": 61.75,
+        "x": 59.5,
         "y": 183
       },
+      "dimension": 33,
       "topLeft": {
         "x": 66.75,
-        "y": 72.5
+        "y": 73
       },
       "topRight": {
         "x": 179.75,
-        "y": 73.5
+        "y": 74
       }
     },
     "name": "127.png",
@@ -2353,17 +2547,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/128.png",
     "inputPath": "test-data/images/128.png",
     "location": {
+      "alignmentPattern": {
+        "x": 240.25,
+        "y": 362.5
+      },
       "bottomLeft": {
         "x": 233.25,
-        "y": 224
+        "y": 224.5
       },
+      "dimension": 57,
       "topLeft": {
         "x": 391.5,
-        "y": 227.5
+        "y": 228
       },
       "topRight": {
         "x": 387.25,
-        "y": 373
+        "y": 373.5
       }
     },
     "name": "128.png",
@@ -2437,17 +2636,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/129.png",
     "inputPath": "test-data/images/129.png",
     "location": {
+      "alignmentPattern": {
+        "x": 172.25,
+        "y": 175
+      },
       "bottomLeft": {
         "x": 52.75,
-        "y": 193.5
+        "y": 194
       },
+      "dimension": 33,
       "topLeft": {
         "x": 49,
-        "y": 55.5
+        "y": 56
       },
       "topRight": {
         "x": 185.25,
-        "y": 54.5
+        "y": 55
       }
     },
     "name": "129.png",
@@ -2482,17 +2686,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/13.png",
     "inputPath": "test-data/images/13.png",
     "location": {
+      "alignmentPattern": {
+        "x": 148,
+        "y": 151
+      },
       "bottomLeft": {
         "x": 65.25,
-        "y": 164
+        "y": 164.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 68.5,
-        "y": 69
+        "y": 69.5
       },
       "topRight": {
         "x": 161.25,
-        "y": 69.5
+        "y": 70
       }
     },
     "name": "13.png",
@@ -2566,17 +2775,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/130.png",
     "inputPath": "test-data/images/130.png",
     "location": {
+      "alignmentPattern": {
+        "x": 176,
+        "y": 183.5
+      },
       "bottomLeft": {
         "x": 53.25,
-        "y": 197
+        "y": 197.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 57.75,
-        "y": 54
+        "y": 54.5
       },
       "topRight": {
         "x": 195.75,
-        "y": 62.5
+        "y": 63
       }
     },
     "name": "130.png",
@@ -5542,17 +5756,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/131.png",
     "inputPath": "test-data/images/131.png",
     "location": {
+      "alignmentPattern": {
+        "x": 170.5,
+        "y": 170.5
+      },
       "bottomLeft": {
         "x": 3.5,
-        "y": 173
+        "y": 173.5
       },
+      "dimension": 177,
       "topLeft": {
         "x": 3.5,
-        "y": 3
+        "y": 3.5
       },
       "topRight": {
         "x": 173.5,
-        "y": 3
+        "y": 3.5
       }
     },
     "name": "131.png",
@@ -5587,17 +5806,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/132.png",
     "inputPath": "test-data/images/132.png",
     "location": {
+      "alignmentPattern": {
+        "x": 159.75,
+        "y": 166.5
+      },
       "bottomLeft": {
         "x": 62,
-        "y": 177
+        "y": 177.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 63.25,
-        "y": 60
+        "y": 60.5
       },
       "topRight": {
-        "x": 181.75,
-        "y": 62.5
+        "x": 183.5,
+        "y": 63.5
       }
     },
     "name": "132.png",
@@ -7941,17 +8165,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/133.png",
     "inputPath": "test-data/images/133.png",
     "location": {
+      "alignmentPattern": {
+        "x": 170.5,
+        "y": 170.5
+      },
       "bottomLeft": {
         "x": 3.5,
-        "y": 173
+        "y": 173.5
       },
+      "dimension": 177,
       "topLeft": {
         "x": 3.5,
-        "y": 3
+        "y": 3.5
       },
       "topRight": {
         "x": 173.5,
-        "y": 3
+        "y": 3.5
       }
     },
     "name": "133.png",
@@ -9627,17 +9856,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/134.png",
     "inputPath": "test-data/images/134.png",
     "location": {
+      "alignmentPattern": {
+        "x": 170.5,
+        "y": 170.5
+      },
       "bottomLeft": {
         "x": 3.5,
-        "y": 173
+        "y": 173.5
       },
+      "dimension": 177,
       "topLeft": {
         "x": 3.5,
-        "y": 3
+        "y": 3.5
       },
       "topRight": {
         "x": 173.5,
-        "y": 3
+        "y": 3.5
       }
     },
     "name": "134.png",
@@ -10923,17 +11157,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/135.png",
     "inputPath": "test-data/images/135.png",
     "location": {
+      "alignmentPattern": {
+        "x": 170.5,
+        "y": 170.5
+      },
       "bottomLeft": {
         "x": 3.5,
         "y": 173.5
       },
+      "dimension": 177,
       "topLeft": {
         "x": 3.5,
-        "y": 3
+        "y": 3.5
       },
       "topRight": {
         "x": 173.5,
-        "y": 3
+        "y": 3.5
       }
     },
     "name": "135.png",
@@ -10956,17 +11195,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/136.png",
     "inputPath": "test-data/images/136.png",
     "location": {
+      "alignmentPattern": {
+        "x": 254.37785460171034,
+        "y": 266.78535341628486
+      },
       "bottomLeft": {
         "x": 221.5,
-        "y": 258
+        "y": 258.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 242.5,
-        "y": 221.5
+        "y": 222
       },
       "topRight": {
         "x": 278.75,
-        "y": 242.5
+        "y": 243
       }
     },
     "name": "136.png",
@@ -10974,25 +11218,41 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/137.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      48
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/137.png",
     "inputPath": "test-data/images/137.png",
     "location": {
+      "alignmentPattern": {
+        "x": 244.6520846349197,
+        "y": 232.20839720816014
+      },
       "bottomLeft": {
         "x": 278.5,
-        "y": 241
+        "y": 241.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 258.5,
-        "y": 278
+        "y": 278.5
       },
       "topRight": {
-        "x": 222.25,
-        "y": 256
+        "x": 221,
+        "y": 257
       }
     },
     "name": "137.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/138.png",
@@ -11011,17 +11271,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/138.png",
     "inputPath": "test-data/images/138.png",
     "location": {
+      "alignmentPattern": {
+        "x": 245.56887048816236,
+        "y": 233.01377397175972
+      },
       "bottomLeft": {
         "x": 278.5,
-        "y": 241
+        "y": 241.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 257.5,
-        "y": 277.5
+        "y": 278
       },
       "topRight": {
         "x": 221.25,
-        "y": 256.5
+        "y": 257
       }
     },
     "name": "138.png",
@@ -11029,25 +11294,41 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/139.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      48
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/139.png",
     "inputPath": "test-data/images/139.png",
     "location": {
+      "alignmentPattern": {
+        "x": 247.3875483451124,
+        "y": 233.99643647911864
+      },
       "bottomLeft": {
-        "x": 277.75,
+        "x": 279.25,
         "y": 244.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 255,
-        "y": 278
+        "y": 278.5
       },
       "topRight": {
         "x": 221,
-        "y": 255
+        "y": 255.5
       }
     },
     "name": "139.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/14.png",
@@ -11062,17 +11343,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/14.png",
     "inputPath": "test-data/images/14.png",
     "location": {
+      "alignmentPattern": {
+        "x": 129.5,
+        "y": 129.5
+      },
       "bottomLeft": {
         "x": 52.5,
-        "y": 150
+        "y": 150.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 52.5,
-        "y": 52
+        "y": 52.5
       },
       "topRight": {
         "x": 150.5,
-        "y": 52
+        "y": 52.5
       }
     },
     "name": "14.png",
@@ -11136,17 +11422,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/140.png",
     "inputPath": "test-data/images/140.png",
     "location": {
+      "alignmentPattern": {
+        "x": 376.5,
+        "y": 342.5
+      },
       "bottomLeft": {
         "x": 227.75,
-        "y": 357.5
+        "y": 358
       },
+      "dimension": 33,
       "topLeft": {
         "x": 231.25,
-        "y": 202
+        "y": 202.5
       },
       "topRight": {
         "x": 397.25,
-        "y": 204
+        "y": 204.5
       }
     },
     "name": "140.png",
@@ -11154,6 +11445,33 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/141.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/141.png",
+    "inputPath": "test-data/images/141.png",
+    "location": {
+      "alignmentPattern": {
+        "x": 233.60123239271812,
+        "y": 262.2496592440961
+      },
+      "bottomLeft": {
+        "x": 245,
+        "y": 278.5
+      },
+      "dimension": 13,
+      "topLeft": {
+        "x": 229,
+        "y": 257.5
+      },
+      "topRight": {
+        "x": 220.75,
+        "y": 244.5
+      }
+    },
+    "name": "141.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/142.png",
     "decodedBytes": [
       49,
       50,
@@ -11166,46 +11484,29 @@
       57,
       48
     ],
-    "extractedPath": "test-data/AUTOGEN/extracted/141.png",
-    "inputPath": "test-data/images/141.png",
-    "location": {
-      "bottomLeft": {
-        "x": 279,
-        "y": 255
-      },
-      "topLeft": {
-        "x": 245,
-        "y": 278
-      },
-      "topRight": {
-        "x": 220.75,
-        "y": 244
-      }
-    },
-    "name": "141.png",
-    "successful": true
-  },
-  {
-    "binarizedPath": "test-data/AUTOGEN/binarized/142.png",
-    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/142.png",
     "inputPath": "test-data/images/142.png",
     "location": {
+      "alignmentPattern": {
+        "x": 266.5513660527376,
+        "y": 253.86132281615326
+      },
       "bottomLeft": {
         "x": 245.25,
-        "y": 279
+        "y": 279.5
       },
+      "dimension": 21,
       "topLeft": {
-        "x": 223,
+        "x": 221.5,
         "y": 244.5
       },
       "topRight": {
         "x": 255.5,
-        "y": 221
+        "y": 221.5
       }
     },
     "name": "142.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/143.png",
@@ -11236,17 +11537,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/143.png",
     "inputPath": "test-data/images/143.png",
     "location": {
+      "alignmentPattern": {
+        "x": 158,
+        "y": 154.5
+      },
       "bottomLeft": {
         "x": 80,
-        "y": 169.5
+        "y": 170
       },
+      "dimension": 29,
       "topLeft": {
         "x": 78.25,
-        "y": 76
+        "y": 76.5
       },
       "topRight": {
         "x": 170.75,
-        "y": 73.5
+        "y": 74
       }
     },
     "name": "143.png",
@@ -11263,16 +11569,21 @@
     "extractedPath": "test-data/AUTOGEN/extracted/144.png",
     "inputPath": "test-data/images/144.png",
     "location": {
-      "bottomLeft": {
-        "x": 654.5,
-        "y": 892
+      "alignmentPattern": {
+        "x": 591,
+        "y": 378
       },
+      "bottomLeft": {
+        "x": 659.5,
+        "y": 893
+      },
+      "dimension": 33,
       "topLeft": {
-        "x": 96,
-        "y": 864.5
+        "x": 93.25,
+        "y": 865
       },
       "topRight": {
-        "x": 96.25,
+        "x": 98.25,
         "y": 316.5
       }
     },
@@ -11296,17 +11607,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/145.png",
     "inputPath": "test-data/images/145.png",
     "location": {
+      "alignmentPattern": {
+        "x": 253.9182428491664,
+        "y": 266.9749202943899
+      },
       "bottomLeft": {
         "x": 221.25,
-        "y": 257
+        "y": 257.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 243.75,
-        "y": 221.5
+        "y": 222
       },
       "topRight": {
         "x": 279.25,
-        "y": 243.5
+        "y": 244
       }
     },
     "name": "145.png",
@@ -11329,17 +11645,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/146.png",
     "inputPath": "test-data/images/146.png",
     "location": {
+      "alignmentPattern": {
+        "x": 244.6159822732343,
+        "y": 267.15033440494597
+      },
       "bottomLeft": {
         "x": 221.75,
-        "y": 241
+        "y": 241.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 258.75,
-        "y": 221.5
+        "y": 222
       },
       "topRight": {
         "x": 277.75,
-        "y": 259.5
+        "y": 260
       }
     },
     "name": "146.png",
@@ -11362,17 +11683,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/147.png",
     "inputPath": "test-data/images/147.png",
     "location": {
+      "alignmentPattern": {
+        "x": 233.7117260566014,
+        "y": 256.2693313474427
+      },
       "bottomLeft": {
         "x": 238.5,
-        "y": 222
+        "y": 222.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 277,
-        "y": 239
+        "y": 239.5
       },
       "topRight": {
         "x": 260,
-        "y": 277.5
+        "y": 278
       }
     },
     "name": "147.png",
@@ -11380,36 +11706,30 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/148.png",
-    "decodedBytes": [
-      49,
-      50,
-      51,
-      52,
-      53,
-      54,
-      55,
-      56,
-      57,
-      48
-    ],
+    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/148.png",
     "inputPath": "test-data/images/148.png",
     "location": {
+      "alignmentPattern": {
+        "x": 234.3723820015918,
+        "y": 256.35031923226614
+      },
       "bottomLeft": {
         "x": 239.5,
-        "y": 222
+        "y": 222.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 277,
-        "y": 239.5
+        "y": 240
       },
       "topRight": {
         "x": 259.75,
-        "y": 278
+        "y": 278.5
       }
     },
     "name": "148.png",
-    "successful": true
+    "successful": false
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/149.png",
@@ -11428,17 +11748,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/149.png",
     "inputPath": "test-data/images/149.png",
     "location": {
+      "alignmentPattern": {
+        "x": 228.7291995012294,
+        "y": 257.3738775062405
+      },
       "bottomLeft": {
         "x": 237,
-        "y": 212
+        "y": 212.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 287.5,
-        "y": 236.5
+        "y": 237
       },
       "topRight": {
         "x": 263,
-        "y": 287
+        "y": 287.5
       }
     },
     "name": "149.png",
@@ -11537,17 +11862,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/15.png",
     "inputPath": "test-data/images/15.png",
     "location": {
+      "alignmentPattern": {
+        "x": 194.5,
+        "y": 168
+      },
       "bottomLeft": {
         "x": 66.5,
-        "y": 193
+        "y": 193.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 51.5,
-        "y": 50.5
+        "y": 51
       },
       "topRight": {
         "x": 188,
-        "y": 44.5
+        "y": 45
       }
     },
     "name": "15.png",
@@ -11559,17 +11889,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/150.png",
     "inputPath": "test-data/images/150.png",
     "location": {
-      "bottomLeft": {
-        "x": 245.75,
-        "y": 221
+      "alignmentPattern": {
+        "x": 233.4486339472624,
+        "y": 253.86132281615326
       },
+      "bottomLeft": {
+        "x": 244.5,
+        "y": 221.5
+      },
+      "dimension": 21,
       "topLeft": {
-        "x": 277,
+        "x": 278.5,
         "y": 244.5
       },
       "topRight": {
         "x": 254.75,
-        "y": 279
+        "y": 279.5
       }
     },
     "name": "150.png",
@@ -11592,17 +11927,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/151.png",
     "inputPath": "test-data/images/151.png",
     "location": {
+      "alignmentPattern": {
+        "x": 243.22999949827894,
+        "y": 232.87755429567827
+      },
       "bottomLeft": {
         "x": 277.25,
-        "y": 238
+        "y": 238.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 261,
-        "y": 277
+        "y": 277.5
       },
       "topRight": {
         "x": 222.25,
-        "y": 259.5
+        "y": 260
       }
     },
     "name": "151.png",
@@ -11686,17 +12026,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/152.png",
     "inputPath": "test-data/images/152.png",
     "location": {
+      "alignmentPattern": {
+        "x": 195.5,
+        "y": 307
+      },
       "bottomLeft": {
         "x": 210.5,
-        "y": 139.5
+        "y": 140
       },
+      "dimension": 57,
       "topLeft": {
         "x": 399.25,
-        "y": 167.5
+        "y": 168
       },
       "topRight": {
         "x": 368.75,
-        "y": 342.5
+        "y": 343
       }
     },
     "name": "152.png",
@@ -11719,17 +12064,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/153.png",
     "inputPath": "test-data/images/153.png",
     "location": {
+      "alignmentPattern": {
+        "x": 244.1681533685537,
+        "y": 233.71810314266708
+      },
       "bottomLeft": {
         "x": 278,
-        "y": 239
+        "y": 239.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 260,
-        "y": 277
+        "y": 277.5
       },
       "topRight": {
         "x": 221.75,
-        "y": 259
+        "y": 259.5
       }
     },
     "name": "153.png",
@@ -11764,17 +12114,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/154.png",
     "inputPath": "test-data/images/154.png",
     "location": {
+      "alignmentPattern": {
+        "x": 166.5,
+        "y": 163
+      },
       "bottomLeft": {
         "x": 74.5,
-        "y": 183.5
+        "y": 184
       },
+      "dimension": 29,
       "topLeft": {
         "x": 71.25,
-        "y": 70
+        "y": 70.5
       },
       "topRight": {
         "x": 179,
-        "y": 67.5
+        "y": 68
       }
     },
     "name": "154.png",
@@ -11813,17 +12168,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/155.png",
     "inputPath": "test-data/images/155.png",
     "location": {
+      "alignmentPattern": {
+        "x": 112.5,
+        "y": 113
+      },
       "bottomLeft": {
         "x": 27,
-        "y": 129
+        "y": 129.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 27,
-        "y": 27
+        "y": 27.5
       },
       "topRight": {
         "x": 129.5,
-        "y": 27
+        "y": 27.5
       }
     },
     "name": "155.png",
@@ -11887,17 +12247,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/156.png",
     "inputPath": "test-data/images/156.png",
     "location": {
+      "alignmentPattern": {
+        "x": 383.75,
+        "y": 338
+      },
       "bottomLeft": {
         "x": 187.75,
-        "y": 350.5
+        "y": 351
       },
+      "dimension": 33,
       "topLeft": {
         "x": 209,
-        "y": 157
+        "y": 157.5
       },
       "topRight": {
         "x": 416.25,
-        "y": 166.5
+        "y": 167
       }
     },
     "name": "156.png",
@@ -11961,17 +12326,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/157.png",
     "inputPath": "test-data/images/157.png",
     "location": {
+      "alignmentPattern": {
+        "x": 323,
+        "y": 277.5
+      },
       "bottomLeft": {
         "x": 197.75,
-        "y": 293
+        "y": 293.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 199.5,
-        "y": 163.5
+        "y": 164
       },
       "topRight": {
         "x": 337.75,
-        "y": 162
+        "y": 162.5
       }
     },
     "name": "157.png",
@@ -12035,17 +12405,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/158.png",
     "inputPath": "test-data/images/158.png",
     "location": {
+      "alignmentPattern": {
+        "x": 374,
+        "y": 305.5
+      },
       "bottomLeft": {
         "x": 239,
-        "y": 320.5
+        "y": 321
       },
+      "dimension": 33,
       "topLeft": {
         "x": 239,
-        "y": 178.5
+        "y": 179
       },
       "topRight": {
         "x": 392.5,
-        "y": 178.5
+        "y": 179
       }
     },
     "name": "158.png",
@@ -12078,17 +12453,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/159.png",
     "inputPath": "test-data/images/159.png",
     "location": {
+      "alignmentPattern": {
+        "x": 170.75,
+        "y": 90
+      },
       "bottomLeft": {
         "x": 133.5,
-        "y": 92
+        "y": 92.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 138,
-        "y": 49
+        "y": 49.5
       },
       "topRight": {
-        "x": 183,
-        "y": 54
+        "x": 182.5,
+        "y": 55.5
       }
     },
     "name": "159.png",
@@ -12187,17 +12567,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/16.png",
     "inputPath": "test-data/images/16.png",
     "location": {
+      "alignmentPattern": {
+        "x": 177.25,
+        "y": 172
+      },
       "bottomLeft": {
         "x": 66.5,
-        "y": 188.5
+        "y": 189
       },
+      "dimension": 41,
       "topLeft": {
         "x": 53.75,
-        "y": 67
+        "y": 67.5
       },
       "topRight": {
         "x": 182,
-        "y": 58
+        "y": 58.5
       }
     },
     "name": "16.png",
@@ -12261,17 +12646,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/160.png",
     "inputPath": "test-data/images/160.png",
     "location": {
+      "alignmentPattern": {
+        "x": 387,
+        "y": 302.5
+      },
       "bottomLeft": {
         "x": 239,
-        "y": 336
+        "y": 336.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 224.5,
-        "y": 181.5
+        "y": 182
       },
       "topRight": {
         "x": 387,
-        "y": 168
+        "y": 168.5
       }
     },
     "name": "160.png",
@@ -12335,17 +12725,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/161.png",
     "inputPath": "test-data/images/161.png",
     "location": {
+      "alignmentPattern": {
+        "x": 374,
+        "y": 311
+      },
       "bottomLeft": {
         "x": 253,
-        "y": 321.5
+        "y": 322
       },
+      "dimension": 33,
       "topLeft": {
         "x": 260.25,
-        "y": 197
+        "y": 197.5
       },
       "topRight": {
         "x": 393.5,
-        "y": 198
+        "y": 198.5
       }
     },
     "name": "161.png",
@@ -12409,17 +12804,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/162.png",
     "inputPath": "test-data/images/162.png",
     "location": {
+      "alignmentPattern": {
+        "x": 399.75,
+        "y": 179
+      },
       "bottomLeft": {
         "x": 417.25,
-        "y": 334
+        "y": 334.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 237.5,
-        "y": 325
+        "y": 325.5
       },
       "topRight": {
         "x": 235.5,
-        "y": 156
+        "y": 156.5
       }
     },
     "name": "162.png",
@@ -12483,17 +12883,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/163.png",
     "inputPath": "test-data/images/163.png",
     "location": {
+      "alignmentPattern": {
+        "x": 361,
+        "y": 182.5
+      },
       "bottomLeft": {
         "x": 378.75,
-        "y": 316
+        "y": 316.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 216.25,
-        "y": 317
+        "y": 317.5
       },
       "topRight": {
         "x": 218.5,
-        "y": 161
+        "y": 161.5
       }
     },
     "name": "163.png",
@@ -13073,17 +13478,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/164.png",
     "inputPath": "test-data/images/164.png",
     "location": {
+      "alignmentPattern": {
+        "x": 362,
+        "y": 362
+      },
       "bottomLeft": {
         "x": 30,
-        "y": 373.5
+        "y": 374
       },
+      "dimension": 93,
       "topLeft": {
         "x": 30,
-        "y": 29.5
+        "y": 30
       },
       "topRight": {
         "x": 374,
-        "y": 29.5
+        "y": 30
       }
     },
     "name": "164.png",
@@ -13118,17 +13528,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/165.png",
     "inputPath": "test-data/images/165.png",
     "location": {
+      "alignmentPattern": {
+        "x": 158.25,
+        "y": 161.5
+      },
       "bottomLeft": {
         "x": 75.75,
-        "y": 176.5
+        "y": 177
       },
+      "dimension": 29,
       "topLeft": {
         "x": 76.25,
-        "y": 76.5
+        "y": 77
       },
       "topRight": {
         "x": 171,
-        "y": 70
+        "y": 70.5
       }
     },
     "name": "165.png",
@@ -13174,17 +13589,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/166.png",
     "inputPath": "test-data/images/166.png",
     "location": {
+      "alignmentPattern": {
+        "x": 59.75,
+        "y": 59.5
+      },
       "bottomLeft": {
-        "x": 9.5,
+        "x": 9.25,
         "y": 68
       },
+      "dimension": 29,
       "topLeft": {
-        "x": 9.5,
-        "y": 10
+        "x": 9.25,
+        "y": 9
       },
       "topRight": {
         "x": 67.75,
-        "y": 8.5
+        "y": 9
       }
     },
     "name": "166.png",
@@ -13475,17 +13895,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/167.png",
     "inputPath": "test-data/images/167.png",
     "location": {
+      "alignmentPattern": {
+        "x": 117,
+        "y": 117
+      },
       "bottomLeft": {
         "x": 7,
-        "y": 122.5
+        "y": 123
       },
+      "dimension": 65,
       "topLeft": {
         "x": 7,
-        "y": 7.5
+        "y": 7
       },
       "topRight": {
         "x": 123,
-        "y": 6.5
+        "y": 7
       }
     },
     "name": "167.png",
@@ -13525,17 +13950,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/168.png",
     "inputPath": "test-data/images/168.png",
     "location": {
+      "alignmentPattern": {
+        "x": 346.5,
+        "y": 346.5
+      },
       "bottomLeft": {
         "x": 49.5,
-        "y": 379
+        "y": 379.5
       },
+      "dimension": 37,
       "topLeft": {
         "x": 49.5,
-        "y": 49
+        "y": 49.5
       },
       "topRight": {
         "x": 379.5,
-        "y": 49
+        "y": 49.5
       }
     },
     "name": "168.png",
@@ -13647,17 +14077,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/169.png",
     "inputPath": "test-data/images/169.png",
     "location": {
+      "alignmentPattern": {
+        "x": 423.5,
+        "y": 295.5
+      },
       "bottomLeft": {
         "x": 193,
-        "y": 317
+        "y": 317.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 193,
-        "y": 64.5
+        "y": 65
       },
       "topRight": {
         "x": 445.5,
-        "y": 64.5
+        "y": 65
       }
     },
     "name": "169.png",
@@ -13756,17 +14191,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/17.png",
     "inputPath": "test-data/images/17.png",
     "location": {
+      "alignmentPattern": {
+        "x": 161.25,
+        "y": 195.5
+      },
       "bottomLeft": {
         "x": 71.5,
-        "y": 201.5
+        "y": 202
       },
+      "dimension": 41,
       "topLeft": {
         "x": 69.75,
-        "y": 104
+        "y": 104.5
       },
       "topRight": {
         "x": 171.5,
-        "y": 105
+        "y": 105.5
       }
     },
     "name": "17.png",
@@ -13780,17 +14220,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/170.png",
     "inputPath": "test-data/images/170.png",
     "location": {
-      "bottomLeft": {
-        "x": 39.5,
-        "y": 217.5
+      "alignmentPattern": {
+        "x": 168,
+        "y": 168
       },
+      "bottomLeft": {
+        "x": 123.75,
+        "y": 174
+      },
+      "dimension": 33,
       "topLeft": {
-        "x": 39.5,
-        "y": 39.5
+        "x": 124,
+        "y": 124
       },
       "topRight": {
-        "x": 217.75,
-        "y": 39.5
+        "x": 173.5,
+        "y": 124
       }
     },
     "name": "170.png",
@@ -13798,46 +14243,30 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/171.png",
-    "decodedBytes": [
-      104,
-      116,
-      116,
-      112,
-      58,
-      47,
-      47,
-      105,
-      102,
-      46,
-      103,
-      115,
-      47,
-      49,
-      86,
-      50,
-      66,
-      90,
-      77,
-      68
-    ],
+    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/171.png",
     "inputPath": "test-data/images/171.png",
     "location": {
-      "bottomLeft": {
-        "x": 202.25,
-        "y": 98
+      "alignmentPattern": {
+        "x": 333.5,
+        "y": 84
       },
+      "bottomLeft": {
+        "x": 359.25,
+        "y": 51.5
+      },
+      "dimension": 29,
       "topLeft": {
         "x": 263.5,
-        "y": 81
+        "y": 81.5
       },
       "topRight": {
-        "x": 269.75,
-        "y": 135
+        "x": 202.25,
+        "y": 98.5
       }
     },
     "name": "171.png",
-    "successful": true
+    "successful": false
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/172.png",
@@ -13875,17 +14304,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/172.png",
     "inputPath": "test-data/images/172.png",
     "location": {
+      "alignmentPattern": {
+        "x": 171,
+        "y": 171
+      },
       "bottomLeft": {
         "x": 33.5,
-        "y": 184
+        "y": 184.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 33.5,
-        "y": 33
+        "y": 33.5
       },
       "topRight": {
         "x": 184.5,
-        "y": 33
+        "y": 33.5
       }
     },
     "name": "172.png",
@@ -13941,17 +14375,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/173.png",
     "inputPath": "test-data/images/173.png",
     "location": {
+      "alignmentPattern": {
+        "x": 171,
+        "y": 171
+      },
       "bottomLeft": {
         "x": 33.5,
-        "y": 184
+        "y": 184.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 33.5,
-        "y": 33
+        "y": 33.5
       },
       "topRight": {
         "x": 184.5,
-        "y": 33
+        "y": 33.5
       }
     },
     "name": "173.png",
@@ -14008,17 +14447,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/174.png",
     "inputPath": "test-data/images/174.png",
     "location": {
+      "alignmentPattern": {
+        "x": 171,
+        "y": 171
+      },
       "bottomLeft": {
         "x": 32.5,
-        "y": 184
+        "y": 184.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 32.5,
-        "y": 32
+        "y": 32.5
       },
       "topRight": {
         "x": 184.25,
-        "y": 32
+        "y": 32.5
       }
     },
     "name": "174.png",
@@ -15056,17 +15500,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/175.png",
     "inputPath": "test-data/images/175.png",
     "location": {
+      "alignmentPattern": {
+        "x": 474,
+        "y": 474
+      },
       "bottomLeft": {
         "x": 30,
-        "y": 485.5
+        "y": 486
       },
+      "dimension": 121,
       "topLeft": {
         "x": 30,
-        "y": 29.5
+        "y": 30
       },
       "topRight": {
         "x": 486,
-        "y": 29.5
+        "y": 30
       }
     },
     "name": "175.png",
@@ -15101,17 +15550,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/176.png",
     "inputPath": "test-data/images/176.png",
     "location": {
+      "alignmentPattern": {
+        "x": 171.5,
+        "y": 146.5
+      },
       "bottomLeft": {
         "x": 91,
-        "y": 159.5
+        "y": 160
       },
+      "dimension": 29,
       "topLeft": {
         "x": 91,
-        "y": 63
+        "y": 63.5
       },
       "topRight": {
         "x": 186.5,
-        "y": 62.5
+        "y": 63
       }
     },
     "name": "176.png",
@@ -15159,17 +15613,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/177.png",
     "inputPath": "test-data/images/177.png",
     "location": {
+      "alignmentPattern": {
+        "x": 165,
+        "y": 165
+      },
       "bottomLeft": {
         "x": 26.5,
-        "y": 178
+        "y": 178.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 26.75,
-        "y": 26
+        "y": 26.5
       },
       "topRight": {
         "x": 178.5,
-        "y": 26
+        "y": 26.5
       }
     },
     "name": "177.png",
@@ -15223,17 +15682,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/178.png",
     "inputPath": "test-data/images/178.png",
     "location": {
+      "alignmentPattern": {
+        "x": 159.75,
+        "y": 159
+      },
       "bottomLeft": {
         "x": 28.25,
-        "y": 173
+        "y": 173.5
       },
+      "dimension": 37,
       "topLeft": {
         "x": 28.25,
-        "y": 27
+        "y": 27.5
       },
       "topRight": {
         "x": 174,
-        "y": 27
+        "y": 27.5
       }
     },
     "name": "178.png",
@@ -15337,17 +15801,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/179.png",
     "inputPath": "test-data/images/179.png",
     "location": {
+      "alignmentPattern": {
+        "x": 180.5,
+        "y": 178
+      },
       "bottomLeft": {
         "x": 23,
-        "y": 188
+        "y": 188.5
       },
+      "dimension": 53,
       "topLeft": {
         "x": 21.75,
-        "y": 20.5
+        "y": 21
       },
       "topRight": {
         "x": 190.25,
-        "y": 19.5
+        "y": 20
       }
     },
     "name": "179.png",
@@ -15446,17 +15915,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/18.png",
     "inputPath": "test-data/images/18.png",
     "location": {
+      "alignmentPattern": {
+        "x": 167,
+        "y": 164.5
+      },
       "bottomLeft": {
         "x": 77.5,
-        "y": 171.5
+        "y": 172
       },
+      "dimension": 41,
       "topLeft": {
         "x": 75,
-        "y": 73
+        "y": 73.5
       },
       "topRight": {
         "x": 176.5,
-        "y": 73
+        "y": 73.5
       }
     },
     "name": "18.png",
@@ -15491,17 +15965,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/180.png",
     "inputPath": "test-data/images/180.png",
     "location": {
+      "alignmentPattern": {
+        "x": 160,
+        "y": 110.5
+      },
       "bottomLeft": {
         "x": 71,
-        "y": 120
+        "y": 119
       },
+      "dimension": 41,
       "topLeft": {
         "x": 71,
-        "y": 21
+        "y": 21.5
       },
       "topRight": {
         "x": 168.5,
-        "y": 21
+        "y": 21.5
       }
     },
     "name": "180.png",
@@ -15552,17 +16031,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/181.png",
     "inputPath": "test-data/images/181.png",
     "location": {
+      "alignmentPattern": {
+        "x": 84,
+        "y": 83
+      },
       "bottomLeft": {
         "x": 15.5,
-        "y": 89.5
+        "y": 90
       },
+      "dimension": 41,
       "topLeft": {
         "x": 15.5,
         "y": 14
       },
       "topRight": {
         "x": 91,
-        "y": 13.5
+        "y": 14
       }
     },
     "name": "181.png",
@@ -15592,17 +16076,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/182.png",
     "inputPath": "test-data/images/182.png",
     "location": {
+      "alignmentPattern": {
+        "x": 85,
+        "y": 84
+      },
       "bottomLeft": {
         "x": 18.5,
-        "y": 91
+        "y": 91.5
       },
+      "dimension": 37,
       "topLeft": {
         "x": 18.5,
-        "y": 17
+        "y": 17.5
       },
       "topRight": {
         "x": 92.5,
-        "y": 17
+        "y": 17.5
       }
     },
     "name": "182.png",
@@ -15650,17 +16139,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/184.png",
     "inputPath": "test-data/images/184.png",
     "location": {
+      "alignmentPattern": {
+        "x": 87,
+        "y": 89
+      },
       "bottomLeft": {
         "x": 16,
-        "y": 98
+        "y": 97
       },
+      "dimension": 37,
       "topLeft": {
-        "x": 15.75,
-        "y": 17
+        "x": 16,
+        "y": 18
       },
       "topRight": {
         "x": 95,
-        "y": 17.5
+        "y": 18
       }
     },
     "name": "184.png",
@@ -15700,17 +16194,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/185.png",
     "inputPath": "test-data/images/185.png",
     "location": {
+      "alignmentPattern": {
+        "x": 273.75,
+        "y": 216
+      },
       "bottomLeft": {
         "x": 150.75,
-        "y": 233.5
+        "y": 234
       },
+      "dimension": 33,
       "topLeft": {
         "x": 152.5,
-        "y": 100.5
+        "y": 101
       },
       "topRight": {
         "x": 288.75,
-        "y": 98.5
+        "y": 99
       }
     },
     "name": "185.png",
@@ -15852,17 +16351,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/186.png",
     "inputPath": "test-data/images/186.png",
     "location": {
+      "alignmentPattern": {
+        "x": 91.25,
+        "y": 91.5
+      },
       "bottomLeft": {
         "x": 17.75,
-        "y": 98
+        "y": 98.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 17.5,
-        "y": 17
+        "y": 17.5
       },
       "topRight": {
         "x": 98.5,
-        "y": 17
+        "y": 17.5
       }
     },
     "name": "186.png",
@@ -15961,17 +16465,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/19.png",
     "inputPath": "test-data/images/19.png",
     "location": {
+      "alignmentPattern": {
+        "x": 174.75,
+        "y": 180
+      },
       "bottomLeft": {
         "x": 55.75,
-        "y": 178
+        "y": 178.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 63.75,
-        "y": 48
+        "y": 48.5
       },
       "topRight": {
         "x": 198.25,
-        "y": 59.5
+        "y": 60
       }
     },
     "name": "19.png",
@@ -15979,25 +16488,53 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/2.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      99,
+      111,
+      100,
+      101,
+      46,
+      103,
+      111,
+      111,
+      103,
+      108,
+      101,
+      46,
+      99,
+      111,
+      109
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/2.png",
     "inputPath": "test-data/images/2.png",
     "location": {
+      "alignmentPattern": {
+        "x": 153.5,
+        "y": 152.5
+      },
       "bottomLeft": {
         "x": 78.75,
-        "y": 167.5
+        "y": 168
       },
+      "dimension": 29,
       "topLeft": {
-        "x": 76.75,
-        "y": 80.5
+        "x": 75.5,
+        "y": 81.5
       },
       "topRight": {
         "x": 158.5,
-        "y": 80
+        "y": 80.5
       }
     },
     "name": "2.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/20.png",
@@ -16092,17 +16629,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/20.png",
     "inputPath": "test-data/images/20.png",
     "location": {
+      "alignmentPattern": {
+        "x": 173.75,
+        "y": 160.5
+      },
       "bottomLeft": {
         "x": 54.75,
-        "y": 182
+        "y": 182.5
       },
+      "dimension": 41,
       "topLeft": {
         "x": 55,
-        "y": 60
+        "y": 60.5
       },
       "topRight": {
         "x": 203,
-        "y": 52
+        "y": 52.5
       }
     },
     "name": "20.png",
@@ -16201,17 +16743,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/21.png",
     "inputPath": "test-data/images/21.png",
     "location": {
+      "alignmentPattern": {
+        "x": 182.75,
+        "y": 196
+      },
       "bottomLeft": {
         "x": 48,
-        "y": 196.5
+        "y": 197
       },
+      "dimension": 41,
       "topLeft": {
         "x": 54.5,
-        "y": 50
+        "y": 50.5
       },
       "topRight": {
         "x": 208,
-        "y": 60
+        "y": 60.5
       }
     },
     "name": "21.png",
@@ -16310,17 +16857,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/23.png",
     "inputPath": "test-data/images/23.png",
     "location": {
+      "alignmentPattern": {
+        "x": 178.25,
+        "y": 189
+      },
       "bottomLeft": {
         "x": 54.75,
-        "y": 215.5
+        "y": 216
       },
+      "dimension": 41,
       "topLeft": {
-        "x": 59.75,
-        "y": 62.5
+        "x": 60.5,
+        "y": 63.5
       },
       "topRight": {
         "x": 203.25,
-        "y": 61
+        "y": 61.5
       }
     },
     "name": "23.png",
@@ -16355,17 +16907,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/24.png",
     "inputPath": "test-data/images/24.png",
     "location": {
+      "alignmentPattern": {
+        "x": 141.25,
+        "y": 155
+      },
       "bottomLeft": {
         "x": 48.25,
-        "y": 159.5
+        "y": 160
       },
+      "dimension": 29,
       "topLeft": {
         "x": 63.75,
-        "y": 50.5
+        "y": 51
       },
       "topRight": {
         "x": 168.75,
-        "y": 65
+        "y": 65.5
       }
     },
     "name": "24.png",
@@ -16416,17 +16973,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/25.png",
     "inputPath": "test-data/images/25.png",
     "location": {
+      "alignmentPattern": {
+        "x": 161,
+        "y": 151
+      },
       "bottomLeft": {
         "x": 69.25,
-        "y": 166
+        "y": 166.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 68.75,
-        "y": 59
+        "y": 59.5
       },
       "topRight": {
         "x": 175,
-        "y": 58
+        "y": 58.5
       }
     },
     "name": "25.png",
@@ -16477,17 +17039,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/26.png",
     "inputPath": "test-data/images/26.png",
     "location": {
+      "alignmentPattern": {
+        "x": 160.75,
+        "y": 169
+      },
       "bottomLeft": {
         "x": 53.25,
-        "y": 179
+        "y": 179.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 65.25,
-        "y": 41
+        "y": 41.5
       },
       "topRight": {
         "x": 182.75,
-        "y": 62.5
+        "y": 63
       }
     },
     "name": "26.png",
@@ -16538,17 +17105,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/27.png",
     "inputPath": "test-data/images/27.png",
     "location": {
+      "alignmentPattern": {
+        "x": 179,
+        "y": 148.5
+      },
       "bottomLeft": {
         "x": 76.5,
-        "y": 163.5
+        "y": 164
       },
+      "dimension": 29,
       "topLeft": {
         "x": 77.5,
-        "y": 43
+        "y": 43.5
       },
       "topRight": {
         "x": 199.25,
-        "y": 45
+        "y": 45.5
       }
     },
     "name": "27.png",
@@ -16599,17 +17171,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/28.png",
     "inputPath": "test-data/images/28.png",
     "location": {
+      "alignmentPattern": {
+        "x": 156.5,
+        "y": 136.5
+      },
       "bottomLeft": {
         "x": 93.25,
-        "y": 145.5
+        "y": 146
       },
+      "dimension": 29,
       "topLeft": {
         "x": 93.25,
-        "y": 72.5
+        "y": 73
       },
       "topRight": {
         "x": 167,
-        "y": 71.5
+        "y": 72
       }
     },
     "name": "28.png",
@@ -16660,16 +17237,21 @@
     "extractedPath": "test-data/AUTOGEN/extracted/29.png",
     "inputPath": "test-data/images/29.png",
     "location": {
+      "alignmentPattern": {
+        "x": 163.25,
+        "y": 178.5
+      },
       "bottomLeft": {
         "x": 63.75,
-        "y": 191.5
+        "y": 192
       },
+      "dimension": 29,
       "topLeft": {
         "x": 54.25,
-        "y": 72.5
+        "y": 73
       },
       "topRight": {
-        "x": 160.75,
+        "x": 162.25,
         "y": 86.5
       }
     },
@@ -16700,17 +17282,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/3.png",
     "inputPath": "test-data/images/3.png",
     "location": {
+      "alignmentPattern": {
+        "x": 235,
+        "y": 235
+      },
       "bottomLeft": {
         "x": 85,
-        "y": 264.5
+        "y": 265
       },
+      "dimension": 25,
       "topLeft": {
         "x": 85,
-        "y": 84.5
+        "y": 85
       },
       "topRight": {
         "x": 265,
-        "y": 84.5
+        "y": 85
       }
     },
     "name": "3.png",
@@ -16761,17 +17348,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/30.png",
     "inputPath": "test-data/images/30.png",
     "location": {
+      "alignmentPattern": {
+        "x": 165.75,
+        "y": 145.5
+      },
       "bottomLeft": {
         "x": 85.5,
-        "y": 177
+        "y": 177.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 64,
-        "y": 79.5
+        "y": 80
       },
       "topRight": {
         "x": 159,
-        "y": 54
+        "y": 54.5
       }
     },
     "name": "30.png",
@@ -16822,17 +17414,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/31.png",
     "inputPath": "test-data/images/31.png",
     "location": {
+      "alignmentPattern": {
+        "x": 149.5,
+        "y": 173
+      },
       "bottomLeft": {
         "x": 54.5,
-        "y": 186
+        "y": 186.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 57.75,
-        "y": 66.5
+        "y": 67
       },
       "topRight": {
         "x": 166.25,
-        "y": 57.5
+        "y": 58
       }
     },
     "name": "31.png",
@@ -16883,17 +17480,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/32.png",
     "inputPath": "test-data/images/32.png",
     "location": {
+      "alignmentPattern": {
+        "x": 176.25,
+        "y": 154.5
+      },
       "bottomLeft": {
         "x": 96.5,
-        "y": 211
+        "y": 211.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 46.75,
-        "y": 104.5
+        "y": 105
       },
       "topRight": {
         "x": 142,
-        "y": 46.5
+        "y": 47
       }
     },
     "name": "32.png",
@@ -16984,17 +17586,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/33.png",
     "inputPath": "test-data/images/33.png",
     "location": {
+      "alignmentPattern": {
+        "x": 158,
+        "y": 176
+      },
       "bottomLeft": {
         "x": 43,
-        "y": 185
+        "y": 185.5
       },
+      "dimension": 45,
       "topLeft": {
         "x": 44.75,
-        "y": 60.5
+        "y": 61
       },
       "topRight": {
         "x": 178.5,
-        "y": 64.5
+        "y": 65
       }
     },
     "name": "33.png",
@@ -17058,17 +17665,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/34.png",
     "inputPath": "test-data/images/34.png",
     "location": {
+      "alignmentPattern": {
+        "x": 404.25,
+        "y": 341.5
+      },
       "bottomLeft": {
         "x": 190.25,
-        "y": 366
+        "y": 366.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 204.75,
-        "y": 161
+        "y": 161.5
       },
       "topRight": {
         "x": 421.25,
-        "y": 164.5
+        "y": 165
       }
     },
     "name": "34.png",
@@ -17119,17 +17731,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/35.png",
     "inputPath": "test-data/images/35.png",
     "location": {
-      "bottomLeft": {
-        "x": 240,
-        "y": 294.5
+      "alignmentPattern": {
+        "x": 353.25,
+        "y": 280.5
       },
+      "bottomLeft": {
+        "x": 239.75,
+        "y": 295.5
+      },
+      "dimension": 29,
       "topLeft": {
         "x": 243.5,
-        "y": 175
+        "y": 175.5
       },
       "topRight": {
         "x": 370,
-        "y": 178
+        "y": 178.5
       }
     },
     "name": "35.png",
@@ -17220,17 +17837,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/36.png",
     "inputPath": "test-data/images/36.png",
     "location": {
+      "alignmentPattern": {
+        "x": 166,
+        "y": 153
+      },
       "bottomLeft": {
         "x": 68,
-        "y": 154.5
+        "y": 155
       },
+      "dimension": 45,
       "topLeft": {
         "x": 63,
-        "y": 43
+        "y": 43.5
       },
       "topRight": {
-        "x": 175,
-        "y": 41.5
+        "x": 173.75,
+        "y": 42.5
       }
     },
     "name": "36.png",
@@ -17321,17 +17943,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/37.png",
     "inputPath": "test-data/images/37.png",
     "location": {
+      "alignmentPattern": {
+        "x": 171.75,
+        "y": 198.5
+      },
       "bottomLeft": {
         "x": 52.5,
-        "y": 201.5
+        "y": 202
       },
+      "dimension": 45,
       "topLeft": {
         "x": 46.5,
-        "y": 70
+        "y": 70.5
       },
       "topRight": {
         "x": 181.75,
-        "y": 69
+        "y": 69.5
       }
     },
     "name": "37.png",
@@ -17422,17 +18049,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/38.png",
     "inputPath": "test-data/images/38.png",
     "location": {
+      "alignmentPattern": {
+        "x": 169.25,
+        "y": 153.5
+      },
       "bottomLeft": {
         "x": 66.5,
-        "y": 144
+        "y": 144.5
       },
+      "dimension": 45,
       "topLeft": {
         "x": 64.25,
-        "y": 32
+        "y": 32.5
       },
       "topRight": {
         "x": 187.75,
-        "y": 46.5
+        "y": 47
       }
     },
     "name": "38.png",
@@ -17523,17 +18155,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/39.png",
     "inputPath": "test-data/images/39.png",
     "location": {
+      "alignmentPattern": {
+        "x": 185.75,
+        "y": 187.5
+      },
       "bottomLeft": {
         "x": 67.75,
-        "y": 185.5
+        "y": 186
       },
+      "dimension": 45,
       "topLeft": {
         "x": 60.75,
-        "y": 61.5
+        "y": 62
       },
       "topRight": {
         "x": 203.25,
-        "y": 69
+        "y": 69.5
       }
     },
     "name": "39.png",
@@ -17824,17 +18461,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/4.png",
     "inputPath": "test-data/images/4.png",
     "location": {
+      "alignmentPattern": {
+        "x": 58.5,
+        "y": 58.5
+      },
       "bottomLeft": {
         "x": 3.5,
-        "y": 61
+        "y": 61.5
       },
+      "dimension": 65,
       "topLeft": {
         "x": 3.5,
         "y": 3.5
       },
       "topRight": {
         "x": 61.5,
-        "y": 3
+        "y": 3.5
       }
     },
     "name": "4.png",
@@ -17908,17 +18550,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/40.png",
     "inputPath": "test-data/images/40.png",
     "location": {
+      "alignmentPattern": {
+        "x": 182,
+        "y": 147
+      },
       "bottomLeft": {
         "x": 67.75,
-        "y": 162.5
+        "y": 163
       },
+      "dimension": 33,
       "topLeft": {
         "x": 72.5,
-        "y": 54
+        "y": 54.5
       },
       "topRight": {
         "x": 189.75,
-        "y": 51
+        "y": 51.5
       }
     },
     "name": "40.png",
@@ -17992,17 +18639,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/41.png",
     "inputPath": "test-data/images/41.png",
     "location": {
+      "alignmentPattern": {
+        "x": 164.75,
+        "y": 150.5
+      },
       "bottomLeft": {
         "x": 80,
-        "y": 170.5
+        "y": 171
       },
+      "dimension": 33,
       "topLeft": {
         "x": 66,
-        "y": 72
+        "y": 72.5
       },
       "topRight": {
         "x": 159.5,
-        "y": 67.5
+        "y": 68
       }
     },
     "name": "41.png",
@@ -18076,17 +18728,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/42.png",
     "inputPath": "test-data/images/42.png",
     "location": {
+      "alignmentPattern": {
+        "x": 129,
+        "y": 151.5
+      },
       "bottomLeft": {
         "x": 63,
-        "y": 154
+        "y": 154.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 68.25,
-        "y": 80.5
+        "y": 81
       },
       "topRight": {
         "x": 143.25,
-        "y": 86.5
+        "y": 87
       }
     },
     "name": "42.png",
@@ -18160,17 +18817,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/43.png",
     "inputPath": "test-data/images/43.png",
     "location": {
+      "alignmentPattern": {
+        "x": 170,
+        "y": 162
+      },
       "bottomLeft": {
         "x": 88.75,
-        "y": 169
+        "y": 169.5
       },
+      "dimension": 33,
       "topLeft": {
-        "x": 92.5,
+        "x": 91.25,
         "y": 71.5
       },
       "topRight": {
         "x": 183.25,
-        "y": 68.5
+        "y": 69
       }
     },
     "name": "43.png",
@@ -18244,17 +18906,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/44.png",
     "inputPath": "test-data/images/44.png",
     "location": {
+      "alignmentPattern": {
+        "x": 146.5,
+        "y": 145
+      },
       "bottomLeft": {
         "x": 87.75,
-        "y": 180
+        "y": 180.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 57.75,
-        "y": 110
+        "y": 110.5
       },
       "topRight": {
         "x": 126.75,
-        "y": 79
+        "y": 79.5
       }
     },
     "name": "44.png",
@@ -18328,17 +18995,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/45.png",
     "inputPath": "test-data/images/45.png",
     "location": {
+      "alignmentPattern": {
+        "x": 157.5,
+        "y": 171.5
+      },
       "bottomLeft": {
         "x": 61.25,
-        "y": 177
+        "y": 177.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 76.25,
-        "y": 77.5
+        "y": 78
       },
       "topRight": {
         "x": 192.5,
-        "y": 88
+        "y": 88.5
       }
     },
     "name": "45.png",
@@ -18373,17 +19045,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/46.png",
     "inputPath": "test-data/images/46.png",
     "location": {
+      "alignmentPattern": {
+        "x": 171.5,
+        "y": 158
+      },
       "bottomLeft": {
         "x": 72.5,
-        "y": 180.5
+        "y": 181
       },
+      "dimension": 29,
       "topLeft": {
         "x": 68.25,
-        "y": 72
+        "y": 72.5
       },
       "topRight": {
         "x": 177.5,
-        "y": 66.5
+        "y": 67
       }
     },
     "name": "46.png",
@@ -18447,16 +19124,21 @@
     "extractedPath": "test-data/AUTOGEN/extracted/47.png",
     "inputPath": "test-data/images/47.png",
     "location": {
+      "alignmentPattern": {
+        "x": 321,
+        "y": 181.5
+      },
       "bottomLeft": {
         "x": 335.25,
-        "y": 297
+        "y": 297.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 193.25,
-        "y": 300
+        "y": 300.5
       },
       "topRight": {
-        "x": 196,
+        "x": 194.75,
         "y": 163
       }
     },
@@ -18531,17 +19213,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/48.png",
     "inputPath": "test-data/images/48.png",
     "location": {
+      "alignmentPattern": {
+        "x": 141.5,
+        "y": 154.5
+      },
       "bottomLeft": {
         "x": 54.75,
-        "y": 171
+        "y": 171.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 51,
-        "y": 70.5
+        "y": 71
       },
       "topRight": {
         "x": 153.25,
-        "y": 66.5
+        "y": 67
       }
     },
     "name": "48.png",
@@ -18615,17 +19302,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/49.png",
     "inputPath": "test-data/images/49.png",
     "location": {
+      "alignmentPattern": {
+        "x": 164.75,
+        "y": 153.5
+      },
       "bottomLeft": {
         "x": 81,
-        "y": 174
+        "y": 174.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 67.25,
-        "y": 78
+        "y": 78.5
       },
       "topRight": {
         "x": 165.25,
-        "y": 65
+        "y": 65.5
       }
     },
     "name": "49.png",
@@ -18642,17 +19334,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/5.png",
     "inputPath": "test-data/images/5.png",
     "location": {
+      "alignmentPattern": {
+        "x": 55.5,
+        "y": 75.5
+      },
       "bottomLeft": {
         "x": 22.5,
-        "y": 84
+        "y": 84.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 22.5,
-        "y": 42
+        "y": 42.5
       },
       "topRight": {
         "x": 64.5,
-        "y": 42
+        "y": 42.5
       }
     },
     "name": "5.png",
@@ -18726,17 +19423,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/50.png",
     "inputPath": "test-data/images/50.png",
     "location": {
+      "alignmentPattern": {
+        "x": 180.25,
+        "y": 180
+      },
       "bottomLeft": {
         "x": 77.5,
-        "y": 192.5
+        "y": 193
       },
+      "dimension": 33,
       "topLeft": {
         "x": 80,
-        "y": 79.5
+        "y": 80
       },
       "topRight": {
         "x": 190.75,
-        "y": 80.5
+        "y": 81
       }
     },
     "name": "50.png",
@@ -18810,17 +19512,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/51.png",
     "inputPath": "test-data/images/51.png",
     "location": {
+      "alignmentPattern": {
+        "x": 131.5,
+        "y": 193.5
+      },
       "bottomLeft": {
         "x": 30,
-        "y": 193
+        "y": 193.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 47.75,
-        "y": 83.5
+        "y": 84
       },
       "topRight": {
         "x": 156.5,
-        "y": 95.5
+        "y": 96
       }
     },
     "name": "51.png",
@@ -18894,17 +19601,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/52.png",
     "inputPath": "test-data/images/52.png",
     "location": {
+      "alignmentPattern": {
+        "x": 167.75,
+        "y": 165.5
+      },
       "bottomLeft": {
         "x": 79.5,
-        "y": 184.5
+        "y": 185
       },
+      "dimension": 33,
       "topLeft": {
         "x": 72,
-        "y": 85.5
+        "y": 86
       },
       "topRight": {
         "x": 169.75,
-        "y": 78
+        "y": 78.5
       }
     },
     "name": "52.png",
@@ -18978,17 +19690,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/53.png",
     "inputPath": "test-data/images/53.png",
     "location": {
-      "bottomLeft": {
-        "x": 48.75,
+      "alignmentPattern": {
+        "x": 150,
         "y": 150
       },
+      "bottomLeft": {
+        "x": 48.75,
+        "y": 150.5
+      },
+      "dimension": 33,
       "topLeft": {
         "x": 64.5,
-        "y": 33
+        "y": 33.5
       },
       "topRight": {
         "x": 177.5,
-        "y": 51.5
+        "y": 52
       }
     },
     "name": "53.png",
@@ -19062,17 +19779,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/54.png",
     "inputPath": "test-data/images/54.png",
     "location": {
+      "alignmentPattern": {
+        "x": 178.5,
+        "y": 163.5
+      },
       "bottomLeft": {
         "x": 84,
-        "y": 198.5
+        "y": 199
       },
+      "dimension": 33,
       "topLeft": {
         "x": 64.25,
-        "y": 92.5
+        "y": 93
       },
       "topRight": {
         "x": 169.25,
-        "y": 66
+        "y": 66.5
       }
     },
     "name": "54.png",
@@ -19146,17 +19868,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/55.png",
     "inputPath": "test-data/images/55.png",
     "location": {
+      "alignmentPattern": {
+        "x": 156,
+        "y": 195
+      },
       "bottomLeft": {
         "x": 61.75,
-        "y": 192.5
+        "y": 193
       },
+      "dimension": 33,
       "topLeft": {
         "x": 82,
-        "y": 81.5
+        "y": 82
       },
       "topRight": {
         "x": 184,
-        "y": 104
+        "y": 104.5
       }
     },
     "name": "55.png",
@@ -19230,17 +19957,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/56.png",
     "inputPath": "test-data/images/56.png",
     "location": {
+      "alignmentPattern": {
+        "x": 141.25,
+        "y": 183
+      },
       "bottomLeft": {
         "x": 51,
-        "y": 170.5
+        "y": 171
       },
+      "dimension": 33,
       "topLeft": {
         "x": 98,
-        "y": 68
+        "y": 68.5
       },
       "topRight": {
         "x": 192,
-        "y": 102
+        "y": 102.5
       }
     },
     "name": "56.png",
@@ -19275,17 +20007,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/57.png",
     "inputPath": "test-data/images/57.png",
     "location": {
+      "alignmentPattern": {
+        "x": 133.25,
+        "y": 165.5
+      },
       "bottomLeft": {
         "x": 57.75,
-        "y": 129.5
+        "y": 130
       },
+      "dimension": 29,
       "topLeft": {
         "x": 112.25,
-        "y": 57
+        "y": 57.5
       },
       "topRight": {
         "x": 188,
-        "y": 106.5
+        "y": 107
       }
     },
     "name": "57.png",
@@ -19359,17 +20096,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/58.png",
     "inputPath": "test-data/images/58.png",
     "location": {
+      "alignmentPattern": {
+        "x": 160.25,
+        "y": 168.5
+      },
       "bottomLeft": {
         "x": 52.75,
-        "y": 172.5
+        "y": 173
       },
+      "dimension": 33,
       "topLeft": {
         "x": 68,
-        "y": 58
+        "y": 58.5
       },
       "topRight": {
         "x": 182.75,
-        "y": 64
+        "y": 64.5
       }
     },
     "name": "58.png",
@@ -19433,17 +20175,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/59.png",
     "inputPath": "test-data/images/59.png",
     "location": {
+      "alignmentPattern": {
+        "x": 217.25,
+        "y": 314
+      },
       "bottomLeft": {
         "x": 197.5,
-        "y": 156
+        "y": 156.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 385.75,
-        "y": 151
+        "y": 151.5
       },
       "topRight": {
         "x": 390,
-        "y": 333.5
+        "y": 334
       }
     },
     "name": "59.png",
@@ -19478,17 +20225,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/6.png",
     "inputPath": "test-data/images/6.png",
     "location": {
+      "alignmentPattern": {
+        "x": 67.5,
+        "y": 67.5
+      },
       "bottomLeft": {
         "x": 22.5,
-        "y": 76
+        "y": 76.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 22.5,
-        "y": 22
+        "y": 22.5
       },
       "topRight": {
         "x": 76.5,
-        "y": 22
+        "y": 22.5
       }
     },
     "name": "6.png",
@@ -19562,17 +20314,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/60.png",
     "inputPath": "test-data/images/60.png",
     "location": {
+      "alignmentPattern": {
+        "x": 167,
+        "y": 161
+      },
       "bottomLeft": {
         "x": 67.75,
-        "y": 172.5
+        "y": 173
       },
+      "dimension": 33,
       "topLeft": {
         "x": 84.75,
-        "y": 61
+        "y": 61.5
       },
       "topRight": {
         "x": 190,
-        "y": 51
+        "y": 51.5
       }
     },
     "name": "60.png",
@@ -19580,74 +20337,30 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/61.png",
-    "decodedBytes": [
-      71,
-      111,
-      111,
-      103,
-      108,
-      101,
-      32,
-      80,
-      114,
-      105,
-      110,
-      116,
-      32,
-      65,
-      100,
-      115,
-      32,
-      45,
-      32,
-      84,
-      46,
-      71,
-      46,
-      73,
-      46,
-      65,
-      46,
-      70,
-      46,
-      32,
-      45,
-      32,
-      74,
-      97,
-      110,
-      117,
-      97,
-      114,
-      121,
-      32,
-      51,
-      49,
-      44,
-      32,
-      50,
-      48,
-      48,
-      56
-    ],
+    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/61.png",
     "inputPath": "test-data/images/61.png",
     "location": {
+      "alignmentPattern": {
+        "x": 163.5,
+        "y": 170
+      },
       "bottomLeft": {
         "x": 57.25,
-        "y": 185.5
+        "y": 186
       },
+      "dimension": 29,
       "topLeft": {
-        "x": 57,
-        "y": 60
+        "x": 54.75,
+        "y": 61
       },
       "topRight": {
         "x": 186,
-        "y": 57.5
+        "y": 58
       }
     },
     "name": "61.png",
-    "successful": true
+    "successful": false
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/62.png",
@@ -19704,17 +20417,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/62.png",
     "inputPath": "test-data/images/62.png",
     "location": {
+      "alignmentPattern": {
+        "x": 149.75,
+        "y": 156.5
+      },
       "bottomLeft": {
         "x": 56.5,
-        "y": 178
+        "y": 178.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 53,
-        "y": 65
+        "y": 65.5
       },
       "topRight": {
         "x": 161.5,
-        "y": 59
+        "y": 59.5
       }
     },
     "name": "62.png",
@@ -19775,17 +20493,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/63.png",
     "inputPath": "test-data/images/63.png",
     "location": {
+      "alignmentPattern": {
+        "x": 148.5,
+        "y": 145.5
+      },
       "bottomLeft": {
         "x": 61,
-        "y": 164
+        "y": 164.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 59,
-        "y": 59.5
+        "y": 60
       },
       "topRight": {
         "x": 162.25,
-        "y": 53.5
+        "y": 54
       }
     },
     "name": "63.png",
@@ -19846,17 +20569,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/64.png",
     "inputPath": "test-data/images/64.png",
     "location": {
+      "alignmentPattern": {
+        "x": 157,
+        "y": 171.5
+      },
       "bottomLeft": {
         "x": 68,
-        "y": 188.5
+        "y": 189
       },
+      "dimension": 29,
       "topLeft": {
         "x": 66.25,
-        "y": 84
+        "y": 84.5
       },
       "topRight": {
         "x": 173.5,
-        "y": 79
+        "y": 79.5
       }
     },
     "name": "64.png",
@@ -19864,25 +20592,79 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/65.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      71,
+      111,
+      111,
+      103,
+      108,
+      101,
+      32,
+      80,
+      114,
+      105,
+      110,
+      116,
+      32,
+      65,
+      100,
+      115,
+      32,
+      45,
+      32,
+      84,
+      46,
+      71,
+      46,
+      73,
+      46,
+      65,
+      46,
+      70,
+      46,
+      32,
+      45,
+      32,
+      74,
+      97,
+      110,
+      117,
+      97,
+      114,
+      121,
+      32,
+      51,
+      49,
+      44,
+      32,
+      50,
+      48,
+      48,
+      56
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/65.png",
     "inputPath": "test-data/images/65.png",
     "location": {
+      "alignmentPattern": {
+        "x": 159.5,
+        "y": 164.5
+      },
       "bottomLeft": {
         "x": 63.5,
-        "y": 177.5
+        "y": 178
       },
+      "dimension": 29,
       "topLeft": {
         "x": 66.75,
-        "y": 70
+        "y": 70.5
       },
       "topRight": {
         "x": 176,
-        "y": 68.5
+        "y": 69
       }
     },
     "name": "65.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/66.png",
@@ -19890,17 +20672,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/66.png",
     "inputPath": "test-data/images/66.png",
     "location": {
+      "alignmentPattern": {
+        "x": 156,
+        "y": 165
+      },
       "bottomLeft": {
         "x": 62,
-        "y": 156
+        "y": 156.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 89.25,
-        "y": 57
+        "y": 57.5
       },
       "topRight": {
         "x": 191.5,
-        "y": 76
+        "y": 76.5
       }
     },
     "name": "66.png",
@@ -19908,25 +20695,79 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/67.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      71,
+      111,
+      111,
+      103,
+      108,
+      101,
+      32,
+      80,
+      114,
+      105,
+      110,
+      116,
+      32,
+      65,
+      100,
+      115,
+      32,
+      45,
+      32,
+      84,
+      46,
+      71,
+      46,
+      73,
+      46,
+      65,
+      46,
+      70,
+      46,
+      32,
+      45,
+      32,
+      74,
+      97,
+      110,
+      117,
+      97,
+      114,
+      121,
+      32,
+      51,
+      49,
+      44,
+      32,
+      50,
+      48,
+      48,
+      56
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/67.png",
     "inputPath": "test-data/images/67.png",
     "location": {
+      "alignmentPattern": {
+        "x": 164.25,
+        "y": 159
+      },
       "bottomLeft": {
         "x": 70.5,
-        "y": 183.5
+        "y": 184
       },
+      "dimension": 29,
       "topLeft": {
         "x": 60,
-        "y": 76.5
+        "y": 77
       },
       "topRight": {
         "x": 167.5,
-        "y": 64
+        "y": 64.5
       }
     },
     "name": "67.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/68.png",
@@ -19957,17 +20798,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/68.png",
     "inputPath": "test-data/images/68.png",
     "location": {
+      "alignmentPattern": {
+        "x": 178,
+        "y": 153
+      },
       "bottomLeft": {
         "x": 82,
-        "y": 169.5
+        "y": 170
       },
+      "dimension": 29,
       "topLeft": {
         "x": 83.5,
-        "y": 73.5
+        "y": 74
       },
       "topRight": {
         "x": 184.75,
-        "y": 72
+        "y": 72.5
       }
     },
     "name": "68.png",
@@ -19975,25 +20821,79 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/69.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      71,
+      111,
+      111,
+      103,
+      108,
+      101,
+      32,
+      80,
+      114,
+      105,
+      110,
+      116,
+      32,
+      65,
+      100,
+      115,
+      32,
+      45,
+      32,
+      84,
+      46,
+      71,
+      46,
+      73,
+      46,
+      65,
+      46,
+      70,
+      46,
+      32,
+      45,
+      32,
+      74,
+      97,
+      110,
+      117,
+      97,
+      114,
+      121,
+      32,
+      51,
+      49,
+      44,
+      32,
+      50,
+      48,
+      48,
+      56
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/69.png",
     "inputPath": "test-data/images/69.png",
     "location": {
+      "alignmentPattern": {
+        "x": 163.75,
+        "y": 148.5
+      },
       "bottomLeft": {
         "x": 68.25,
-        "y": 171
+        "y": 171.5
       },
+      "dimension": 29,
       "topLeft": {
-        "x": 62.5,
-        "y": 55.5
+        "x": 60.5,
+        "y": 56.5
       },
       "topRight": {
         "x": 178,
-        "y": 50.5
+        "y": 51
       }
     },
     "name": "69.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/7.png",
@@ -20024,17 +20924,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/7.png",
     "inputPath": "test-data/images/7.png",
     "location": {
+      "alignmentPattern": {
+        "x": 67.5,
+        "y": 67.5
+      },
       "bottomLeft": {
         "x": 22.5,
-        "y": 76
+        "y": 76.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 22.5,
-        "y": 22
+        "y": 22.5
       },
       "topRight": {
         "x": 76.5,
-        "y": 22
+        "y": 22.5
       }
     },
     "name": "7.png",
@@ -20042,25 +20947,79 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/70.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      71,
+      111,
+      111,
+      103,
+      108,
+      101,
+      32,
+      80,
+      114,
+      105,
+      110,
+      116,
+      32,
+      65,
+      100,
+      115,
+      32,
+      45,
+      32,
+      84,
+      46,
+      71,
+      46,
+      73,
+      46,
+      65,
+      46,
+      70,
+      46,
+      32,
+      45,
+      32,
+      74,
+      97,
+      110,
+      117,
+      97,
+      114,
+      121,
+      32,
+      51,
+      49,
+      44,
+      32,
+      50,
+      48,
+      48,
+      56
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/70.png",
     "inputPath": "test-data/images/70.png",
     "location": {
+      "alignmentPattern": {
+        "x": 148,
+        "y": 150
+      },
       "bottomLeft": {
         "x": 52.25,
-        "y": 169.5
+        "y": 170
       },
+      "dimension": 29,
       "topLeft": {
         "x": 47.75,
-        "y": 58
+        "y": 58.5
       },
       "topRight": {
         "x": 161.5,
-        "y": 52
+        "y": 52.5
       }
     },
     "name": "70.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/71.png",
@@ -20068,16 +21027,21 @@
     "extractedPath": "test-data/AUTOGEN/extracted/71.png",
     "inputPath": "test-data/images/71.png",
     "location": {
+      "alignmentPattern": {
+        "x": 152,
+        "y": 153.5
+      },
       "bottomLeft": {
         "x": 73,
-        "y": 162
+        "y": 162.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 69,
-        "y": 64.5
+        "y": 65
       },
       "topRight": {
-        "x": 168,
+        "x": 169.75,
         "y": 64.5
       }
     },
@@ -20090,17 +21054,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/72.png",
     "inputPath": "test-data/images/72.png",
     "location": {
+      "alignmentPattern": {
+        "x": 164.25,
+        "y": 152.5
+      },
       "bottomLeft": {
         "x": 70,
-        "y": 168.5
+        "y": 169
       },
+      "dimension": 29,
       "topLeft": {
         "x": 64.5,
-        "y": 58.5
+        "y": 59
       },
       "topRight": {
         "x": 181.5,
-        "y": 53.5
+        "y": 54
       }
     },
     "name": "72.png",
@@ -20108,25 +21077,79 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/73.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      71,
+      111,
+      111,
+      103,
+      108,
+      101,
+      32,
+      80,
+      114,
+      105,
+      110,
+      116,
+      32,
+      65,
+      100,
+      115,
+      32,
+      45,
+      32,
+      84,
+      46,
+      71,
+      46,
+      73,
+      46,
+      65,
+      46,
+      70,
+      46,
+      32,
+      45,
+      32,
+      74,
+      97,
+      110,
+      117,
+      97,
+      114,
+      121,
+      32,
+      51,
+      49,
+      44,
+      32,
+      50,
+      48,
+      48,
+      56
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/73.png",
     "inputPath": "test-data/images/73.png",
     "location": {
+      "alignmentPattern": {
+        "x": 156,
+        "y": 155
+      },
       "bottomLeft": {
         "x": 63,
-        "y": 171.5
+        "y": 172
       },
+      "dimension": 29,
       "topLeft": {
         "x": 61.25,
-        "y": 64
+        "y": 64.5
       },
       "topRight": {
         "x": 169.5,
-        "y": 60
+        "y": 60.5
       }
     },
     "name": "73.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/74.png",
@@ -20157,17 +21180,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/74.png",
     "inputPath": "test-data/images/74.png",
     "location": {
+      "alignmentPattern": {
+        "x": 157,
+        "y": 141
+      },
       "bottomLeft": {
         "x": 82.5,
-        "y": 152.5
+        "y": 153
       },
+      "dimension": 29,
       "topLeft": {
         "x": 82.5,
-        "y": 64
+        "y": 64.5
       },
       "topRight": {
         "x": 171,
-        "y": 63.5
+        "y": 64
       }
     },
     "name": "74.png",
@@ -20175,25 +21203,69 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/75.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      111,
+      111,
+      103,
+      108,
+      101,
+      46,
+      99,
+      111,
+      109,
+      47,
+      103,
+      119,
+      116,
+      47,
+      110,
+      63,
+      117,
+      61,
+      98,
+      108,
+      117,
+      101,
+      110,
+      105,
+      108,
+      101,
+      46,
+      99,
+      111,
+      109
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/75.png",
     "inputPath": "test-data/images/75.png",
     "location": {
+      "alignmentPattern": {
+        "x": 332.25,
+        "y": 229
+      },
       "bottomLeft": {
         "x": 346,
-        "y": 313.5
+        "y": 314
       },
+      "dimension": 29,
       "topLeft": {
         "x": 242,
-        "y": 312.5
+        "y": 313
       },
       "topRight": {
         "x": 240.75,
-        "y": 214.5
+        "y": 215
       }
     },
     "name": "75.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/76.png",
@@ -20201,17 +21273,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/76.png",
     "inputPath": "test-data/images/76.png",
     "location": {
+      "alignmentPattern": {
+        "x": 147,
+        "y": 151.5
+      },
       "bottomLeft": {
         "x": 63,
-        "y": 163
+        "y": 163.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 54.25,
-        "y": 67.5
+        "y": 68
       },
       "topRight": {
         "x": 159.25,
-        "y": 66.5
+        "y": 67
       }
     },
     "name": "76.png",
@@ -20223,17 +21300,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/77.png",
     "inputPath": "test-data/images/77.png",
     "location": {
+      "alignmentPattern": {
+        "x": 160.5,
+        "y": 161.5
+      },
       "bottomLeft": {
         "x": 59.75,
-        "y": 180
+        "y": 180.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 56.25,
-        "y": 62
+        "y": 62.5
       },
       "topRight": {
         "x": 176,
-        "y": 61.5
+        "y": 62
       }
     },
     "name": "77.png",
@@ -20245,17 +21327,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/78.png",
     "inputPath": "test-data/images/78.png",
     "location": {
+      "alignmentPattern": {
+        "x": 166,
+        "y": 156
+      },
       "bottomLeft": {
         "x": 68.5,
-        "y": 187
+        "y": 187.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 51.75,
-        "y": 70.5
+        "y": 71
       },
       "topRight": {
         "x": 168.5,
-        "y": 56
+        "y": 56.5
       }
     },
     "name": "78.png",
@@ -20290,17 +21377,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/79.png",
     "inputPath": "test-data/images/79.png",
     "location": {
+      "alignmentPattern": {
+        "x": 162.25,
+        "y": 161
+      },
       "bottomLeft": {
         "x": 65.5,
-        "y": 177
+        "y": 177.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 60.5,
-        "y": 65
+        "y": 65.5
       },
       "topRight": {
         "x": 177.5,
-        "y": 64
+        "y": 64.5
       }
     },
     "name": "79.png",
@@ -20354,17 +21446,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/8.png",
     "inputPath": "test-data/images/8.png",
     "location": {
-      "bottomLeft": {
-        "x": 124.25,
-        "y": 162
+      "alignmentPattern": {
+        "x": 175.25,
+        "y": 151.5
       },
+      "bottomLeft": {
+        "x": 124.5,
+        "y": 161.5
+      },
+      "dimension": 29,
       "topLeft": {
         "x": 124.75,
-        "y": 108
+        "y": 107.5
       },
       "topRight": {
         "x": 181.75,
-        "y": 104
+        "y": 104.5
       }
     },
     "name": "8.png",
@@ -20376,17 +21473,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/80.png",
     "inputPath": "test-data/images/80.png",
     "location": {
-      "bottomLeft": {
-        "x": 62,
+      "alignmentPattern": {
+        "x": 157.75,
         "y": 166
       },
+      "bottomLeft": {
+        "x": 62,
+        "y": 166.5
+      },
+      "dimension": 29,
       "topLeft": {
         "x": 69.25,
-        "y": 53
+        "y": 53.5
       },
       "topRight": {
         "x": 184.75,
-        "y": 69.5
+        "y": 70
       }
     },
     "name": "80.png",
@@ -20398,17 +21500,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/81.png",
     "inputPath": "test-data/images/81.png",
     "location": {
+      "alignmentPattern": {
+        "x": 147.5,
+        "y": 131.5
+      },
       "bottomLeft": {
         "x": 68.25,
-        "y": 143.5
+        "y": 144
       },
+      "dimension": 29,
       "topLeft": {
         "x": 66,
-        "y": 49
+        "y": 49.5
       },
       "topRight": {
         "x": 159.5,
-        "y": 50
+        "y": 50.5
       }
     },
     "name": "81.png",
@@ -20420,17 +21527,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/82.png",
     "inputPath": "test-data/images/82.png",
     "location": {
+      "alignmentPattern": {
+        "x": 131,
+        "y": 124
+      },
       "bottomLeft": {
         "x": 80.75,
-        "y": 130.5
+        "y": 131
       },
+      "dimension": 25,
       "topLeft": {
         "x": 88.25,
-        "y": 66
+        "y": 66.5
       },
       "topRight": {
         "x": 149.25,
-        "y": 73.5
+        "y": 74
       }
     },
     "name": "82.png",
@@ -20514,17 +21626,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/83.png",
     "inputPath": "test-data/images/83.png",
     "location": {
+      "alignmentPattern": {
+        "x": 193.5,
+        "y": 323.5
+      },
       "bottomLeft": {
         "x": 200,
-        "y": 133
+        "y": 133.5
       },
+      "dimension": 57,
       "topLeft": {
         "x": 413.25,
-        "y": 147
+        "y": 147.5
       },
       "topRight": {
         "x": 399.75,
-        "y": 350.5
+        "y": 351
       }
     },
     "name": "83.png",
@@ -20543,17 +21660,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/84.png",
     "inputPath": "test-data/images/84.png",
     "location": {
+      "alignmentPattern": {
+        "x": 240.48967581674742,
+        "y": 410.08484925166084
+      },
       "bottomLeft": {
         "x": 151.75,
-        "y": 434.5
+        "y": 435
       },
+      "dimension": 21,
       "topLeft": {
         "x": 151.75,
-        "y": 323
+        "y": 323.5
       },
       "topRight": {
         "x": 265,
-        "y": 322
+        "y": 322.5
       }
     },
     "name": "84.png",
@@ -20565,17 +21687,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/85.png",
     "inputPath": "test-data/images/85.png",
     "location": {
+      "alignmentPattern": {
+        "x": 161,
+        "y": 165.5
+      },
       "bottomLeft": {
         "x": 59,
-        "y": 175.5
+        "y": 176
       },
+      "dimension": 29,
       "topLeft": {
         "x": 68.25,
-        "y": 70
+        "y": 70.5
       },
       "topRight": {
         "x": 178.5,
-        "y": 70.5
+        "y": 71
       }
     },
     "name": "85.png",
@@ -20587,17 +21714,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/86.png",
     "inputPath": "test-data/images/86.png",
     "location": {
+      "alignmentPattern": {
+        "x": 161.75,
+        "y": 152.5
+      },
       "bottomLeft": {
-        "x": 68.5,
+        "x": 71.25,
         "y": 163.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 70.75,
-        "y": 56.5
+        "y": 57
       },
       "topRight": {
         "x": 176,
-        "y": 56
+        "y": 56.5
       }
     },
     "name": "86.png",
@@ -20606,20 +21738,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/87.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/87.png",
     "inputPath": "test-data/images/87.png",
     "location": {
+      "alignmentPattern": {
+        "x": 207.5,
+        "y": 228.5
+      },
       "bottomLeft": {
         "x": 27,
-        "y": 27.5
+        "y": 229.5
       },
+      "dimension": 41,
       "topLeft": {
-        "x": 36,
-        "y": 97
+        "x": 24.75,
+        "y": 27
       },
       "topRight": {
-        "x": 27,
-        "y": 229
+        "x": 226.75,
+        "y": 33
       }
     },
     "name": "87.png",
@@ -20628,20 +21765,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/88.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/88.png",
     "inputPath": "test-data/images/88.png",
     "location": {
-      "bottomLeft": {
-        "x": 55,
-        "y": 72.5
+      "alignmentPattern": {
+        "x": 100.75,
+        "y": 220.5
       },
+      "bottomLeft": {
+        "x": 30,
+        "y": 227
+      },
+      "dimension": 29,
       "topLeft": {
-        "x": 116,
-        "y": 157.5
+        "x": 114.75,
+        "y": 183.5
       },
       "topRight": {
-        "x": 32,
-        "y": 231.5
+        "x": 180,
+        "y": 210.5
       }
     },
     "name": "88.png",
@@ -20649,25 +21791,79 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/89.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      77,
+      69,
+      66,
+      75,
+      77,
+      58,
+      84,
+      73,
+      84,
+      76,
+      69,
+      58,
+      59,
+      85,
+      82,
+      76,
+      58,
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      100,
+      46,
+      107,
+      97,
+      121,
+      119,
+      97,
+      46,
+      99,
+      111,
+      109,
+      47,
+      50,
+      48,
+      50,
+      48,
+      52,
+      48,
+      48,
+      49,
+      48,
+      50,
+      59,
+      59
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/89.png",
     "inputPath": "test-data/images/89.png",
     "location": {
+      "alignmentPattern": {
+        "x": 89.5,
+        "y": 88.5
+      },
       "bottomLeft": {
         "x": 14.5,
-        "y": 94
+        "y": 94.5
       },
+      "dimension": 49,
       "topLeft": {
         "x": 15,
-        "y": 13.5
+        "y": 14
       },
       "topRight": {
         "x": 95.5,
-        "y": 13.5
+        "y": 14
       }
     },
     "name": "89.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/9.png",
@@ -20703,17 +21899,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/9.png",
     "inputPath": "test-data/images/9.png",
     "location": {
+      "alignmentPattern": {
+        "x": 198.25,
+        "y": 107.5
+      },
       "bottomLeft": {
         "x": 131,
-        "y": 115.5
+        "y": 116
       },
+      "dimension": 29,
       "topLeft": {
         "x": 132,
-        "y": 41
+        "y": 41.5
       },
       "topRight": {
         "x": 206.5,
-        "y": 45
+        "y": 45.5
       }
     },
     "name": "9.png",
@@ -20757,17 +21958,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/90.png",
     "inputPath": "test-data/images/90.png",
     "location": {
+      "alignmentPattern": {
+        "x": 148,
+        "y": 144
+      },
       "bottomLeft": {
         "x": 85.5,
-        "y": 160
+        "y": 160.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 80.5,
-        "y": 85.5
+        "y": 86
       },
       "topRight": {
         "x": 155,
-        "y": 79.5
+        "y": 80
       }
     },
     "name": "90.png",
@@ -20779,17 +21985,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/91.png",
     "inputPath": "test-data/images/91.png",
     "location": {
+      "alignmentPattern": {
+        "x": 200.5,
+        "y": 262
+      },
       "bottomLeft": {
         "x": 61,
-        "y": 283.5
+        "y": 284
       },
+      "dimension": 29,
       "topLeft": {
         "x": 61,
-        "y": 122.5
+        "y": 123
       },
       "topRight": {
         "x": 222,
-        "y": 122.5
+        "y": 123
       }
     },
     "name": "91.png",
@@ -20797,86 +22008,34 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/92.png",
-    "decodedBytes": [
-      50,
-      48,
-      50,
-      49,
-      50,
-      48,
-      48,
-      48,
-      48,
-      48
-    ],
+    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/92.png",
     "inputPath": "test-data/images/92.png",
     "location": {
+      "alignmentPattern": {
+        "x": 174.9212807234381,
+        "y": 156.93495649833076
+      },
       "bottomLeft": {
         "x": 149,
-        "y": 162
+        "y": 162.5
       },
+      "dimension": 21,
       "topLeft": {
         "x": 149.25,
-        "y": 129
+        "y": 129.5
       },
       "topRight": {
         "x": 182.25,
-        "y": 131
+        "y": 131.5
       }
     },
     "name": "92.png",
-    "successful": true
-  },
-  {
-    "binarizedPath": "test-data/AUTOGEN/binarized/93.png",
-    "decodedBytes": null,
-    "extractedPath": "test-data/AUTOGEN/extracted/93.png",
-    "inputPath": "test-data/images/93.png",
-    "location": {
-      "bottomLeft": {
-        "x": 98.5,
-        "y": 200.5
-      },
-      "topLeft": {
-        "x": 67.75,
-        "y": 86
-      },
-      "topRight": {
-        "x": 168.75,
-        "y": 48.5
-      }
-    },
-    "name": "93.png",
     "successful": false
   },
   {
-    "binarizedPath": "test-data/AUTOGEN/binarized/94.png",
+    "binarizedPath": "test-data/AUTOGEN/binarized/93.png",
     "decodedBytes": [
-      85,
-      73,
-      32,
-      111,
-      102,
-      102,
-      105,
-      99,
-      101,
-      32,
-      104,
-      111,
-      117,
-      114,
-      115,
-      32,
-      115,
-      105,
-      103,
-      110,
-      117,
-      112,
-      13,
-      10,
       104,
       116,
       116,
@@ -20884,72 +22043,136 @@
       58,
       47,
       47,
-      119,
-      119,
-      119,
-      46,
-      99,
-      111,
+      97,
       114,
-      112,
+      110,
+      97,
+      117,
+      100,
       46,
+      115,
+      97,
+      104,
+      117,
       103,
-      111,
-      111,
-      103,
-      108,
+      117,
       101,
+      116,
       46,
       99,
       111,
       109,
       47,
-      115,
-      112,
+      103,
+      114,
       97,
-      114,
-      114,
-      111,
-      119,
+      102,
+      102,
+      105,
+      116,
+      105,
       47,
-      117,
-      105,
-      95,
-      111,
-      102,
-      102,
-      105,
-      99,
+      116,
       101,
-      95,
-      104,
-      111,
-      117,
-      114,
       115,
-      47,
-      32,
-      13,
-      10
+      116,
+      46,
+      112,
+      104,
+      112,
+      63,
+      108,
+      108,
+      61,
+      45,
+      55,
+      52,
+      46,
+      48,
+      48,
+      51,
+      48,
+      57,
+      57,
+      54,
+      49,
+      53,
+      48,
+      51,
+      50,
+      49,
+      56,
+      44,
+      52,
+      48,
+      46,
+      55,
+      52,
+      49,
+      48,
+      50,
+      53,
+      55,
+      51,
+      49,
+      54,
+      51,
+      48,
+      52,
+      54,
+      44,
+      48
     ],
+    "extractedPath": "test-data/AUTOGEN/extracted/93.png",
+    "inputPath": "test-data/images/93.png",
+    "location": {
+      "alignmentPattern": {
+        "x": 190.25,
+        "y": 170
+      },
+      "bottomLeft": {
+        "x": 98.5,
+        "y": 201
+      },
+      "dimension": 41,
+      "topLeft": {
+        "x": 67.75,
+        "y": 86.5
+      },
+      "topRight": {
+        "x": 168.75,
+        "y": 49
+      }
+    },
+    "name": "93.png",
+    "successful": true
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/94.png",
+    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/94.png",
     "inputPath": "test-data/images/94.png",
     "location": {
+      "alignmentPattern": {
+        "x": 175.25,
+        "y": 152
+      },
       "bottomLeft": {
         "x": 55.75,
-        "y": 158.5
+        "y": 159
       },
+      "dimension": 45,
       "topLeft": {
         "x": 45,
-        "y": 39
+        "y": 39.5
       },
       "topRight": {
         "x": 195,
-        "y": 41.5
+        "y": 42
       }
     },
     "name": "94.png",
-    "successful": true
+    "successful": false
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/95.png",
@@ -21036,17 +22259,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/95.png",
     "inputPath": "test-data/images/95.png",
     "location": {
+      "alignmentPattern": {
+        "x": 165,
+        "y": 191.5
+      },
       "bottomLeft": {
         "x": 56,
-        "y": 197.5
+        "y": 198
       },
+      "dimension": 45,
       "topLeft": {
         "x": 82.5,
-        "y": 40
+        "y": 40.5
       },
       "topRight": {
         "x": 193.25,
-        "y": 68.5
+        "y": 69
       }
     },
     "name": "95.png",
@@ -21058,17 +22286,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/96.png",
     "inputPath": "test-data/images/96.png",
     "location": {
+      "alignmentPattern": {
+        "x": 151.5,
+        "y": 171.5
+      },
       "bottomLeft": {
         "x": 65.25,
-        "y": 187.5
+        "y": 188
       },
+      "dimension": 45,
       "topLeft": {
         "x": 72.5,
-        "y": 55
+        "y": 55.5
       },
       "topRight": {
-        "x": 165.75,
-        "y": 65
+        "x": 165,
+        "y": 66.5
       }
     },
     "name": "96.png",
@@ -21076,25 +22309,69 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/97.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      103,
+      111,
+      111,
+      103,
+      108,
+      101,
+      46,
+      99,
+      111,
+      109,
+      47,
+      103,
+      119,
+      116,
+      47,
+      110,
+      63,
+      117,
+      61,
+      98,
+      108,
+      117,
+      101,
+      110,
+      105,
+      108,
+      101,
+      46,
+      99,
+      111,
+      109
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/97.png",
     "inputPath": "test-data/images/97.png",
     "location": {
+      "alignmentPattern": {
+        "x": 263.5,
+        "y": 301.5
+      },
       "bottomLeft": {
         "x": 250.25,
-        "y": 203
+        "y": 203.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 370.25,
-        "y": 207
+        "y": 207.5
       },
       "topRight": {
         "x": 367,
-        "y": 319
+        "y": 319.5
       }
     },
     "name": "97.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/98.png",
@@ -21134,17 +22411,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/98.png",
     "inputPath": "test-data/images/98.png",
     "location": {
+      "alignmentPattern": {
+        "x": 146,
+        "y": 135.5
+      },
       "bottomLeft": {
         "x": 80.75,
-        "y": 136.5
+        "y": 137
       },
+      "dimension": 25,
       "topLeft": {
         "x": 94,
-        "y": 62.5
+        "y": 63
       },
       "topRight": {
         "x": 169,
-        "y": 73.5
+        "y": 74
       }
     },
     "name": "98.png",
@@ -21208,17 +22490,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/99.png",
     "inputPath": "test-data/images/99.png",
     "location": {
+      "alignmentPattern": {
+        "x": 341,
+        "y": 334.5
+      },
       "bottomLeft": {
         "x": 323.75,
-        "y": 219.5
+        "y": 220
       },
+      "dimension": 33,
       "topLeft": {
         "x": 462,
-        "y": 216.5
+        "y": 217
       },
       "topRight": {
         "x": 468.5,
-        "y": 350
+        "y": 350.5
       }
     },
     "name": "99.png",
@@ -21275,17 +22562,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/angel-hotel.png",
     "inputPath": "test-data/images/angel-hotel.png",
     "location": {
+      "alignmentPattern": {
+        "x": 323,
+        "y": 369
+      },
       "bottomLeft": {
         "x": 246.25,
-        "y": 377
+        "y": 377.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 244.25,
-        "y": 290
+        "y": 290.5
       },
       "topRight": {
         "x": 337,
-        "y": 292
+        "y": 292.5
       }
     },
     "name": "angel-hotel.png",
@@ -21318,17 +22610,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/battery.png",
     "inputPath": "test-data/images/battery.png",
     "location": {
+      "alignmentPattern": {
+        "x": 223.75,
+        "y": 508.5
+      },
       "bottomLeft": {
         "x": 144.25,
-        "y": 522
+        "y": 522.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 144.25,
-        "y": 430.5
+        "y": 431
       },
       "topRight": {
         "x": 241,
-        "y": 432
+        "y": 432.5
       }
     },
     "name": "battery.png",
@@ -21388,17 +22685,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/bike-1.png",
     "inputPath": "test-data/images/bike-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 327.5,
+        "y": 350.5
+      },
       "bottomLeft": {
         "x": 312,
-        "y": 195.5
+        "y": 196
       },
+      "dimension": 41,
       "topLeft": {
         "x": 478.5,
-        "y": 195
+        "y": 195.5
       },
       "topRight": {
         "x": 482.75,
-        "y": 362.5
+        "y": 363
       }
     },
     "name": "bike-1.png",
@@ -21458,17 +22760,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/bike-2.png",
     "inputPath": "test-data/images/bike-2.png",
     "location": {
+      "alignmentPattern": {
+        "x": 397.75,
+        "y": 463.5
+      },
       "bottomLeft": {
         "x": 285.25,
-        "y": 441.5
+        "y": 442
       },
+      "dimension": 41,
       "topLeft": {
         "x": 318,
-        "y": 313.5
+        "y": 314
       },
       "topRight": {
         "x": 439,
-        "y": 346.5
+        "y": 347
       }
     },
     "name": "bike-2.png",
@@ -21477,20 +22784,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/billboard-1.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/billboard-1.png",
     "inputPath": "test-data/images/billboard-1.png",
     "location": {
-      "bottomLeft": {
-        "x": 438,
-        "y": 701
+      "alignmentPattern": {
+        "x": 303.75,
+        "y": 392.5
       },
+      "bottomLeft": {
+        "x": 178.5,
+        "y": 492.5
+      },
+      "dimension": 25,
       "topLeft": {
         "x": 136,
-        "y": 411
+        "y": 411.5
       },
       "topRight": {
         "x": 324.25,
-        "y": 255.5
+        "y": 256
       }
     },
     "name": "billboard-1.png",
@@ -21592,17 +22904,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/billboard-2.png",
     "inputPath": "test-data/images/billboard-2.png",
     "location": {
+      "alignmentPattern": {
+        "x": 354.75,
+        "y": 287.5
+      },
       "bottomLeft": {
         "x": 172.25,
-        "y": 262
+        "y": 262.5
       },
+      "dimension": 37,
       "topLeft": {
         "x": 184,
-        "y": 90
+        "y": 90.5
       },
       "topRight": {
         "x": 367,
-        "y": 140.5
+        "y": 141
       }
     },
     "name": "billboard-2.png",
@@ -21611,20 +22928,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/bitcoin-tag.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/bitcoin-tag.png",
     "inputPath": "test-data/images/bitcoin-tag.png",
     "location": {
-      "bottomLeft": {
-        "x": 268.75,
-        "y": 361
+      "alignmentPattern": {
+        "x": 493.5,
+        "y": 465.5
       },
+      "bottomLeft": {
+        "x": 193.5,
+        "y": 670.5
+      },
+      "dimension": 89,
       "topLeft": {
-        "x": 423,
-        "y": 491.5
+        "x": 153,
+        "y": 593
       },
       "topRight": {
-        "x": 167,
-        "y": 640
+        "x": 442,
+        "y": 338.5
       }
     },
     "name": "bitcoin-tag.png",
@@ -21750,17 +23072,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/bus-stop-1.png",
     "inputPath": "test-data/images/bus-stop-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 202,
+        "y": 220.5
+      },
       "bottomLeft": {
         "x": 118.5,
-        "y": 230.5
+        "y": 231
       },
+      "dimension": 45,
       "topLeft": {
         "x": 113.75,
-        "y": 138
+        "y": 138.5
       },
       "topRight": {
         "x": 205.75,
-        "y": 135.5
+        "y": 136
       }
     },
     "name": "bus-stop-1.png",
@@ -21831,17 +23158,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/bus-stop-2.png",
     "inputPath": "test-data/images/bus-stop-2.png",
     "location": {
+      "alignmentPattern": {
+        "x": 264.25,
+        "y": 177
+      },
       "bottomLeft": {
         "x": 195.5,
-        "y": 191
+        "y": 191.5
       },
+      "dimension": 33,
       "topLeft": {
-        "x": 193.25,
+        "x": 191.75,
         "y": 113.5
       },
       "topRight": {
         "x": 270.75,
-        "y": 107
+        "y": 107.5
       }
     },
     "name": "bus-stop-2.png",
@@ -21849,25 +23181,52 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/bus-stop-3.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      79,
+      72,
+      65,
+      73,
+      80,
+      85,
+      90,
+      90,
+      76,
+      69,
+      46,
+      67,
+      79,
+      77
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/bus-stop-3.png",
     "inputPath": "test-data/images/bus-stop-3.png",
     "location": {
+      "alignmentPattern": {
+        "x": 141.5,
+        "y": 155.5
+      },
       "bottomLeft": {
         "x": 92,
         "y": 162
       },
+      "dimension": 33,
       "topLeft": {
         "x": 90.75,
-        "y": 104
+        "y": 106
       },
       "topRight": {
         "x": 148,
-        "y": 104
+        "y": 103.5
       }
     },
     "name": "bus-stop-3.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/business-card-1.png",
@@ -22016,17 +23375,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/business-card-1.png",
     "inputPath": "test-data/images/business-card-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 323,
+        "y": 505.5
+      },
       "bottomLeft": {
         "x": 241.5,
-        "y": 513
+        "y": 513.5
       },
+      "dimension": 45,
       "topLeft": {
         "x": 245.5,
-        "y": 423
+        "y": 423.5
       },
       "topRight": {
         "x": 331.75,
-        "y": 422
+        "y": 422.5
       }
     },
     "name": "business-card-1.png",
@@ -22035,20 +23399,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/business-card-2.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/business-card-2.png",
     "inputPath": "test-data/images/business-card-2.png",
     "location": {
-      "bottomLeft": {
-        "x": 248,
-        "y": 422.5
+      "alignmentPattern": {
+        "x": 290,
+        "y": 458.5
       },
+      "bottomLeft": {
+        "x": 182.25,
+        "y": 417
+      },
+      "dimension": 137,
       "topLeft": {
-        "x": 189,
-        "y": 436
+        "x": 332.25,
+        "y": 17.5
       },
       "topRight": {
-        "x": 173.5,
-        "y": 386
+        "x": 439,
+        "y": 72.5
       }
     },
     "name": "business-card-2.png",
@@ -22259,17 +23628,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/business-card-3.png",
     "inputPath": "test-data/images/business-card-3.png",
     "location": {
+      "alignmentPattern": {
+        "x": 448.5,
+        "y": 200.5
+      },
       "bottomLeft": {
         "x": 646.25,
-        "y": 189.5
+        "y": 190
       },
+      "dimension": 53,
       "topLeft": {
         "x": 642,
-        "y": 401.5
+        "y": 402
       },
       "topRight": {
         "x": 431.25,
-        "y": 398.5
+        "y": 399
       }
     },
     "name": "business-card-3.png",
@@ -22326,17 +23700,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/cache-flyer.png",
     "inputPath": "test-data/images/cache-flyer.png",
     "location": {
+      "alignmentPattern": {
+        "x": 207,
+        "y": 455.5
+      },
       "bottomLeft": {
         "x": 94,
-        "y": 473.5
+        "y": 474
       },
+      "dimension": 29,
       "topLeft": {
-        "x": 95.25,
+        "x": 93.25,
         "y": 344.5
       },
       "topRight": {
         "x": 226.75,
-        "y": 345
+        "y": 345.5
       }
     },
     "name": "cache-flyer.png",
@@ -22371,17 +23750,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/cgi.png",
     "inputPath": "test-data/images/cgi.png",
     "location": {
+      "alignmentPattern": {
+        "x": 345.5,
+        "y": 306
+      },
       "bottomLeft": {
         "x": 210.75,
-        "y": 335
+        "y": 335.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 209.75,
-        "y": 167
+        "y": 167.5
       },
       "topRight": {
         "x": 367.25,
-        "y": 163.5
+        "y": 164
       }
     },
     "name": "cgi.png",
@@ -22417,17 +23801,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/chevy-ad.png",
     "inputPath": "test-data/images/chevy-ad.png",
     "location": {
+      "alignmentPattern": {
+        "x": 183,
+        "y": 209.5
+      },
       "bottomLeft": {
         "x": 40.25,
-        "y": 230
+        "y": 230.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 30,
-        "y": 62.5
+        "y": 63
       },
       "topRight": {
         "x": 205.5,
-        "y": 60.5
+        "y": 61
       }
     },
     "name": "chevy-ad.png",
@@ -22436,20 +23825,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/cupake-5.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/cupake-5.png",
     "inputPath": "test-data/images/cupake-5.png",
     "location": {
-      "bottomLeft": {
-        "x": 218.75,
-        "y": 22
+      "alignmentPattern": {
+        "x": 164.5,
+        "y": 39
       },
+      "bottomLeft": {
+        "x": 221.5,
+        "y": 18.5
+      },
+      "dimension": 25,
       "topLeft": {
         "x": 180.5,
-        "y": 100.5
+        "y": 101
       },
       "topRight": {
-        "x": 121.5,
-        "y": 104
+        "x": 122.75,
+        "y": 105
       }
     },
     "name": "cupake-5.png",
@@ -22481,17 +23875,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/cupcake-1.png",
     "inputPath": "test-data/images/cupcake-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 109.5,
+        "y": 64.5
+      },
       "bottomLeft": {
         "x": 160.5,
-        "y": 89.5
+        "y": 90
       },
+      "dimension": 25,
       "topLeft": {
         "x": 117.25,
-        "y": 153.5
+        "y": 154
       },
       "topRight": {
         "x": 68.5,
-        "y": 110.5
+        "y": 111
       }
     },
     "name": "cupcake-1.png",
@@ -22503,17 +23902,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/cupcake-2.png",
     "inputPath": "test-data/images/cupcake-2.png",
     "location": {
-      "bottomLeft": {
-        "x": 105.25,
-        "y": 153.5
+      "alignmentPattern": {
+        "x": 150.25,
+        "y": 99
       },
+      "bottomLeft": {
+        "x": 105,
+        "y": 155
+      },
+      "dimension": 25,
       "topLeft": {
-        "x": 64.25,
+        "x": 62.75,
         "y": 104.5
       },
       "topRight": {
         "x": 126,
-        "y": 52
+        "y": 52.5
       }
     },
     "name": "cupcake-2.png",
@@ -22545,17 +23949,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/cupcake-3.png",
     "inputPath": "test-data/images/cupcake-3.png",
     "location": {
+      "alignmentPattern": {
+        "x": 148.25,
+        "y": 153.5
+      },
       "bottomLeft": {
         "x": 76,
-        "y": 146
+        "y": 146.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 113,
-        "y": 63.5
+        "y": 64
       },
       "topRight": {
         "x": 191.75,
-        "y": 85.5
+        "y": 86
       }
     },
     "name": "cupcake-3.png",
@@ -22588,17 +23997,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/cupcake-4.png",
     "inputPath": "test-data/images/cupcake-4.png",
     "location": {
+      "alignmentPattern": {
+        "x": 134.25,
+        "y": 213.5
+      },
       "bottomLeft": {
         "x": 89,
-        "y": 139.5
+        "y": 140
       },
+      "dimension": 25,
       "topLeft": {
         "x": 179,
-        "y": 91
+        "y": 91.5
       },
       "topRight": {
         "x": 221.25,
-        "y": 189.5
+        "y": 190
       }
     },
     "name": "cupcake-4.png",
@@ -22606,6 +24020,60 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/damaged.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/damaged.png",
+    "inputPath": "test-data/images/damaged.png",
+    "location": {
+      "alignmentPattern": {
+        "x": 219.75,
+        "y": 221
+      },
+      "bottomLeft": {
+        "x": 81.5,
+        "y": 215.5
+      },
+      "dimension": 29,
+      "topLeft": {
+        "x": 82,
+        "y": 75.5
+      },
+      "topRight": {
+        "x": 221.75,
+        "y": 76
+      }
+    },
+    "name": "damaged.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/emblem-patch.png",
+    "decodedBytes": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/emblem-patch.png",
+    "inputPath": "test-data/images/emblem-patch.png",
+    "location": {
+      "alignmentPattern": {
+        "x": 182,
+        "y": 172.5
+      },
+      "bottomLeft": {
+        "x": 158.75,
+        "y": 125
+      },
+      "dimension": 81,
+      "topLeft": {
+        "x": 374.5,
+        "y": 168.5
+      },
+      "topRight": {
+        "x": 389.75,
+        "y": 216.5
+      }
+    },
+    "name": "emblem-patch.png",
+    "successful": false
+  },
+  {
+    "binarizedPath": "test-data/AUTOGEN/binarized/hk-ikea.png",
     "decodedBytes": [
       104,
       116,
@@ -22614,87 +24082,60 @@
       58,
       47,
       47,
-      101,
-      110,
-      46,
       109,
       46,
-      119,
-      105,
+      104,
       107,
-      105,
-      112,
+      99,
+      108,
       101,
-      100,
-      105,
       97,
+      110,
       46,
+      110,
+      101,
+      116,
+      47,
+      103,
       111,
-      114,
-      103
+      111,
+      100,
+      115,
+      46,
+      112,
+      104,
+      112,
+      63,
+      105,
+      100,
+      61,
+      49,
+      53,
+      50
     ],
-    "extractedPath": "test-data/AUTOGEN/extracted/damaged.png",
-    "inputPath": "test-data/images/damaged.png",
-    "location": {
-      "bottomLeft": {
-        "x": 81.5,
-        "y": 215
-      },
-      "topLeft": {
-        "x": 82,
-        "y": 75
-      },
-      "topRight": {
-        "x": 221.75,
-        "y": 75.5
-      }
-    },
-    "name": "damaged.png",
-    "successful": true
-  },
-  {
-    "binarizedPath": "test-data/AUTOGEN/binarized/emblem-patch.png",
-    "decodedBytes": null,
-    "extractedPath": null,
-    "inputPath": "test-data/images/emblem-patch.png",
-    "location": {
-      "bottomLeft": {
-        "x": 165.5,
-        "y": 270
-      },
-      "topLeft": {
-        "x": 359.5,
-        "y": 163
-      },
-      "topRight": {
-        "x": 389,
-        "y": 263.5
-      }
-    },
-    "name": "emblem-patch.png",
-    "successful": false
-  },
-  {
-    "binarizedPath": "test-data/AUTOGEN/binarized/hk-ikea.png",
-    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/hk-ikea.png",
     "inputPath": "test-data/images/hk-ikea.png",
     "location": {
+      "alignmentPattern": {
+        "x": 338,
+        "y": 142.5
+      },
       "bottomLeft": {
         "x": 364.5,
-        "y": 104
+        "y": 104.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 416.75,
-        "y": 134.5
+        "y": 135
       },
       "topRight": {
         "x": 378.5,
-        "y": 176.5
+        "y": 177.5
       }
     },
     "name": "hk-ikea.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/hudson-highlands-state-park.png",
@@ -22723,17 +24164,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/hudson-highlands-state-park.png",
     "inputPath": "test-data/images/hudson-highlands-state-park.png",
     "location": {
+      "alignmentPattern": {
+        "x": 357.75,
+        "y": 403.5
+      },
       "bottomLeft": {
         "x": 218.5,
-        "y": 437.5
+        "y": 438
       },
+      "dimension": 25,
       "topLeft": {
         "x": 216,
-        "y": 275.5
+        "y": 276
       },
       "topRight": {
         "x": 390,
-        "y": 267
+        "y": 267.5
       }
     },
     "name": "hudson-highlands-state-park.png",
@@ -22742,20 +24188,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/issue-14-regression.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/issue-14-regression.png",
     "inputPath": "test-data/images/issue-14-regression.png",
     "location": {
+      "alignmentPattern": {
+        "x": 135.25,
+        "y": 310.5
+      },
       "bottomLeft": {
         "x": 301.75,
-        "y": 192
+        "y": 192.5
       },
+      "dimension": 45,
       "topLeft": {
-        "x": 205,
-        "y": 361
+        "x": 253,
+        "y": 397.5
       },
       "topRight": {
-        "x": 83.75,
-        "y": 507
+        "x": 84,
+        "y": 508.5
       }
     },
     "name": "issue-14-regression.png",
@@ -22763,25 +24214,73 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/issue-32-regression.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      119,
+      120,
+      112,
+      58,
+      47,
+      47,
+      102,
+      50,
+      102,
+      48,
+      45,
+      49,
+      68,
+      76,
+      111,
+      114,
+      65,
+      109,
+      67,
+      71,
+      87,
+      48,
+      109,
+      53,
+      81,
+      110,
+      83,
+      66,
+      110,
+      101,
+      120,
+      70,
+      65,
+      122,
+      83,
+      115,
+      48,
+      83,
+      106,
+      84,
+      84,
+      103
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/issue-32-regression.png",
     "inputPath": "test-data/images/issue-32-regression.png",
     "location": {
-      "bottomLeft": {
-        "x": 785.75,
-        "y": 746
+      "alignmentPattern": {
+        "x": 495.75,
+        "y": 831
       },
+      "bottomLeft": {
+        "x": 333.5,
+        "y": 727.5
+      },
+      "dimension": 37,
       "topLeft": {
-        "x": 780.25,
-        "y": 755.5
+        "x": 466.75,
+        "y": 563
       },
       "topRight": {
-        "x": 232.5,
-        "y": 619.5
+        "x": 633.5,
+        "y": 692.5
       }
     },
     "name": "issue-32-regression.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/issue-34-regression.png",
@@ -22890,17 +24389,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/issue-34-regression.png",
     "inputPath": "test-data/images/issue-34-regression.png",
     "location": {
+      "alignmentPattern": {
+        "x": 378.5,
+        "y": 378.5
+      },
       "bottomLeft": {
         "x": 49.5,
-        "y": 399
+        "y": 399.5
       },
+      "dimension": 57,
       "topLeft": {
         "x": 49.5,
-        "y": 49
+        "y": 49.5
       },
       "topRight": {
         "x": 399.5,
-        "y": 49
+        "y": 49.5
       }
     },
     "name": "issue-34-regression.png",
@@ -22909,20 +24413,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/japan-visa.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/japan-visa.png",
     "inputPath": "test-data/images/japan-visa.png",
     "location": {
-      "bottomLeft": {
-        "x": 279,
-        "y": 345.5
+      "alignmentPattern": {
+        "x": 187.5,
+        "y": 342
       },
-      "topLeft": {
+      "bottomLeft": {
         "x": 178,
-        "y": 247
+        "y": 247.5
+      },
+      "dimension": 47,
+      "topLeft": {
+        "x": 277.75,
+        "y": 244.5
       },
       "topRight": {
-        "x": 10.25,
-        "y": 32
+        "x": 280.5,
+        "y": 346.5
       }
     },
     "name": "japan-visa.png",
@@ -22934,17 +24443,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/japanese-jean-ad.png",
     "inputPath": "test-data/images/japanese-jean-ad.png",
     "location": {
+      "alignmentPattern": {
+        "x": 388.75,
+        "y": 338
+      },
       "bottomLeft": {
         "x": 340.25,
         "y": 344
       },
+      "dimension": 45,
       "topLeft": {
         "x": 342,
-        "y": 271
+        "y": 271.5
       },
       "topRight": {
         "x": 394,
-        "y": 274
+        "y": 274.5
       }
     },
     "name": "japanese-jean-ad.png",
@@ -22956,17 +24470,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/key-flyer.png",
     "inputPath": "test-data/images/key-flyer.png",
     "location": {
+      "alignmentPattern": {
+        "x": 605,
+        "y": 268
+      },
       "bottomLeft": {
         "x": 416,
-        "y": 221.5
+        "y": 222
       },
+      "dimension": 61,
       "topLeft": {
         "x": 454.75,
-        "y": 50
+        "y": 50.5
       },
       "topRight": {
         "x": 657.25,
-        "y": 101.5
+        "y": 102
       }
     },
     "name": "key-flyer.png",
@@ -23004,17 +24523,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/museum-1.png",
     "inputPath": "test-data/images/museum-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 667.5,
+        "y": 413
+      },
       "bottomLeft": {
         "x": 615,
-        "y": 424
+        "y": 424.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 613.25,
-        "y": 362.5
+        "y": 363
       },
       "topRight": {
         "x": 676,
-        "y": 360.5
+        "y": 361
       }
     },
     "name": "museum-1.png",
@@ -23023,20 +24547,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/museum-2.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/museum-2.png",
     "inputPath": "test-data/images/museum-2.png",
     "location": {
-      "bottomLeft": {
-        "x": 619,
-        "y": 518
+      "alignmentPattern": {
+        "x": 398.25,
+        "y": 691.5
       },
+      "bottomLeft": {
+        "x": 517.75,
+        "y": 616.5
+      },
+      "dimension": 105,
       "topLeft": {
-        "x": 615.5,
-        "y": 532
+        "x": 219.25,
+        "y": 703.5
       },
       "topRight": {
-        "x": 583.75,
-        "y": 540.5
+        "x": 166,
+        "y": 702
       }
     },
     "name": "museum-2.png",
@@ -23074,17 +24603,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/paper-flyer.png",
     "inputPath": "test-data/images/paper-flyer.png",
     "location": {
+      "alignmentPattern": {
+        "x": 301.75,
+        "y": 646.5
+      },
       "bottomLeft": {
         "x": 256.5,
-        "y": 651.5
+        "y": 652
       },
+      "dimension": 25,
       "topLeft": {
         "x": 257.25,
-        "y": 598
+        "y": 598.5
       },
       "topRight": {
         "x": 312.5,
-        "y": 601.5
+        "y": 602
       }
     },
     "name": "paper-flyer.png",
@@ -23092,25 +24626,56 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/pepsi-bottle.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      119,
+      97,
+      112,
+      46,
+      112,
+      101,
+      112,
+      115,
+      105,
+      46,
+      99,
+      111,
+      46,
+      117,
+      107,
+      47,
+      114,
+      53
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/pepsi-bottle.png",
     "inputPath": "test-data/images/pepsi-bottle.png",
     "location": {
+      "alignmentPattern": {
+        "x": 321.25,
+        "y": 473
+      },
       "bottomLeft": {
         "x": 279.5,
-        "y": 478.5
+        "y": 479
       },
+      "dimension": 25,
       "topLeft": {
         "x": 280.75,
-        "y": 428.5
+        "y": 429
       },
       "topRight": {
         "x": 330.5,
-        "y": 430
+        "y": 430.5
       }
     },
     "name": "pepsi-bottle.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/ring.png",
@@ -23147,17 +24712,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/ring.png",
     "inputPath": "test-data/images/ring.png",
     "location": {
+      "alignmentPattern": {
+        "x": 465.75,
+        "y": 302.5
+      },
       "bottomLeft": {
         "x": 415.25,
-        "y": 406
+        "y": 406.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 310.5,
-        "y": 356.5
+        "y": 357
       },
       "topRight": {
         "x": 391.75,
-        "y": 238
+        "y": 238.5
       }
     },
     "name": "ring.png",
@@ -23208,17 +24778,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/schiller-denkmal.png",
     "inputPath": "test-data/images/schiller-denkmal.png",
     "location": {
+      "alignmentPattern": {
+        "x": 621.5,
+        "y": 333.5
+      },
       "bottomLeft": {
         "x": 536.25,
-        "y": 343
+        "y": 343.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 536,
-        "y": 260
+        "y": 260.5
       },
       "topRight": {
         "x": 631.75,
-        "y": 260
+        "y": 260.5
       }
     },
     "name": "schiller-denkmal.png",
@@ -23230,17 +24805,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/school-flyer.png",
     "inputPath": "test-data/images/school-flyer.png",
     "location": {
-      "bottomLeft": {
-        "x": 24.5,
-        "y": 494
+      "alignmentPattern": {
+        "x": 180,
+        "y": 91.5
       },
+      "bottomLeft": {
+        "x": 699.25,
+        "y": 35.5
+      },
+      "dimension": 229,
       "topLeft": {
-        "x": 245,
-        "y": 462
+        "x": 708.75,
+        "y": 223
       },
       "topRight": {
-        "x": 263.75,
-        "y": 532
+        "x": 175.5,
+        "y": 271.5
       }
     },
     "name": "school-flyer.png",
@@ -23248,25 +24828,51 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/sd-card-1.png",
-    "decodedBytes": null,
-    "extractedPath": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      105,
+      102,
+      46,
+      103,
+      115,
+      47,
+      49,
+      66,
+      71,
+      73,
+      74,
+      51,
+      55
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/sd-card-1.png",
     "inputPath": "test-data/images/sd-card-1.png",
     "location": {
-      "bottomLeft": {
-        "x": 108.75,
-        "y": 200
+      "alignmentPattern": {
+        "x": 368.5,
+        "y": 269
       },
+      "bottomLeft": {
+        "x": 300.25,
+        "y": 362.5
+      },
+      "dimension": 25,
       "topLeft": {
-        "x": 153,
-        "y": 163
+        "x": 208.75,
+        "y": 261.5
       },
       "topRight": {
-        "x": 186,
-        "y": 174
+        "x": 309.75,
+        "y": 170
       }
     },
     "name": "sd-card-1.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/sd-card-2.png",
@@ -23295,17 +24901,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/sd-card-2.png",
     "inputPath": "test-data/images/sd-card-2.png",
     "location": {
+      "alignmentPattern": {
+        "x": 288.5,
+        "y": 255.5
+      },
       "bottomLeft": {
         "x": 228.75,
-        "y": 265
+        "y": 265.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 231.75,
-        "y": 204.5
+        "y": 205
       },
       "topRight": {
         "x": 301.75,
-        "y": 205
+        "y": 205.5
       }
     },
     "name": "sd-card-2.png",
@@ -23317,17 +24928,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/sheep.png",
     "inputPath": "test-data/images/sheep.png",
     "location": {
+      "alignmentPattern": {
+        "x": 91.36329309556386,
+        "y": 97.46067164378331
+      },
       "bottomLeft": {
         "x": 68.75,
-        "y": 102.5
+        "y": 103
       },
+      "dimension": 21,
       "topLeft": {
         "x": 69.25,
-        "y": 77
+        "y": 77.5
       },
       "topRight": {
         "x": 98,
-        "y": 77
+        "y": 77.5
       }
     },
     "name": "sheep.png",
@@ -23339,17 +24955,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/sidewalk.png",
     "inputPath": "test-data/images/sidewalk.png",
     "location": {
+      "alignmentPattern": {
+        "x": 146.24003817436943,
+        "y": 85.90647432317306
+      },
       "bottomLeft": {
-        "x": 134.25,
+        "x": 91.25,
+        "y": 88
+      },
+      "dimension": 19,
+      "topLeft": {
+        "x": 135,
         "y": 76
       },
-      "topLeft": {
-        "x": 193.5,
-        "y": 76.5
-      },
       "topRight": {
-        "x": 232.75,
-        "y": 102.5
+        "x": 193.5,
+        "y": 77
       }
     },
     "name": "sidewalk.png",
@@ -23380,17 +25001,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/square-des-fusilles.png",
     "inputPath": "test-data/images/square-des-fusilles.png",
     "location": {
+      "alignmentPattern": {
+        "x": 620.25,
+        "y": 341
+      },
       "bottomLeft": {
         "x": 551.25,
-        "y": 354
+        "y": 354.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 551,
-        "y": 272
+        "y": 272.5
       },
       "topRight": {
         "x": 633.5,
-        "y": 271.5
+        "y": 272
       }
     },
     "name": "square-des-fusilles.png",
@@ -23399,20 +25025,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/starbucks-app.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/starbucks-app.png",
     "inputPath": "test-data/images/starbucks-app.png",
     "location": {
-      "bottomLeft": {
-        "x": 426.5,
-        "y": 188.5
+      "alignmentPattern": {
+        "x": 399.25,
+        "y": 239.5
       },
+      "bottomLeft": {
+        "x": 330.75,
+        "y": 256.5
+      },
+      "dimension": 23,
       "topLeft": {
-        "x": 390.25,
-        "y": 202
+        "x": 328.75,
+        "y": 189
       },
       "topRight": {
-        "x": 328.75,
-        "y": 188.5
+        "x": 426.5,
+        "y": 189
       }
     },
     "name": "starbucks-app.png",
@@ -23461,17 +25092,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-1.png",
     "inputPath": "test-data/images/stickerbook-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 425.75,
+        "y": 330
+      },
       "bottomLeft": {
         "x": 389.75,
-        "y": 347.5
+        "y": 348
       },
+      "dimension": 29,
       "topLeft": {
         "x": 368.75,
-        "y": 306.5
+        "y": 307
       },
       "topRight": {
         "x": 412.75,
-        "y": 293
+        "y": 293.5
       }
     },
     "name": "stickerbook-1.png",
@@ -23520,17 +25156,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-2.png",
     "inputPath": "test-data/images/stickerbook-2.png",
     "location": {
+      "alignmentPattern": {
+        "x": 338.25,
+        "y": 362.5
+      },
       "bottomLeft": {
         "x": 298.75,
-        "y": 382
+        "y": 382.5
       },
+      "dimension": 29,
       "topLeft": {
         "x": 279.25,
-        "y": 339
+        "y": 339.5
       },
       "topRight": {
         "x": 327.25,
-        "y": 323.5
+        "y": 324
       }
     },
     "name": "stickerbook-2.png",
@@ -23538,47 +25179,131 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-3.png",
-    "decodedBytes": null,
-    "extractedPath": null,
+    "decodedBytes": [
+      68,
+      97,
+      110,
+      32,
+      66,
+      117,
+      114,
+      122,
+      121,
+      110,
+      115,
+      107,
+      105,
+      32,
+      60,
+      99,
+      111,
+      110,
+      116,
+      97,
+      120,
+      64,
+      112,
+      104,
+      114,
+      101,
+      110,
+      101,
+      116,
+      105,
+      99,
+      46,
+      111,
+      114,
+      103,
+      62
+    ],
+    "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-3.png",
     "inputPath": "test-data/images/stickerbook-3.png",
     "location": {
+      "alignmentPattern": {
+        "x": 251.25,
+        "y": 394
+      },
       "bottomLeft": {
         "x": 208.5,
-        "y": 414.5
+        "y": 415
       },
+      "dimension": 29,
       "topLeft": {
         "x": 192.5,
-        "y": 368
+        "y": 368.5
       },
       "topRight": {
-        "x": 241.5,
-        "y": 352
+        "x": 242.75,
+        "y": 353
       }
     },
     "name": "stickerbook-3.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-4.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      68,
+      97,
+      110,
+      32,
+      66,
+      117,
+      114,
+      122,
+      121,
+      110,
+      115,
+      107,
+      105,
+      32,
+      60,
+      99,
+      111,
+      110,
+      116,
+      97,
+      120,
+      64,
+      112,
+      104,
+      114,
+      101,
+      110,
+      101,
+      116,
+      105,
+      99,
+      46,
+      111,
+      114,
+      103,
+      62
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-4.png",
     "inputPath": "test-data/images/stickerbook-4.png",
     "location": {
+      "alignmentPattern": {
+        "x": 391.5,
+        "y": 266
+      },
       "bottomLeft": {
         "x": 357,
-        "y": 281.5
+        "y": 282
       },
+      "dimension": 29,
       "topLeft": {
-        "x": 339.75,
+        "x": 338.25,
         "y": 245
       },
       "topRight": {
-        "x": 378.75,
-        "y": 233
+        "x": 380.25,
+        "y": 234
       }
     },
     "name": "stickerbook-4.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-5.png",
@@ -23623,17 +25348,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-5.png",
     "inputPath": "test-data/images/stickerbook-5.png",
     "location": {
+      "alignmentPattern": {
+        "x": 309.25,
+        "y": 291
+      },
       "bottomLeft": {
         "x": 271.5,
-        "y": 307.5
+        "y": 308
       },
+      "dimension": 29,
       "topLeft": {
-        "x": 256.25,
+        "x": 255,
         "y": 269
       },
       "topRight": {
         "x": 300,
-        "y": 255.5
+        "y": 256
       }
     },
     "name": "stickerbook-5.png",
@@ -23642,20 +25372,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/stickerbook-6.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/stickerbook-6.png",
     "inputPath": "test-data/images/stickerbook-6.png",
     "location": {
+      "alignmentPattern": {
+        "x": 215,
+        "y": 316
+      },
       "bottomLeft": {
         "x": 174.5,
-        "y": 330.5
+        "y": 331
       },
+      "dimension": 27,
       "topLeft": {
         "x": 160.75,
-        "y": 293.5
+        "y": 294
       },
       "topRight": {
         "x": 206,
-        "y": 280.5
+        "y": 281
       }
     },
     "name": "stickerbook-6.png",
@@ -23667,16 +25402,21 @@
     "extractedPath": "test-data/AUTOGEN/extracted/subway-station.png",
     "inputPath": "test-data/images/subway-station.png",
     "location": {
-      "bottomLeft": {
-        "x": 571.75,
-        "y": 333.5
+      "alignmentPattern": {
+        "x": 285.75,
+        "y": 229
       },
+      "bottomLeft": {
+        "x": 217,
+        "y": 86.5
+      },
+      "dimension": 29,
       "topLeft": {
-        "x": 527,
-        "y": 332
+        "x": 335.25,
+        "y": 87
       },
       "topRight": {
-        "x": 399,
+        "x": 397.5,
         "y": 222.5
       }
     },
@@ -23715,17 +25455,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/tattoo-scan.png",
     "inputPath": "test-data/images/tattoo-scan.png",
     "location": {
+      "alignmentPattern": {
+        "x": 197,
+        "y": 150.5
+      },
       "bottomLeft": {
         "x": 139,
-        "y": 164.5
+        "y": 165
       },
+      "dimension": 29,
       "topLeft": {
         "x": 134.5,
-        "y": 98
+        "y": 98.5
       },
       "topRight": {
         "x": 201.5,
-        "y": 92
+        "y": 92.5
       }
     },
     "name": "tattoo-scan.png",
@@ -23737,17 +25482,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-1.png",
     "inputPath": "test-data/images/trackable-book-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 426.5,
+        "y": 153.5
+      },
       "bottomLeft": {
         "x": 457,
-        "y": 168
+        "y": 168.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 411.5,
-        "y": 206
+        "y": 206.5
       },
       "topRight": {
         "x": 399.5,
-        "y": 149.5
+        "y": 150
       }
     },
     "name": "trackable-book-1.png",
@@ -23756,20 +25506,25 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-2.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-2.png",
     "inputPath": "test-data/images/trackable-book-2.png",
     "location": {
-      "bottomLeft": {
-        "x": 288,
-        "y": 315.5
+      "alignmentPattern": {
+        "x": 274.6846204849511,
+        "y": 286.59231143500006
       },
+      "bottomLeft": {
+        "x": 282,
+        "y": 267.5
+      },
+      "dimension": 13,
       "topLeft": {
-        "x": 273.25,
-        "y": 309.5
+        "x": 295,
+        "y": 301.5
       },
       "topRight": {
-        "x": 282,
-        "y": 267
+        "x": 273.25,
+        "y": 310
       }
     },
     "name": "trackable-book-2.png",
@@ -23777,25 +25532,51 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-3.png",
-    "decodedBytes": null,
+    "decodedBytes": [
+      104,
+      116,
+      116,
+      112,
+      58,
+      47,
+      47,
+      105,
+      102,
+      46,
+      103,
+      115,
+      47,
+      49,
+      80,
+      71,
+      50,
+      82,
+      57,
+      67
+    ],
     "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-3.png",
     "inputPath": "test-data/images/trackable-book-3.png",
     "location": {
+      "alignmentPattern": {
+        "x": 181,
+        "y": 269.5
+      },
       "bottomLeft": {
         "x": 135,
-        "y": 258.5
+        "y": 259
       },
+      "dimension": 25,
       "topLeft": {
         "x": 146,
-        "y": 216.5
+        "y": 217
       },
       "topRight": {
         "x": 198,
-        "y": 237.5
+        "y": 238
       }
     },
     "name": "trackable-book-3.png",
-    "successful": false
+    "successful": true
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/trackable-book-4.png",
@@ -23803,17 +25584,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-4.png",
     "inputPath": "test-data/images/trackable-book-4.png",
     "location": {
+      "alignmentPattern": {
+        "x": 428.830686572787,
+        "y": 468.0645373163096
+      },
       "bottomLeft": {
         "x": 390.25,
-        "y": 474.5
+        "y": 475
       },
+      "dimension": 21,
       "topLeft": {
-        "x": 441.75,
-        "y": 447.5
+        "x": 394.5,
+        "y": 450.5
       },
       "topRight": {
-        "x": 597.75,
-        "y": 409
+        "x": 441.75,
+        "y": 448
       }
     },
     "name": "trackable-book-4.png",
@@ -23846,17 +25632,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-5.png",
     "inputPath": "test-data/images/trackable-book-5.png",
     "location": {
+      "alignmentPattern": {
+        "x": 297.25,
+        "y": 431.5
+      },
       "bottomLeft": {
         "x": 252,
-        "y": 423
+        "y": 423.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 259,
-        "y": 376.5
+        "y": 377
       },
       "topRight": {
         "x": 310.5,
-        "y": 396
+        "y": 396.5
       }
     },
     "name": "trackable-book-5.png",
@@ -23889,17 +25680,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/trackable-book-6.png",
     "inputPath": "test-data/images/trackable-book-6.png",
     "location": {
+      "alignmentPattern": {
+        "x": 154.75,
+        "y": 377.5
+      },
       "bottomLeft": {
         "x": 105.25,
-        "y": 368
+        "y": 368.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 117.25,
-        "y": 320.5
+        "y": 321
       },
       "topRight": {
         "x": 172.5,
-        "y": 341.5
+        "y": 342
       }
     },
     "name": "trackable-book-6.png",
@@ -23943,17 +25739,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/tree-1.png",
     "inputPath": "test-data/images/tree-1.png",
     "location": {
+      "alignmentPattern": {
+        "x": 335.75,
+        "y": 442.5
+      },
       "bottomLeft": {
         "x": 281.75,
-        "y": 449
+        "y": 449.5
       },
+      "dimension": 25,
       "topLeft": {
         "x": 286,
-        "y": 385.5
+        "y": 386
       },
       "topRight": {
         "x": 349.75,
-        "y": 390
+        "y": 390.5
       }
     },
     "name": "tree-1.png",
@@ -23997,17 +25798,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/tree-2.png",
     "inputPath": "test-data/images/tree-2.png",
     "location": {
+      "alignmentPattern": {
+        "x": 442.25,
+        "y": 227.5
+      },
       "bottomLeft": {
         "x": 449.75,
-        "y": 280.5
+        "y": 281
       },
+      "dimension": 25,
       "topLeft": {
         "x": 385.75,
-        "y": 276.5
+        "y": 277
       },
       "topRight": {
         "x": 390.25,
-        "y": 212.5
+        "y": 213
       }
     },
     "name": "tree-2.png",
@@ -24015,300 +25821,30 @@
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/videogame-frame.png",
-    "decodedBytes": [
-      45,
-      32,
-      67,
-      111,
-      110,
-      103,
-      114,
-      97,
-      116,
-      117,
-      108,
-      97,
-      116,
-      105,
-      111,
-      110,
-      115,
-      33,
-      32,
-      89,
-      111,
-      117,
-      32,
-      115,
-      117,
-      99,
-      99,
-      101,
-      115,
-      115,
-      102,
-      117,
-      108,
-      108,
-      121,
-      32,
-      105,
-      100,
-      101,
-      110,
-      116,
-      105,
-      102,
-      105,
-      101,
-      100,
-      32,
-      97,
-      110,
-      100,
-      32,
-      115,
-      99,
-      97,
-      110,
-      110,
-      101,
-      100,
-      32,
-      97,
-      32,
-      81,
-      82,
-      32,
-      99,
-      111,
-      100,
-      101,
-      33,
-      32,
-      71,
-      114,
-      101,
-      97,
-      116,
-      32,
-      74,
-      111,
-      98,
-      33,
-      10,
-      10,
-      45,
-      32,
-      70,
-      195,
-      169,
-      108,
-      105,
-      99,
-      105,
-      116,
-      97,
-      116,
-      105,
-      111,
-      110,
-      115,
-      33,
-      32,
-      81,
-      82,
-      32,
-      67,
-      111,
-      100,
-      101,
-      32,
-      78,
-      117,
-      109,
-      195,
-      169,
-      114,
-      105,
-      115,
-      195,
-      169,
-      101,
-      115,
-      33,
-      10,
-      10,
-      45,
-      32,
-      67,
-      111,
-      110,
-      103,
-      114,
-      97,
-      116,
-      117,
-      108,
-      97,
-      122,
-      105,
-      111,
-      110,
-      105,
-      33,
-      32,
-      67,
-      111,
-      100,
-      105,
-      99,
-      101,
-      32,
-      97,
-      32,
-      98,
-      97,
-      114,
-      114,
-      101,
-      32,
-      83,
-      99,
-      97,
-      110,
-      115,
-      105,
-      111,
-      110,
-      97,
-      116,
-      105,
-      33,
-      10,
-      10,
-      45,
-      32,
-      71,
-      108,
-      195,
-      188,
-      99,
-      107,
-      119,
-      195,
-      188,
-      110,
-      115,
-      99,
-      104,
-      101,
-      33,
-      32,
-      81,
-      82,
-      32,
-      67,
-      111,
-      100,
-      101,
-      32,
-      71,
-      101,
-      115,
-      99,
-      97,
-      110,
-      110,
-      116,
-      33,
-      10,
-      10,
-      45,
-      32,
-      194,
-      161,
-      70,
-      101,
-      108,
-      105,
-      99,
-      105,
-      100,
-      97,
-      100,
-      101,
-      115,
-      33,
-      32,
-      194,
-      161,
-      67,
-      195,
-      179,
-      100,
-      105,
-      103,
-      111,
-      32,
-      81,
-      82,
-      32,
-      69,
-      226,
-      128,
-      139,
-      101,
-      115,
-      99,
-      97,
-      110,
-      101,
-      97,
-      100,
-      111,
-      115,
-      33,
-      10,
-      10,
-      60,
-      51,
-      32,
-      68,
-      114,
-      105,
-      110,
-      107,
-      98,
-      111,
-      120,
-      32,
-      83,
-      116,
-      117,
-      100,
-      105,
-      111,
-      115
-    ],
+    "decodedBytes": null,
     "extractedPath": "test-data/AUTOGEN/extracted/videogame-frame.png",
     "inputPath": "test-data/images/videogame-frame.png",
     "location": {
-      "bottomLeft": {
-        "x": 182.75,
-        "y": 314.5
+      "alignmentPattern": {
+        "x": 301,
+        "y": 8.5
       },
+      "bottomLeft": {
+        "x": 502.5,
+        "y": 1.5
+      },
+      "dimension": 53,
       "topLeft": {
-        "x": 170.5,
-        "y": 101.5
+        "x": 381,
+        "y": 91
       },
       "topRight": {
-        "x": 381,
-        "y": 90.5
+        "x": 170.5,
+        "y": 102
       }
     },
     "name": "videogame-frame.png",
-    "successful": true
+    "successful": false
   },
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/weekend-tirana-2016-agenda.png",
@@ -24390,17 +25926,22 @@
     "extractedPath": "test-data/AUTOGEN/extracted/weekend-tirana-2016-agenda.png",
     "inputPath": "test-data/images/weekend-tirana-2016-agenda.png",
     "location": {
+      "alignmentPattern": {
+        "x": 472,
+        "y": 331
+      },
       "bottomLeft": {
         "x": 361.25,
-        "y": 362
+        "y": 362.5
       },
+      "dimension": 33,
       "topLeft": {
         "x": 355.75,
-        "y": 207.5
+        "y": 208
       },
       "topRight": {
         "x": 482.75,
-        "y": 206.5
+        "y": 207
       }
     },
     "name": "weekend-tirana-2016-agenda.png",
@@ -24409,19 +25950,24 @@
   {
     "binarizedPath": "test-data/AUTOGEN/binarized/windows-screenshot.png",
     "decodedBytes": null,
-    "extractedPath": null,
+    "extractedPath": "test-data/AUTOGEN/extracted/windows-screenshot.png",
     "inputPath": "test-data/images/windows-screenshot.png",
     "location": {
+      "alignmentPattern": {
+        "x": 106.5,
+        "y": 58.5
+      },
       "bottomLeft": {
         "x": 191.5,
-        "y": 54
+        "y": 54.5
       },
+      "dimension": 43,
       "topLeft": {
         "x": 189,
-        "y": 145.5
+        "y": 146
       },
       "topRight": {
-        "x": 95.75,
+        "x": 94,
         "y": 143
       }
     },
