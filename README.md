@@ -65,9 +65,6 @@ If a QR is able to be decoded the library will return an object with the followi
   - If the `encodingType` is `numeric` then a number.
   - If the `encodingType` is `alphanumeric` or `kanji` then a string.
   - Does not exist for all other encoding types.
-- `errorRate` - A `number` between 0 and 1 indicating how the error correction rate during decoding.
-0 indicates a QR code that was perfectly read.
-In practice will never be 1 since a QR code with 100% error rate wouldn't be possible to decode.
 - `location` - An object with keys describing key points of the QR code. Each key is a point of the form `{x: number, y: number}`.
 Has points for the following locations.
   - Corners - `topRightCorner`/`topLeftCorner`/`bottomRightCorner`/`bottomLeftCorner`;

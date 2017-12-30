@@ -326,7 +326,7 @@ export function decode(matrix: BitMatrix): Uint8ClampedArray {
   if (matrix == null) {
     return null;
   }
-  let result = decodeMatrix(matrix);
+  const result = decodeMatrix(matrix);
   if (result) {
     return result;
   }
@@ -338,10 +338,6 @@ export function decode(matrix: BitMatrix): Uint8ClampedArray {
         matrix.set(y, x, !matrix.get(y, x));
       }
     }
-  }
-  result = decodeMatrix(matrix);
-  if (!result) {
-    return null;
   }
   return decodeMatrix(matrix);
 }

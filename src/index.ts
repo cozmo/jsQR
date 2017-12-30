@@ -1,5 +1,5 @@
-import {BitMatrix} from "./BitMatrix";
 import {binarize} from "./binarizer";
+import {BitMatrix} from "./BitMatrix";
 import {decode} from "./decoder/decoder";
 import {extract} from "./extractor";
 import {locate, Point} from "./locator";
@@ -26,14 +26,12 @@ export interface QRInfo {
 
     bottomRightAlignmentPattern?: Point;
   };
-
-  errorRate: number; // TODO is this the right field name?
 }
 
 export interface NumericCode extends QRInfo {
   data: number;
   encodingType: "numeric";
-};
+}
 
 export interface AlphaNumericCode extends QRInfo {
   encodingType: "alphanumeric" | "kanji" | "TODO";
@@ -77,7 +75,5 @@ export default function x(data: Uint8ClampedArray, width: number, height: number
 
       bottomRightAlignmentPattern: location.alignmentPattern,
     },
-
-    errorRate: 0, // TODO
   };
 }
