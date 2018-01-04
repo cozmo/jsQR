@@ -1,1 +1,1 @@
-export declare function decode(bytes: number[], twoS: number): Uint8ClampedArray | null;
+export declare function decode(bytes: number[], twoS: number): Uint8ClampedArray;

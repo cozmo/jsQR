@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -117,18 +117,217 @@ exports.BitMatrix = BitMatrix;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var binarizer_1 = __webpack_require__(2);
-var decoder_1 = __webpack_require__(3);
-var extractor_1 = __webpack_require__(8);
-var locator_1 = __webpack_require__(9);
-function byteArrayToString(bytes) {
-    var str = "";
-    for (var i = 0; i < bytes.length; i++) {
-        str += String.fromCharCode(bytes[i]);
-    }
-    return str;
+var GenericGFPoly_1 = __webpack_require__(2);
+function addOrSubtractGF(a, b) {
+    return a ^ b; // tslint:disable-line:no-bitwise
 }
-;
+exports.addOrSubtractGF = addOrSubtractGF;
+var GenericGF = /** @class */ (function () {
+    function GenericGF(primitive, size, genBase) {
+        this.primitive = primitive;
+        this.size = size;
+        this.generatorBase = genBase;
+        this.expTable = new Array(this.size);
+        this.logTable = new Array(this.size);
+        var x = 1;
+        for (var i = 0; i < this.size; i++) {
+            this.expTable[i] = x;
+            x = x * 2;
+            if (x >= this.size) {
+                x = (x ^ this.primitive) & (this.size - 1); // tslint:disable-line:no-bitwise
+            }
+        }
+        for (var i = 0; i < this.size - 1; i++) {
+            this.logTable[this.expTable[i]] = i;
+        }
+        this.zero = new GenericGFPoly_1.default(this, Uint8ClampedArray.from([0]));
+        this.one = new GenericGFPoly_1.default(this, Uint8ClampedArray.from([1]));
+    }
+    GenericGF.prototype.multiply = function (a, b) {
+        if (a === 0 || b === 0) {
+            return 0;
+        }
+        return this.expTable[(this.logTable[a] + this.logTable[b]) % (this.size - 1)];
+    };
+    GenericGF.prototype.inverse = function (a) {
+        if (a === 0) {
+            throw new Error("Can't invert 0");
+        }
+        return this.expTable[this.size - this.logTable[a] - 1];
+    };
+    GenericGF.prototype.buildMonomial = function (degree, coefficient) {
+        if (degree < 0) {
+            throw new Error("Invalid monomial degree less than 0");
+        }
+        if (coefficient === 0) {
+            return this.zero;
+        }
+        var coefficients = new Uint8ClampedArray(degree + 1);
+        coefficients[0] = coefficient;
+        return new GenericGFPoly_1.default(this, coefficients);
+    };
+    GenericGF.prototype.log = function (a) {
+        if (a === 0) {
+            throw new Error("Can't take log(0)");
+        }
+        return this.logTable[a];
+    };
+    GenericGF.prototype.exp = function (a) {
+        return this.expTable[a];
+    };
+    return GenericGF;
+}());
+exports.default = GenericGF;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var GenericGF_1 = __webpack_require__(1);
+var GenericGFPoly = /** @class */ (function () {
+    function GenericGFPoly(field, coefficients) {
+        if (coefficients.length === 0) {
+            throw new Error("No coefficients.");
+        }
+        this.field = field;
+        var coefficientsLength = coefficients.length;
+        if (coefficientsLength > 1 && coefficients[0] === 0) {
+            // Leading term must be non-zero for anything except the constant polynomial "0"
+            var firstNonZero = 1;
+            while (firstNonZero < coefficientsLength && coefficients[firstNonZero] === 0) {
+                firstNonZero++;
+            }
+            if (firstNonZero === coefficientsLength) {
+                this.coefficients = field.zero.coefficients;
+            }
+            else {
+                this.coefficients = new Uint8ClampedArray(coefficientsLength - firstNonZero);
+                for (var i = 0; i < this.coefficients.length; i++) {
+                    this.coefficients[i] = coefficients[firstNonZero + i];
+                }
+            }
+        }
+        else {
+            this.coefficients = coefficients;
+        }
+    }
+    GenericGFPoly.prototype.degree = function () {
+        return this.coefficients.length - 1;
+    };
+    GenericGFPoly.prototype.isZero = function () {
+        return this.coefficients[0] === 0;
+    };
+    GenericGFPoly.prototype.getCoefficient = function (degree) {
+        return this.coefficients[this.coefficients.length - 1 - degree];
+    };
+    GenericGFPoly.prototype.addOrSubtract = function (other) {
+        if (this.isZero()) {
+            return other;
+        }
+        if (other.isZero()) {
+            return this;
+        }
+        var smallerCoefficients = this.coefficients;
+        var largerCoefficients = other.coefficients;
+        if (smallerCoefficients.length > largerCoefficients.length) {
+            _a = [largerCoefficients, smallerCoefficients], smallerCoefficients = _a[0], largerCoefficients = _a[1];
+        }
+        var sumDiff = new Uint8ClampedArray(largerCoefficients.length);
+        var lengthDiff = largerCoefficients.length - smallerCoefficients.length;
+        for (var i = 0; i < lengthDiff; i++) {
+            sumDiff[i] = largerCoefficients[i];
+        }
+        for (var i = lengthDiff; i < largerCoefficients.length; i++) {
+            sumDiff[i] = GenericGF_1.addOrSubtractGF(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
+        }
+        return new GenericGFPoly(this.field, sumDiff);
+        var _a;
+    };
+    GenericGFPoly.prototype.multiply = function (scalar) {
+        if (scalar === 0) {
+            return this.field.zero;
+        }
+        if (scalar === 1) {
+            return this;
+        }
+        var size = this.coefficients.length;
+        var product = new Uint8ClampedArray(size);
+        for (var i = 0; i < size; i++) {
+            product[i] = this.field.multiply(this.coefficients[i], scalar);
+        }
+        return new GenericGFPoly(this.field, product);
+    };
+    GenericGFPoly.prototype.multiplyPoly = function (other) {
+        if (this.isZero() || other.isZero()) {
+            return this.field.zero;
+        }
+        var aCoefficients = this.coefficients;
+        var aLength = aCoefficients.length;
+        var bCoefficients = other.coefficients;
+        var bLength = bCoefficients.length;
+        var product = new Uint8ClampedArray(aLength + bLength - 1);
+        for (var i = 0; i < aLength; i++) {
+            var aCoeff = aCoefficients[i];
+            for (var j = 0; j < bLength; j++) {
+                product[i + j] = GenericGF_1.addOrSubtractGF(product[i + j], this.field.multiply(aCoeff, bCoefficients[j]));
+            }
+        }
+        return new GenericGFPoly(this.field, product);
+    };
+    GenericGFPoly.prototype.multiplyByMonomial = function (degree, coefficient) {
+        if (degree < 0) {
+            throw new Error("Invalid degree less than 0");
+        }
+        if (coefficient === 0) {
+            return this.field.zero;
+        }
+        var size = this.coefficients.length;
+        var product = new Uint8ClampedArray(size + degree);
+        for (var i = 0; i < size; i++) {
+            product[i] = this.field.multiply(this.coefficients[i], coefficient);
+        }
+        return new GenericGFPoly(this.field, product);
+    };
+    GenericGFPoly.prototype.evaluateAt = function (a) {
+        var result = 0;
+        if (a === 0) {
+            // Just return the x^0 coefficient
+            return this.getCoefficient(0);
+        }
+        var size = this.coefficients.length;
+        if (a === 1) {
+            // Just the sum of the coefficients
+            this.coefficients.forEach(function (coefficient) {
+                result = GenericGF_1.addOrSubtractGF(result, coefficient);
+            });
+            return result;
+        }
+        result = this.coefficients[0];
+        for (var i = 1; i < size; i++) {
+            result = GenericGF_1.addOrSubtractGF(this.field.multiply(a, result), this.coefficients[i]);
+        }
+        return result;
+    };
+    return GenericGFPoly;
+}());
+exports.default = GenericGFPoly;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var binarizer_1 = __webpack_require__(4);
+var decoder_1 = __webpack_require__(5);
+var extractor_1 = __webpack_require__(10);
+var locator_1 = __webpack_require__(11);
 function x(data, width, height) {
     var binarized = binarizer_1.binarize(data, width, height);
     var location = locator_1.locate(binarized);
@@ -140,11 +339,10 @@ function x(data, width, height) {
     if (!decoded) {
         return null;
     }
-    var decodedString = byteArrayToString(decoded);
     return {
-        binaryData: decoded,
-        encodingType: "TODO",
-        data: decodedString,
+        binaryData: decoded.bytes,
+        data: decoded.text,
+        chunks: decoded.chunks,
         location: {
             topRightCorner: extracted.mappingFunction(location.dimension, 0),
             topLeftCorner: extracted.mappingFunction(0, 0),
@@ -155,14 +353,13 @@ function x(data, width, height) {
             bottomLeftFinderPattern: location.bottomLeft,
             bottomRightAlignmentPattern: location.alignmentPattern,
         },
-        errorRate: 0,
     };
 }
 exports.default = x;
 
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -270,335 +467,258 @@ exports.binarize = binarize;
 
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var BitMatrix_1 = __webpack_require__(0);
-var decodeqrdata_1 = __webpack_require__(4);
-var reedsolomon_1 = __webpack_require__(6);
-var version_1 = __webpack_require__(7);
-var FORMAT_INFO_MASK_QR = 0x5412;
-var FORMAT_INFO_DECODE_LOOKUP = [
-    [0x5412, 0x00],
-    [0x5125, 0x01],
-    [0x5E7C, 0x02],
-    [0x5B4B, 0x03],
-    [0x45F9, 0x04],
-    [0x40CE, 0x05],
-    [0x4F97, 0x06],
-    [0x4AA0, 0x07],
-    [0x77C4, 0x08],
-    [0x72F3, 0x09],
-    [0x7DAA, 0x0A],
-    [0x789D, 0x0B],
-    [0x662F, 0x0C],
-    [0x6318, 0x0D],
-    [0x6C41, 0x0E],
-    [0x6976, 0x0F],
-    [0x1689, 0x10],
-    [0x13BE, 0x11],
-    [0x1CE7, 0x12],
-    [0x19D0, 0x13],
-    [0x0762, 0x14],
-    [0x0255, 0x15],
-    [0x0D0C, 0x16],
-    [0x083B, 0x17],
-    [0x355F, 0x18],
-    [0x3068, 0x19],
-    [0x3F31, 0x1A],
-    [0x3A06, 0x1B],
-    [0x24B4, 0x1C],
-    [0x2183, 0x1D],
-    [0x2EDA, 0x1E],
-    [0x2BED, 0x1F],
+var decodeData_1 = __webpack_require__(6);
+var reedsolomon_1 = __webpack_require__(8);
+var version_1 = __webpack_require__(9);
+// tslint:disable:no-bitwise
+function numBitsDiffering(x, y) {
+    var z = x ^ y;
+    var bitCount = 0;
+    while (z) {
+        bitCount++;
+        z &= z - 1;
+    }
+    return bitCount;
+}
+function pushBit(bit, byte) {
+    return (byte << 1) | bit;
+}
+// tslint:enable:no-bitwise
+var FORMAT_INFO_TABLE = [
+    { bits: 0x5412, formatInfo: { errorCorrectionLevel: 1, dataMask: 0 } },
+    { bits: 0x5125, formatInfo: { errorCorrectionLevel: 1, dataMask: 1 } },
+    { bits: 0x5E7C, formatInfo: { errorCorrectionLevel: 1, dataMask: 2 } },
+    { bits: 0x5B4B, formatInfo: { errorCorrectionLevel: 1, dataMask: 3 } },
+    { bits: 0x45F9, formatInfo: { errorCorrectionLevel: 1, dataMask: 4 } },
+    { bits: 0x40CE, formatInfo: { errorCorrectionLevel: 1, dataMask: 5 } },
+    { bits: 0x4F97, formatInfo: { errorCorrectionLevel: 1, dataMask: 6 } },
+    { bits: 0x4AA0, formatInfo: { errorCorrectionLevel: 1, dataMask: 7 } },
+    { bits: 0x77C4, formatInfo: { errorCorrectionLevel: 0, dataMask: 0 } },
+    { bits: 0x72F3, formatInfo: { errorCorrectionLevel: 0, dataMask: 1 } },
+    { bits: 0x7DAA, formatInfo: { errorCorrectionLevel: 0, dataMask: 2 } },
+    { bits: 0x789D, formatInfo: { errorCorrectionLevel: 0, dataMask: 3 } },
+    { bits: 0x662F, formatInfo: { errorCorrectionLevel: 0, dataMask: 4 } },
+    { bits: 0x6318, formatInfo: { errorCorrectionLevel: 0, dataMask: 5 } },
+    { bits: 0x6C41, formatInfo: { errorCorrectionLevel: 0, dataMask: 6 } },
+    { bits: 0x6976, formatInfo: { errorCorrectionLevel: 0, dataMask: 7 } },
+    { bits: 0x1689, formatInfo: { errorCorrectionLevel: 3, dataMask: 0 } },
+    { bits: 0x13BE, formatInfo: { errorCorrectionLevel: 3, dataMask: 1 } },
+    { bits: 0x1CE7, formatInfo: { errorCorrectionLevel: 3, dataMask: 2 } },
+    { bits: 0x19D0, formatInfo: { errorCorrectionLevel: 3, dataMask: 3 } },
+    { bits: 0x0762, formatInfo: { errorCorrectionLevel: 3, dataMask: 4 } },
+    { bits: 0x0255, formatInfo: { errorCorrectionLevel: 3, dataMask: 5 } },
+    { bits: 0x0D0C, formatInfo: { errorCorrectionLevel: 3, dataMask: 6 } },
+    { bits: 0x083B, formatInfo: { errorCorrectionLevel: 3, dataMask: 7 } },
+    { bits: 0x355F, formatInfo: { errorCorrectionLevel: 2, dataMask: 0 } },
+    { bits: 0x3068, formatInfo: { errorCorrectionLevel: 2, dataMask: 1 } },
+    { bits: 0x3F31, formatInfo: { errorCorrectionLevel: 2, dataMask: 2 } },
+    { bits: 0x3A06, formatInfo: { errorCorrectionLevel: 2, dataMask: 3 } },
+    { bits: 0x24B4, formatInfo: { errorCorrectionLevel: 2, dataMask: 4 } },
+    { bits: 0x2183, formatInfo: { errorCorrectionLevel: 2, dataMask: 5 } },
+    { bits: 0x2EDA, formatInfo: { errorCorrectionLevel: 2, dataMask: 6 } },
+    { bits: 0x2BED, formatInfo: { errorCorrectionLevel: 2, dataMask: 7 } },
 ];
 var DATA_MASKS = [
-    function (i, j) { return ((i + j) & 0x01) === 0; },
-    function (i, j) { return (i & 0x01) === 0; },
-    function (i, j) { return j % 3 == 0; },
-    function (i, j) { return (i + j) % 3 === 0; },
-    function (i, j) { return (((i >> 1) + (j / 3)) & 0x01) === 0; },
-    function (i, j) { return ((i * j) & 0x01) + ((i * j) % 3) === 0; },
-    function (i, j) { return ((((i * j) & 0x01) + ((i * j) % 3)) & 0x01) === 0; },
-    function (i, j) { return ((((i + j) & 0x01) + ((i * j) % 3)) & 0x01) === 0; },
+    function (p) { return ((p.y + p.x) % 2) === 0; },
+    function (p) { return (p.y % 2) === 0; },
+    function (p) { return p.x % 3 === 0; },
+    function (p) { return (p.y + p.x) % 3 === 0; },
+    function (p) { return (Math.floor(p.y / 2) + Math.floor(p.x / 3)) % 2 === 0; },
+    function (p) { return ((p.x * p.y) % 2) + ((p.x * p.y) % 3) === 0; },
+    function (p) { return ((((p.y * p.x) % 2) + (p.y * p.x) % 3) % 2) === 0; },
+    function (p) { return ((((p.y + p.x) % 2) + (p.y * p.x) % 3) % 2) === 0; },
 ];
-var ERROR_CORRECTION_LEVELS = [
-    { ordinal: 1, bits: 0x00, name: "M" },
-    { ordinal: 0, bits: 0x01, name: "L" },
-    { ordinal: 3, bits: 0x02, name: "H" },
-    { ordinal: 2, bits: 0x03, name: "Q" },
-];
-function copyBit(matrix, x, y, versionBits) {
-    return matrix.get(x, y) ? (versionBits << 1) | 0x1 : versionBits << 1;
-}
-function buildFunctionPattern(version) {
-    var dimension = version.getDimensionForVersion();
-    var emptyArray = new Uint8ClampedArray(dimension * dimension);
-    var bitMatrix = new BitMatrix_1.BitMatrix(emptyArray, dimension);
-    ///BitMatrix bitMatrix = new BitMatrix(dimension);
-    // Top left finder pattern + separator + format
-    bitMatrix.setRegion(0, 0, 9, 9, true);
-    // Top right finder pattern + separator + format
-    bitMatrix.setRegion(dimension - 8, 0, 8, 9, true);
-    // Bottom left finder pattern + separator + format
-    bitMatrix.setRegion(0, dimension - 8, 9, 8, true);
+function buildFunctionPatternMask(version) {
+    var dimension = 17 + 4 * version.versionNumber;
+    var matrix = BitMatrix_1.BitMatrix.createEmpty(dimension, dimension);
+    matrix.setRegion(0, 0, 9, 9, true); // Top left finder pattern + separator + format
+    matrix.setRegion(dimension - 8, 0, 8, 9, true); // Top right finder pattern + separator + format
+    matrix.setRegion(0, dimension - 8, 9, 8, true); // Bottom left finder pattern + separator + format
     // Alignment patterns
-    var max = version.alignmentPatternCenters.length;
-    for (var x = 0; x < max; x++) {
-        var i = version.alignmentPatternCenters[x] - 2;
-        for (var y = 0; y < max; y++) {
-            if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0)) {
-                // No alignment patterns near the three finder paterns
-                continue;
+    for (var _i = 0, _a = version.alignmentPatternCenters; _i < _a.length; _i++) {
+        var x = _a[_i];
+        for (var _b = 0, _c = version.alignmentPatternCenters; _b < _c.length; _b++) {
+            var y = _c[_b];
+            if (!(x === 6 && y === 6 || x === 6 && y === dimension - 7 || x === dimension - 7 && y === 6)) {
+                matrix.setRegion(x - 2, y - 2, 5, 5, true);
             }
-            bitMatrix.setRegion(version.alignmentPatternCenters[y] - 2, i, 5, 5, true);
         }
     }
-    // Vertical timing pattern
-    bitMatrix.setRegion(6, 9, 1, dimension - 17, true);
-    // Horizontal timing pattern
-    bitMatrix.setRegion(9, 6, dimension - 17, 1, true);
+    matrix.setRegion(6, 9, 1, dimension - 17, true); // Vertical timing pattern
+    matrix.setRegion(9, 6, dimension - 17, 1, true); // Horizontal timing pattern
     if (version.versionNumber > 6) {
-        // Version info, top right
-        bitMatrix.setRegion(dimension - 11, 0, 3, 6, true);
-        // Version info, bottom left
-        bitMatrix.setRegion(0, dimension - 11, 6, 3, true);
+        matrix.setRegion(dimension - 11, 0, 3, 6, true); // Version info, top right
+        matrix.setRegion(0, dimension - 11, 6, 3, true); // Version info, bottom left
     }
-    return bitMatrix;
+    return matrix;
 }
 function readCodewords(matrix, version, formatInfo) {
-    // Get the data mask for the format used in this QR Code. This will exclude
-    // some bits from reading as we wind through the bit matrix.
     var dataMask = DATA_MASKS[formatInfo.dataMask];
     var dimension = matrix.height;
-    var funcPattern = buildFunctionPattern(version);
-    var readingUp = true;
-    var result = [];
-    var resultOffset = 0;
+    var functionPatternMask = buildFunctionPatternMask(version);
+    var codewords = [];
     var currentByte = 0;
     var bitsRead = 0;
     // Read columns in pairs, from right to left
-    for (var j = dimension - 1; j > 0; j -= 2) {
-        if (j == 6) {
-            // Skip whole column with vertical alignment pattern;
-            // saves time and makes the other code proceed more cleanly
-            j--;
+    var readingUp = true;
+    for (var columnIndex = dimension - 1; columnIndex > 0; columnIndex -= 2) {
+        if (columnIndex === 6) {
+            columnIndex--;
         }
-        // Read alternatingly from bottom to top then top to bottom
-        for (var count = 0; count < dimension; count++) {
-            var i = readingUp ? dimension - 1 - count : count;
-            for (var col = 0; col < 2; col++) {
-                // Ignore bits covered by the function pattern
-                if (!funcPattern.get(j - col, i)) {
-                    // Read a bit
+        for (var i = 0; i < dimension; i++) {
+            var y = readingUp ? dimension - 1 - i : i;
+            for (var columnOffset = 0; columnOffset < 2; columnOffset++) {
+                var x = columnIndex - columnOffset;
+                if (!functionPatternMask.get(x, y)) {
                     bitsRead++;
-                    currentByte <<= 1;
-                    if (matrix.get(j - col, i) !== dataMask(i, j - col)) {
-                        currentByte |= 1;
+                    var bit = matrix.get(x, y);
+                    if (dataMask({ y: y, x: x })) {
+                        bit = !bit;
                     }
-                    // If we've made a whole byte, save it off
-                    if (bitsRead == 8) {
-                        result[resultOffset++] = currentByte & 0xFF;
+                    currentByte = pushBit(bit, currentByte);
+                    if (bitsRead === 8) {
+                        codewords.push(currentByte);
                         bitsRead = 0;
                         currentByte = 0;
                     }
                 }
             }
         }
-        readingUp = !readingUp; // switch directions
+        readingUp = !readingUp;
     }
-    if (resultOffset != version.totalCodewords) {
-        return null;
-    }
-    return result;
+    return codewords;
 }
 function readVersion(matrix) {
     var dimension = matrix.height;
-    var provisionalVersion = (dimension - 17) >> 2;
+    var provisionalVersion = Math.floor((dimension - 17) / 4);
     if (provisionalVersion <= 6) {
-        return version_1.getVersionForNumber(provisionalVersion);
+        return version_1.VERSIONS[provisionalVersion - 1];
     }
-    // Read top-right version info: 3 wide by 6 tall
-    var versionBits = 0;
-    var ijMin = dimension - 11;
-    for (var j = 5; j >= 0; j--) {
-        for (var i = dimension - 9; i >= ijMin; i--) {
-            versionBits = copyBit(matrix, i, j, versionBits);
+    var topRightVersionBits = 0;
+    for (var y = 5; y >= 0; y--) {
+        for (var x = dimension - 9; x >= dimension - 11; x--) {
+            topRightVersionBits = pushBit(matrix.get(x, y), topRightVersionBits);
         }
     }
-    var parsedVersion = version_1.Version.decodeVersionInformation(versionBits);
-    if (parsedVersion != null && parsedVersion.getDimensionForVersion() == dimension) {
-        return parsedVersion;
-    }
-    // Hmm, failed. Try bottom left: 6 wide by 3 tall
-    versionBits = 0;
-    for (var i = 5; i >= 0; i--) {
-        for (var j = dimension - 9; j >= ijMin; j--) {
-            versionBits = copyBit(matrix, i, j, versionBits);
+    var bottomLeftVersionBits = 0;
+    for (var x = 5; x >= 0; x--) {
+        for (var y = dimension - 9; y >= dimension - 11; y--) {
+            bottomLeftVersionBits = pushBit(matrix.get(x, y), bottomLeftVersionBits);
         }
     }
-    parsedVersion = version_1.Version.decodeVersionInformation(versionBits);
-    if (parsedVersion != null && parsedVersion.getDimensionForVersion() == dimension) {
-        return parsedVersion;
-    }
-    return null;
-}
-function newFormatInformation(formatInfo) {
-    return {
-        errorCorrectionLevel: ERROR_CORRECTION_LEVELS[(formatInfo >> 3) & 0x03],
-        dataMask: formatInfo & 0x07,
-    };
-}
-function doDecodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2) {
-    // Find the int in FORMAT_INFO_DECODE_LOOKUP with fewest bits differing
     var bestDifference = Infinity;
-    var bestFormatInfo = 0;
-    for (var i = 0; i < FORMAT_INFO_DECODE_LOOKUP.length; i++) {
-        var decodeInfo = FORMAT_INFO_DECODE_LOOKUP[i];
-        var targetInfo = decodeInfo[0];
-        if (targetInfo == maskedFormatInfo1 || targetInfo == maskedFormatInfo2) {
-            // Found an exact match
-            return newFormatInformation(decodeInfo[1]);
+    var bestVersion;
+    for (var _i = 0, VERSIONS_1 = version_1.VERSIONS; _i < VERSIONS_1.length; _i++) {
+        var version = VERSIONS_1[_i];
+        if (version.infoBits === topRightVersionBits || version.infoBits === bottomLeftVersionBits) {
+            return version;
         }
-        var bitsDifference = version_1.numBitsDiffering(maskedFormatInfo1, targetInfo);
-        if (bitsDifference < bestDifference) {
-            bestFormatInfo = decodeInfo[1];
-            bestDifference = bitsDifference;
+        var difference = numBitsDiffering(topRightVersionBits, version.infoBits);
+        if (difference < bestDifference) {
+            bestVersion = version;
+            bestDifference = difference;
         }
-        if (maskedFormatInfo1 != maskedFormatInfo2) {
-            // also try the other option
-            bitsDifference = version_1.numBitsDiffering(maskedFormatInfo2, targetInfo);
-            if (bitsDifference < bestDifference) {
-                bestFormatInfo = decodeInfo[1];
-                bestDifference = bitsDifference;
+        difference = numBitsDiffering(bottomLeftVersionBits, version.infoBits);
+        if (difference < bestDifference) {
+            bestVersion = version;
+            bestDifference = difference;
+        }
+    }
+    // We can tolerate up to 3 bits of error since no two version info codewords will
+    // differ in less than 8 bits.
+    if (bestDifference <= 3) {
+        return bestVersion;
+    }
+}
+function readFormatInformation(matrix) {
+    var topLeftFormatInfoBits = 0;
+    for (var x = 0; x <= 8; x++) {
+        if (x !== 6) {
+            topLeftFormatInfoBits = pushBit(matrix.get(x, 8), topLeftFormatInfoBits);
+        }
+    }
+    for (var y = 7; y >= 0; y--) {
+        if (y !== 6) {
+            topLeftFormatInfoBits = pushBit(matrix.get(8, y), topLeftFormatInfoBits);
+        }
+    }
+    var dimension = matrix.height;
+    var topRightBottomRightFormatInfoBits = 0;
+    for (var y = dimension - 1; y >= dimension - 7; y--) {
+        topRightBottomRightFormatInfoBits = pushBit(matrix.get(8, y), topRightBottomRightFormatInfoBits);
+    }
+    for (var x = dimension - 8; x < dimension; x++) {
+        topRightBottomRightFormatInfoBits = pushBit(matrix.get(x, 8), topRightBottomRightFormatInfoBits);
+    }
+    var bestDifference = Infinity;
+    var bestFormatInfo = null;
+    for (var _i = 0, FORMAT_INFO_TABLE_1 = FORMAT_INFO_TABLE; _i < FORMAT_INFO_TABLE_1.length; _i++) {
+        var _a = FORMAT_INFO_TABLE_1[_i], bits = _a.bits, formatInfo = _a.formatInfo;
+        if (bits === topLeftFormatInfoBits || bits === topRightBottomRightFormatInfoBits) {
+            return formatInfo;
+        }
+        var difference = numBitsDiffering(topLeftFormatInfoBits, bits);
+        if (difference < bestDifference) {
+            bestFormatInfo = formatInfo;
+            bestDifference = difference;
+        }
+        if (topLeftFormatInfoBits !== topRightBottomRightFormatInfoBits) {
+            difference = numBitsDiffering(topRightBottomRightFormatInfoBits, bits);
+            if (difference < bestDifference) {
+                bestFormatInfo = formatInfo;
+                bestDifference = difference;
             }
         }
     }
-    // Hamming distance of the 32 masked codes is 7, by construction, so <= 3 bits
-    // differing means we found a match
-    if (bestDifference <= 3)
-        return newFormatInformation(bestFormatInfo);
-    return null;
-}
-function decodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2) {
-    var formatInfo = doDecodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2);
-    if (formatInfo) {
-        return formatInfo;
-    }
-    // Should return null, but, some QR codes apparently
-    // do not mask this info. Try again by actually masking the pattern
-    // first
-    return doDecodeFormatInformation(maskedFormatInfo1 ^ FORMAT_INFO_MASK_QR, maskedFormatInfo2 ^ FORMAT_INFO_MASK_QR);
-}
-function readFormatInformation(matrix) {
-    // Read top-left format info bits
-    var formatInfoBits1 = 0;
-    for (var i = 0; i < 6; i++) {
-        formatInfoBits1 = copyBit(matrix, i, 8, formatInfoBits1);
-    }
-    // .. and skip a bit in the timing pattern ...
-    formatInfoBits1 = copyBit(matrix, 7, 8, formatInfoBits1);
-    formatInfoBits1 = copyBit(matrix, 8, 8, formatInfoBits1);
-    formatInfoBits1 = copyBit(matrix, 8, 7, formatInfoBits1);
-    // .. and skip a bit in the timing pattern ...
-    for (var j = 5; j >= 0; j--) {
-        formatInfoBits1 = copyBit(matrix, 8, j, formatInfoBits1);
-    }
-    // Read the top-right/bottom-left pattern too
-    var dimension = matrix.height;
-    var formatInfoBits2 = 0;
-    var jMin = dimension - 7;
-    for (var j = dimension - 1; j >= jMin; j--) {
-        formatInfoBits2 = copyBit(matrix, 8, j, formatInfoBits2);
-    }
-    for (var i = dimension - 8; i < dimension; i++) {
-        formatInfoBits2 = copyBit(matrix, i, 8, formatInfoBits2);
-    }
-    // parsedFormatInfo = FormatInformation.decodeFormatInformation(formatInfoBits1, formatInfoBits2);
-    var parsedFormatInfo = decodeFormatInformation(formatInfoBits1, formatInfoBits2);
-    if (parsedFormatInfo != null) {
-        return parsedFormatInfo;
+    // Hamming distance of the 32 masked codes is 7, by construction, so <= 3 bits differing means we found a match
+    if (bestDifference <= 3) {
+        return bestFormatInfo;
     }
     return null;
 }
-function getDataBlocks(rawCodewords, version, ecLevel) {
-    if (rawCodewords.length != version.totalCodewords) {
-        throw new Error("Invalid number of codewords for version; got " + rawCodewords.length + " expected " + version.totalCodewords);
-    }
-    // Figure out the number and size of data blocks used by this version and
-    // error correction level
-    var ecBlocks = version.getECBlocksForLevel(ecLevel);
-    // First count the total number of data blocks
-    var totalBlocks = 0;
-    var ecBlockArray = ecBlocks.ecBlocks;
-    ecBlockArray.forEach(function (ecBlock) {
-        totalBlocks += ecBlock.count;
-    });
-    // Now establish DataBlocks of the appropriate size and number of data codewords
-    var result = new Array(totalBlocks);
-    var numResultBlocks = 0;
-    ecBlockArray.forEach(function (ecBlock) {
-        for (var i = 0; i < ecBlock.count; i++) {
-            var numDataCodewords = ecBlock.dataCodewords;
-            var numBlockCodewords = ecBlocks.ecCodewordsPerBlock + numDataCodewords;
-            result[numResultBlocks++] = { numDataCodewords: numDataCodewords, codewords: new Array(numBlockCodewords) };
+function getDataBlocks(codewords, version, ecLevel) {
+    var ecInfo = version.errorCorrectionLevels[ecLevel];
+    var dataBlocks = [];
+    var totalCodewords = 0;
+    ecInfo.ecBlocks.forEach(function (block) {
+        for (var i = 0; i < block.numBlocks; i++) {
+            dataBlocks.push({ numDataCodewords: block.dataCodewordsPerBlock, codewords: [] });
+            totalCodewords += block.dataCodewordsPerBlock + ecInfo.ecCodewordsPerBlock;
         }
     });
-    // All blocks have the same amount of data, except that the last n
-    // (where n may be 0) have 1 more byte. Figure out where these start.
-    var shorterBlocksTotalCodewords = result[0].codewords.length;
-    var longerBlocksStartAt = result.length - 1;
-    while (longerBlocksStartAt >= 0) {
-        var numCodewords = result[longerBlocksStartAt].codewords.length;
-        if (numCodewords == shorterBlocksTotalCodewords) {
-            break;
-        }
-        longerBlocksStartAt--;
-    }
-    longerBlocksStartAt++;
-    var shorterBlocksNumDataCodewords = shorterBlocksTotalCodewords - ecBlocks.ecCodewordsPerBlock;
-    // The last elements of result may be 1 element longer;
-    // first fill out as many elements as all of them have
-    var rawCodewordsOffset = 0;
-    for (var i = 0; i < shorterBlocksNumDataCodewords; i++) {
-        for (var j = 0; j < numResultBlocks; j++) {
-            result[j].codewords[i] = rawCodewords[rawCodewordsOffset++];
+    // In some cases the QR code will be malformed enough that we pull off more codewords than we should - truncate that case
+    codewords = codewords.slice(0, totalCodewords);
+    var shortBlockSize = ecInfo.ecBlocks[0].dataCodewordsPerBlock;
+    // Pull codewords to fill the blocks up to the minimum size
+    for (var i = 0; i < shortBlockSize; i++) {
+        for (var _i = 0, dataBlocks_1 = dataBlocks; _i < dataBlocks_1.length; _i++) {
+            var dataBlock = dataBlocks_1[_i];
+            dataBlock.codewords.push(codewords.shift());
         }
     }
-    // Fill out the last data block in the longer ones
-    for (var j = longerBlocksStartAt; j < numResultBlocks; j++) {
-        result[j].codewords[shorterBlocksNumDataCodewords] = rawCodewords[rawCodewordsOffset++];
-    }
-    // Now add in error correction blocks
-    var max = result[0].codewords.length;
-    for (var i = shorterBlocksNumDataCodewords; i < max; i++) {
-        for (var j = 0; j < numResultBlocks; j++) {
-            var iOffset = j < longerBlocksStartAt ? i : i + 1;
-            result[j].codewords[iOffset] = rawCodewords[rawCodewordsOffset++];
+    // If there are any large blocks, pull codewords to fill the last element of those
+    if (ecInfo.ecBlocks.length > 1) {
+        var smallBlockCount = ecInfo.ecBlocks[0].numBlocks;
+        var largeBlockCount = ecInfo.ecBlocks[1].numBlocks;
+        for (var i = 0; i < largeBlockCount; i++) {
+            dataBlocks[smallBlockCount + i].codewords.push(codewords.shift());
         }
     }
-    return result;
-}
-function correctErrors(codewordBytes, numDataCodewords) {
-    var rsDecoder = new reedsolomon_1.ReedSolomonDecoder();
-    var numCodewords = codewordBytes.length;
-    // First read into an array of ints
-    var codewordsInts = new Array(numCodewords);
-    for (var i = 0; i < numCodewords; i++) {
-        codewordsInts[i] = codewordBytes[i] & 0xFF;
+    // Add the rest of the codewords to the blocks. These are the error correction codewords.
+    while (codewords.length > 0) {
+        for (var _a = 0, dataBlocks_2 = dataBlocks; _a < dataBlocks_2.length; _a++) {
+            var dataBlock = dataBlocks_2[_a];
+            dataBlock.codewords.push(codewords.shift());
+        }
     }
-    var numECCodewords = codewordBytes.length - numDataCodewords;
-    if (!rsDecoder.decode(codewordsInts, numECCodewords))
-        return false;
-    // Copy back into array of bytes -- only need to worry about the bytes that were data
-    // We don't care about errors in the error-correction codewords
-    for (var i = 0; i < numDataCodewords; i++) {
-        codewordBytes[i] = codewordsInts[i];
-    }
-    return true;
+    return dataBlocks;
 }
 function decodeMatrix(matrix) {
     var version = readVersion(matrix);
@@ -609,40 +729,28 @@ function decodeMatrix(matrix) {
     if (!formatInfo) {
         return null;
     }
-    var ecLevel = formatInfo.errorCorrectionLevel;
-    // Read codewords
     var codewords = readCodewords(matrix, version, formatInfo);
-    if (!codewords) {
-        return null;
-    }
-    // Separate into data blocks
-    var dataBlocks = getDataBlocks(codewords, version, ecLevel);
+    var dataBlocks = getDataBlocks(codewords, version, formatInfo.errorCorrectionLevel);
     // Count total number of data bytes
-    var totalBytes = 0;
-    dataBlocks.forEach(function (dataBlock) {
-        totalBytes += dataBlock.numDataCodewords;
-    });
+    var totalBytes = dataBlocks.reduce(function (a, b) { return a + b.numDataCodewords; }, 0);
     var resultBytes = new Uint8ClampedArray(totalBytes);
-    var resultOffset = 0;
-    // Error-correct and copy data blocks together into a stream of bytes
-    for (var _i = 0, dataBlocks_1 = dataBlocks; _i < dataBlocks_1.length; _i++) {
-        var dataBlock = dataBlocks_1[_i];
-        var codewordBytes = dataBlock.codewords;
-        var numDataCodewords = dataBlock.numDataCodewords;
-        if (!correctErrors(codewordBytes, numDataCodewords))
+    var resultIndex = 0;
+    for (var _i = 0, dataBlocks_3 = dataBlocks; _i < dataBlocks_3.length; _i++) {
+        var dataBlock = dataBlocks_3[_i];
+        var correctedBytes = reedsolomon_1.decode(dataBlock.codewords, dataBlock.codewords.length - dataBlock.numDataCodewords);
+        if (!correctedBytes) {
             return null;
-        for (var i = 0; i < numDataCodewords; i++) {
-            resultBytes[resultOffset++] = codewordBytes[i];
+        }
+        for (var i = 0; i < dataBlock.numDataCodewords; i++) {
+            resultBytes[resultIndex++] = correctedBytes[i];
         }
     }
-    return decodeqrdata_1.decodeQRdata(resultBytes, version.versionNumber, ecLevel.name);
-}
-function numberArrayToUInt8(array) {
-    var clamped = new Uint8ClampedArray(array.length);
-    for (var i = 0; i < array.length; i++) {
-        clamped[i] = array[i];
+    try {
+        return decodeData_1.decode(resultBytes, version.versionNumber);
     }
-    return clamped;
+    catch (_a) {
+        return null;
+    }
 }
 function decode(matrix) {
     if (matrix == null) {
@@ -650,10 +758,9 @@ function decode(matrix) {
     }
     var result = decodeMatrix(matrix);
     if (result) {
-        return numberArrayToUInt8(result);
+        return result;
     }
     // Decoding didn't work, try mirroring the QR across the topLeft -> bottomRight line.
-    // TODO - unclear if this is actually needed?
     for (var x = 0; x < matrix.width; x++) {
         for (var y = x + 1; y < matrix.height; y++) {
             if (matrix.get(x, y) !== matrix.get(y, x)) {
@@ -662,325 +769,206 @@ function decode(matrix) {
             }
         }
     }
-    result = decodeMatrix(matrix);
-    if (!result) {
-        return null;
-    }
-    return numberArrayToUInt8(decodeMatrix(matrix));
+    return decodeMatrix(matrix);
 }
 exports.decode = decode;
 
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+// tslint:disable:no-bitwise
 Object.defineProperty(exports, "__esModule", { value: true });
-var bitstream_1 = __webpack_require__(5);
-function toAlphaNumericByte(value) {
-    var ALPHANUMERIC_CHARS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-        'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        ' ', '$', '%', '*', '+', '-', '.', '/', ':'];
-    if (value >= ALPHANUMERIC_CHARS.length) {
-        throw new Error("Could not decode alphanumeric char");
+var BitStream_1 = __webpack_require__(7);
+var Mode;
+(function (Mode) {
+    Mode["Numeric"] = "numeric";
+    Mode["Alphanumeric"] = "alphanumeric";
+    Mode["Byte"] = "byte";
+    Mode["Kanji"] = "kanji";
+})(Mode = exports.Mode || (exports.Mode = {}));
+var ModeByte;
+(function (ModeByte) {
+    ModeByte[ModeByte["Terminator"] = 0] = "Terminator";
+    ModeByte[ModeByte["Numeric"] = 1] = "Numeric";
+    ModeByte[ModeByte["Alphanumeric"] = 2] = "Alphanumeric";
+    ModeByte[ModeByte["Byte"] = 4] = "Byte";
+    ModeByte[ModeByte["Kanji"] = 8] = "Kanji";
+    // StructuredAppend = 0x3,
+    // ECI = 0x7,
+    // FNC1FirstPosition = 0x5,
+    // FNC1SecondPosition = 0x9,
+})(ModeByte || (ModeByte = {}));
+function decodeNumeric(stream, size) {
+    var bytes = [];
+    var text = "";
+    var characterCountSize = [10, 12, 14][size];
+    var length = stream.readBits(characterCountSize);
+    // Read digits in groups of 3
+    while (length >= 3) {
+        var num = stream.readBits(10);
+        if (num >= 1000) {
+            throw new Error("Invalid numeric value above 999");
+        }
+        var a = Math.floor(num / 100);
+        var b = Math.floor(num / 10) % 10;
+        var c = num % 10;
+        bytes.push(48 + a, 48 + b, 48 + c);
+        text += a.toString() + b.toString() + c.toString();
+        length -= 3;
     }
-    return ALPHANUMERIC_CHARS[value].charCodeAt(0);
+    // If the number of digits aren't a multiple of 3, the remaining digits are special cased.
+    if (length === 2) {
+        var num = stream.readBits(7);
+        if (num >= 100) {
+            throw new Error("Invalid numeric value above 99");
+        }
+        var a = Math.floor(num / 10);
+        var b = num % 10;
+        bytes.push(48 + a, 48 + b);
+        text += a.toString() + b.toString();
+    }
+    else if (length === 1) {
+        var num = stream.readBits(4);
+        if (num >= 10) {
+            throw new Error("Invalid numeric value above 9");
+        }
+        bytes.push(48 + num);
+        text += num.toString();
+    }
+    return { bytes: bytes, text: text };
 }
-var Mode = /** @class */ (function () {
-    function Mode(characterCountBitsForVersions, bits) {
-        this.characterCountBitsForVersions = characterCountBitsForVersions;
-        this.bits = bits;
+var AlphanumericCharacterCodes = [
+    "0", "1", "2", "3", "4", "5", "6", "7", "8",
+    "9", "A", "B", "C", "D", "E", "F", "G", "H",
+    "I", "J", "K", "L", "M", "N", "O", "P", "Q",
+    "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    " ", "$", "%", "*", "+", "-", ".", "/", ":",
+];
+function decodeAlphanumeric(stream, size) {
+    var bytes = [];
+    var text = "";
+    var characterCountSize = [9, 11, 13][size];
+    var length = stream.readBits(characterCountSize);
+    while (length >= 2) {
+        var v = stream.readBits(11);
+        var a = Math.floor(v / 45);
+        var b = v % 45;
+        bytes.push(AlphanumericCharacterCodes[a].charCodeAt(0), AlphanumericCharacterCodes[b].charCodeAt(0));
+        text += AlphanumericCharacterCodes[a] + AlphanumericCharacterCodes[b];
+        length -= 2;
     }
-    Mode.prototype.getCharacterCountBits = function (version) {
-        if (this.characterCountBitsForVersions == null) {
-            throw new Error("Character count doesn't apply to this mode");
-        }
-        var offset;
-        if (version <= 9) {
-            offset = 0;
-        }
-        else if (version <= 26) {
-            offset = 1;
+    if (length === 1) {
+        var a = stream.readBits(6);
+        bytes.push(AlphanumericCharacterCodes[a].charCodeAt(0));
+        text += AlphanumericCharacterCodes[a];
+    }
+    return { bytes: bytes, text: text };
+}
+function decodeByte(stream, size) {
+    var bytes = [];
+    var text = "";
+    var characterCountSize = [8, 16, 16][size];
+    var length = stream.readBits(characterCountSize);
+    for (var i = 0; i < length; i++) {
+        var b = stream.readBits(8);
+        bytes.push(b);
+    }
+    try {
+        text += decodeURIComponent(bytes.map(function (b) { return "%" + ("0" + b.toString(16)).substr(-2); }).join(""));
+    }
+    catch (_a) {
+        // failed to decode
+    }
+    return { bytes: bytes, text: text };
+}
+function decodeKanji(stream, size) {
+    var bytes = [];
+    var text = "";
+    var characterCountSize = [8, 10, 12][size];
+    var length = stream.readBits(characterCountSize);
+    for (var i = 0; i < length; i++) {
+        var k = stream.readBits(13);
+        var c = (Math.floor(k / 0xC0) << 8) | (k % 0xC0);
+        if (c < 0x1F00) {
+            c += 0x8140;
         }
         else {
-            offset = 2;
+            c += 0xC140;
         }
-        return this.characterCountBitsForVersions[offset];
+        bytes.push(c >> 8, c & 0xFF);
+        text += String.fromCharCode(c);
+    }
+    return { bytes: bytes, text: text };
+}
+function decode(data, version) {
+    var stream = new BitStream_1.BitStream(data);
+    // There are 3 'sizes' based on the version. 1-9 is small (0), 10-26 is medium (1) and 27-40 is large (2).
+    var size = version <= 9 ? 0 : version <= 26 ? 1 : 2;
+    var result = {
+        text: "",
+        bytes: [],
+        chunks: [],
     };
-    return Mode;
-}());
-var TERMINATOR_MODE = new Mode([0, 0, 0], 0x00); // Not really a mod...
-var NUMERIC_MODE = new Mode([10, 12, 14], 0x01);
-var ALPHANUMERIC_MODE = new Mode([9, 11, 13], 0x02);
-var STRUCTURED_APPEND_MODE = new Mode([0, 0, 0], 0x03); // Not supported
-var BYTE_MODE = new Mode([8, 16, 16], 0x04);
-var ECI_MODE = new Mode(null, 0x07); // character counts don't apply
-var KANJI_MODE = new Mode([8, 10, 12], 0x08);
-var FNC1_FIRST_POSITION_MODE = new Mode(null, 0x05);
-var FNC1_SECOND_POSITION_MODE = new Mode(null, 0x09);
-var HANZI_MODE = new Mode([8, 10, 12], 0x0D);
-function modeForBits(bits) {
-    switch (bits) {
-        case 0x0:
-            return TERMINATOR_MODE;
-        case 0x1:
-            return NUMERIC_MODE;
-        case 0x2:
-            return ALPHANUMERIC_MODE;
-        case 0x3:
-            return STRUCTURED_APPEND_MODE;
-        case 0x4:
-            return BYTE_MODE;
-        case 0x5:
-            return FNC1_FIRST_POSITION_MODE;
-        case 0x7:
-            return ECI_MODE;
-        case 0x8:
-            return KANJI_MODE;
-        case 0x9:
-            return FNC1_SECOND_POSITION_MODE;
-        case 0xD:
-            // 0xD is defined in GBT 18284-2000, may not be supported in foreign country
-            return HANZI_MODE;
-        default:
-            throw new Error("Couldn't decode mode from byte array");
+    while (stream.available() >= 4) {
+        var mode = stream.readBits(4);
+        if (mode === ModeByte.Terminator) {
+            return result;
+        }
+        else if (mode === ModeByte.Numeric) {
+            var numericResult = decodeNumeric(stream, size);
+            result.text += numericResult.text;
+            (_a = result.bytes).push.apply(_a, numericResult.bytes);
+            result.chunks.push({
+                type: Mode.Numeric,
+                text: numericResult.text,
+            });
+        }
+        else if (mode === ModeByte.Alphanumeric) {
+            var alphanumericResult = decodeAlphanumeric(stream, size);
+            result.text += alphanumericResult.text;
+            (_b = result.bytes).push.apply(_b, alphanumericResult.bytes);
+            result.chunks.push({
+                type: Mode.Alphanumeric,
+                text: alphanumericResult.text,
+            });
+        }
+        else if (mode === ModeByte.Byte) {
+            var byteResult = decodeByte(stream, size);
+            result.text += byteResult.text;
+            (_c = result.bytes).push.apply(_c, byteResult.bytes);
+            result.chunks.push({
+                type: Mode.Byte,
+                bytes: byteResult.bytes,
+                text: byteResult.text,
+            });
+        }
+        else if (mode === ModeByte.Kanji) {
+            var kanjiResult = decodeKanji(stream, size);
+            result.text += kanjiResult.text;
+            (_d = result.bytes).push.apply(_d, kanjiResult.bytes);
+            result.chunks.push({
+                type: Mode.Kanji,
+                bytes: kanjiResult.bytes,
+                text: kanjiResult.text,
+            });
+        }
     }
+    var _a, _b, _c, _d;
 }
-function parseECIValue(bits) {
-    var firstByte = bits.readBits(8);
-    if ((firstByte & 0x80) == 0) {
-        // just one byte
-        return firstByte & 0x7F;
-    }
-    if ((firstByte & 0xC0) == 0x80) {
-        // two bytes
-        var secondByte = bits.readBits(8);
-        return ((firstByte & 0x3F) << 8) | secondByte;
-    }
-    if ((firstByte & 0xE0) == 0xC0) {
-        // three bytes
-        var secondThirdBytes = bits.readBits(16);
-        return ((firstByte & 0x1F) << 16) | secondThirdBytes;
-    }
-    throw new Error("Bad ECI bits starting with byte " + firstByte);
-}
-function decodeHanziSegment(bits, result, count) {
-    // Don't crash trying to read more bits than we have available.
-    if (count * 13 > bits.available()) {
-        return false;
-    }
-    // Each character will require 2 bytes. Read the characters as 2-byte pairs
-    // and decode as GB2312 afterwards
-    var buffer = new Array(2 * count);
-    var offset = 0;
-    while (count > 0) {
-        // Each 13 bits encodes a 2-byte character
-        var twoBytes = bits.readBits(13);
-        var assembledTwoBytes = (Math.floor(twoBytes / 0x060) << 8) | (twoBytes % 0x060);
-        if (assembledTwoBytes < 0x003BF) {
-            // In the 0xA1A1 to 0xAAFE range
-            assembledTwoBytes += 0x0A1A1;
-        }
-        else {
-            // In the 0xB0A1 to 0xFAFE range
-            assembledTwoBytes += 0x0A6A1;
-        }
-        buffer[offset] = ((assembledTwoBytes >> 8) & 0xFF);
-        buffer[offset + 1] = (assembledTwoBytes & 0xFF);
-        offset += 2;
-        count--;
-    }
-    result.val = buffer;
-    return true;
-}
-function decodeNumericSegment(bits, result, count) {
-    // Read three digits at a time
-    while (count >= 3) {
-        // Each 10 bits encodes three digits
-        if (bits.available() < 10) {
-            return false;
-        }
-        var threeDigitsBits = bits.readBits(10);
-        if (threeDigitsBits >= 1000) {
-            return false;
-        }
-        result.val.push(toAlphaNumericByte(Math.floor(threeDigitsBits / 100)));
-        result.val.push(toAlphaNumericByte(Math.floor(threeDigitsBits / 10) % 10));
-        result.val.push(toAlphaNumericByte(threeDigitsBits % 10));
-        count -= 3;
-    }
-    if (count == 2) {
-        // Two digits left over to read, encoded in 7 bits
-        if (bits.available() < 7) {
-            return false;
-        }
-        var twoDigitsBits = bits.readBits(7);
-        if (twoDigitsBits >= 100) {
-            return false;
-        }
-        result.val.push(toAlphaNumericByte(Math.floor(twoDigitsBits / 10)));
-        result.val.push(toAlphaNumericByte(twoDigitsBits % 10));
-    }
-    else if (count == 1) {
-        // One digit left over to read
-        if (bits.available() < 4) {
-            return false;
-        }
-        var digitBits = bits.readBits(4);
-        if (digitBits >= 10) {
-            return false;
-        }
-        result.val.push(toAlphaNumericByte(digitBits));
-    }
-    return true;
-}
-function decodeAlphanumericSegment(bits, result, count, fc1InEffect) {
-    // Read two characters at a time
-    var start = result.val.length;
-    while (count > 1) {
-        if (bits.available() < 11) {
-            return false;
-        }
-        var nextTwoCharsBits = bits.readBits(11);
-        result.val.push(toAlphaNumericByte(Math.floor(nextTwoCharsBits / 45)));
-        result.val.push(toAlphaNumericByte(nextTwoCharsBits % 45));
-        count -= 2;
-    }
-    if (count == 1) {
-        // special case: one character left
-        if (bits.available() < 6) {
-            return false;
-        }
-        result.val.push(toAlphaNumericByte(bits.readBits(6)));
-    }
-    // See section 6.4.8.1, 6.4.8.2
-    if (fc1InEffect) {
-        // We need to massage the result a bit if in an FNC1 mode:
-        for (var i = start; i < result.val.length; i++) {
-            if (result.val[i] == '%'.charCodeAt(0)) {
-                if (i < result.val.length - 1 && result.val[i + 1] == '%'.charCodeAt(0)) {
-                    // %% is rendered as %
-                    result.val = result.val.slice(0, i + 1).concat(result.val.slice(i + 2));
-                }
-                else {
-                    // In alpha mode, % should be converted to FNC1 separator 0x1D
-                    // THIS IS ALMOST CERTAINLY INVALID
-                    result.val[i] = 0x1D;
-                }
-            }
-        }
-    }
-    return true;
-}
-function decodeByteSegment(bits, result, count) {
-    // Don't crash trying to read more bits than we have available.
-    if (count << 3 > bits.available()) {
-        return false;
-    }
-    var readBytes = new Uint32Array(count);
-    for (var i = 0; i < count; i++) {
-        readBytes[i] = bits.readBits(8);
-    }
-    Array.prototype.push.apply(result.val, readBytes);
-    return true;
-}
-var GB2312_SUBSET = 1;
-// Takes in a byte array, a qr version number and an error correction level.
-// Returns decoded data.
-function decodeQRdata(data, version, ecl) {
-    var symbolSequence = -1;
-    var parityData = -1;
-    var bits = new bitstream_1.BitStream(Uint32Array.from(data));
-    var result = { val: [] }; // Have to pass this around so functions can share a reference to a number[]
-    var fc1InEffect = false;
-    var mode;
-    while (mode != TERMINATOR_MODE) {
-        // While still another segment to read...
-        if (bits.available() < 4) {
-            // OK, assume we're done. Really, a TERMINATOR mode should have been recorded here
-            mode = TERMINATOR_MODE;
-        }
-        else {
-            mode = modeForBits(bits.readBits(4)); // mode is encoded by 4 bits
-        }
-        if (mode != TERMINATOR_MODE) {
-            if (mode == FNC1_FIRST_POSITION_MODE || mode == FNC1_SECOND_POSITION_MODE) {
-                // We do little with FNC1 except alter the parsed result a bit according to the spec
-                fc1InEffect = true;
-            }
-            else if (mode == STRUCTURED_APPEND_MODE) {
-                if (bits.available() < 16) {
-                    return null;
-                }
-                // not really supported; but sequence number and parity is added later to the result metadata
-                // Read next 8 bits (symbol sequence #) and 8 bits (parity data), then continue
-                symbolSequence = bits.readBits(8);
-                parityData = bits.readBits(8);
-            }
-            else if (mode == ECI_MODE) {
-                // Ignore since we don't do character encoding in JS
-                var value = parseECIValue(bits);
-                if (value < 0 || value > 30) {
-                    return null;
-                }
-            }
-            else {
-                // First handle Hanzi mode which does not start with character count
-                if (mode == HANZI_MODE) {
-                    //chinese mode contains a sub set indicator right after mode indicator
-                    var subset = bits.readBits(4);
-                    var countHanzi = bits.readBits(mode.getCharacterCountBits(version));
-                    if (subset == GB2312_SUBSET) {
-                        if (!decodeHanziSegment(bits, result, countHanzi)) {
-                            return null;
-                        }
-                    }
-                }
-                else {
-                    // "Normal" QR code modes:
-                    // How many characters will follow, encoded in this mode?
-                    var count = bits.readBits(mode.getCharacterCountBits(version));
-                    if (mode == NUMERIC_MODE) {
-                        if (!decodeNumericSegment(bits, result, count)) {
-                            return null;
-                        }
-                    }
-                    else if (mode == ALPHANUMERIC_MODE) {
-                        if (!decodeAlphanumericSegment(bits, result, count, fc1InEffect)) {
-                            return null;
-                        }
-                    }
-                    else if (mode == BYTE_MODE) {
-                        if (!decodeByteSegment(bits, result, count)) {
-                            return null;
-                        }
-                    }
-                    else if (mode == KANJI_MODE) {
-                        // if (!decodeKanjiSegment(bits, result, count)){
-                        //   return null;
-                        // }
-                    }
-                    else {
-                        return null;
-                    }
-                }
-            }
-        }
-    }
-    return result.val;
-}
-exports.decodeQRdata = decodeQRdata;
+exports.decode = decode;
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+// tslint:disable:no-bitwise
 Object.defineProperty(exports, "__esModule", { value: true });
 var BitStream = /** @class */ (function () {
     function BitStream(bytes) {
@@ -1002,7 +990,7 @@ var BitStream = /** @class */ (function () {
             result = (this.bytes[this.byteOffset] & mask) >> bitsToNotRead;
             numBits -= toRead;
             this.bitOffset += toRead;
-            if (this.bitOffset == 8) {
+            if (this.bitOffset === 8) {
                 this.bitOffset = 0;
                 this.byteOffset++;
             }
@@ -1033,532 +1021,1451 @@ exports.BitStream = BitStream;
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var ReedSolomonDecoder = /** @class */ (function () {
-    function ReedSolomonDecoder() {
-        this.field = new GenericGF(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
-    }
-    ReedSolomonDecoder.prototype.decode = function (received, twoS) {
-        var poly = new GenericGFPoly(this.field, received);
-        var syndromeCoefficients = new Array(twoS);
-        var noError = true;
-        for (var i = 0; i < twoS; i++) {
-            var evaluation = poly.evaluateAt(this.field.exp(i + this.field.generatorBase));
-            syndromeCoefficients[syndromeCoefficients.length - 1 - i] = evaluation;
-            if (evaluation != 0) {
-                noError = false;
-            }
-        }
-        if (noError) {
-            return true;
-        }
-        var syndrome = new GenericGFPoly(this.field, syndromeCoefficients);
-        var sigmaOmega = this.runEuclideanAlgorithm(this.field.buildMonomial(twoS, 1), syndrome, twoS);
-        if (sigmaOmega == null)
-            return false;
-        var sigma = sigmaOmega[0];
-        var errorLocations = this.findErrorLocations(sigma);
-        if (errorLocations == null)
-            return false;
-        var omega = sigmaOmega[1];
-        var errorMagnitudes = this.findErrorMagnitudes(omega, errorLocations);
-        for (var i = 0; i < errorLocations.length; i++) {
-            var position = received.length - 1 - this.field.log(errorLocations[i]);
-            if (position < 0) {
-                // throw new ReedSolomonException("Bad error location");
-                return false;
-            }
-            received[position] = GenericGF.addOrSubtract(received[position], errorMagnitudes[i]);
-        }
-        return true;
-    };
-    ReedSolomonDecoder.prototype.runEuclideanAlgorithm = function (a, b, R) {
-        // Assume a's degree is >= b's
-        if (a.degree() < b.degree()) {
-            var temp = a;
-            a = b;
-            b = temp;
-        }
-        var rLast = a;
-        var r = b;
-        var tLast = this.field.zero;
-        var t = this.field.one;
-        // Run Euclidean algorithm until r's degree is less than R/2
-        while (r.degree() >= R / 2) {
-            var rLastLast = rLast;
-            var tLastLast = tLast;
-            rLast = r;
-            tLast = t;
-            // Divide rLastLast by rLast, with quotient in q and remainder in r
-            if (rLast.isZero()) {
-                // Oops, Euclidean algorithm already terminated?
-                // throw new ReedSolomonException("r_{i-1} was zero");
-                return null;
-            }
-            r = rLastLast;
-            var q = this.field.zero;
-            var denominatorLeadingTerm = rLast.getCoefficient(rLast.degree());
-            var dltInverse = this.field.inverse(denominatorLeadingTerm);
-            while (r.degree() >= rLast.degree() && !r.isZero()) {
-                var degreeDiff = r.degree() - rLast.degree();
-                var scale = this.field.multiply(r.getCoefficient(r.degree()), dltInverse);
-                q = q.addOrSubtract(this.field.buildMonomial(degreeDiff, scale));
-                r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
-            }
-            t = q.multiplyPoly(tLast).addOrSubtract(tLastLast);
-            if (r.degree() >= rLast.degree()) {
-                // throw new IllegalStateException("Division algorithm failed to reduce polynomial?");
-                return null;
-            }
-        }
-        var sigmaTildeAtZero = t.getCoefficient(0);
-        if (sigmaTildeAtZero == 0) {
-            // throw new ReedSolomonException("sigmaTilde(0) was zero");
-            return null;
-        }
-        var inverse = this.field.inverse(sigmaTildeAtZero);
-        var sigma = t.multiply(inverse);
-        var omega = r.multiply(inverse);
-        return [sigma, omega];
-    };
-    ReedSolomonDecoder.prototype.findErrorLocations = function (errorLocator) {
-        // This is a direct application of Chien's search
-        var numErrors = errorLocator.degree();
-        if (numErrors == 1) {
-            // shortcut
-            return [errorLocator.getCoefficient(1)];
-        }
-        var result = new Array(numErrors);
-        var e = 0;
-        for (var i = 1; i < this.field.size && e < numErrors; i++) {
-            if (errorLocator.evaluateAt(i) == 0) {
-                result[e] = this.field.inverse(i);
-                e++;
-            }
-        }
-        if (e != numErrors) {
-            // throw new ReedSolomonException("Error locator degree does not match number of roots");
-            return null;
-        }
-        return result;
-    };
-    ReedSolomonDecoder.prototype.findErrorMagnitudes = function (errorEvaluator, errorLocations) {
-        // This is directly applying Forney's Formula
-        var s = errorLocations.length;
-        var result = new Array(s);
-        for (var i = 0; i < s; i++) {
-            var xiInverse = this.field.inverse(errorLocations[i]);
-            var denominator = 1;
-            for (var j = 0; j < s; j++) {
-                if (i != j) {
-                    //denominator = field.multiply(denominator,
-                    //    GenericGF.addOrSubtract(1, field.multiply(errorLocations[j], xiInverse)));
-                    // Above should work but fails on some Apple and Linux JDKs due to a Hotspot bug.
-                    // Below is a funny-looking workaround from Steven Parkes
-                    var term = this.field.multiply(errorLocations[j], xiInverse);
-                    var termPlus1 = (term & 0x1) == 0 ? term | 1 : term & ~1;
-                    denominator = this.field.multiply(denominator, termPlus1);
-                    // removed in java version, not sure if this is right
-                    // denominator = field.multiply(denominator, GenericGF.addOrSubtract(1, field.multiply(errorLocations[j], xiInverse)));
-                }
-            }
-            result[i] = this.field.multiply(errorEvaluator.evaluateAt(xiInverse), this.field.inverse(denominator));
-            if (this.field.generatorBase != 0) {
-                result[i] = this.field.multiply(result[i], xiInverse);
-            }
-        }
-        return result;
-    };
-    return ReedSolomonDecoder;
-}());
-exports.ReedSolomonDecoder = ReedSolomonDecoder;
-var GenericGFPoly = /** @class */ (function () {
-    function GenericGFPoly(field, coefficients) {
-        if (coefficients.length == 0) {
-            throw new Error("No coefficients.");
-        }
-        this.field = field;
-        var coefficientsLength = coefficients.length;
-        if (coefficientsLength > 1 && coefficients[0] == 0) {
-            // Leading term must be non-zero for anything except the constant polynomial "0"
-            var firstNonZero = 1;
-            while (firstNonZero < coefficientsLength && coefficients[firstNonZero] == 0) {
-                firstNonZero++;
-            }
-            if (firstNonZero == coefficientsLength) {
-                this.coefficients = field.zero.coefficients;
-            }
-            else {
-                this.coefficients = new Array(coefficientsLength - firstNonZero);
-                /*Array.Copy(coefficients,       // Source array
-                  firstNonZero,              // Source index
-                  this.coefficients,         // Destination array
-                  0,                         // Destination index
-                  this.coefficients.length); // length*/
-                for (var i = 0; i < this.coefficients.length; i++) {
-                    this.coefficients[i] = coefficients[firstNonZero + i];
-                }
-            }
-        }
-        else {
-            this.coefficients = coefficients;
-        }
-    }
-    GenericGFPoly.prototype.evaluateAt = function (a) {
-        var result = 0;
-        if (a == 0) {
-            // Just return the x^0 coefficient
-            return this.getCoefficient(0);
-        }
-        var size = this.coefficients.length;
-        if (a == 1) {
-            // Just the sum of the coefficients
-            this.coefficients.forEach(function (coefficient) {
-                result = GenericGF.addOrSubtract(result, coefficient);
-            });
-            return result;
-        }
-        result = this.coefficients[0];
-        for (var i = 1; i < size; i++) {
-            result = GenericGF.addOrSubtract(this.field.multiply(a, result), this.coefficients[i]);
-        }
-        return result;
-    };
-    GenericGFPoly.prototype.getCoefficient = function (degree) {
-        return this.coefficients[this.coefficients.length - 1 - degree];
-    };
-    GenericGFPoly.prototype.degree = function () {
-        return this.coefficients.length - 1;
-    };
-    GenericGFPoly.prototype.isZero = function () {
-        return this.coefficients[0] == 0;
-    };
-    GenericGFPoly.prototype.addOrSubtract = function (other) {
-        /* TODO, fix this.
-        if (!this.field.Equals(other.field))
-        {
-          throw new Error("GenericGFPolys do not have same GenericGF field");
-        }*/
-        if (this.isZero()) {
-            return other;
-        }
-        if (other.isZero()) {
-            return this;
-        }
-        var smallerCoefficients = this.coefficients;
-        var largerCoefficients = other.coefficients;
-        if (smallerCoefficients.length > largerCoefficients.length) {
-            var temp = smallerCoefficients;
-            smallerCoefficients = largerCoefficients;
-            largerCoefficients = temp;
-        }
-        var sumDiff = new Array(largerCoefficients.length);
-        var lengthDiff = largerCoefficients.length - smallerCoefficients.length;
-        // Copy high-order terms only found in higher-degree polynomial's coefficients
-        ///Array.Copy(largerCoefficients, 0, sumDiff, 0, lengthDiff);
-        for (var i = 0; i < lengthDiff; i++) {
-            sumDiff[i] = largerCoefficients[i];
-        }
-        for (var i = lengthDiff; i < largerCoefficients.length; i++) {
-            sumDiff[i] = GenericGF.addOrSubtract(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
-        }
-        return new GenericGFPoly(this.field, sumDiff);
-    };
-    GenericGFPoly.prototype.multiply = function (scalar) {
-        if (scalar == 0) {
-            return this.field.zero;
-        }
-        if (scalar == 1) {
-            return this;
-        }
-        var size = this.coefficients.length;
-        var product = new Array(size);
-        for (var i = 0; i < size; i++) {
-            product[i] = this.field.multiply(this.coefficients[i], scalar);
-        }
-        return new GenericGFPoly(this.field, product);
-    };
-    GenericGFPoly.prototype.multiplyPoly = function (other) {
-        /* TODO Fix this.
-        if (!field.Equals(other.field))
-        {
-          throw new Error("GenericGFPolys do not have same GenericGF field");
-        }*/
-        if (this.isZero() || other.isZero()) {
-            return this.field.zero;
-        }
-        var aCoefficients = this.coefficients;
-        var aLength = aCoefficients.length;
-        var bCoefficients = other.coefficients;
-        var bLength = bCoefficients.length;
-        var product = new Array(aLength + bLength - 1);
-        for (var i = 0; i < aLength; i++) {
-            var aCoeff = aCoefficients[i];
-            for (var j = 0; j < bLength; j++) {
-                product[i + j] = GenericGF.addOrSubtract(product[i + j], this.field.multiply(aCoeff, bCoefficients[j]));
-            }
-        }
-        return new GenericGFPoly(this.field, product);
-    };
-    GenericGFPoly.prototype.multiplyByMonomial = function (degree, coefficient) {
-        if (degree < 0) {
-            throw new Error("Invalid degree less than 0");
-        }
-        if (coefficient == 0) {
-            return this.field.zero;
-        }
-        var size = this.coefficients.length;
-        var product = new Array(size + degree);
-        for (var i = 0; i < size; i++) {
-            product[i] = this.field.multiply(this.coefficients[i], coefficient);
-        }
-        return new GenericGFPoly(this.field, product);
-    };
-    return GenericGFPoly;
-}());
-var GenericGF = /** @class */ (function () {
-    function GenericGF(primitive, size, genBase) {
-        // ok.
-        this.INITIALIZATION_THRESHOLD = 0;
-        this.initialized = false;
-        this.primitive = primitive;
-        this.size = size;
-        this.generatorBase = genBase;
-        if (size <= this.INITIALIZATION_THRESHOLD) {
-            this.initialize();
-        }
-    }
-    GenericGF.prototype.initialize = function () {
-        this.expTable = new Array(this.size);
-        this.logTable = new Array(this.size);
-        var x = 1;
-        for (var i = 0; i < this.size; i++) {
-            this.expTable[i] = x;
-            x <<= 1; // x = x * 2; we're assuming the generator alpha is 2
-            if (x >= this.size) {
-                x ^= this.primitive;
-                x &= this.size - 1;
-            }
-        }
-        for (var i = 0; i < this.size - 1; i++) {
-            this.logTable[this.expTable[i]] = i;
-        }
-        // logTable[0] == 0 but this should never be used
-        this.zero = new GenericGFPoly(this, [0]);
-        this.one = new GenericGFPoly(this, [1]);
-        this.initialized = true;
-    };
-    GenericGF.addOrSubtract = function (a, b) {
-        return a ^ b;
-    };
-    GenericGF.prototype.checkInit = function () {
-        if (!this.initialized)
-            this.initialize();
-    };
-    GenericGF.prototype.multiply = function (a, b) {
-        this.checkInit();
-        if (a == 0 || b == 0) {
-            return 0;
-        }
-        return this.expTable[(this.logTable[a] + this.logTable[b]) % (this.size - 1)];
-    };
-    GenericGF.prototype.exp = function (a) {
-        this.checkInit();
-        return this.expTable[a];
-    };
-    GenericGF.prototype.log = function (a) {
-        this.checkInit();
-        if (a == 0) {
-            throw new Error("Can't take log(0)");
-        }
-        return this.logTable[a];
-    };
-    GenericGF.prototype.inverse = function (a) {
-        this.checkInit();
-        if (a == 0) {
-            throw new Error("Can't invert 0");
-        }
-        return this.expTable[this.size - this.logTable[a] - 1];
-    };
-    GenericGF.prototype.buildMonomial = function (degree, coefficient) {
-        this.checkInit();
-        if (degree < 0) {
-            throw new Error("Invalid monomial degree less than 0");
-        }
-        if (coefficient == 0) {
-            return this.zero;
-        }
-        var coefficients = new Array(degree + 1);
-        coefficients[0] = coefficient;
-        return new GenericGFPoly(this, coefficients);
-    };
-    return GenericGF;
-}());
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function numBitsDiffering(a, b) {
-    var BITS_SET_IN_HALF_BYTE = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
-    a ^= b; // a now has a 1 bit exactly where its bit differs with b's
-    // Count bits set quickly with a series of lookups:
-    return BITS_SET_IN_HALF_BYTE[a & 0x0F] +
-        BITS_SET_IN_HALF_BYTE[((a >> 4) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 8) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 12) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 16) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 20) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 24) & 0x0F)] +
-        BITS_SET_IN_HALF_BYTE[((a >> 28) & 0x0F)];
-}
-exports.numBitsDiffering = numBitsDiffering;
-var VERSION_DECODE_INFO = [
-    0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
-    0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
-    0x1145D, 0x12A17, 0x13532, 0x149A6, 0x15683,
-    0x168C9, 0x177EC, 0x18EC4, 0x191E1, 0x1AFAB,
-    0x1B08E, 0x1CC1A, 0x1D33F, 0x1ED75, 0x1F250,
-    0x209D5, 0x216F0, 0x228BA, 0x2379F, 0x24B0B,
-    0x2542E, 0x26A64, 0x27541, 0x28C69,
-];
-var ECB = /** @class */ (function () {
-    function ECB(_count, _dataCodewords) {
-        this.count = _count;
-        this.dataCodewords = _dataCodewords;
-    }
-    return ECB;
-}());
-var ECBlocks = /** @class */ (function () {
-    function ECBlocks(_ecCodewordsPerBlock) {
-        var _ecBlocks = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            _ecBlocks[_i - 1] = arguments[_i];
-        }
-        this.ecCodewordsPerBlock = _ecCodewordsPerBlock;
-        this.ecBlocks = _ecBlocks;
-    }
-    ECBlocks.prototype.getNumBlocks = function () {
-        return this.ecBlocks.reduce(function (a, b) { return (a + b.count); }, 0);
-    };
-    ECBlocks.prototype.getTotalECCodewords = function () {
-        return this.ecCodewordsPerBlock * this.getNumBlocks();
-    };
-    return ECBlocks;
-}());
-var Version = /** @class */ (function () {
-    function Version(_versionNumber, _alignmentPatternCenters) {
-        var _ecBlocks = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            _ecBlocks[_i - 2] = arguments[_i];
-        }
-        this.versionNumber = _versionNumber;
-        this.alignmentPatternCenters = _alignmentPatternCenters;
-        this.ecBlocks = _ecBlocks;
-        var total = 0;
-        var ecCodewords = this.ecBlocks[0].ecCodewordsPerBlock;
-        var ecbArray = this.ecBlocks[0].ecBlocks;
-        ecbArray.forEach(function (ecBlock) {
-            total += ecBlock.count * (ecBlock.dataCodewords + ecCodewords);
-        });
-        this.totalCodewords = total;
-    }
-    Version.prototype.getDimensionForVersion = function () {
-        return 17 + 4 * this.versionNumber;
-    };
-    Version.prototype.getECBlocksForLevel = function (ecLevel) {
-        return this.ecBlocks[ecLevel.ordinal];
-    };
-    Version.decodeVersionInformation = function (versionBits) {
-        var bestDifference = Infinity;
-        var bestVersion = 0;
-        for (var i = 0; i < VERSION_DECODE_INFO.length; i++) {
-            var targetVersion = VERSION_DECODE_INFO[i];
-            // Do the version info bits match exactly? done.
-            if (targetVersion == versionBits) {
-                return getVersionForNumber(i + 7);
-            }
-            // Otherwise see if this is the closest to a real version info bit string
-            // we have seen so far
-            var bitsDifference = numBitsDiffering(versionBits, targetVersion);
-            if (bitsDifference < bestDifference) {
-                bestVersion = i + 7;
-                bestDifference = bitsDifference;
-            }
-        }
-        // We can tolerate up to 3 bits of error since no two version info codewords will
-        // differ in less than 8 bits.
-        if (bestDifference <= 3) {
-            return getVersionForNumber(bestVersion);
-        }
-        // If we didn't find a close enough match, fail
-        return null;
-    };
-    return Version;
-}());
-exports.Version = Version;
-var VERSIONS = [
-    new Version(1, [], new ECBlocks(7, new ECB(1, 19)), new ECBlocks(10, new ECB(1, 16)), new ECBlocks(13, new ECB(1, 13)), new ECBlocks(17, new ECB(1, 9))),
-    new Version(2, [6, 18], new ECBlocks(10, new ECB(1, 34)), new ECBlocks(16, new ECB(1, 28)), new ECBlocks(22, new ECB(1, 22)), new ECBlocks(28, new ECB(1, 16))),
-    new Version(3, [6, 22], new ECBlocks(15, new ECB(1, 55)), new ECBlocks(26, new ECB(1, 44)), new ECBlocks(18, new ECB(2, 17)), new ECBlocks(22, new ECB(2, 13))),
-    new Version(4, [6, 26], new ECBlocks(20, new ECB(1, 80)), new ECBlocks(18, new ECB(2, 32)), new ECBlocks(26, new ECB(2, 24)), new ECBlocks(16, new ECB(4, 9))),
-    new Version(5, [6, 30], new ECBlocks(26, new ECB(1, 108)), new ECBlocks(24, new ECB(2, 43)), new ECBlocks(18, new ECB(2, 15), new ECB(2, 16)), new ECBlocks(22, new ECB(2, 11), new ECB(2, 12))),
-    new Version(6, [6, 34], new ECBlocks(18, new ECB(2, 68)), new ECBlocks(16, new ECB(4, 27)), new ECBlocks(24, new ECB(4, 19)), new ECBlocks(28, new ECB(4, 15))),
-    new Version(7, [6, 22, 38], new ECBlocks(20, new ECB(2, 78)), new ECBlocks(18, new ECB(4, 31)), new ECBlocks(18, new ECB(2, 14), new ECB(4, 15)), new ECBlocks(26, new ECB(4, 13), new ECB(1, 14))),
-    new Version(8, [6, 24, 42], new ECBlocks(24, new ECB(2, 97)), new ECBlocks(22, new ECB(2, 38), new ECB(2, 39)), new ECBlocks(22, new ECB(4, 18), new ECB(2, 19)), new ECBlocks(26, new ECB(4, 14), new ECB(2, 15))),
-    new Version(9, [6, 26, 46], new ECBlocks(30, new ECB(2, 116)), new ECBlocks(22, new ECB(3, 36), new ECB(2, 37)), new ECBlocks(20, new ECB(4, 16), new ECB(4, 17)), new ECBlocks(24, new ECB(4, 12), new ECB(4, 13))),
-    new Version(10, [6, 28, 50], new ECBlocks(18, new ECB(2, 68), new ECB(2, 69)), new ECBlocks(26, new ECB(4, 43), new ECB(1, 44)), new ECBlocks(24, new ECB(6, 19), new ECB(2, 20)), new ECBlocks(28, new ECB(6, 15), new ECB(2, 16))),
-    new Version(11, [6, 30, 54], new ECBlocks(20, new ECB(4, 81)), new ECBlocks(30, new ECB(1, 50), new ECB(4, 51)), new ECBlocks(28, new ECB(4, 22), new ECB(4, 23)), new ECBlocks(24, new ECB(3, 12), new ECB(8, 13))),
-    new Version(12, [6, 32, 58], new ECBlocks(24, new ECB(2, 92), new ECB(2, 93)), new ECBlocks(22, new ECB(6, 36), new ECB(2, 37)), new ECBlocks(26, new ECB(4, 20), new ECB(6, 21)), new ECBlocks(28, new ECB(7, 14), new ECB(4, 15))),
-    new Version(13, [6, 34, 62], new ECBlocks(26, new ECB(4, 107)), new ECBlocks(22, new ECB(8, 37), new ECB(1, 38)), new ECBlocks(24, new ECB(8, 20), new ECB(4, 21)), new ECBlocks(22, new ECB(12, 11), new ECB(4, 12))),
-    new Version(14, [6, 26, 46, 66], new ECBlocks(30, new ECB(3, 115), new ECB(1, 116)), new ECBlocks(24, new ECB(4, 40), new ECB(5, 41)), new ECBlocks(20, new ECB(11, 16), new ECB(5, 17)), new ECBlocks(24, new ECB(11, 12), new ECB(5, 13))),
-    new Version(15, [6, 26, 48, 70], new ECBlocks(22, new ECB(5, 87), new ECB(1, 88)), new ECBlocks(24, new ECB(5, 41), new ECB(5, 42)), new ECBlocks(30, new ECB(5, 24), new ECB(7, 25)), new ECBlocks(24, new ECB(11, 12), new ECB(7, 13))),
-    new Version(16, [6, 26, 50, 74], new ECBlocks(24, new ECB(5, 98), new ECB(1, 99)), new ECBlocks(28, new ECB(7, 45), new ECB(3, 46)), new ECBlocks(24, new ECB(15, 19), new ECB(2, 20)), new ECBlocks(30, new ECB(3, 15), new ECB(13, 16))),
-    new Version(17, [6, 30, 54, 78], new ECBlocks(28, new ECB(1, 107), new ECB(5, 108)), new ECBlocks(28, new ECB(10, 46), new ECB(1, 47)), new ECBlocks(28, new ECB(1, 22), new ECB(15, 23)), new ECBlocks(28, new ECB(2, 14), new ECB(17, 15))),
-    new Version(18, [6, 30, 56, 82], new ECBlocks(30, new ECB(5, 120), new ECB(1, 121)), new ECBlocks(26, new ECB(9, 43), new ECB(4, 44)), new ECBlocks(28, new ECB(17, 22), new ECB(1, 23)), new ECBlocks(28, new ECB(2, 14), new ECB(19, 15))),
-    new Version(19, [6, 30, 58, 86], new ECBlocks(28, new ECB(3, 113), new ECB(4, 114)), new ECBlocks(26, new ECB(3, 44), new ECB(11, 45)), new ECBlocks(26, new ECB(17, 21), new ECB(4, 22)), new ECBlocks(26, new ECB(9, 13), new ECB(16, 14))),
-    new Version(20, [6, 34, 62, 90], new ECBlocks(28, new ECB(3, 107), new ECB(5, 108)), new ECBlocks(26, new ECB(3, 41), new ECB(13, 42)), new ECBlocks(30, new ECB(15, 24), new ECB(5, 25)), new ECBlocks(28, new ECB(15, 15), new ECB(10, 16))),
-    new Version(21, [6, 28, 50, 72, 94], new ECBlocks(28, new ECB(4, 116), new ECB(4, 117)), new ECBlocks(26, new ECB(17, 42)), new ECBlocks(28, new ECB(17, 22), new ECB(6, 23)), new ECBlocks(30, new ECB(19, 16), new ECB(6, 17))),
-    new Version(22, [6, 26, 50, 74, 98], new ECBlocks(28, new ECB(2, 111), new ECB(7, 112)), new ECBlocks(28, new ECB(17, 46)), new ECBlocks(30, new ECB(7, 24), new ECB(16, 25)), new ECBlocks(24, new ECB(34, 13))),
-    new Version(23, [6, 30, 54, 74, 102], new ECBlocks(30, new ECB(4, 121), new ECB(5, 122)), new ECBlocks(28, new ECB(4, 47), new ECB(14, 48)), new ECBlocks(30, new ECB(11, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(16, 15), new ECB(14, 16))),
-    new Version(24, [6, 28, 54, 80, 106], new ECBlocks(30, new ECB(6, 117), new ECB(4, 118)), new ECBlocks(28, new ECB(6, 45), new ECB(14, 46)), new ECBlocks(30, new ECB(11, 24), new ECB(16, 25)), new ECBlocks(30, new ECB(30, 16), new ECB(2, 17))),
-    new Version(25, [6, 32, 58, 84, 110], new ECBlocks(26, new ECB(8, 106), new ECB(4, 107)), new ECBlocks(28, new ECB(8, 47), new ECB(13, 48)), new ECBlocks(30, new ECB(7, 24), new ECB(22, 25)), new ECBlocks(30, new ECB(22, 15), new ECB(13, 16))),
-    new Version(26, [6, 30, 58, 86, 114], new ECBlocks(28, new ECB(10, 114), new ECB(2, 115)), new ECBlocks(28, new ECB(19, 46), new ECB(4, 47)), new ECBlocks(28, new ECB(28, 22), new ECB(6, 23)), new ECBlocks(30, new ECB(33, 16), new ECB(4, 17))),
-    new Version(27, [6, 34, 62, 90, 118], new ECBlocks(30, new ECB(8, 122), new ECB(4, 123)), new ECBlocks(28, new ECB(22, 45), new ECB(3, 46)), new ECBlocks(30, new ECB(8, 23), new ECB(26, 24)), new ECBlocks(30, new ECB(12, 15), new ECB(28, 16))),
-    new Version(28, [6, 26, 50, 74, 98, 122], new ECBlocks(30, new ECB(3, 117), new ECB(10, 118)), new ECBlocks(28, new ECB(3, 45), new ECB(23, 46)), new ECBlocks(30, new ECB(4, 24), new ECB(31, 25)), new ECBlocks(30, new ECB(11, 15), new ECB(31, 16))),
-    new Version(29, [6, 30, 54, 78, 102, 126], new ECBlocks(30, new ECB(7, 116), new ECB(7, 117)), new ECBlocks(28, new ECB(21, 45), new ECB(7, 46)), new ECBlocks(30, new ECB(1, 23), new ECB(37, 24)), new ECBlocks(30, new ECB(19, 15), new ECB(26, 16))),
-    new Version(30, [6, 26, 52, 78, 104, 130], new ECBlocks(30, new ECB(5, 115), new ECB(10, 116)), new ECBlocks(28, new ECB(19, 47), new ECB(10, 48)), new ECBlocks(30, new ECB(15, 24), new ECB(25, 25)), new ECBlocks(30, new ECB(23, 15), new ECB(25, 16))),
-    new Version(31, [6, 30, 56, 82, 108, 134], new ECBlocks(30, new ECB(13, 115), new ECB(3, 116)), new ECBlocks(28, new ECB(2, 46), new ECB(29, 47)), new ECBlocks(30, new ECB(42, 24), new ECB(1, 25)), new ECBlocks(30, new ECB(23, 15), new ECB(28, 16))),
-    new Version(32, [6, 34, 60, 86, 112, 138], new ECBlocks(30, new ECB(17, 115)), new ECBlocks(28, new ECB(10, 46), new ECB(23, 47)), new ECBlocks(30, new ECB(10, 24), new ECB(35, 25)), new ECBlocks(30, new ECB(19, 15), new ECB(35, 16))),
-    new Version(33, [6, 30, 58, 86, 114, 142], new ECBlocks(30, new ECB(17, 115), new ECB(1, 116)), new ECBlocks(28, new ECB(14, 46), new ECB(21, 47)), new ECBlocks(30, new ECB(29, 24), new ECB(19, 25)), new ECBlocks(30, new ECB(11, 15), new ECB(46, 16))),
-    new Version(34, [6, 34, 62, 90, 118, 146], new ECBlocks(30, new ECB(13, 115), new ECB(6, 116)), new ECBlocks(28, new ECB(14, 46), new ECB(23, 47)), new ECBlocks(30, new ECB(44, 24), new ECB(7, 25)), new ECBlocks(30, new ECB(59, 16), new ECB(1, 17))),
-    new Version(35, [6, 30, 54, 78, 102, 126, 150], new ECBlocks(30, new ECB(12, 121), new ECB(7, 122)), new ECBlocks(28, new ECB(12, 47), new ECB(26, 48)), new ECBlocks(30, new ECB(39, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(22, 15), new ECB(41, 16))),
-    new Version(36, [6, 24, 50, 76, 102, 128, 154], new ECBlocks(30, new ECB(6, 121), new ECB(14, 122)), new ECBlocks(28, new ECB(6, 47), new ECB(34, 48)), new ECBlocks(30, new ECB(46, 24), new ECB(10, 25)), new ECBlocks(30, new ECB(2, 15), new ECB(64, 16))),
-    new Version(37, [6, 28, 54, 80, 106, 132, 158], new ECBlocks(30, new ECB(17, 122), new ECB(4, 123)), new ECBlocks(28, new ECB(29, 46), new ECB(14, 47)), new ECBlocks(30, new ECB(49, 24), new ECB(10, 25)), new ECBlocks(30, new ECB(24, 15), new ECB(46, 16))),
-    new Version(38, [6, 32, 58, 84, 110, 136, 162], new ECBlocks(30, new ECB(4, 122), new ECB(18, 123)), new ECBlocks(28, new ECB(13, 46), new ECB(32, 47)), new ECBlocks(30, new ECB(48, 24), new ECB(14, 25)), new ECBlocks(30, new ECB(42, 15), new ECB(32, 16))),
-    new Version(39, [6, 26, 54, 82, 110, 138, 166], new ECBlocks(30, new ECB(20, 117), new ECB(4, 118)), new ECBlocks(28, new ECB(40, 47), new ECB(7, 48)), new ECBlocks(30, new ECB(43, 24), new ECB(22, 25)), new ECBlocks(30, new ECB(10, 15), new ECB(67, 16))),
-    new Version(40, [6, 30, 58, 86, 114, 142, 170], new ECBlocks(30, new ECB(19, 118), new ECB(6, 119)), new ECBlocks(28, new ECB(18, 47), new ECB(31, 48)), new ECBlocks(30, new ECB(34, 24), new ECB(34, 25)), new ECBlocks(30, new ECB(20, 15), new ECB(61, 16))),
-];
-function getVersionForNumber(versionNumber) {
-    if (versionNumber < 1 || versionNumber > 40) {
-        return null;
-    }
-    return VERSIONS[versionNumber - 1];
-}
-exports.getVersionForNumber = getVersionForNumber;
-
-
-/***/ }),
 /* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var GenericGF_1 = __webpack_require__(1);
+var GenericGFPoly_1 = __webpack_require__(2);
+function runEuclideanAlgorithm(field, a, b, R) {
+    // Assume a's degree is >= b's
+    if (a.degree() < b.degree()) {
+        _a = [b, a], a = _a[0], b = _a[1];
+    }
+    var rLast = a;
+    var r = b;
+    var tLast = field.zero;
+    var t = field.one;
+    // Run Euclidean algorithm until r's degree is less than R/2
+    while (r.degree() >= R / 2) {
+        var rLastLast = rLast;
+        var tLastLast = tLast;
+        rLast = r;
+        tLast = t;
+        // Divide rLastLast by rLast, with quotient in q and remainder in r
+        if (rLast.isZero()) {
+            // Euclidean algorithm already terminated?
+            return null;
+        }
+        r = rLastLast;
+        var q = field.zero;
+        var denominatorLeadingTerm = rLast.getCoefficient(rLast.degree());
+        var dltInverse = field.inverse(denominatorLeadingTerm);
+        while (r.degree() >= rLast.degree() && !r.isZero()) {
+            var degreeDiff = r.degree() - rLast.degree();
+            var scale = field.multiply(r.getCoefficient(r.degree()), dltInverse);
+            q = q.addOrSubtract(field.buildMonomial(degreeDiff, scale));
+            r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
+        }
+        t = q.multiplyPoly(tLast).addOrSubtract(tLastLast);
+        if (r.degree() >= rLast.degree()) {
+            return null;
+        }
+    }
+    var sigmaTildeAtZero = t.getCoefficient(0);
+    if (sigmaTildeAtZero === 0) {
+        return null;
+    }
+    var inverse = field.inverse(sigmaTildeAtZero);
+    return [t.multiply(inverse), r.multiply(inverse)];
+    var _a;
+}
+function findErrorLocations(field, errorLocator) {
+    // This is a direct application of Chien's search
+    var numErrors = errorLocator.degree();
+    if (numErrors === 1) {
+        return [errorLocator.getCoefficient(1)];
+    }
+    var result = new Array(numErrors);
+    var errorCount = 0;
+    for (var i = 1; i < field.size && errorCount < numErrors; i++) {
+        if (errorLocator.evaluateAt(i) === 0) {
+            result[errorCount] = field.inverse(i);
+            errorCount++;
+        }
+    }
+    if (errorCount !== numErrors) {
+        return null;
+    }
+    return result;
+}
+function findErrorMagnitudes(field, errorEvaluator, errorLocations) {
+    // This is directly applying Forney's Formula
+    var s = errorLocations.length;
+    var result = new Array(s);
+    for (var i = 0; i < s; i++) {
+        var xiInverse = field.inverse(errorLocations[i]);
+        var denominator = 1;
+        for (var j = 0; j < s; j++) {
+            if (i !== j) {
+                denominator = field.multiply(denominator, GenericGF_1.addOrSubtractGF(1, field.multiply(errorLocations[j], xiInverse)));
+            }
+        }
+        result[i] = field.multiply(errorEvaluator.evaluateAt(xiInverse), field.inverse(denominator));
+        if (field.generatorBase !== 0) {
+            result[i] = field.multiply(result[i], xiInverse);
+        }
+    }
+    return result;
+}
+function decode(bytes, twoS) {
+    var outputBytes = new Uint8ClampedArray(bytes.length);
+    outputBytes.set(bytes);
+    var field = new GenericGF_1.default(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
+    var poly = new GenericGFPoly_1.default(field, outputBytes);
+    var syndromeCoefficients = new Uint8ClampedArray(twoS);
+    var error = false;
+    for (var s = 0; s < twoS; s++) {
+        var evaluation = poly.evaluateAt(field.exp(s + field.generatorBase));
+        syndromeCoefficients[syndromeCoefficients.length - 1 - s] = evaluation;
+        if (evaluation !== 0) {
+            error = true;
+        }
+    }
+    if (!error) {
+        return outputBytes;
+    }
+    var syndrome = new GenericGFPoly_1.default(field, syndromeCoefficients);
+    var sigmaOmega = runEuclideanAlgorithm(field, field.buildMonomial(twoS, 1), syndrome, twoS);
+    if (sigmaOmega === null) {
+        return null;
+    }
+    var errorLocations = findErrorLocations(field, sigmaOmega[0]);
+    if (errorLocations == null) {
+        return null;
+    }
+    var errorMagnitudes = findErrorMagnitudes(field, sigmaOmega[1], errorLocations);
+    for (var i = 0; i < errorLocations.length; i++) {
+        var position = outputBytes.length - 1 - field.log(errorLocations[i]);
+        if (position < 0) {
+            return null;
+        }
+        outputBytes[position] = GenericGF_1.addOrSubtractGF(outputBytes[position], errorMagnitudes[i]);
+    }
+    return outputBytes;
+}
+exports.decode = decode;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VERSIONS = [
+    {
+        infoBits: null,
+        versionNumber: 1,
+        alignmentPatternCenters: [],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 7,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 19 }],
+            },
+            {
+                ecCodewordsPerBlock: 10,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 16 }],
+            },
+            {
+                ecCodewordsPerBlock: 13,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 13 }],
+            },
+            {
+                ecCodewordsPerBlock: 17,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 9 }],
+            },
+        ],
+    },
+    {
+        infoBits: null,
+        versionNumber: 2,
+        alignmentPatternCenters: [6, 18],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 10,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 34 }],
+            },
+            {
+                ecCodewordsPerBlock: 16,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 28 }],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 22 }],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 16 }],
+            },
+        ],
+    },
+    {
+        infoBits: null,
+        versionNumber: 3,
+        alignmentPatternCenters: [6, 22],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 15,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 55 }],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 44 }],
+            },
+            {
+                ecCodewordsPerBlock: 18,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 17 }],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 13 }],
+            },
+        ],
+    },
+    {
+        infoBits: null,
+        versionNumber: 4,
+        alignmentPatternCenters: [6, 26],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 20,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 80 }],
+            },
+            {
+                ecCodewordsPerBlock: 18,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 32 }],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 24 }],
+            },
+            {
+                ecCodewordsPerBlock: 16,
+                ecBlocks: [{ numBlocks: 4, dataCodewordsPerBlock: 9 }],
+            },
+        ],
+    },
+    {
+        infoBits: null,
+        versionNumber: 5,
+        alignmentPatternCenters: [6, 30],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [{ numBlocks: 1, dataCodewordsPerBlock: 108 }],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 43 }],
+            },
+            {
+                ecCodewordsPerBlock: 18,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 16 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 11 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 12 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: null,
+        versionNumber: 6,
+        alignmentPatternCenters: [6, 34],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 18,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 68 }],
+            },
+            {
+                ecCodewordsPerBlock: 16,
+                ecBlocks: [{ numBlocks: 4, dataCodewordsPerBlock: 27 }],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [{ numBlocks: 4, dataCodewordsPerBlock: 19 }],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [{ numBlocks: 4, dataCodewordsPerBlock: 15 }],
+            },
+        ],
+    },
+    {
+        infoBits: 0x07C94,
+        versionNumber: 7,
+        alignmentPatternCenters: [6, 22, 38],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 20,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 78 }],
+            },
+            {
+                ecCodewordsPerBlock: 18,
+                ecBlocks: [{ numBlocks: 4, dataCodewordsPerBlock: 31 }],
+            },
+            {
+                ecCodewordsPerBlock: 18,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 14 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 15 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 13 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 14 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x085BC,
+        versionNumber: 8,
+        alignmentPatternCenters: [6, 24, 42],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 97 }],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 38 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 39 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 18 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 19 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 14 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 15 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x09A99,
+        versionNumber: 9,
+        alignmentPatternCenters: [6, 26, 46],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [{ numBlocks: 2, dataCodewordsPerBlock: 116 }],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 36 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 37 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 20,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 16 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 17 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 12 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 13 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x0A4D3,
+        versionNumber: 10,
+        alignmentPatternCenters: [6, 28, 50],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 18,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 68 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 69 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 43 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 44 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 6, dataCodewordsPerBlock: 19 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 20 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 6, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x0BBF6,
+        versionNumber: 11,
+        alignmentPatternCenters: [6, 30, 54],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 20,
+                ecBlocks: [{ numBlocks: 4, dataCodewordsPerBlock: 81 }],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 1, dataCodewordsPerBlock: 50 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 51 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 22 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 23 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 12 },
+                    { numBlocks: 8, dataCodewordsPerBlock: 13 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x0C762,
+        versionNumber: 12,
+        alignmentPatternCenters: [6, 32, 58],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 92 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 93 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 6, dataCodewordsPerBlock: 36 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 37 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 20 },
+                    { numBlocks: 6, dataCodewordsPerBlock: 21 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 7, dataCodewordsPerBlock: 14 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 15 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x0D847,
+        versionNumber: 13,
+        alignmentPatternCenters: [6, 34, 62],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [{ numBlocks: 4, dataCodewordsPerBlock: 107 }],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 8, dataCodewordsPerBlock: 37 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 38 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 8, dataCodewordsPerBlock: 20 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 21 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 12, dataCodewordsPerBlock: 11 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 12 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x0E60D,
+        versionNumber: 14,
+        alignmentPatternCenters: [6, 26, 46, 66],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 115 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 116 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 40 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 41 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 20,
+                ecBlocks: [
+                    { numBlocks: 11, dataCodewordsPerBlock: 16 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 17 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 11, dataCodewordsPerBlock: 12 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 13 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x0F928,
+        versionNumber: 15,
+        alignmentPatternCenters: [6, 26, 48, 70],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 22,
+                ecBlocks: [
+                    { numBlocks: 5, dataCodewordsPerBlock: 87 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 88 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 5, dataCodewordsPerBlock: 41 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 42 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 5, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 11, dataCodewordsPerBlock: 12 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 13 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x10B78,
+        versionNumber: 16,
+        alignmentPatternCenters: [6, 26, 50, 74],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 5, dataCodewordsPerBlock: 98 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 99 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 7, dataCodewordsPerBlock: 45 },
+                    { numBlocks: 3, dataCodewordsPerBlock: 46 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [
+                    { numBlocks: 15, dataCodewordsPerBlock: 19 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 20 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 13, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x1145D,
+        versionNumber: 17,
+        alignmentPatternCenters: [6, 30, 54, 78],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 1, dataCodewordsPerBlock: 107 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 108 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 10, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 1, dataCodewordsPerBlock: 22 },
+                    { numBlocks: 15, dataCodewordsPerBlock: 23 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 14 },
+                    { numBlocks: 17, dataCodewordsPerBlock: 15 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x12A17,
+        versionNumber: 18,
+        alignmentPatternCenters: [6, 30, 56, 82],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 5, dataCodewordsPerBlock: 120 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 121 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 9, dataCodewordsPerBlock: 43 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 44 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 17, dataCodewordsPerBlock: 22 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 23 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 14 },
+                    { numBlocks: 19, dataCodewordsPerBlock: 15 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x13532,
+        versionNumber: 19,
+        alignmentPatternCenters: [6, 30, 58, 86],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 113 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 114 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 44 },
+                    { numBlocks: 11, dataCodewordsPerBlock: 45 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 17, dataCodewordsPerBlock: 21 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 22 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 9, dataCodewordsPerBlock: 13 },
+                    { numBlocks: 16, dataCodewordsPerBlock: 14 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x149A6,
+        versionNumber: 20,
+        alignmentPatternCenters: [6, 34, 62, 90],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 107 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 108 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 41 },
+                    { numBlocks: 13, dataCodewordsPerBlock: 42 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 15, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 15, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 10, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x15683,
+        versionNumber: 21,
+        alignmentPatternCenters: [6, 28, 50, 72, 94],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 116 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 117 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [{ numBlocks: 17, dataCodewordsPerBlock: 42 }],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 17, dataCodewordsPerBlock: 22 },
+                    { numBlocks: 6, dataCodewordsPerBlock: 23 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 19, dataCodewordsPerBlock: 16 },
+                    { numBlocks: 6, dataCodewordsPerBlock: 17 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x168C9,
+        versionNumber: 22,
+        alignmentPatternCenters: [6, 26, 50, 74, 98],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 111 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 112 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [{ numBlocks: 17, dataCodewordsPerBlock: 46 }],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 7, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 16, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 24,
+                ecBlocks: [{ numBlocks: 34, dataCodewordsPerBlock: 13 }],
+            },
+        ],
+    },
+    {
+        infoBits: 0x177EC,
+        versionNumber: 23,
+        alignmentPatternCenters: [6, 30, 54, 74, 102],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 121 },
+                    { numBlocks: 5, dataCodewordsPerBlock: 122 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 47 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 48 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 11, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 16, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x18EC4,
+        versionNumber: 24,
+        alignmentPatternCenters: [6, 28, 54, 80, 106],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 6, dataCodewordsPerBlock: 117 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 118 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 6, dataCodewordsPerBlock: 45 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 46 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 11, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 16, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 30, dataCodewordsPerBlock: 16 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 17 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x191E1,
+        versionNumber: 25,
+        alignmentPatternCenters: [6, 32, 58, 84, 110],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 26,
+                ecBlocks: [
+                    { numBlocks: 8, dataCodewordsPerBlock: 106 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 107 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 8, dataCodewordsPerBlock: 47 },
+                    { numBlocks: 13, dataCodewordsPerBlock: 48 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 7, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 22, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 22, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 13, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x1AFAB,
+        versionNumber: 26,
+        alignmentPatternCenters: [6, 30, 58, 86, 114],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 10, dataCodewordsPerBlock: 114 },
+                    { numBlocks: 2, dataCodewordsPerBlock: 115 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 19, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 28, dataCodewordsPerBlock: 22 },
+                    { numBlocks: 6, dataCodewordsPerBlock: 23 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 33, dataCodewordsPerBlock: 16 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 17 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x1B08E,
+        versionNumber: 27,
+        alignmentPatternCenters: [6, 34, 62, 90, 118],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 8, dataCodewordsPerBlock: 122 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 123 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 22, dataCodewordsPerBlock: 45 },
+                    { numBlocks: 3, dataCodewordsPerBlock: 46 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 8, dataCodewordsPerBlock: 23 },
+                    { numBlocks: 26, dataCodewordsPerBlock: 24 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 12, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 28, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x1CC1A,
+        versionNumber: 28,
+        alignmentPatternCenters: [6, 26, 50, 74, 98, 122],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 117 },
+                    { numBlocks: 10, dataCodewordsPerBlock: 118 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 3, dataCodewordsPerBlock: 45 },
+                    { numBlocks: 23, dataCodewordsPerBlock: 46 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 31, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 11, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 31, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x1D33F,
+        versionNumber: 29,
+        alignmentPatternCenters: [6, 30, 54, 78, 102, 126],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 7, dataCodewordsPerBlock: 116 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 117 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 21, dataCodewordsPerBlock: 45 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 46 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 1, dataCodewordsPerBlock: 23 },
+                    { numBlocks: 37, dataCodewordsPerBlock: 24 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 19, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 26, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x1ED75,
+        versionNumber: 30,
+        alignmentPatternCenters: [6, 26, 52, 78, 104, 130],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 5, dataCodewordsPerBlock: 115 },
+                    { numBlocks: 10, dataCodewordsPerBlock: 116 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 19, dataCodewordsPerBlock: 47 },
+                    { numBlocks: 10, dataCodewordsPerBlock: 48 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 15, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 25, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 23, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 25, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x1F250,
+        versionNumber: 31,
+        alignmentPatternCenters: [6, 30, 56, 82, 108, 134],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 13, dataCodewordsPerBlock: 115 },
+                    { numBlocks: 3, dataCodewordsPerBlock: 116 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 29, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 42, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 23, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 28, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x209D5,
+        versionNumber: 32,
+        alignmentPatternCenters: [6, 34, 60, 86, 112, 138],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [{ numBlocks: 17, dataCodewordsPerBlock: 115 }],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 10, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 23, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 10, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 35, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 19, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 35, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x216F0,
+        versionNumber: 33,
+        alignmentPatternCenters: [6, 30, 58, 86, 114, 142],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 17, dataCodewordsPerBlock: 115 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 116 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 14, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 21, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 29, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 19, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 11, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 46, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x228BA,
+        versionNumber: 34,
+        alignmentPatternCenters: [6, 34, 62, 90, 118, 146],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 13, dataCodewordsPerBlock: 115 },
+                    { numBlocks: 6, dataCodewordsPerBlock: 116 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 14, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 23, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 44, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 59, dataCodewordsPerBlock: 16 },
+                    { numBlocks: 1, dataCodewordsPerBlock: 17 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x2379F,
+        versionNumber: 35,
+        alignmentPatternCenters: [6, 30, 54, 78, 102, 126, 150],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 12, dataCodewordsPerBlock: 121 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 122 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 12, dataCodewordsPerBlock: 47 },
+                    { numBlocks: 26, dataCodewordsPerBlock: 48 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 39, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 22, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 41, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x24B0B,
+        versionNumber: 36,
+        alignmentPatternCenters: [6, 24, 50, 76, 102, 128, 154],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 6, dataCodewordsPerBlock: 121 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 122 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 6, dataCodewordsPerBlock: 47 },
+                    { numBlocks: 34, dataCodewordsPerBlock: 48 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 46, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 10, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 2, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 64, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x2542E,
+        versionNumber: 37,
+        alignmentPatternCenters: [6, 28, 54, 80, 106, 132, 158],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 17, dataCodewordsPerBlock: 122 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 123 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 29, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 49, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 10, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 24, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 46, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x26A64,
+        versionNumber: 38,
+        alignmentPatternCenters: [6, 32, 58, 84, 110, 136, 162],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 4, dataCodewordsPerBlock: 122 },
+                    { numBlocks: 18, dataCodewordsPerBlock: 123 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 13, dataCodewordsPerBlock: 46 },
+                    { numBlocks: 32, dataCodewordsPerBlock: 47 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 48, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 14, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 42, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 32, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x27541,
+        versionNumber: 39,
+        alignmentPatternCenters: [6, 26, 54, 82, 110, 138, 166],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 20, dataCodewordsPerBlock: 117 },
+                    { numBlocks: 4, dataCodewordsPerBlock: 118 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 40, dataCodewordsPerBlock: 47 },
+                    { numBlocks: 7, dataCodewordsPerBlock: 48 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 43, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 22, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 10, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 67, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+    {
+        infoBits: 0x28C69,
+        versionNumber: 40,
+        alignmentPatternCenters: [6, 30, 58, 86, 114, 142, 170],
+        errorCorrectionLevels: [
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 19, dataCodewordsPerBlock: 118 },
+                    { numBlocks: 6, dataCodewordsPerBlock: 119 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 28,
+                ecBlocks: [
+                    { numBlocks: 18, dataCodewordsPerBlock: 47 },
+                    { numBlocks: 31, dataCodewordsPerBlock: 48 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 34, dataCodewordsPerBlock: 24 },
+                    { numBlocks: 34, dataCodewordsPerBlock: 25 },
+                ],
+            },
+            {
+                ecCodewordsPerBlock: 30,
+                ecBlocks: [
+                    { numBlocks: 20, dataCodewordsPerBlock: 15 },
+                    { numBlocks: 61, dataCodewordsPerBlock: 16 },
+                ],
+            },
+        ],
+    },
+];
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1652,14 +2559,14 @@ function extract(image, location) {
     }
     return {
         matrix: matrix,
-        mappingFunction: mappingFunction
+        mappingFunction: mappingFunction,
     };
 }
 exports.extract = extract;
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
