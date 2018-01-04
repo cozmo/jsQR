@@ -1,13 +1,13 @@
 import * as fs from "fs-extra";
 import * as path from "path";
-import {ITest} from "../test-data"
+import {Test} from "../test-data";
 
 import * as png from "upng-js";
 
 import * as helpers from "./helpers";
 
-import {decode} from "../src/decoder/decoder";
 import {binarize} from "../src/binarizer";
+import {decode} from "../src/decoder/decoder";
 import {extract} from "../src/extractor";
 import {locate} from "../src/locator";
 
@@ -17,17 +17,17 @@ import {locate} from "../src/locator";
   await fs.ensureDir(path.join("test-data", "AUTOGEN", "extracted"));
   const images = (await fs.readdir(path.join("test-data", "images"))).filter((n) => n.includes(".png"));
 
-  const testCases: ITest[] = [];
+  const testCases: Test[] = [];
   const summary: { [key: string]: boolean } = {};
 
   for (const imagePath of images) {
-    const test: ITest = {
-      binarizedPath: path.join("test-data", "AUTOGEN", "binarized", imagePath),
-      decodedBytes: null,
-      extractedPath: null,
-      inputPath: path.join("test-data", "images", imagePath),
-      location: null,
+    const test: Test = {
       name: imagePath,
+      inputPath: path.join("test-data", "images", imagePath),
+      binarizedPath: path.join("test-data", "AUTOGEN", "binarized", imagePath),
+      extractedPath: null,
+      location: null,
+      decoded: null,
       successful: false,
     };
 
@@ -43,9 +43,8 @@ import {locate} from "../src/locator";
       const extractedPath = path.join("test-data", "AUTOGEN", "extracted", imagePath);
       await fs.writeFile(extractedPath, helpers.bitMatrixToPng(extracted.matrix));
       test.extractedPath = extractedPath;
-
-      test.decodedBytes = decode(extracted.matrix);
-      test.successful = !!test.decodedBytes;
+      test.decoded = decode(extracted.matrix);
+      test.successful = !!test.decoded;
     } catch (e) {
       // failed to parse QR
     }
@@ -59,8 +58,6 @@ import {locate} from "../src/locator";
     },
     tests: summary,
   }, null, 2));
-  await fs.writeFile(path.join("test-data", "AUTOGEN", "tests.json"), JSON.stringify(testCases.map(t =>
-    Object.assign(t, {decodedBytes: t.decodedBytes ? Array.from(t.decodedBytes) : null})
-  ), null, 2));
+  await fs.writeFile(path.join("test-data", "AUTOGEN", "tests.json"), JSON.stringify(testCases, null, 2));
 })()).then(() => process.exit(0))
 .catch((e) => { throw e; });

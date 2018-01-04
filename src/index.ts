@@ -1,19 +1,14 @@
 import {binarize} from "./binarizer";
 import {BitMatrix} from "./BitMatrix";
+import {Chunks} from "./decoder/decodeData";
 import {decode} from "./decoder/decoder";
 import {extract} from "./extractor";
 import {locate, Point} from "./locator";
 
-function byteArrayToString(bytes: Uint8ClampedArray): string {
-  let str = "";
-  for (let i = 0; i < bytes.length; i++) {
-    str += String.fromCharCode(bytes[i]);
-  }
-  return str;
-}
-
-export interface QRInfo {
-  binaryData: Uint8ClampedArray;
+export interface QRCode {
+  binaryData: number[];
+  data: string;
+  chunks: Chunks;
   location: {
     topRightCorner: Point;
     topLeftCorner: Point;
@@ -28,23 +23,7 @@ export interface QRInfo {
   };
 }
 
-export interface NumericCode extends QRInfo {
-  data: number;
-  encodingType: "numeric";
-}
-
-export interface AlphaNumericCode extends QRInfo {
-  encodingType: "alphanumeric" | "kanji" | "TODO";
-  data: string;
-}
-
-export interface BinaryCode extends QRInfo {
-  encodingType: "byte" | "structured_append" | "eci";
-}
-
-export type QRCode = NumericCode | AlphaNumericCode | BinaryCode;
-
-export default function x(data: Uint8ClampedArray, width: number, height: number):  QRCode | null {
+export default function x(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
   const binarized = binarize(data, width, height);
   const location = locate(binarized);
   if (!location) {
@@ -57,12 +36,10 @@ export default function x(data: Uint8ClampedArray, width: number, height: number
     return null;
   }
 
-  const decodedString = byteArrayToString(decoded);
-
   return {
-    binaryData: decoded,
-    encodingType: "TODO",
-    data: decodedString,
+    binaryData: decoded.bytes,
+    data: decoded.text,
+    chunks: decoded.chunks,
     location: {
       topRightCorner: extracted.mappingFunction(location.dimension, 0),
       topLeftCorner: extracted.mappingFunction(0, 0),

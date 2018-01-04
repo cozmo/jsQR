@@ -1,6 +1,6 @@
 import { BitMatrix } from "../BitMatrix";
 import { Point } from "../Point";
-import { decodeQRdata } from "./decodeqrdata";
+import { decode as decodeData, DecodedQR } from "./decodeData";
 import { decode as rsDecode } from "./reedsolomon";
 import { Version, VERSIONS } from "./version";
 
@@ -8,8 +8,9 @@ import { Version, VERSIONS } from "./version";
 function numBitsDiffering(x: number, y: number) {
   let z = x ^ y;
   let bitCount = 0;
-  for (bitCount = 0; z; z &= z - 1) {
+  while (z) {
     bitCount++;
+    z &= z - 1;
   }
   return bitCount;
 }
@@ -279,7 +280,7 @@ function getDataBlocks(codewords: number[], version: Version, ecLevel: any) {
   return dataBlocks;
 }
 
-function decodeMatrix(matrix: BitMatrix): Uint8ClampedArray {
+function decodeMatrix(matrix: BitMatrix) {
   const version = readVersion(matrix);
   if (!version) {
     return null;
@@ -308,21 +309,14 @@ function decodeMatrix(matrix: BitMatrix): Uint8ClampedArray {
     }
   }
 
-  return numberArrayToUInt8(decodeQRdata(resultBytes, version.versionNumber, "TODO"));
-}
-
-function numberArrayToUInt8(array: number[]): Uint8ClampedArray {
-  if (!array) {
+  try {
+    return decodeData(resultBytes, version.versionNumber);
+  } catch {
     return null;
   }
-  const clamped = new Uint8ClampedArray(array.length);
-  for (let i = 0; i < array.length; i++) {
-    clamped[i] = array[i];
-  }
-  return clamped;
 }
 
-export function decode(matrix: BitMatrix): Uint8ClampedArray {
+export function decode(matrix: BitMatrix): DecodedQR {
   if (matrix == null) {
     return null;
   }

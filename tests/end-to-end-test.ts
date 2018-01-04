@@ -10,7 +10,11 @@ describe("end to end", () => {
       const output = jsQR(inputImage.data, inputImage.width, inputImage.height);
       expect(!!output).toBe(t.successful);
       if (output) {
-        expect(output.binaryData).toEqual(t.decodedBytes);
+        expect(output.chunks).toEqual(t.decoded.chunks);
+        expect(output.location.topLeftFinderPattern).toEqual(t.location.topLeft);
+        expect(output.location.topRightFinderPattern).toEqual(t.location.topRight);
+        expect(output.location.bottomLeftFinderPattern).toEqual(t.location.bottomLeft);
+        expect(output.location.bottomRightAlignmentPattern).toEqual(t.location.alignmentPattern);
       }
     });
   });

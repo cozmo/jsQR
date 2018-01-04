@@ -60,11 +60,7 @@ This data is in the same form as the [`ImageData`](https://developer.mozilla.org
 If a QR is able to be decoded the library will return an object with the following keys.
 
 - `binaryData` - `Uint8ClampedArray` - The raw bytes of the QR code.
-- `encodingType` - The encoding type used in the QR code. `"numeric"`, `"alphanumeric"`, `"kanji"`, `"byte"`, `"structured_append"` or `"eci"`.
-- `data` - The decoded form of the `binaryData` if there is one.
-  - If the `encodingType` is `numeric` then a number.
-  - If the `encodingType` is `alphanumeric` or `kanji` then a string.
-  - Does not exist for all other encoding types.
+- `data` - The string version of the QR code data.
 - `location` - An object with keys describing key points of the QR code. Each key is a point of the form `{x: number, y: number}`.
 Has points for the following locations.
   - Corners - `topRightCorner`/`topLeftCorner`/`bottomRightCorner`/`bottomLeftCorner`;
