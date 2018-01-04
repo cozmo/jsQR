@@ -24,7 +24,7 @@ export class BitStream {
       result = (this.bytes[this.byteOffset] & mask) >> bitsToNotRead;
       numBits -= toRead;
       this.bitOffset += toRead;
-      if (this.bitOffset == 8) {
+      if (this.bitOffset === 8) {
         this.bitOffset = 0;
         this.byteOffset++;
       }

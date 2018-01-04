@@ -1,5 +1,5 @@
 import {BitMatrix} from "../BitMatrix";
-import {QRLocation, Point} from "../locator";
+import {Point, QRLocation} from "../locator";
 
 interface PerspectiveTransform {
   a11: number;
@@ -96,8 +96,8 @@ export function extract(image: BitMatrix, location: QRLocation) {
     return {
       x: (transform.a11 * x + transform.a21 * y + transform.a31) / denominator,
       y: (transform.a12 * x + transform.a22 * y + transform.a32) / denominator,
-    }
-  }
+    };
+  };
 
   for (let y = 0; y < location.dimension; y++) {
     for (let x = 0; x < location.dimension; x++) {
@@ -110,6 +110,6 @@ export function extract(image: BitMatrix, location: QRLocation) {
 
   return {
     matrix,
-    mappingFunction
+    mappingFunction,
   };
 }
