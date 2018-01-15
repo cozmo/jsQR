@@ -163,24 +163,25 @@ BitMatrices are a convenient way to represent and interact with a 2d array of bo
 - `data` - A 1d array of booleans representing the data represented by the bit matrix.
 - `width` - The width of the matrix (height is inferred by `data.length / width`).
 
-## State of the library
-jsQR was originally written by porting over the ZXing C# library directly to typescript.
-This lead to code that works extremely well, but may not follow best javascript practices.
-
-The next steps (which are ongoing) are to port over any test cases (writing any that don't exist), and refactor each of the modules into more idomatic code.
-The end goal is a pure JS library QR library that is as fully featured as the ZXing library, but maintainable and extendable in it's own right.
-
 ## Contributing
 
 jsQR is written using [typescript](http://www.typescriptlang.org/).
 You can view the development source in the `src` directory.
 
-Currently the library is very untested, but tests are being added as the library is refactored into more maintainable code.
-Tests can be run via
+Tests can be run with
 
 ```
 npm test
 ```
+
+The test suite is several hundred images that can be found in the [test-data/](./test-data/images) folder. These images have been collected from
+
+1. the original ZXing test suite
+2. Creative commons images that have QR codes in them
+3. Issues that have been filed.
+
+
+Not all the images can be read. In general changes should hope to increase the number of images that read. However due to the nature of computer vision some changes may cause images that pass to start to fail and visa versa. To update the expected outcomes run `npm run-script generate-test-data`. These outcomes can be evaluated in the context of a PR to determine if a change improves or harms the overall ability of the library to read QR codes.
 
 After testing any changes, you can compile the production version by running
 ```
