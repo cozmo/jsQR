@@ -7,7 +7,7 @@ describe("decode", () => {
     it(t.name, async () => {
       const extracted = await loadBinarized(t.extractedPath);
       const output = decode(extracted);
-      expect(output).toEqual(t.decodedBytes);
+      expect(output).toEqual(t.decoded);
     });
   });
 });

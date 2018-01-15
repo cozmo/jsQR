@@ -2,171 +2,77 @@
 
 [![Build Status](https://travis-ci.org/cozmo/jsQR.svg?branch=master)](https://travis-ci.org/cozmo/jsQR)
 
-A pure javascript port of the [ZXing](https://github.com/zxing/zxing) QR parsing library.
+A pure javascript QR code reading library.
 This library takes in raw images and will locate, extract and parse any QR codes found within.
-It also exposes methods to do each step of the process individually.
-This allows piecemeal use and custom extension, for example you can use this library to parse pure QR codes (without extracting from an image), or to locate QR codes within an image without parsing them.
 
-[See a demo](https://s3-us-west-2.amazonaws.com/templaedhel/jsQR/features.html)
+[Demo](https://cozmo.github.io/jsQR)
 
-## Motivation
 
-This library was written because there were no javascript QR code parsing libraries that were well maintained and capable of parsing any reasonably complex QR codes.
+## Installation
 
-[See how jsQR compares to other JS QR code decoders](https://s3-us-west-2.amazonaws.com/templaedhel/jsQR/comparison.html)
-
-[ZXing](https://github.com/zxing/zxing) is the best QR code library, and had been ported to many languages, but not to Javascript.
-jsQR is a fully featured port of the QR code portions of the zxing library, with the goal of growing into a maintainable and extendable QR parsing library in pure javascript.
-
-## Documentation
-
-### Installation
-
-#### NodeJS
+### NodeJS
 
 ```
 npm install jsqr --save
 ```
 
 ```javascript
-jsQR = require("jsqr");
+// ES6 import
+import jsQR from "jsqr";
+
+// CommonJS require
+const jsQR = require("jsqr");
+
+jsQR(...);
 ```
 
-#### Browser
+### Browser
 
 Include [`jsQR.js`](./dist/jsQR.js).
 
 ```html
 <script src="jsQR.js"></script>
+<script>
+  jsQR(...);
+</script>
 ```
 
-You can also use module loaders such as [requireJS](http://requirejs.org/) or [browserify](http://browserify.org/)
+## Usage
 
-### Usage
-
-qrJS exports methods for each step in the QR recognition, extraction and decoding process, as well as a convenience wrapper method.
-
-#### Examples
-
-Using the wrapper method
-```javascript
-var decoded = jsQR.decodeQRFromImage(data, width, height);
-```
-
-Using the individual methods
-```javascript
-var binarizedImage = binarizeImage(data, width, height);
-var location = locateQRInBinaryImage(binarizedImage);
-if (!location) {
-  return;
-}
-var rawQR = extractQRFromBinaryImage(binarizedImage, location);
-if (!rawQR) {
-  return;
-}
-
-console.log(decodeQR(rawQR));
-```
-
-[Working example of parsing a webcam feed](https://s3-us-west-2.amazonaws.com/templaedhel/jsQR/example.html)
-
-### Methods
-
-#### qrJS.decodeQRFromImage(data, width, height)
-
-`decodeQRFromImage` is a wrapper method for the different steps of the QR decoding process.
-It takes in a RGBA image and returns a string representation of the data encoded within any detected QR codes.
-
-##### Arguments
-- `data` - An 1d array of numbers representing an RGBA image in the form `r1, g1, b1, a1, r2, g2, b2, a2,...`. This is the same form as the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) type returned by the `.getImageData()` call when reading data from a canvas element.
-- `width` - The width of the image.
-- `height` The height of the image.
-
-`data.length` should always be equal to `width * height * 4`.
-
-#### qrJS.binarizeImage(data, width, height)
-
-Binarizing an image (converting it to an image where pixels are either back or white, not grey) is the first step of the process.
-binarizeImage takes in a RGBA image and returns a [`BitMatrix`](#bitmatrices) representing the binarized form of that image.
-
-##### Arguments
-- `data` - An 1d array of numbers representing an RGBA image in the form `r1, g1, b1, a1, r2, g2, b2, a2,...`. This is the same form as the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) type returned by the `.getImageData()` call when reading data from a canvas element.
-- `width` - The width of the image.
-- `height` The height of the image.
-
-`data.length` should always be equal to `width * height * 4`.
-
-#### qrJS.locateQRInBinaryImage(image)
-
-`locateQRInBinaryImage` takes in a [`BitMatrix`](#bitmatrices) representing a binary image (as output by [`binarizeImage`](#qrjsbinarizeimagedata-width-height)) and returns the location of a QR code if one is detected.
-
-##### Arguments
-- `image` - a [`BitMatrix`](#bitmatrices) representing a binary image (as output by [`binarizeImage`](#qrjsbinarizeimagedata-width-height))
-
-##### Returns
-`locateQRInBinaryImage` returns `null` if no QR is found, else it returns an object with the following structure
+jsQR exports a method that takes in 3 arguments representing the image data you wish to decode.
 
 ```javascript
-{
-  bottomLeft: {
-    x: number,
-    y: number
-  },
-  topLeft: {
-    x: number,
-    y: number
-  },
-  topRight: {
-    x: number,
-    y: number
-  }
+const code = jsQR(imageData, width, height);
+
+if (code) {
+  console.log("Found QR code", code);
 }
 ```
-The coordinates represent the pixel locations of the QR's corner points.
 
-#### qrJS.extractQRFromBinaryImage(image, location)
+### Arguments
+- `imageData` - An `Uint8ClampedArray` of RGBA pixel values in the form `[r0, g0, b0, a0, r1, g1, b1, a1, ...]`.
+As such the length of this array should be `4 * width * height`.
+This data is in the same form as the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) interface, and it's also [commonly](https://www.npmjs.com/package/jpeg-js#decoding-jpegs) [returned](https://github.com/lukeapage/pngjs/blob/master/README.md#property-data) by node modules for reading images.
+- `width` - The width of the image you wish to decode.
+- `height` The height of the image you wish to decode.
 
-`extractQRFromBinaryImage` takes in a [`BitMatrix`](#bitmatrices) representing a binary image (as output by [`binarizeImage`](#qrjsbinarizeimagedata-width-height)) and the location of a QR code. It returns a [`BitMatrix`](#bitmatrices) representing the raw QR code.
+### Return value
+If a QR is able to be decoded the library will return an object with the following keys.
 
-##### Arguments
-- `image` - a [`BitMatrix`](#bitmatrices) representing a binary image (as output by [`binarizeImage`](#qrjsbinarizeimagedata-width-height))
-- `location` - The location of a QR code, as returned by [`locateQRInBinaryImage`](#qrjslocateqrinbinaryimageimage)
+- `binaryData` - `Uint8ClampedArray` - The raw bytes of the QR code.
+- `data` - The string version of the QR code data.
+- `location` - An object with keys describing key points of the QR code. Each key is a point of the form `{x: number, y: number}`.
+Has points for the following locations.
+  - Corners - `topRightCorner`/`topLeftCorner`/`bottomRightCorner`/`bottomLeftCorner`;
+  - Finder patterns - `topRightFinderPattern`/`topLeftFinderPattern`/`bottomLeftFinderPattern`
+  - May also have a point for the `bottomRightAlignmentPattern` assuming one exists and can be located.
 
-##### Returns
-`extractQRFromBinaryImage` a [`BitMatrix`](#bitmatrices) representing the extracted QR code. The matrix is size `N` by `N` where `N` is the number of "blocks" along the edge of the QR code.
-
-#### qrJS.decodeQR(qrCode)
-
-`decodeQR` takes in a [`BitMatrix`](#bitmatrices) representing a raw QR code (as output by [`extractQRFromBinaryImage`](#qrjsextractqrfrombinaryimageimage-location)) and returns a string of decoded data. It is the last step in the QR decoding process.
-
-##### Arguments
-- `qrCode` - a [`BitMatrix`](#bitmatrices) representing a raw QR code (as output by [`extractQRFromBinaryImage`](#qrjsextractqrfrombinaryimageimage-location))
-
-#### BitMatrices
-
-Throughout the QR extraction and decoding process data is often represented as a `BitMatrix`.
-BitMatrices are a convenient way to represent and interact with a 2d array of booleans.
-
-##### Properties
-- `width` - The width of the matrix.
-- `height` - The height of the matrix.
-- `data` - The underlying data (represented as a 1d array)
-
-##### Methods
-- `get(x, y)` - Get the bit at specific coordinates.
-- `set(x, y, bit)` - Set the bit at specific coordinates.
-
-#### qrJS.createBitMatrix(data, width)
-`createBitMatrix` is a convenience method for creating bit matrices.
-
-##### Arguments
-- `data` - A 1d array of booleans representing the data represented by the bit matrix.
-- `width` - The width of the matrix (height is inferred by `data.length / width`).
+Because the library is written in [typescript](http://www.typescriptlang.org/) you can also view the [type definitions](./dist/index.d.ts) to understand the API.
 
 ## Contributing
 
 jsQR is written using [typescript](http://www.typescriptlang.org/).
-You can view the development source in the `src` directory.
+You can view the development source in the [`src`](./src) directory.
 
 Tests can be run with
 
@@ -174,12 +80,7 @@ Tests can be run with
 npm test
 ```
 
-The test suite is several hundred images that can be found in the [test-data/](./test-data/images) folder. These images have been collected from
-
-1. the original ZXing test suite
-2. Creative commons images that have QR codes in them
-3. Issues that have been filed.
-
+The test suite is several hundred images that can be found in the [test-data/](./test-data/images) folder.
 
 Not all the images can be read. In general changes should hope to increase the number of images that read. However due to the nature of computer vision some changes may cause images that pass to start to fail and visa versa. To update the expected outcomes run `npm run-script generate-test-data`. These outcomes can be evaluated in the context of a PR to determine if a change improves or harms the overall ability of the library to read QR codes.
 

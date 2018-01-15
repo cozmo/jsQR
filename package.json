@@ -4,6 +4,7 @@
   "description": "QR code detection, extraction, decoding and parsing written as pure JS port of the ZXing library.",
   "repository": "https://github.com/cozmo/jsQR",
   "main": "./dist/jsQR.js",
+  "types": "./dist/index.d.ts",
   "contributors": [
     {
       "name": "Cosmo Wolfe",
@@ -27,7 +28,7 @@
     "tslint": "^5.7.0",
     "typescript": "^2.5.2",
     "upng-js": "^1.0.1",
-    "webpack": "^3.5.5"
+    "webpack": "^3.10.0"
   },
   "scripts": {
     "build": "./node_modules/.bin/webpack",
@@ -38,7 +39,10 @@
   },
   "jest": {
     "testRegex": ".*test.ts",
-    "moduleFileExtensions": ["ts", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "transform": {
       "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }
