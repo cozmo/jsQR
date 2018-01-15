@@ -1,6 +1,6 @@
 // tslint:disable:no-bitwise
-
 import { BitStream } from "./BitStream";
+import { shiftJISTable } from "./shiftJISTable";
 
 export interface Chunk {
   type: Mode;
@@ -156,7 +156,7 @@ function decodeKanji(stream: BitStream, size: number) {
     }
 
     bytes.push(c >> 8, c & 0xFF);
-    text += String.fromCharCode(c);
+    text += String.fromCharCode(shiftJISTable[c]);
   }
 
   return { bytes, text };
