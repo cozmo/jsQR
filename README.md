@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/cozmo/jsQR.svg?branch=master)](https://travis-ci.org/cozmo/jsQR)
 
 A pure javascript QR code reading library.
-This library takes in raw images and will locate, extract and parse any QR codes found within.
+This library takes in raw images and will locate, extract and parse any QR code found within.
 
 [Demo](https://cozmo.github.io/jsQR)
 

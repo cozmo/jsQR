@@ -1,7 +1,7 @@
 {
   "name": "jsqr",
-  "version": "0.2.2",
-  "description": "QR code detection, extraction, decoding and parsing written as pure JS port of the ZXing library.",
+  "version": "1.0.0",
+  "description": "A pure javascript QR code reading library that takes in raw images and will locate, extract and parse any QR code found within.",
   "repository": "https://github.com/cozmo/jsQR",
   "main": "./dist/jsQR.js",
   "types": "./dist/index.d.ts",
