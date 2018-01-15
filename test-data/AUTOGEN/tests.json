@@ -45325,6 +45325,109 @@
     "successful": false
   },
   {
+    "name": "kanji.png",
+    "inputPath": "test-data/images/kanji.png",
+    "binarizedPath": "test-data/AUTOGEN/binarized/kanji.png",
+    "extractedPath": "test-data/AUTOGEN/extracted/kanji.png",
+    "location": {
+      "alignmentPattern": {
+        "x": 106,
+        "y": 255
+      },
+      "bottomLeft": {
+        "x": 48.5,
+        "y": 267
+      },
+      "dimension": 25,
+      "topLeft": {
+        "x": 48.5,
+        "y": 197.5
+      },
+      "topRight": {
+        "x": 118,
+        "y": 197.5
+      }
+    },
+    "decoded": {
+      "text": "石積籍績脊責赤跡蹟碩切拙接摂折設",
+      "bytes": [
+        144,
+        206,
+        144,
+        207,
+        144,
+        208,
+        144,
+        209,
+        144,
+        210,
+        144,
+        211,
+        144,
+        212,
+        144,
+        213,
+        144,
+        214,
+        144,
+        215,
+        144,
+        216,
+        144,
+        217,
+        144,
+        218,
+        144,
+        219,
+        144,
+        220,
+        144,
+        221
+      ],
+      "chunks": [
+        {
+          "type": "kanji",
+          "bytes": [
+            144,
+            206,
+            144,
+            207,
+            144,
+            208,
+            144,
+            209,
+            144,
+            210,
+            144,
+            211,
+            144,
+            212,
+            144,
+            213,
+            144,
+            214,
+            144,
+            215,
+            144,
+            216,
+            144,
+            217,
+            144,
+            218,
+            144,
+            219,
+            144,
+            220,
+            144,
+            221
+          ],
+          "text": "石積籍績脊責赤跡蹟碩切拙接摂折設"
+        }
+      ]
+    },
+    "successful": true
+  },
+  {
     "name": "key-flyer.png",
     "inputPath": "test-data/images/key-flyer.png",
     "binarizedPath": "test-data/AUTOGEN/binarized/key-flyer.png",
