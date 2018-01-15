@@ -1,7 +1,7 @@
 {
   "counts": {
     "failed": 45,
-    "successful": 203
+    "successful": 204
   },
   "tests": {
     "0.png": true,
@@ -134,7 +134,7 @@
     "47.png": true,
     "48.png": true,
     "49.png": true,
-    "5.png": true,
+    "5.png": false,
     "50.png": true,
     "51.png": true,
     "52.png": true,
@@ -180,7 +180,7 @@
     "89.png": true,
     "9.png": true,
     "90.png": true,
-    "91.png": false,
+    "91.png": true,
     "92.png": false,
     "93.png": true,
     "94.png": false,
@@ -219,6 +219,7 @@
     "issue-34-regression.png": true,
     "japan-visa.png": false,
     "japanese-jean-ad.png": false,
+    "kanji.png": true,
     "key-flyer.png": false,
     "museum-1.png": true,
     "museum-2.png": false,

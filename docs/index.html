@@ -60,7 +60,6 @@
   <canvas id="canvas" hidden></canvas>
   <div id="output" hidden>
     <div id="outputMessage">No QR code detected.</div>
-    <div hidden><b>Encoding Type:</b> <span id="outputEncoding"></span></div>
     <div hidden><b>Data:</b> <span id="outputData"></span></div>
   </div>
   <script>
@@ -70,7 +69,6 @@
     var loadingMessage = document.getElementById("loadingMessage");
     var outputContainer = document.getElementById("output");
     var outputMessage = document.getElementById("outputMessage");
-    var outputEncoding = document.getElementById("outputEncoding");
     var outputData = document.getElementById("outputData");
 
     function drawLine(begin, end, color) {
@@ -106,13 +104,10 @@
           drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
           drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
           outputMessage.hidden = true;
-          outputEncoding.parentElement.hidden = false;
-          outputEncoding.innerText = code.encodingType;
           outputData.parentElement.hidden = false;
           outputData.innerText = code.data;
         } else {
           outputMessage.hidden = false;
-          outputEncoding.parentElement.hidden = true;
           outputData.parentElement.hidden = true;
         }
       }

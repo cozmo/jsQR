@@ -5,8 +5,8 @@ const MIN_QUAD_RATIO = 0.5;
 const MAX_QUAD_RATIO = 1.5;
 
 export interface Point {
-  x: number,
-  y: number,
+  x: number;
+  y: number;
 }
 
 export interface QRLocation {
@@ -305,11 +305,11 @@ export function locate(matrix: BitMatrix): QRLocation {
         }
       }
     }
-    finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y !== y && q.bottom.y - q.top.y >= 2))
-    activeFinderPatternQuads = activeFinderPatternQuads.filter(q => q.bottom.y === y)
+    finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y !== y && q.bottom.y - q.top.y >= 2));
+    activeFinderPatternQuads = activeFinderPatternQuads.filter(q => q.bottom.y === y);
 
-    alignmentPatternQuads.push(...activeAlignmentPatternQuads.filter(q => q.bottom.y !== y))
-    activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(q => q.bottom.y === y)
+    alignmentPatternQuads.push(...activeAlignmentPatternQuads.filter(q => q.bottom.y !== y));
+    activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(q => q.bottom.y === y);
 
   }
 
@@ -352,7 +352,7 @@ export function locate(matrix: BitMatrix): QRLocation {
   }
 
   const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
-    finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]
+    finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2],
   );
 
   // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.

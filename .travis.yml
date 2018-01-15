@@ -7,3 +7,4 @@ deploy:
     branch: master
   email: cosmo.wolfe@gmail.com
   api_key: $NPM_API_TOKEN
+script: npm run-script lint && npm test
