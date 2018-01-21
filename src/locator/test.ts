@@ -10,4 +10,9 @@ describe("locate", () => {
       expect(output).toEqual(t.location);
     });
   });
+
+  it("handles images with missing finder patterns", async () => {
+    const binarized = await loadBinarized("./src/locator/test-data/missing-finder-patterns.png");
+    expect(() => locate(binarized)).not.toThrow();
+  });
 });
