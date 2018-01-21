@@ -341,6 +341,9 @@ export function locate(matrix: BitMatrix): QRLocation {
         .filter((p, ii) => i !== ii)
         .map(p => ({ x: p.x, y: p.y, score: p.score + ((p.size - point.size) ** 2) / point.size, size: p.size }))
         .sort((a, b) => a.score - b.score);
+      if (otherPoints.length < 2) {
+        return null;
+      }
       const score = point.score + otherPoints[0].score + otherPoints[1].score;
       return {points: [point].concat(otherPoints.slice(0, 2)), score};
     })
