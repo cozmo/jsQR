@@ -9905,6 +9905,9 @@ function locate(matrix) {
             .filter(function (p, ii) { return i !== ii; })
             .map(function (p) { return ({ x: p.x, y: p.y, score: p.score + (Math.pow((p.size - point.size), 2)) / point.size, size: p.size }); })
             .sort(function (a, b) { return a.score - b.score; });
+        if (otherPoints.length < 2) {
+            return null;
+        }
         var score = point.score + otherPoints[0].score + otherPoints[1].score;
         return { points: [point].concat(otherPoints.slice(0, 2)), score: score };
     })
