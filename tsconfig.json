@@ -5,7 +5,8 @@
     "target": "es5",
     "typeRoots": [],
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "newLine": "LF",
   },
   "files": [
     "./src/index.ts"
