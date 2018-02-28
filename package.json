@@ -23,6 +23,7 @@
     "awesome-typescript-loader": "^3.2.3",
     "fs-extra": "^4.0.1",
     "jest": "^20.0.4",
+    "rimraf": "^2.6.2",
     "ts-jest": "^20.0.14",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
@@ -31,6 +32,7 @@
     "webpack": "^3.10.0"
   },
   "scripts": {
+    "prebuild": "rimraf dist",
     "build": "./node_modules/.bin/webpack",
     "watch": "./node_modules/.bin/webpack --watch",
     "test": "./node_modules/.bin/jest",
