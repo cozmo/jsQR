@@ -10,7 +10,10 @@ This library takes in raw images and will locate, extract and parse any QR code 
 
 ## Installation
 
-### NodeJS
+
+
+### NPM
+Available [on npm](https://www.npmjs.com/package/jsqr). Can be used in a Node.js program or with a module bundler such as Webpack or Browserify.
 
 ```
 npm install jsqr --save
@@ -27,8 +30,7 @@ jsQR(...);
 ```
 
 ### Browser
-
-Include [`jsQR.js`](./dist/jsQR.js).
+Alternatively for frontend use [`jsQR.js`](./dist/jsQR.js) can be included with a script tag
 
 ```html
 <script src="jsQR.js"></script>
@@ -36,6 +38,11 @@ Include [`jsQR.js`](./dist/jsQR.js).
   jsQR(...);
 </script>
 ```
+
+### A note on webcams
+jsQR is designed to be a completely standalone library for scanning QR codes. By design it does not include any platform specific code. This allows it to just as easily scan a frontend webcam stream, a user uploaded image, or be used as part of a backend Node.js process.
+
+If you want to use jsQR to scan a webcam stream you'll need to extract the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) from the video stream. This can then be passed to jsQR. The [jsQR demo](https://cozmo.github.io/jsQR) contains a barebones implementation of webcam scanning that can be used as a starting point and customized for your needs. For more advanced questions you can refer to the [`getUserMedia` docs](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) or the fairly comprehensive [webRTC sample code](https://github.com/webrtc/samples), both of which are great resources for consuming a webcam stream.
 
 ## Usage
 
