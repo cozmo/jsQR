@@ -23,7 +23,7 @@ export interface QRCode {
   };
 }
 
-export default function x(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
+function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
   const binarized = binarize(data, width, height);
   const location = locate(binarized);
   if (!location) {
@@ -54,3 +54,6 @@ export default function x(data: Uint8ClampedArray, width: number, height: number
     },
   };
 }
+
+(jsQR as any).default = jsQR;
+export default jsQR;

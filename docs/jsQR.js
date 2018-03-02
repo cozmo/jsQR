@@ -328,7 +328,7 @@ var binarizer_1 = __webpack_require__(4);
 var decoder_1 = __webpack_require__(5);
 var extractor_1 = __webpack_require__(11);
 var locator_1 = __webpack_require__(12);
-function x(data, width, height) {
+function jsQR(data, width, height) {
     var binarized = binarizer_1.binarize(data, width, height);
     var location = locator_1.locate(binarized);
     if (!location) {
@@ -355,7 +355,8 @@ function x(data, width, height) {
         },
     };
 }
-exports.default = x;
+jsQR.default = jsQR;
+exports.default = jsQR;
 
 
 /***/ }),

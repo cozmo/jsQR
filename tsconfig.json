@@ -6,7 +6,7 @@
     "typeRoots": [],
     "declaration": true,
     "outDir": "./dist",
-    "newLine": "LF",
+    "newLine": "LF"
   },
   "files": [
     "./src/index.ts"
