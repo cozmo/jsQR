@@ -1,6 +1,6 @@
 {
   "counts": {
-    "failed": 45,
+    "failed": 47,
     "successful": 204
   },
   "tests": {
@@ -217,6 +217,8 @@
     "issue-14-regression.png": false,
     "issue-32-regression.png": true,
     "issue-34-regression.png": true,
+    "issue-54-1.png": false,
+    "issue-54-2.png": false,
     "japan-visa.png": false,
     "japanese-jean-ad.png": false,
     "kanji.png": true,

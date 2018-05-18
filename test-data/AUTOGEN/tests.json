@@ -45271,6 +45271,60 @@
     "successful": true
   },
   {
+    "name": "issue-54-1.png",
+    "inputPath": "test-data/images/issue-54-1.png",
+    "binarizedPath": "test-data/AUTOGEN/binarized/issue-54-1.png",
+    "extractedPath": "test-data/AUTOGEN/extracted/issue-54-1.png",
+    "location": {
+      "alignmentPattern": {
+        "x": 411.6054083289644,
+        "y": 512.665444641921
+      },
+      "bottomLeft": {
+        "x": 466,
+        "y": 516.5
+      },
+      "dimension": 19,
+      "topLeft": {
+        "x": 464.5,
+        "y": 524
+      },
+      "topRight": {
+        "x": 393,
+        "y": 516.5
+      }
+    },
+    "decoded": null,
+    "successful": false
+  },
+  {
+    "name": "issue-54-2.png",
+    "inputPath": "test-data/images/issue-54-2.png",
+    "binarizedPath": "test-data/AUTOGEN/binarized/issue-54-2.png",
+    "extractedPath": "test-data/AUTOGEN/extracted/issue-54-2.png",
+    "location": {
+      "alignmentPattern": {
+        "x": 244.83835857660316,
+        "y": 81.48238799637457
+      },
+      "bottomLeft": {
+        "x": 286.5,
+        "y": 133.5
+      },
+      "dimension": 17,
+      "topLeft": {
+        "x": 207,
+        "y": 88
+      },
+      "topRight": {
+        "x": 179.75,
+        "y": 33.5
+      }
+    },
+    "decoded": null,
+    "successful": false
+  },
+  {
     "name": "japan-visa.png",
     "inputPath": "test-data/images/japan-visa.png",
     "binarizedPath": "test-data/AUTOGEN/binarized/japan-visa.png",
