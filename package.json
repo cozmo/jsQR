@@ -22,7 +22,7 @@
     "@types/node": "^8.0.27",
     "awesome-typescript-loader": "^3.2.3",
     "fs-extra": "^4.0.1",
-    "jest": "^20.0.4",
+    "jest": "^23.1.0",
     "rimraf": "^2.6.2",
     "ts-jest": "^20.0.14",
     "ts-node": "^3.3.0",

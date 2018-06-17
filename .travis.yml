@@ -1,10 +1,10 @@
 language: node_js
 node_js:
-  - "4"
+  - "node" # Latest
 deploy:
   provider: npm
   on:
     branch: master
   email: cosmo.wolfe@gmail.com
   api_key: $NPM_API_TOKEN
-script: npm run-script lint && npm test
+script: npm run-script lint && node --max-old-space-size=4096 ./node_modules/.bin/jest --runInBand
