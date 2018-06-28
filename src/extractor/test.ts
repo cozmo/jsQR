@@ -9,7 +9,6 @@ function matricCompare(a: BitMatrix, b: BitMatrix) {
   for (let x = 0; x < a.width; x++) {
     for (let y = 0; y < a.height; y++) {
       if (a.get(x, y) !== b.get(x, y)) {
-        console.log(x, y);
         return false;
       }
     }

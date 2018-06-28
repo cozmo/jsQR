@@ -1,21 +1,16 @@
+import * as fs from "fs-extra";
+import * as path from "path";
 import jsQR from "../src";
-import tests from "../test-data";
 import { loadPng } from "../tests/helpers";
+import * as helpers from "./helpers";
 
-describe("end to end", () => {
-  tests.forEach((t) => {
-    it(t.name, async () => {
-      const inputImage = await loadPng(t.inputPath);
-
-      const output = jsQR(inputImage.data, inputImage.width, inputImage.height);
-      expect(!!output).toBe(t.successful);
-      if (output) {
-        expect(output.chunks).toEqual(t.decoded.chunks);
-        expect(output.location.topLeftFinderPattern).toEqual(t.location.topLeft);
-        expect(output.location.topRightFinderPattern).toEqual(t.location.topRight);
-        expect(output.location.bottomLeftFinderPattern).toEqual(t.location.bottomLeft);
-        expect(output.location.bottomRightAlignmentPattern).toEqual(t.location.alignmentPattern);
-      }
+describe("end to end", async () => {
+  const tests = fs.readdirSync(path.join("tests", "end-to-end")).filter((n) => !n.includes("."));
+  for (const t of tests) {
+    it(t, async () => {
+      const inputImage = await helpers.loadPng(path.join("tests", "end-to-end", t, "input.png"));
+      const expectedOutput = JSON.parse(await fs.readFile(path.join("tests", "end-to-end", t, "output.json"), "utf8"));
+      expect(jsQR(inputImage.data, inputImage.width, inputImage.height)).toEqual(expectedOutput);
     });
-  });
+  }
 });

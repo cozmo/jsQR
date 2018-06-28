@@ -1,0 +1,101 @@
+{
+  "binaryData": [
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    98,
+    98,
+    99,
+    46,
+    99,
+    111,
+    46,
+    117,
+    107,
+    47,
+    112,
+    114,
+    111,
+    103,
+    114,
+    97,
+    109,
+    109,
+    101,
+    115
+  ],
+  "data": "http://bbc.co.uk/programmes",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        116,
+        116,
+        112,
+        58,
+        47,
+        47,
+        98,
+        98,
+        99,
+        46,
+        99,
+        111,
+        46,
+        117,
+        107,
+        47,
+        112,
+        114,
+        111,
+        103,
+        114,
+        97,
+        109,
+        109,
+        101,
+        115
+      ],
+      "text": "http://bbc.co.uk/programmes"
+    }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 418,
+      "y": 11
+    },
+    "topLeftCorner": {
+      "x": 11,
+      "y": 11
+    },
+    "bottomRightCorner": {
+      "x": 418,
+      "y": 418
+    },
+    "bottomLeftCorner": {
+      "x": 11,
+      "y": 418
+    },
+    "topRightFinderPattern": {
+      "x": 379.5,
+      "y": 49.5
+    },
+    "topLeftFinderPattern": {
+      "x": 49.5,
+      "y": 49.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 49.5,
+      "y": 379.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 346.5,
+      "y": 346.5
+    }
+  }
+}

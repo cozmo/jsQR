@@ -1,0 +1,59 @@
+{
+  "binaryData": [
+    119,
+    112,
+    58,
+    32,
+    107,
+    97
+  ],
+  "data": "wp: ka",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        119,
+        112,
+        58,
+        32,
+        107,
+        97
+      ],
+      "text": "wp: ka"
+    }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 293.3125,
+      "y": 294.37500000000006
+    },
+    "topLeftCorner": {
+      "x": 123.23296456602323,
+      "y": 295.6754312101154
+    },
+    "bottomRightCorner": {
+      "x": 292.30438844839114,
+      "y": 460.641367978342
+    },
+    "bottomLeftCorner": {
+      "x": 123.43750000000001,
+      "y": 463.12500000000006
+    },
+    "topRightFinderPattern": {
+      "x": 265,
+      "y": 322.5
+    },
+    "topLeftFinderPattern": {
+      "x": 151.75,
+      "y": 323.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 151.75,
+      "y": 435
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 240.48967581674742,
+      "y": 410.08484925166084
+    }
+  }
+}

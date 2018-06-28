@@ -1,0 +1,248 @@
+{
+  "binaryData": [
+    83,
+    101,
+    97,
+    110,
+    32,
+    79,
+    119,
+    101,
+    110,
+    13,
+    10,
+    115,
+    114,
+    111,
+    119,
+    101,
+    110,
+    64,
+    103,
+    111,
+    111,
+    103,
+    108,
+    101,
+    46,
+    99,
+    111,
+    109,
+    13,
+    10,
+    57,
+    49,
+    55,
+    45,
+    51,
+    54,
+    52,
+    45,
+    50,
+    57,
+    49,
+    56,
+    13,
+    10,
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    97,
+    119,
+    101,
+    115,
+    111,
+    109,
+    101,
+    45,
+    116,
+    104,
+    111,
+    117,
+    103,
+    104,
+    116,
+    115,
+    46,
+    99,
+    111,
+    109
+  ],
+  "data": "Sean Owen\r\nsrowen@google.com\r\n917-364-2918\r\nhttp://awesome-thoughts.com",
+  "chunks": [
+    {
+      "type": "alphanumeric",
+      "text": "S"
+    },
+    {
+      "type": "byte",
+      "bytes": [
+        101,
+        97,
+        110
+      ],
+      "text": "ean"
+    },
+    {
+      "type": "alphanumeric",
+      "text": " O"
+    },
+    {
+      "type": "byte",
+      "bytes": [
+        119,
+        101,
+        110,
+        13,
+        10,
+        115,
+        114,
+        111,
+        119,
+        101,
+        110,
+        64,
+        103,
+        111,
+        111,
+        103,
+        108,
+        101
+      ],
+      "text": "wen\r\nsrowen@google"
+    },
+    {
+      "type": "alphanumeric",
+      "text": "."
+    },
+    {
+      "type": "byte",
+      "bytes": [
+        99,
+        111,
+        109,
+        13,
+        10
+      ],
+      "text": "com\r\n"
+    },
+    {
+      "type": "numeric",
+      "text": "917"
+    },
+    {
+      "type": "alphanumeric",
+      "text": "-"
+    },
+    {
+      "type": "numeric",
+      "text": "364"
+    },
+    {
+      "type": "alphanumeric",
+      "text": "-"
+    },
+    {
+      "type": "numeric",
+      "text": "2918"
+    },
+    {
+      "type": "byte",
+      "bytes": [
+        13,
+        10,
+        104,
+        116,
+        116,
+        112
+      ],
+      "text": "\r\nhttp"
+    },
+    {
+      "type": "alphanumeric",
+      "text": "://"
+    },
+    {
+      "type": "byte",
+      "bytes": [
+        97,
+        119,
+        101,
+        115,
+        111,
+        109,
+        101
+      ],
+      "text": "awesome"
+    },
+    {
+      "type": "alphanumeric",
+      "text": "-"
+    },
+    {
+      "type": "byte",
+      "bytes": [
+        116,
+        104,
+        111,
+        117,
+        103,
+        104,
+        116,
+        115
+      ],
+      "text": "thoughts"
+    },
+    {
+      "type": "alphanumeric",
+      "text": "."
+    },
+    {
+      "type": "byte",
+      "bytes": [
+        99,
+        111,
+        109
+      ],
+      "text": "com"
+    }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 414.37349964854525,
+      "y": 366.922959567252
+    },
+    "topLeftCorner": {
+      "x": 429.1636058648266,
+      "y": 134.75463193533795
+    },
+    "bottomRightCorner": {
+      "x": 162.1937376277326,
+      "y": 348.57350251430745
+    },
+    "bottomLeftCorner": {
+      "x": 186.6286498275812,
+      "y": 118.94045725906837
+    },
+    "topRightFinderPattern": {
+      "x": 399.75,
+      "y": 351
+    },
+    "topLeftFinderPattern": {
+      "x": 413.25,
+      "y": 147.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 200,
+      "y": 133.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 193.5,
+      "y": 323.5
+    }
+  }
+}

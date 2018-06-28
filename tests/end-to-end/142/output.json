@@ -1,0 +1,55 @@
+{
+  "binaryData": [
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    48
+  ],
+  "data": "1234567890",
+  "chunks": [
+    {
+      "type": "numeric",
+      "text": "1234567890"
+    }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 258.0624999999999,
+      "y": 206.99999999999994
+    },
+    "topLeftCorner": {
+      "x": 206.7850177832688,
+      "y": 241.44234135756233
+    },
+    "bottomRightCorner": {
+      "x": 292.35144563687794,
+      "y": 259.2223783141564
+    },
+    "bottomLeftCorner": {
+      "x": 242.68749999999994,
+      "y": 293.99999999999994
+    },
+    "topRightFinderPattern": {
+      "x": 255.5,
+      "y": 221.5
+    },
+    "topLeftFinderPattern": {
+      "x": 221.5,
+      "y": 244.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 245.25,
+      "y": 279.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 266.5513660527376,
+      "y": 253.86132281615326
+    }
+  }
+}
