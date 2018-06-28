@@ -81,4 +81,23 @@ describe("decode", () => {
     const matrix = new BitMatrix(d, Math.sqrt(d.length));
     expect(decode(matrix)).toBeNull();
   });
+
+  it("Supports ECI chunks", async () => {
+    const data = await loadBinarized("./src/decoder/test-data/eci.png");
+    expect(decode(data)).toEqual({
+      text: "7948,328,1019,149,12,12,15,4,14,11,32,4",
+      bytes: [55, 57, 52, 56, 44, 51, 50, 56, 44, 49, 48, 49, 57, 44, 49, 52, 57, 44, 49, 50, 44, 49, 50, 44, 49, 53, 44,
+        52, 44, 49, 52, 44, 49, 49, 44, 51, 50, 44, 52],
+      chunks: [
+        {
+          type: "eci", assignmentNumber: 26,
+        }, {
+          type: "byte",
+          bytes: [55, 57, 52, 56, 44, 51, 50, 56, 44, 49, 48, 49, 57, 44, 49, 52, 57, 44, 49, 50, 44, 49, 50, 44, 49,
+            53, 44, 52, 44, 49, 52, 44, 49, 49, 44, 51, 50, 44, 52],
+          text: "7948,328,1019,149,12,12,15,4,14,11,32,4",
+        },
+      ],
+    });
+  });
 });

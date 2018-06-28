@@ -1,7 +1,7 @@
 {
   "counts": {
     "failed": 47,
-    "successful": 206
+    "successful": 207
   },
   "tests": {
     "0": true,
@@ -221,6 +221,7 @@
     "issue-54-2": false,
     "issue-59": true,
     "issue-59-inverted": true,
+    "issue-61": true,
     "japan-visa": false,
     "japanese-jean-ad": false,
     "kanji": true,
