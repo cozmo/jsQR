@@ -105,6 +105,9 @@ var BitMatrix = /** @class */ (function () {
             }
         }
     };
+    BitMatrix.prototype.getInverted = function () {
+        return new BitMatrix(this.data.map(function (d) { return d === 0 ? 1 : 0; }), this.width);
+    };
     return BitMatrix;
 }());
 exports.BitMatrix = BitMatrix;
@@ -328,13 +331,12 @@ var binarizer_1 = __webpack_require__(4);
 var decoder_1 = __webpack_require__(5);
 var extractor_1 = __webpack_require__(11);
 var locator_1 = __webpack_require__(12);
-function jsQR(data, width, height) {
-    var binarized = binarizer_1.binarize(data, width, height);
-    var location = locator_1.locate(binarized);
+function scan(matrix) {
+    var location = locator_1.locate(matrix);
     if (!location) {
         return null;
     }
-    var extracted = extractor_1.extract(binarized, location);
+    var extracted = extractor_1.extract(matrix, location);
     var decoded = decoder_1.decode(extracted.matrix);
     if (!decoded) {
         return null;
@@ -354,6 +356,14 @@ function jsQR(data, width, height) {
             bottomRightAlignmentPattern: location.alignmentPattern,
         },
     };
+}
+function jsQR(data, width, height) {
+    var binarized = binarizer_1.binarize(data, width, height);
+    var result = scan(binarized);
+    if (!result) {
+        result = scan(binarized.getInverted());
+    }
+    return result;
 }
 jsQR.default = jsQR;
 exports.default = jsQR;
