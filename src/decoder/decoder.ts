@@ -235,7 +235,7 @@ function readFormatInformation(matrix: BitMatrix) {
   return null;
 }
 
-function getDataBlocks(codewords: number[], version: Version, ecLevel: any) {
+function getDataBlocks(codewords: number[], version: Version, ecLevel: number) {
   const ecInfo = version.errorCorrectionLevels[ecLevel];
   const dataBlocks: Array<{
     numDataCodewords: number;
@@ -250,7 +250,12 @@ function getDataBlocks(codewords: number[], version: Version, ecLevel: any) {
     }
   });
 
-  // In some cases the QR code will be malformed enough that we pull off more codewords than we should - truncate that case
+  // In some cases the QR code will be malformed enough that we pull off more or less than we should.
+  // If we pull off less there's nothing we can do.
+  // If we pull off more we can safely truncate
+  if (codewords.length < totalCodewords) {
+    return null;
+  }
   codewords = codewords.slice(0, totalCodewords);
 
   const shortBlockSize = ecInfo.ecBlocks[0].dataCodewordsPerBlock;
@@ -293,6 +298,9 @@ function decodeMatrix(matrix: BitMatrix) {
 
   const codewords = readCodewords(matrix, version, formatInfo);
   const dataBlocks = getDataBlocks(codewords, version, formatInfo.errorCorrectionLevel);
+  if (!dataBlocks) {
+    return null;
+  }
 
   // Count total number of data bytes
   const totalBytes = dataBlocks.reduce((a, b) => a + b.numDataCodewords, 0);

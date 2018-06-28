@@ -121,7 +121,7 @@ export function decode(bytes: number[], twoS: number) {
   const errorLocations = findErrorLocations(field, sigmaOmega[0]);
   if (errorLocations == null) {
     return null;
-}
+  }
 
   const errorMagnitudes = findErrorMagnitudes(field, sigmaOmega[1], errorLocations);
   for (let i = 0; i < errorLocations.length; i++) {
