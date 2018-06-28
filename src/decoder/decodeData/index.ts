@@ -12,7 +12,12 @@ export interface ByteChunk {
   bytes: number[];
 }
 
-export type Chunks = Array<Chunk | ByteChunk>;
+export interface ECIChunk {
+  type: Mode.ECI;
+  assignmentNumber: number;
+}
+
+export type Chunks = Array<Chunk | ByteChunk | ECIChunk>;
 
 export interface DecodedQR {
   text: string;
@@ -25,6 +30,7 @@ export enum Mode {
   Alphanumeric = "alphanumeric",
   Byte = "byte",
   Kanji = "kanji",
+  ECI = "eci",
 }
 
 enum ModeByte {
@@ -33,8 +39,8 @@ enum ModeByte {
   Alphanumeric = 0x2,
   Byte = 0x4,
   Kanji = 0x8,
+  ECI = 0x7,
   // StructuredAppend = 0x3,
-  // ECI = 0x7,
   // FNC1FirstPosition = 0x5,
   // FNC1SecondPosition = 0x9,
 }
@@ -178,6 +184,29 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
     const mode = stream.readBits(4);
     if (mode === ModeByte.Terminator) {
       return result;
+    } else if (mode === ModeByte.ECI) {
+      if (stream.readBits(1) === 0) {
+        result.chunks.push({
+          type: Mode.ECI,
+          assignmentNumber: stream.readBits(7),
+        });
+      } else if (stream.readBits(1) === 0) {
+        result.chunks.push({
+          type: Mode.ECI,
+          assignmentNumber: stream.readBits(14),
+        });
+      } else if (stream.readBits(1) === 0) {
+        result.chunks.push({
+          type: Mode.ECI,
+          assignmentNumber: stream.readBits(21),
+        });
+      } else {
+        // ECI data seems corrupted
+        result.chunks.push({
+          type: Mode.ECI,
+          assignmentNumber: -1,
+        });
+      }
     } else if (mode === ModeByte.Numeric) {
       const numericResult = decodeNumeric(stream, size);
       result.text += numericResult.text;
