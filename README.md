@@ -87,9 +87,10 @@ Tests can be run with
 npm test
 ```
 
-The test suite is several hundred images that can be found in the [test-data/](./test-data/images) folder.
+Besides unit tests the test suite contains several hundred images that can be found in the [/tests/end-to-end/](./tests/end-to-end/) folder.
 
-Not all the images can be read. In general changes should hope to increase the number of images that read. However due to the nature of computer vision some changes may cause images that pass to start to fail and visa versa. To update the expected outcomes run `npm run-script generate-test-data`. These outcomes can be evaluated in the context of a PR to determine if a change improves or harms the overall ability of the library to read QR codes.
+Not all the images can be read. In general changes should hope to increase the number of images that read. However due to the nature of computer vision some changes may cause images that pass to start to fail and visa versa. To update the expected outcomes run `npm run-script generate-test-data`. These outcomes can be evaluated in the context of a PR to determine if a change improves or harms the overall ability of the library to read QR codes. A summary of which are passing
+and failing can be found at [/tests/end-to-end/report.json](./tests/end-to-end/report.json)
 
 After testing any changes, you can compile the production version by running
 ```
