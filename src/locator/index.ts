@@ -367,9 +367,7 @@ export function locate(matrix: BitMatrix): QRLocation {
   let dimension: number;
   let moduleSize: number;
   try {
-    const computedDimension = computeDimension(topLeft, topRight, bottomLeft, matrix);
-    dimension = computedDimension.dimension;
-    moduleSize = computedDimension.moduleSize;
+    ({ dimension, moduleSize } = computeDimension(topLeft, topRight, bottomLeft, matrix));
   } catch (e) {
     return null;
   }
