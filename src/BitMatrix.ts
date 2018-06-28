@@ -31,4 +31,8 @@ export class BitMatrix {
       }
     }
   }
+
+  public getInverted() {
+    return new BitMatrix(this.data.map(d => d === 0 ? 1 : 0), this.width);
+  }
 }

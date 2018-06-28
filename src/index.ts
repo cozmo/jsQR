@@ -23,13 +23,12 @@ export interface QRCode {
   };
 }
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
-  const binarized = binarize(data, width, height);
-  const location = locate(binarized);
+function scan(matrix: BitMatrix): QRCode | null {
+  const location = locate(matrix);
   if (!location) {
     return null;
   }
-  const extracted = extract(binarized, location);
+  const extracted = extract(matrix, location);
   const decoded = decode(extracted.matrix);
 
   if (!decoded) {
@@ -53,6 +52,15 @@ function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | 
       bottomRightAlignmentPattern: location.alignmentPattern,
     },
   };
+}
+
+function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
+  const binarized = binarize(data, width, height);
+  let result = scan(binarized);
+  if (!result) {
+    result = scan(binarized.getInverted());
+  }
+  return result;
 }
 
 (jsQR as any).default = jsQR;
