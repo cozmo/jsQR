@@ -809,6 +809,7 @@ var Mode;
     Mode["Alphanumeric"] = "alphanumeric";
     Mode["Byte"] = "byte";
     Mode["Kanji"] = "kanji";
+    Mode["ECI"] = "eci";
 })(Mode = exports.Mode || (exports.Mode = {}));
 var ModeByte;
 (function (ModeByte) {
@@ -817,8 +818,8 @@ var ModeByte;
     ModeByte[ModeByte["Alphanumeric"] = 2] = "Alphanumeric";
     ModeByte[ModeByte["Byte"] = 4] = "Byte";
     ModeByte[ModeByte["Kanji"] = 8] = "Kanji";
+    ModeByte[ModeByte["ECI"] = 7] = "ECI";
     // StructuredAppend = 0x3,
-    // ECI = 0x7,
     // FNC1FirstPosition = 0x5,
     // FNC1SecondPosition = 0x9,
 })(ModeByte || (ModeByte = {}));
@@ -937,6 +938,33 @@ function decode(data, version) {
         var mode = stream.readBits(4);
         if (mode === ModeByte.Terminator) {
             return result;
+        }
+        else if (mode === ModeByte.ECI) {
+            if (stream.readBits(1) === 0) {
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: stream.readBits(7),
+                });
+            }
+            else if (stream.readBits(1) === 0) {
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: stream.readBits(14),
+                });
+            }
+            else if (stream.readBits(1) === 0) {
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: stream.readBits(21),
+                });
+            }
+            else {
+                // ECI data seems corrupted
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: -1,
+                });
+            }
         }
         else if (mode === ModeByte.Numeric) {
             var numericResult = decodeNumeric(stream, size);
