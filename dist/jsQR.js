@@ -704,7 +704,12 @@ function getDataBlocks(codewords, version, ecLevel) {
             totalCodewords += block.dataCodewordsPerBlock + ecInfo.ecCodewordsPerBlock;
         }
     });
-    // In some cases the QR code will be malformed enough that we pull off more codewords than we should - truncate that case
+    // In some cases the QR code will be malformed enough that we pull off more or less than we should.
+    // If we pull off less there's nothing we can do.
+    // If we pull off more we can safely truncate
+    if (codewords.length < totalCodewords) {
+        return null;
+    }
     codewords = codewords.slice(0, totalCodewords);
     var shortBlockSize = ecInfo.ecBlocks[0].dataCodewordsPerBlock;
     // Pull codewords to fill the blocks up to the minimum size
@@ -742,6 +747,9 @@ function decodeMatrix(matrix) {
     }
     var codewords = readCodewords(matrix, version, formatInfo);
     var dataBlocks = getDataBlocks(codewords, version, formatInfo.errorCorrectionLevel);
+    if (!dataBlocks) {
+        return null;
+    }
     // Count total number of data bytes
     var totalBytes = dataBlocks.reduce(function (a, b) { return a + b.numDataCodewords; }, 0);
     var resultBytes = new Uint8ClampedArray(totalBytes);
@@ -9673,6 +9681,9 @@ function computeDimension(topLeft, topRight, bottomLeft, matrix) {
         sum(countBlackWhiteRun(topLeft, topRight, matrix, 5)) / 7 +
         sum(countBlackWhiteRun(bottomLeft, topLeft, matrix, 5)) / 7 +
         sum(countBlackWhiteRun(topRight, topLeft, matrix, 5)) / 7) / 4;
+    if (moduleSize < 1) {
+        throw new Error("Invalid module size");
+    }
     var topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
     var sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
     var dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
@@ -9930,7 +9941,14 @@ function locate(matrix) {
     var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
     // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
     // We'll use these to help find the alignment pattern but also later when we do the extraction.
-    var _b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize;
+    var dimension;
+    var moduleSize;
+    try {
+        (_b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize);
+    }
+    catch (e) {
+        return null;
+    }
     // Now find the alignment pattern
     var bottomRightFinderPattern = {
         x: topRight.x - topLeft.x + bottomLeft.x,
@@ -9967,6 +9985,7 @@ function locate(matrix) {
         topLeft: { x: topLeft.x, y: topLeft.y },
         topRight: { x: topRight.x, y: topRight.y },
     };
+    var _b;
 }
 exports.locate = locate;
 
