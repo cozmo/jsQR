@@ -62,6 +62,10 @@ function computeDimension(topLeft: Point, topRight: Point, bottomLeft: Point, ma
     sum(countBlackWhiteRun(topRight, topLeft, matrix, 5)) / 7
   ) / 4;
 
+  if (moduleSize < 1) {
+    throw new Error("Invalid module size");
+  }
+
   const topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
   const sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
   let dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
@@ -360,7 +364,13 @@ export function locate(matrix: BitMatrix): QRLocation {
 
   // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
   // We'll use these to help find the alignment pattern but also later when we do the extraction.
-  const { dimension, moduleSize } = computeDimension(topLeft, topRight, bottomLeft, matrix);
+  let dimension: number;
+  let moduleSize: number;
+  try {
+    ({ dimension, moduleSize } = computeDimension(topLeft, topRight, bottomLeft, matrix));
+  } catch (e) {
+    return null;
+  }
 
   // Now find the alignment pattern
   const bottomRightFinderPattern = { // Best guess at where a bottomRight finder pattern would be

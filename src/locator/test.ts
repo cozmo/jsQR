@@ -62,4 +62,21 @@ describe("locate", () => {
       topRight: { x: 221.75, y: 76 },
     });
   });
+
+  it("locates a damaged QR code and guesses the finder pattern location", async () => {
+    const binarized = await loadBinarized("./src/locator/test-data/damaged.png");
+    expect(locate(binarized)).toEqual({
+      alignmentPattern: { x: 219.75, y: 221 },
+      bottomLeft: { x: 81.5, y: 215.5 },
+      dimension: 29,
+      topLeft: { x: 82, y: 75.5 },
+      topRight: { x: 221.75, y: 76 },
+    });
+  });
+
+  it("doesn't locate a QR code in a malformed image", async () => {
+    // This image was created to be basically noise, but locator orignally found a QR code with size=Infinity within it
+    const binarized = await loadBinarized("./src/locator/test-data/malformed-infinity.png");
+    expect(locate(binarized)).toEqual(null);
+  });
 });
