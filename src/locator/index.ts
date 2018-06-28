@@ -62,7 +62,7 @@ function computeDimension(topLeft: Point, topRight: Point, bottomLeft: Point, ma
     sum(countBlackWhiteRun(topRight, topLeft, matrix, 5)) / 7
   ) / 4;
 
-  if (moduleSize === 0) {
+  if (moduleSize < 1) {
     throw new Error("Invalid module size");
   }
 
