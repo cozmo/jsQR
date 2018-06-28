@@ -1,0 +1,81 @@
+{
+  "binaryData": [
+    77,
+    69,
+    67,
+    65,
+    82,
+    68,
+    58,
+    78,
+    58,
+    230,
+    184,
+    172,
+    232,
+    169,
+    166,
+    59,
+    59
+  ],
+  "data": "MECARD:N:測試;;",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        77,
+        69,
+        67,
+        65,
+        82,
+        68,
+        58,
+        78,
+        58,
+        230,
+        184,
+        172,
+        232,
+        169,
+        166,
+        59,
+        59
+      ],
+      "text": "MECARD:N:測試;;"
+    }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 300,
+      "y": 50
+    },
+    "topLeftCorner": {
+      "x": 50,
+      "y": 50
+    },
+    "bottomRightCorner": {
+      "x": 300,
+      "y": 300
+    },
+    "bottomLeftCorner": {
+      "x": 50,
+      "y": 300
+    },
+    "topRightFinderPattern": {
+      "x": 265,
+      "y": 85
+    },
+    "topLeftFinderPattern": {
+      "x": 85,
+      "y": 85
+    },
+    "bottomLeftFinderPattern": {
+      "x": 85,
+      "y": 265
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 235,
+      "y": 235
+    }
+  }
+}

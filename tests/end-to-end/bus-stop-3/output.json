@@ -1,0 +1,89 @@
+{
+  "binaryData": [
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    79,
+    72,
+    65,
+    73,
+    80,
+    85,
+    90,
+    90,
+    76,
+    69,
+    46,
+    67,
+    79,
+    77
+  ],
+  "data": "http://OHAIPUZZLE.COM",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        116,
+        116,
+        112,
+        58,
+        47,
+        47,
+        79,
+        72,
+        65,
+        73,
+        80,
+        85,
+        90,
+        90,
+        76,
+        69,
+        46,
+        67,
+        79,
+        77
+      ],
+      "text": "http://OHAIPUZZLE.COM"
+    }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 156.0990704080627,
+      "y": 95.03936394872025
+    },
+    "topLeftCorner": {
+      "x": 83.24842797635381,
+      "y": 98.68319576018746
+    },
+    "bottomRightCorner": {
+      "x": 156.3167315669272,
+      "y": 169.95178743966295
+    },
+    "bottomLeftCorner": {
+      "x": 84.97909222757205,
+      "y": 169.33434115512568
+    },
+    "topRightFinderPattern": {
+      "x": 148,
+      "y": 103.5
+    },
+    "topLeftFinderPattern": {
+      "x": 90.75,
+      "y": 106
+    },
+    "bottomLeftFinderPattern": {
+      "x": 92,
+      "y": 162
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 141.5,
+      "y": 155.5
+    }
+  }
+}

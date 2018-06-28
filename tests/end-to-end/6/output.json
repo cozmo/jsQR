@@ -1,0 +1,91 @@
+{
+  "binaryData": [
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    119,
+    119,
+    119,
+    46,
+    103,
+    111,
+    111,
+    103,
+    108,
+    101,
+    46,
+    99,
+    111,
+    109,
+    47
+  ],
+  "data": "http://www.google.com/",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        116,
+        116,
+        112,
+        58,
+        47,
+        47,
+        119,
+        119,
+        119,
+        46,
+        103,
+        111,
+        111,
+        103,
+        108,
+        101,
+        46,
+        99,
+        111,
+        109,
+        47
+      ],
+      "text": "http://www.google.com/"
+    }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 87,
+      "y": 12
+    },
+    "topLeftCorner": {
+      "x": 12,
+      "y": 12
+    },
+    "bottomRightCorner": {
+      "x": 87,
+      "y": 87
+    },
+    "bottomLeftCorner": {
+      "x": 12,
+      "y": 87
+    },
+    "topRightFinderPattern": {
+      "x": 76.5,
+      "y": 22.5
+    },
+    "topLeftFinderPattern": {
+      "x": 22.5,
+      "y": 22.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 22.5,
+      "y": 76.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 67.5,
+      "y": 67.5
+    }
+  }
+}
