@@ -61,16 +61,14 @@ function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: num
 
     for (let y = 0; y < location.dimension; y++) {
       for (let x = 0; x < location.dimension; x++) {
-        const xValue = x + 0.5;
-        const yValue = y + 0.5;
-        const sourcePixel = extracted.mappingFunction(xValue, yValue);
-        const pixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
+        const sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
+        const sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
 
         if(extracted.matrix.get(x, y)) {
-          qrColor.forEach((value, componentIndex, array) => {array[componentIndex] = value + sourceData[pixelOffset + componentIndex]});
+          qrColor.forEach((value, componentIndex, array) => {array[componentIndex] = value + sourceData[sourcePixelOffset + componentIndex]});
           qrPixels++;
         }else {
-          backgroundColor.forEach((value, componentIndex, array) => {array[componentIndex] += sourceData[pixelOffset + componentIndex]});
+          backgroundColor.forEach((value, componentIndex, array) => {array[componentIndex] += sourceData[sourcePixelOffset + componentIndex]});
           backgroundPixels++;
         }
       }
@@ -78,7 +76,6 @@ function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: num
 
     output.backgroundColor = new Uint8ClampedArray(backgroundColor.map(value => value / backgroundPixels));
     output.qrColor = new Uint8ClampedArray(qrColor.map(value => value / qrPixels));
-
   }
 
   return output;
