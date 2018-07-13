@@ -1,49 +1,114 @@
 {
-  "binaryData": [
-    84,
-    69,
-    83,
-    84
-  ],
-  "data": "TEST",
-  "chunks": [
-    {
-      "type": "alphanumeric",
-      "text": "TEST"
+  "default": {
+    "binaryData": [
+      84,
+      69,
+      83,
+      84
+    ],
+    "data": "TEST",
+    "chunks": [
+      {
+        "type": "alphanumeric",
+        "text": "TEST"
+      }
+    ],
+    "location": {
+      "topRightCorner": {
+        "x": 28.304930965658343,
+        "y": 244.6544190676206
+      },
+      "topLeftCorner": {
+        "x": 21.165012324749235,
+        "y": 935.5281546918073
+      },
+      "bottomRightCorner": {
+        "x": 739.7185736323866,
+        "y": 232.49332926374248
+      },
+      "bottomLeftCorner": {
+        "x": 741.1684773445832,
+        "y": 976.8875317401377
+      },
+      "topRightFinderPattern": {
+        "x": 98.25,
+        "y": 316.5
+      },
+      "topLeftFinderPattern": {
+        "x": 93.25,
+        "y": 865
+      },
+      "bottomLeftFinderPattern": {
+        "x": 659.5,
+        "y": 893
+      },
+      "bottomRightAlignmentPattern": {
+        "x": 591,
+        "y": 378
+      }
     }
-  ],
-  "location": {
-    "topRightCorner": {
-      "x": 28.304930965658343,
-      "y": 244.6544190676206
+  },
+  "color": {
+    "binaryData": [
+      84,
+      69,
+      83,
+      84
+    ],
+    "data": "TEST",
+    "chunks": [
+      {
+        "type": "alphanumeric",
+        "text": "TEST"
+      }
+    ],
+    "location": {
+      "topRightCorner": {
+        "x": 28.304930965658343,
+        "y": 244.6544190676206
+      },
+      "topLeftCorner": {
+        "x": 21.165012324749235,
+        "y": 935.5281546918073
+      },
+      "bottomRightCorner": {
+        "x": 739.7185736323866,
+        "y": 232.49332926374248
+      },
+      "bottomLeftCorner": {
+        "x": 741.1684773445832,
+        "y": 976.8875317401377
+      },
+      "topRightFinderPattern": {
+        "x": 98.25,
+        "y": 316.5
+      },
+      "topLeftFinderPattern": {
+        "x": 93.25,
+        "y": 865
+      },
+      "bottomLeftFinderPattern": {
+        "x": 659.5,
+        "y": 893
+      },
+      "bottomRightAlignmentPattern": {
+        "x": 591,
+        "y": 378
+      }
     },
-    "topLeftCorner": {
-      "x": 21.165012324749235,
-      "y": 935.5281546918073
-    },
-    "bottomRightCorner": {
-      "x": 739.7185736323866,
-      "y": 232.49332926374248
-    },
-    "bottomLeftCorner": {
-      "x": 741.1684773445832,
-      "y": 976.8875317401377
-    },
-    "topRightFinderPattern": {
-      "x": 98.25,
-      "y": 316.5
-    },
-    "topLeftFinderPattern": {
-      "x": 93.25,
-      "y": 865
-    },
-    "bottomLeftFinderPattern": {
-      "x": 659.5,
-      "y": 893
-    },
-    "bottomRightAlignmentPattern": {
-      "x": 591,
-      "y": 378
+    "colors": {
+      "qr": {
+        "0": 15,
+        "1": 15,
+        "2": 16,
+        "3": 255
+      },
+      "background": {
+        "0": 234,
+        "1": 230,
+        "2": 228,
+        "3": 255
+      }
     }
   }
 }

@@ -18,8 +18,9 @@ const report = {
   for (const t of tests) {
     const imageData = await helpers.loadPng(path.join("tests", "end-to-end", t, "input.png"));
     const output = jsQR(imageData.data, imageData.width, imageData.height);
+    const colorOutput = jsQR(imageData.data, imageData.width, imageData.height, {retrieveColors: true})
 
-    await fs.writeFile(path.join("tests", "end-to-end", t, "output.json"), JSON.stringify(output, null, 2), "utf8");
+    await fs.writeFile(path.join("tests", "end-to-end", t, "output.json"), JSON.stringify({default: output, color: colorOutput}, null, 2), "utf8");
     report.tests[t] = !!output;
     report.counts[!!output ? "successful" : "failed"]++;
   }

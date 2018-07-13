@@ -7,7 +7,7 @@ export interface QRColors {
   background: Uint8ClampedArray;
 }
 
-//Retrieves the colors that make up a scanned QR code. RGB values are converted to the CIELab color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged directly.
+//Retrieves the colors that make up a scanned QR code. RGB (assumed to be sRGB) values are converted to the CIELab color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged directly.
 export function retrieveColors(location: QRLocation, extracted: {matrix: BitMatrix; mappingFunction: Function}, sourceData: Uint8ClampedArray, sourceWidth: number): QRColors {
   let backgroundColorTotals = [0, 0, 0, 0], qrColorTotals = [0, 0, 0, 0],//Sum totals for all the pixels as [L*, a*, b*, a].
       backgroundPixels = 0,                 qrPixels = 0;//The number of each type of pixel that has been totaled, used to average at the end.
