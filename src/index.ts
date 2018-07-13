@@ -4,6 +4,15 @@ import {Chunks} from "./decoder/decodeData";
 import {decode} from "./decoder/decoder";
 import {extract} from "./extractor";
 import {locate, Point} from "./locator";
+import {QRColors, retrieveColors} from "./color-retriever"
+
+export interface ScanOptions {
+  retrieveColors?: boolean;
+}
+
+const defaultOptions: ScanOptions = {
+  retrieveColors: false
+}
 
 export interface QRCode {
   binaryData: number[];
@@ -21,11 +30,10 @@ export interface QRCode {
 
     bottomRightAlignmentPattern?: Point;
   };
-  backgroundColor?: Uint8ClampedArray;
-  qrColor?: Uint8ClampedArray;
+  colors?: QRColors;
 }
 
-function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: number, retrieveColors: boolean): QRCode | null {
+function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: number, scanOptions: ScanOptions): QRCode | null {
   const location = locate(matrix);
   if (!location) {
     return null;
@@ -55,37 +63,18 @@ function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: num
     }
   }
 
-  if(retrieveColors) {
-    let backgroundColor = [0, 0, 0, 0], qrColor = [0, 0, 0, 0],
-        backgroundPixels = 0,           qrPixels = 0;
-
-    for (let y = 0; y < location.dimension; y++) {
-      for (let x = 0; x < location.dimension; x++) {
-        const sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
-        const sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
-
-        if(extracted.matrix.get(x, y)) {
-          qrColor.forEach((value, componentIndex, array) => {array[componentIndex] = value + sourceData[sourcePixelOffset + componentIndex]});
-          qrPixels++;
-        }else {
-          backgroundColor.forEach((value, componentIndex, array) => {array[componentIndex] += sourceData[sourcePixelOffset + componentIndex]});
-          backgroundPixels++;
-        }
-      }
-    }
-
-    output.backgroundColor = new Uint8ClampedArray(backgroundColor.map(value => value / backgroundPixels));
-    output.qrColor = new Uint8ClampedArray(qrColor.map(value => value / qrPixels));
+  if(scanOptions.retrieveColors) {
+    output.colors = retrieveColors(location, extracted, sourceData, sourceWidth);
   }
 
   return output;
 }
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number, retrieveColors: boolean = false): QRCode | null {
+function jsQR(data: Uint8ClampedArray, width: number, height: number, scanOptions: ScanOptions = defaultOptions): QRCode | null {
   const binarized = binarize(data, width, height);
-  let result = scan(binarized, data, width, retrieveColors);
+  let result = scan(binarized, data, width, scanOptions);
   if (!result) {
-    result = scan(binarized.getInverted(), data, width, retrieveColors);
+    result = scan(binarized.getInverted(), data, width, scanOptions);
   }
   return result;
 }
