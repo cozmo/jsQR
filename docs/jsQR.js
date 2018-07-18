@@ -357,10 +357,17 @@ function scan(matrix) {
         },
     };
 }
-function jsQR(data, width, height) {
+var defaultOptions = {
+    attemptInverted: true,
+};
+function jsQR(data, width, height, options) {
+    var actualOpts = defaultOptions;
+    Object.keys(options || {}).forEach(function (opt) {
+        actualOpts[opt] = options[opt];
+    });
     var binarized = binarizer_1.binarize(data, width, height);
     var result = scan(binarized);
-    if (!result) {
+    if (!result && actualOpts.attemptInverted) {
         result = scan(binarized.getInverted());
     }
     return result;

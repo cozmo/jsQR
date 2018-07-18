@@ -15,5 +15,8 @@ export interface QRCode {
         bottomRightAlignmentPattern?: Point;
     };
 }
-declare function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null;
+export interface Options {
+    attemptInverted?: boolean;
+}
+declare function jsQR(data: Uint8ClampedArray, width: number, height: number, options?: Options): QRCode | null;
 export default jsQR;

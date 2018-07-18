@@ -54,10 +54,24 @@ function scan(matrix: BitMatrix): QRCode | null {
   };
 }
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
+export interface Options {
+  attemptInverted?: boolean;
+}
+
+const defaultOptions: Options = {
+  attemptInverted: true,
+};
+
+function jsQR(data: Uint8ClampedArray, width: number, height: number, options?: Options): QRCode | null {
+
+  const actualOpts = defaultOptions;
+  Object.keys(options || {}).forEach(opt => {
+    (actualOpts as any)[opt] = (options as any)[opt];
+  });
+
   const binarized = binarize(data, width, height);
   let result = scan(binarized);
-  if (!result) {
+  if (!result && actualOpts.attemptInverted) {
     result = scan(binarized.getInverted());
   }
   return result;
