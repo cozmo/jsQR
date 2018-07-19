@@ -12,15 +12,16 @@ export interface QRColors {
 color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged
 directly. */
 export function retrieveColors(location: QRLocation,
-                               extracted: {matrix: BitMatrix; mappingFunction: (x: number, y: number) => Point; }, sourceData: Uint8ClampedArray, 
+                               extracted: {matrix: BitMatrix; mappingFunction: (x: number, y: number) => Point; },
+                               sourceData: Uint8ClampedArray,
                                sourceWidth: number): QRColors {
 
   // Sum totals for all the pixels as [L*, a*, b*, a].
   const backgroundColorTotals = [0, 0, 0, 0];
   const qrColorTotals = [0, 0, 0, 0];
   // The number of each type of pixel that has been totaled, used to average at the end.
-  var backgroundPixels = 0;
-  var qrPixels = 0;
+  let backgroundPixels = 0;
+  let qrPixels = 0;
 
   for (let y = 0; y < location.dimension; y++) {
     for (let x = 0; x < location.dimension; x++) {
@@ -44,21 +45,19 @@ export function retrieveColors(location: QRLocation,
     }
   }
 
-  const backgroundAverages = backgroundColorTotals.map(value => value/ backgroundPixels);
-  const qrAverages = qrColorTotals.map(value => value/ backgroundPixels);
+  const backgroundAverages = backgroundColorTotals.map(value => value / backgroundPixels);
+  const qrAverages = qrColorTotals.map(value => value / backgroundPixels);
 
-  let backgroundColor = labToRGB(backgroundAverages);
+  const backgroundColor = labToRGB(backgroundAverages);
   backgroundColor.push(backgroundAverages[3]);
-  let qrColor = labToRGB(qrAverages);
+  const qrColor = labToRGB(qrAverages);
   qrColor.push(qrAverages[3]);
 
   return {
     qr: new Uint8ClampedArray(qrColor),
     background: new Uint8ClampedArray(backgroundColor),
-  }
+  };  
 }
-
-
 
 // Color space conversions from http://www.easyrgb.com/en/math.php
 
@@ -70,7 +69,7 @@ function rgbToLab(rgb: Uint8ClampedArray): number[] {
   let varB = ( rgb[2] / 255 );
   
   if ( varR > 0.04045 ) {
-    varR = Math.pow(( ( varR + 0.055 ) / 1.055 ), 2.4);
+    varR = Math.pow(((varR + 0.055) / 1.055), 2.4);
   } else {
     varR = varR / 12.92;
   }
