@@ -1,10 +1,10 @@
-import {binarize} from "./binarizer";
-import {BitMatrix} from "./BitMatrix";
-import {Chunks} from "./decoder/decodeData";
-import {decode} from "./decoder/decoder";
-import {extract} from "./extractor";
-import {locate, Point} from "./locator";
-import {QRColors, retrieveColors} from "./color-retriever"
+import { binarize } from "./binarizer";
+import { BitMatrix } from "./BitMatrix";
+import { QRColors, retrieveColors } from "./color-retriever";
+import { Chunks } from "./decoder/decodeData";
+import { decode } from "./decoder/decoder";
+import { extract } from "./extractor";
+import { locate, Point } from "./locator";
 
 export interface QRCode {
   binaryData: number[];
@@ -37,7 +37,7 @@ function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: num
     return null;
   }
 
-  let output: QRCode = {
+  const output: QRCode = {
     binaryData: decoded.bytes,
     data: decoded.text,
     chunks: decoded.chunks,
@@ -52,10 +52,10 @@ function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: num
       bottomLeftFinderPattern: location.bottomLeft,
 
       bottomRightAlignmentPattern: location.alignmentPattern,
-    }
-  }
+    },
+  };
 
-  if(scanOptions.retrieveColors) {
+  if (scanOptions.retrieveColors) {
     output.colors = retrieveColors(location, extracted, sourceData, sourceWidth);
   }
 
