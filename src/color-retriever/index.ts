@@ -11,31 +11,31 @@ export interface QRColors {
 /* Retrieves the colors that make up a scanned QR code. RGB (assumed to be sRGB) values are converted to the CIELab
 color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged
 directly. */
-export function retrieveColors(location: QRLocation, extracted: {matrix: BitMatrix;
-                               mappingFunction: (x: Number, y: Number) => Point;}, sourceData: Uint8ClampedArray,
+export function retrieveColors(location: QRLocation,
+                               extracted: {matrix: BitMatrix; mappingFunction: (x: number, y: number) => Point; }, sourceData: Uint8ClampedArray, 
                                sourceWidth: number): QRColors {
 
   // Sum totals for all the pixels as [L*, a*, b*, a].
-  let backgroundColorTotals = [0, 0, 0, 0];
-  let qrColorTotals = [0, 0, 0, 0];
+  const backgroundColorTotals = [0, 0, 0, 0];
+  const qrColorTotals = [0, 0, 0, 0];
   // The number of each type of pixel that has been totaled, used to average at the end.
-  let backgroundPixels = 0;
-  let qrPixels = 0;
+  var backgroundPixels = 0;
+  var qrPixels = 0;
 
   for (let y = 0; y < location.dimension; y++) {
     for (let x = 0; x < location.dimension; x++) {
       const sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
       const sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
 
-      const sourceColor = rgbToLab(sourceData.slice(sourcePixelOffset, sourcePixelOffset + 3))
+      const sourceColor = rgbToLab(sourceData.slice(sourcePixelOffset, sourcePixelOffset + 3));
       sourceColor.push(sourceData[sourcePixelOffset + 3]);
 
-      if(extracted.matrix.get(x, y)) {
+      if (extracted.matrix.get(x, y)) {
         qrColorTotals.forEach((value, componentIndex, array) => {
           array[componentIndex] = value + sourceColor[componentIndex];
         });
         qrPixels++;
-      }else {
+      } else {
         backgroundColorTotals.forEach((value, componentIndex, array) => {
           array[componentIndex] = value + sourceColor[componentIndex];
         });
@@ -63,128 +63,127 @@ export function retrieveColors(location: QRLocation, extracted: {matrix: BitMatr
 // Color space conversions from http://www.easyrgb.com/en/math.php
 
 // Converts an RGB color ([r, g, b] or [r, g, b, a] - a is ignored) to CIELab ([L*, a*, b*]).
-function rgbToLab(rgb: Uint8ClampedArray): Array<number> {
+function rgbToLab(rgb: Uint8ClampedArray): number[] {
   // To XYZ
-  let let_R = ( rgb[0] / 255 );
-  let let_G = ( rgb[1] / 255 );
-  let let_B = ( rgb[2] / 255 );
+  let varR = ( rgb[0] / 255 );
+  let varG = ( rgb[1] / 255 );
+  let varB = ( rgb[2] / 255 );
   
-  if ( let_R > 0.04045 ) {
-    let_R = Math.pow(( ( let_R + 0.055 ) / 1.055 ), 2.4);
-  }else {
-    let_R = let_R / 12.92;
+  if ( varR > 0.04045 ) {
+    varR = Math.pow(( ( varR + 0.055 ) / 1.055 ), 2.4);
+  } else {
+    varR = varR / 12.92;
   }
 
-  if ( let_G > 0.04045 ) {
-    let_G = Math.pow(( ( let_G + 0.055 ) / 1.055 ), 2.4);
-  }else {
-    let_G = let_G / 12.92;
+  if ( varG > 0.04045 ) {
+    varG = Math.pow(( ( varG + 0.055 ) / 1.055 ), 2.4);
+  } else {
+    varG = varG / 12.92;
   }
 
-  if ( let_B > 0.04045 ) {
-    let_B = Math.pow(( ( let_B + 0.055 ) / 1.055 ), 2.4);
+  if ( varB > 0.04045 ) {
+    varB = Math.pow(( ( varB + 0.055 ) / 1.055 ), 2.4);
   }else {
-    let_B = let_B / 12.92;
+    varB = varB / 12.92;
   }
   
-  let_R = let_R * 100;
-  let_G = let_G * 100;
-  let_B = let_B * 100;
+  varR = varR * 100;
+  varG = varG * 100;
+  varB = varB * 100;
   
-  const X = let_R * 0.4124 + let_G * 0.3576 + let_B * 0.1805;
-  const Y = let_R * 0.2126 + let_G * 0.7152 + let_B * 0.0722;
-  const Z = let_R * 0.0193 + let_G * 0.1192 + let_B * 0.9505;
+  const x = varR * 0.4124 + varG * 0.3576 + varB * 0.1805;
+  const y = varR * 0.2126 + varG * 0.7152 + varB * 0.0722;
+  const z = varR * 0.0193 + varG * 0.1192 + varB * 0.9505;
 
   // To Lab
-  let let_X = X / 95.047;
-  let let_Y = Y / 100;
-  let let_Z = Z / 108.883;
+  let varX = x / 95.047;
+  let varY = y / 100;
+  let varZ = z / 108.883;
 
-  if ( let_X > 0.008856 ) {
-    let_X = Math.pow(let_X, ( 1/3 ));
-  }else {
-    let_X = ( 7.787 * let_X ) + ( 16 / 116 );
+  if ( varX > 0.008856 ) {
+    varX = Math.pow(varX, ( 1/3 ));
+  } else {
+    varX = ( 7.787 * varX ) + ( 16 / 116 );
   }
 
-  if ( let_Y > 0.008856 ) {
-    let_Y = Math.pow(let_Y, ( 1/3 ));
-  }else {
-    let_Y = ( 7.787 * let_Y ) + ( 16 / 116 );
+  if ( varY > 0.008856 ) {
+    varY = Math.pow(varY, ( 1/3 ));
+  } else {
+    varY = ( 7.787 * varY ) + ( 16 / 116 );
   }
 
-  if ( let_Z > 0.008856 ) {
-    let_Z = Math.pow(let_Z, ( 1/3 ));
-  }
-  else {
-    let_Z = ( 7.787 * let_Z ) + ( 16 / 116 );
+  if ( varZ > 0.008856 ) {
+    varZ = Math.pow(varZ, ( 1/3 ));
+  } else {
+    varZ = ( 7.787 * varZ ) + ( 16 / 116 );
   }
 
-  const L = ( 116 * let_Y ) - 16;
-  const a = 500 * ( let_X - let_Y );
-  const b = 200 * ( let_Y - let_Z );
+  const l = ( 116 * varY ) - 16;
+  const a = 500 * ( varX - varY );
+  const b = 200 * ( varY - varZ );
 
-  return [L, a, b];
+  return [l, a, b];
 }
 
 // Converts a CIELab color ([L*, a*, b*] - ignores additional values) to RGB ([r, g, b]).
-function labToRGB(lab: Array<number>): Array<number> {
+function labToRGB(lab: number[]): number[] {
   // To XYZ
-  let let_Y = ( lab[0] + 16 ) / 116;
-  let let_X = lab[1] / 500 + let_Y;
-  let let_Z = let_Y - lab[2] / 200;
+  let varY = ( lab[0] + 16 ) / 116;
+  let varX = lab[1] / 500 + varY;
+  let varZ = varY - lab[2] / 200;
   
-  if ( Math.pow(let_Y,3)  > 0.008856 ) {
-    let_Y = Math.pow(let_Y,3);
-  }else {
-    let_Y = ( let_Y - 16 / 116 ) / 7.787;
+  if ( Math.pow(varY,3)  > 0.008856 ) {
+    varY = Math.pow(varY,3);
+  } else {
+    varY = ( varY - 16 / 116 ) / 7.787;
   }
 
-  if ( Math.pow(let_X,3)  > 0.008856 ) {
-    let_X = Math.pow(let_X,3);
-  }else {
-    let_X = ( let_X - 16 / 116 ) / 7.787;
+  if ( Math.pow(varX,3)  > 0.008856 ) {
+    varX = Math.pow(varX,3);
+  } else {
+    varX = ( varX - 16 / 116 ) / 7.787;
   }
 
-  if ( Math.pow(let_Z,3)  > 0.008856 ) {
-    let_Z = Math.pow(let_Z,3);
-  }else {
-    let_Z = ( let_Z - 16 / 116 ) / 7.787;
+  if ( Math.pow(varZ,3)  > 0.008856 ) {
+    varZ = Math.pow(varZ,3);
+  } else {
+    varZ = ( varZ - 16 / 116 ) / 7.787;
   }
   
-  const X = let_X * 95.047;
-  const Y = let_Y * 100;
-  const Z = let_Z * 108.883;
+  const x = varX * 95.047;
+  const y = varY * 100;
+  const z = varZ * 108.883;
 
   // To RGB
-  let_X = X / 100;
-  let_Y = Y / 100;
-  let_Z = Z / 100;
+  varX = x / 100;
+  varY = y / 100;
+  varZ = z / 100;
 
-  let let_R = let_X *  3.2406 + let_Y * -1.5372 + let_Z * -0.4986;
-  let let_G = let_X * -0.9689 + let_Y *  1.8758 + let_Z *  0.0415;
-  let let_B = let_X *  0.0557 + let_Y * -0.2040 + let_Z *  1.0570;
+  let varR = varX *  3.2406 + varY * -1.5372 + varZ * -0.4986;
+  let varG = varX * -0.9689 + varY *  1.8758 + varZ *  0.0415;
+  let varB = varX *  0.0557 + varY * -0.2040 + varZ *  1.0570;
 
-  if ( let_R > 0.0031308 ) {
-    let_R = 1.055 * Math.pow(let_R, ( 1 / 2.4 )) - 0.055;
-  }else {
-    let_R = 12.92 * let_R;
+  if ( varR > 0.0031308 ) {
+    varR = 1.055 * Math.pow(varR, ( 1 / 2.4 )) - 0.055;
+  } else {
+    varR = 12.92 * varR;
   }
 
-  if ( let_G > 0.0031308 ) {
-    let_G = 1.055 * Math.pow( let_G, ( 1 / 2.4 ) ) - 0.055;
-  }else {
-    let_G = 12.92 * let_G;
+  if ( varG > 0.0031308 ) {
+    varG = 1.055 * Math.pow( varG, ( 1 / 2.4 ) ) - 0.055;
+  } else {
+    varG = 12.92 * varG;
   }
 
-  if ( let_B > 0.0031308 ) {
-    let_B = 1.055 * Math.pow( let_B, ( 1 / 2.4 ) ) - 0.055;
-  }else {
-    let_B = 12.92 * let_B;
+  if ( varB > 0.0031308 ) {
+    varB = 1.055 * Math.pow( varB, ( 1 / 2.4 ) ) - 0.055;
+  } else {
+    varB = 12.92 * varB;
   }
 
-  const r = let_R * 255;
-  const g = let_G * 255;
-  const b = let_B * 255;
+  const r = varR * 255;
+  const g = varG * 255;
+  const b = varB * 255;
 
   return [r, g, b];
 }
