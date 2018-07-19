@@ -56,7 +56,7 @@ export function retrieveColors(location: QRLocation,
   return {
     qr: new Uint8ClampedArray(qrColor),
     background: new Uint8ClampedArray(backgroundColor),
-  };  
+  };
 }
 
 // Color space conversions from http://www.easyrgb.com/en/math.php
@@ -67,9 +67,9 @@ function rgbToLab(rgb: Uint8ClampedArray): number[] {
   let varR = ( rgb[0] / 255 );
   let varG = ( rgb[1] / 255 );
   let varB = ( rgb[2] / 255 );
-  
+
   if ( varR > 0.04045 ) {
-    varR = Math.pow(((varR + 0.055) / 1.055), 2.4);
+    varR = Math.pow(( ( varR + 0.055) / 1.055 ), 2.4);
   } else {
     varR = varR / 12.92;
   }
@@ -82,14 +82,14 @@ function rgbToLab(rgb: Uint8ClampedArray): number[] {
 
   if ( varB > 0.04045 ) {
     varB = Math.pow(( ( varB + 0.055 ) / 1.055 ), 2.4);
-  }else {
+  } else {
     varB = varB / 12.92;
   }
-  
+
   varR = varR * 100;
   varG = varG * 100;
   varB = varB * 100;
-  
+
   const x = varR * 0.4124 + varG * 0.3576 + varB * 0.1805;
   const y = varR * 0.2126 + varG * 0.7152 + varB * 0.0722;
   const z = varR * 0.0193 + varG * 0.1192 + varB * 0.9505;
@@ -100,19 +100,19 @@ function rgbToLab(rgb: Uint8ClampedArray): number[] {
   let varZ = z / 108.883;
 
   if ( varX > 0.008856 ) {
-    varX = Math.pow(varX, ( 1/3 ));
+    varX = Math.pow(varX, ( 1 / 3 ));
   } else {
     varX = ( 7.787 * varX ) + ( 16 / 116 );
   }
 
   if ( varY > 0.008856 ) {
-    varY = Math.pow(varY, ( 1/3 ));
+    varY = Math.pow(varY, ( 1 / 3 ));
   } else {
     varY = ( 7.787 * varY ) + ( 16 / 116 );
   }
 
   if ( varZ > 0.008856 ) {
-    varZ = Math.pow(varZ, ( 1/3 ));
+    varZ = Math.pow(varZ, ( 1 / 3 ));
   } else {
     varZ = ( 7.787 * varZ ) + ( 16 / 116 );
   }
@@ -130,25 +130,25 @@ function labToRGB(lab: number[]): number[] {
   let varY = ( lab[0] + 16 ) / 116;
   let varX = lab[1] / 500 + varY;
   let varZ = varY - lab[2] / 200;
-  
-  if ( Math.pow(varY,3)  > 0.008856 ) {
-    varY = Math.pow(varY,3);
+
+  if ( Math.pow(varY, 3)  > 0.008856 ) {
+    varY = Math.pow(varY, 3);
   } else {
     varY = ( varY - 16 / 116 ) / 7.787;
   }
 
-  if ( Math.pow(varX,3)  > 0.008856 ) {
-    varX = Math.pow(varX,3);
+  if ( Math.pow(varX, 3)  > 0.008856 ) {
+    varX = Math.pow(varX, 3);
   } else {
     varX = ( varX - 16 / 116 ) / 7.787;
   }
 
-  if ( Math.pow(varZ,3)  > 0.008856 ) {
-    varZ = Math.pow(varZ,3);
+  if ( Math.pow(varZ, 3)  > 0.008856 ) {
+    varZ = Math.pow(varZ,   3);
   } else {
     varZ = ( varZ - 16 / 116 ) / 7.787;
   }
-  
+
   const x = varX * 95.047;
   const y = varY * 100;
   const z = varZ * 108.883;
