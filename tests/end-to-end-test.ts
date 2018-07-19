@@ -11,7 +11,7 @@ describe("end to end", async () => {
       const inputImage = await helpers.loadPng(path.join("tests", "end-to-end", t, "input.png"));
       const expectedOutput = JSON.parse(await fs.readFile(path.join("tests", "end-to-end", t, "output.json"), "utf8"));
       const actualOutput = jsQR(inputImage.data, inputImage.width, inputImage.height);
-      const actualColorOutput = jsQR(inputImage.data, inputImage.width, inputImage.height, {retrieveColors: true});
+      const actualColorOutput = JSON.parse(JSON.stringify(jsQR(inputImage.data, inputImage.width, inputImage.height, {retrieveColors: true})));
       expect({default: actualOutput, color: actualColorOutput}).toEqual(expectedOutput);
     });
   }
