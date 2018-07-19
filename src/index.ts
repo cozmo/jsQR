@@ -6,14 +6,6 @@ import {extract} from "./extractor";
 import {locate, Point} from "./locator";
 import {QRColors, retrieveColors} from "./color-retriever"
 
-export interface ScanOptions {
-  retrieveColors?: boolean;
-}
-
-const defaultOptions: ScanOptions = {
-  retrieveColors: false
-}
-
 export interface QRCode {
   binaryData: number[];
   data: string;
@@ -33,7 +25,7 @@ export interface QRCode {
   colors?: QRColors;
 }
 
-function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: number, scanOptions: ScanOptions): QRCode | null {
+function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: number, scanOptions: Options): QRCode | null {
   const location = locate(matrix);
   if (!location) {
     return null;
@@ -70,11 +62,27 @@ function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: num
   return output;
 }
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number, scanOptions: ScanOptions = defaultOptions): QRCode | null {
+export interface Options {
+  attemptInverted?: boolean;
+  retrieveColors?: boolean;
+}
+
+const defaultOptions: Options = {
+  attemptInverted: true,
+  retrieveColors: false,
+};
+
+function jsQR(data: Uint8ClampedArray, width: number, height: number, options?: Options): QRCode | null {
+
+  const actualOpts: Options = defaultOptions;
+  Object.keys(options || {}).forEach(opt => {
+    (actualOpts as any)[opt] = (options as any)[opt];
+  });
+
   const binarized = binarize(data, width, height);
-  let result = scan(binarized, data, width, scanOptions);
-  if (!result) {
-    result = scan(binarized.getInverted(), data, width, scanOptions);
+  let result = scan(binarized, data, width, actualOpts);
+  if (!result && actualOpts.attemptInverted) {
+    result = scan(binarized.getInverted(), data, width, actualOpts);
   }
   return result;
 }

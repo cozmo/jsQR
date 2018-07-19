@@ -1,5 +1,6 @@
 import { Chunks } from "./decoder/decodeData";
 import { Point } from "./locator";
+import { QRColors } from "./color-retriever";
 export interface QRCode {
     binaryData: number[];
     data: string;
@@ -14,6 +15,11 @@ export interface QRCode {
         bottomLeftFinderPattern: Point;
         bottomRightAlignmentPattern?: Point;
     };
+    colors?: QRColors;
 }
-declare function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null;
+export interface Options {
+    attemptInverted?: boolean;
+    retrieveColors?: boolean;
+}
+declare function jsQR(data: Uint8ClampedArray, width: number, height: number, options?: Options): QRCode | null;
 export default jsQR;
