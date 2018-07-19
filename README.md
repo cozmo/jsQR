@@ -46,10 +46,10 @@ If you want to use jsQR to scan a webcam stream you'll need to extract the [`Ima
 
 ## Usage
 
-jsQR exports a method that takes in 3 arguments representing the image data you wish to decode.
+jsQR exports a method that takes in 3 arguments representing the image data you wish to decode. Additionally it can take an options object to further configure scanning behavior.
 
 ```javascript
-const code = jsQR(imageData, width, height);
+const code = jsQR(imageData, width, height, options?);
 
 if (code) {
   console.log("Found QR code", code);
@@ -61,7 +61,10 @@ if (code) {
 As such the length of this array should be `4 * width * height`.
 This data is in the same form as the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) interface, and it's also [commonly](https://www.npmjs.com/package/jpeg-js#decoding-jpegs) [returned](https://github.com/lukeapage/pngjs/blob/master/README.md#property-data) by node modules for reading images.
 - `width` - The width of the image you wish to decode.
-- `height` The height of the image you wish to decode.
+- `height` - The height of the image you wish to decode.
+- `options` (optional) - Additional options.
+  - `attemptInverted` - (default: `true`) - Should jsQR attempt to invert the image to find QR codes with white modules on black backgrounds instead of the black modules on white background. This option defaults to true for backwards compatibility but causes a ~50% performance hit, and will probably be disabled in future versions.
+  - `retrieveColors` - (default: `false`) - Should jsQR include the colors used in the QR code in its output. This can slow down scanning as every pixel of the QR code is sampled and converted into the CIELab* color space for averaging.
 
 ### Return value
 If a QR is able to be decoded the library will return an object with the following keys.
@@ -73,6 +76,7 @@ Has points for the following locations.
   - Corners - `topRightCorner`/`topLeftCorner`/`bottomRightCorner`/`bottomLeftCorner`;
   - Finder patterns - `topRightFinderPattern`/`topLeftFinderPattern`/`bottomLeftFinderPattern`
   - May also have a point for the `bottomRightAlignmentPattern` assuming one exists and can be located.
+- `colors` (not included by default, see the `options` argument) - An object with `qr` and `background` keys containing the Uint8ClampedArray RGBA representations of the average colors used in the QR code (e.g. `[0, 0, 0, 255]` and `[255, 255, 255, 255]` respectively).
 
 Because the library is written in [typescript](http://www.typescriptlang.org/) you can also view the [type definitions](./dist/index.d.ts) to understand the API.
 
