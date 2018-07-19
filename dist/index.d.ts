@@ -1,6 +1,6 @@
+import { QRColors } from "./color-retriever";
 import { Chunks } from "./decoder/decodeData";
 import { Point } from "./locator";
-import { QRColors } from "./color-retriever";
 export interface QRCode {
     binaryData: number[];
     data: string;

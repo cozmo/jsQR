@@ -328,10 +328,10 @@ exports.default = GenericGFPoly;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var binarizer_1 = __webpack_require__(4);
-var decoder_1 = __webpack_require__(5);
-var extractor_1 = __webpack_require__(11);
-var locator_1 = __webpack_require__(12);
-var color_retriever_1 = __webpack_require__(13);
+var color_retriever_1 = __webpack_require__(5);
+var decoder_1 = __webpack_require__(6);
+var extractor_1 = __webpack_require__(12);
+var locator_1 = __webpack_require__(13);
 function scan(matrix, sourceData, sourceWidth, scanOptions) {
     var location = locator_1.locate(matrix);
     if (!location) {
@@ -355,7 +355,7 @@ function scan(matrix, sourceData, sourceWidth, scanOptions) {
             topLeftFinderPattern: location.topLeft,
             bottomLeftFinderPattern: location.bottomLeft,
             bottomRightAlignmentPattern: location.alignmentPattern,
-        }
+        },
     };
     if (scanOptions.retrieveColors) {
         output.colors = color_retriever_1.retrieveColors(location, extracted, sourceData, sourceWidth);
@@ -497,10 +497,179 @@ exports.binarize = binarize;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/* Retrieves the colors that make up a scanned QR code. RGB (assumed to be sRGB) values are converted to the CIELab
+color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged
+directly. */
+function retrieveColors(location, extracted, sourceData, sourceWidth) {
+    // Sum totals for all the pixels as [L*, a*, b*, a].
+    var backgroundColorTotals = [0, 0, 0, 0];
+    var qrColorTotals = [0, 0, 0, 0];
+    // The number of each type of pixel that has been totaled, used to average at the end.
+    var backgroundPixels = 0;
+    var qrPixels = 0;
+    for (var y = 0; y < location.dimension; y++) {
+        var _loop_1 = function (x) {
+            var sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
+            var sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
+            var sourceColor = rgbToLab(sourceData.slice(sourcePixelOffset, sourcePixelOffset + 3));
+            sourceColor.push(sourceData[sourcePixelOffset + 3]);
+            if (extracted.matrix.get(x, y)) {
+                qrColorTotals.forEach(function (value, componentIndex, array) {
+                    array[componentIndex] = value + sourceColor[componentIndex];
+                });
+                qrPixels++;
+            }
+            else {
+                backgroundColorTotals.forEach(function (value, componentIndex, array) {
+                    array[componentIndex] = value + sourceColor[componentIndex];
+                });
+                backgroundPixels++;
+            }
+        };
+        for (var x = 0; x < location.dimension; x++) {
+            _loop_1(x);
+        }
+    }
+    var backgroundAverages = backgroundColorTotals.map(function (value) { return value / backgroundPixels; });
+    var qrAverages = qrColorTotals.map(function (value) { return value / backgroundPixels; });
+    var backgroundColor = labToRGB(backgroundAverages);
+    backgroundColor.push(backgroundAverages[3]);
+    var qrColor = labToRGB(qrAverages);
+    qrColor.push(qrAverages[3]);
+    return {
+        qr: new Uint8ClampedArray(qrColor),
+        background: new Uint8ClampedArray(backgroundColor),
+    };
+}
+exports.retrieveColors = retrieveColors;
+// Color space conversions from http://www.easyrgb.com/en/math.php
+// Converts an RGB color ([r, g, b] or [r, g, b, a] - a is ignored) to CIELab ([L*, a*, b*]).
+function rgbToLab(rgb) {
+    // To XYZ
+    var varR = (rgb[0] / 255);
+    var varG = (rgb[1] / 255);
+    var varB = (rgb[2] / 255);
+    if (varR > 0.04045) {
+        varR = Math.pow(((varR + 0.055) / 1.055), 2.4);
+    }
+    else {
+        varR = varR / 12.92;
+    }
+    if (varG > 0.04045) {
+        varG = Math.pow(((varG + 0.055) / 1.055), 2.4);
+    }
+    else {
+        varG = varG / 12.92;
+    }
+    if (varB > 0.04045) {
+        varB = Math.pow(((varB + 0.055) / 1.055), 2.4);
+    }
+    else {
+        varB = varB / 12.92;
+    }
+    varR = varR * 100;
+    varG = varG * 100;
+    varB = varB * 100;
+    var x = varR * 0.4124 + varG * 0.3576 + varB * 0.1805;
+    var y = varR * 0.2126 + varG * 0.7152 + varB * 0.0722;
+    var z = varR * 0.0193 + varG * 0.1192 + varB * 0.9505;
+    // To Lab
+    var varX = x / 95.047;
+    var varY = y / 100;
+    var varZ = z / 108.883;
+    if (varX > 0.008856) {
+        varX = Math.pow(varX, (1 / 3));
+    }
+    else {
+        varX = (7.787 * varX) + (16 / 116);
+    }
+    if (varY > 0.008856) {
+        varY = Math.pow(varY, (1 / 3));
+    }
+    else {
+        varY = (7.787 * varY) + (16 / 116);
+    }
+    if (varZ > 0.008856) {
+        varZ = Math.pow(varZ, (1 / 3));
+    }
+    else {
+        varZ = (7.787 * varZ) + (16 / 116);
+    }
+    var l = (116 * varY) - 16;
+    var a = 500 * (varX - varY);
+    var b = 200 * (varY - varZ);
+    return [l, a, b];
+}
+// Converts a CIELab color ([L*, a*, b*] - ignores additional values) to RGB ([r, g, b]).
+function labToRGB(lab) {
+    // To XYZ
+    var varY = (lab[0] + 16) / 116;
+    var varX = lab[1] / 500 + varY;
+    var varZ = varY - lab[2] / 200;
+    if (Math.pow(varY, 3) > 0.008856) {
+        varY = Math.pow(varY, 3);
+    }
+    else {
+        varY = (varY - 16 / 116) / 7.787;
+    }
+    if (Math.pow(varX, 3) > 0.008856) {
+        varX = Math.pow(varX, 3);
+    }
+    else {
+        varX = (varX - 16 / 116) / 7.787;
+    }
+    if (Math.pow(varZ, 3) > 0.008856) {
+        varZ = Math.pow(varZ, 3);
+    }
+    else {
+        varZ = (varZ - 16 / 116) / 7.787;
+    }
+    var x = varX * 95.047;
+    var y = varY * 100;
+    var z = varZ * 108.883;
+    // To RGB
+    varX = x / 100;
+    varY = y / 100;
+    varZ = z / 100;
+    var varR = varX * 3.2406 + varY * -1.5372 + varZ * -0.4986;
+    var varG = varX * -0.9689 + varY * 1.8758 + varZ * 0.0415;
+    var varB = varX * 0.0557 + varY * -0.2040 + varZ * 1.0570;
+    if (varR > 0.0031308) {
+        varR = 1.055 * Math.pow(varR, (1 / 2.4)) - 0.055;
+    }
+    else {
+        varR = 12.92 * varR;
+    }
+    if (varG > 0.0031308) {
+        varG = 1.055 * Math.pow(varG, (1 / 2.4)) - 0.055;
+    }
+    else {
+        varG = 12.92 * varG;
+    }
+    if (varB > 0.0031308) {
+        varB = 1.055 * Math.pow(varB, (1 / 2.4)) - 0.055;
+    }
+    else {
+        varB = 12.92 * varB;
+    }
+    var r = varR * 255;
+    var g = varG * 255;
+    var b = varB * 255;
+    return [r, g, b];
+}
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var BitMatrix_1 = __webpack_require__(0);
-var decodeData_1 = __webpack_require__(6);
-var reedsolomon_1 = __webpack_require__(9);
-var version_1 = __webpack_require__(10);
+var decodeData_1 = __webpack_require__(7);
+var reedsolomon_1 = __webpack_require__(10);
+var version_1 = __webpack_require__(11);
 // tslint:disable:no-bitwise
 function numBitsDiffering(x, y) {
     var z = x ^ y;
@@ -807,15 +976,15 @@ exports.decode = decode;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // tslint:disable:no-bitwise
-var BitStream_1 = __webpack_require__(7);
-var shiftJISTable_1 = __webpack_require__(8);
+var BitStream_1 = __webpack_require__(8);
+var shiftJISTable_1 = __webpack_require__(9);
 var Mode;
 (function (Mode) {
     Mode["Numeric"] = "numeric";
@@ -1024,7 +1193,7 @@ exports.decode = decode;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1082,7 +1251,7 @@ exports.BitStream = BitStream;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8130,7 +8299,7 @@ exports.shiftJISTable = {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8259,7 +8428,7 @@ exports.decode = decode;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9574,7 +9743,7 @@ exports.VERSIONS = [
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9675,7 +9844,7 @@ exports.extract = extract;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10030,162 +10199,6 @@ function locate(matrix) {
     };
 }
 exports.locate = locate;
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-//Retrieves the colors that make up a scanned QR code. RGB (assumed to be sRGB) values are converted to the CIELab color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged directly.
-function retrieveColors(location, extracted, sourceData, sourceWidth) {
-    var backgroundColorTotals = [0, 0, 0, 0], qrColorTotals = [0, 0, 0, 0], //Sum totals for all the pixels as [L*, a*, b*, a].
-    backgroundPixels = 0, qrPixels = 0; //The number of each type of pixel that has been totaled, used to average at the end.
-    for (var y = 0; y < location.dimension; y++) {
-        for (var x = 0; x < location.dimension; x++) {
-            var sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
-            var sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
-            var sourceColor = rgbToLab(sourceData.slice(sourcePixelOffset, sourcePixelOffset + 3));
-            sourceColor.push(sourceData[sourcePixelOffset + 3]);
-            if (extracted.matrix.get(x, y)) {
-                qrColorTotals.forEach(function (value, componentIndex, array) { array[componentIndex] = value + sourceColor[componentIndex]; });
-                qrPixels++;
-            }
-            else {
-                backgroundColorTotals.forEach(function (value, componentIndex, array) { array[componentIndex] = value + sourceColor[componentIndex]; });
-                backgroundPixels++;
-            }
-        }
-    }
-    var backgroundAverages = backgroundColorTotals.map(function (value) { return value / backgroundPixels; });
-    var qrAverages = qrColorTotals.map(function (value) { return value / backgroundPixels; });
-    var backgroundColor = labToRGB(backgroundAverages);
-    backgroundColor.push(backgroundAverages[3]);
-    var qrColor = labToRGB(qrAverages);
-    qrColor.push(qrAverages[3]);
-    return {
-        qr: new Uint8ClampedArray(qrColor),
-        background: new Uint8ClampedArray(backgroundColor)
-    };
-}
-exports.retrieveColors = retrieveColors;
-//Color space conversions from http://www.easyrgb.com/en/math.php
-//Converts an RGB color ([r, g, b] or [r, g, b, a] - a is ignored) to CIELab ([L*, a*, b*]).
-function rgbToLab(rgb) {
-    //To XYZ
-    var var_R = (rgb[0] / 255);
-    var var_G = (rgb[1] / 255);
-    var var_B = (rgb[2] / 255);
-    if (var_R > 0.04045) {
-        var_R = Math.pow(((var_R + 0.055) / 1.055), 2.4);
-    }
-    else {
-        var_R = var_R / 12.92;
-    }
-    if (var_G > 0.04045) {
-        var_G = Math.pow(((var_G + 0.055) / 1.055), 2.4);
-    }
-    else {
-        var_G = var_G / 12.92;
-    }
-    if (var_B > 0.04045) {
-        var_B = Math.pow(((var_B + 0.055) / 1.055), 2.4);
-    }
-    else {
-        var_B = var_B / 12.92;
-    }
-    var_R = var_R * 100;
-    var_G = var_G * 100;
-    var_B = var_B * 100;
-    var X = var_R * 0.4124 + var_G * 0.3576 + var_B * 0.1805;
-    var Y = var_R * 0.2126 + var_G * 0.7152 + var_B * 0.0722;
-    var Z = var_R * 0.0193 + var_G * 0.1192 + var_B * 0.9505;
-    //To Lab
-    var var_X = X / 95.047;
-    var var_Y = Y / 100;
-    var var_Z = Z / 108.883;
-    if (var_X > 0.008856) {
-        var_X = Math.pow(var_X, (1 / 3));
-    }
-    else {
-        var_X = (7.787 * var_X) + (16 / 116);
-    }
-    if (var_Y > 0.008856) {
-        var_Y = Math.pow(var_Y, (1 / 3));
-    }
-    else {
-        var_Y = (7.787 * var_Y) + (16 / 116);
-    }
-    if (var_Z > 0.008856) {
-        var_Z = Math.pow(var_Z, (1 / 3));
-    }
-    else {
-        var_Z = (7.787 * var_Z) + (16 / 116);
-    }
-    var L = (116 * var_Y) - 16;
-    var a = 500 * (var_X - var_Y);
-    var b = 200 * (var_Y - var_Z);
-    return [L, a, b];
-}
-//Converts a CIELab color ([L*, a*, b*] - ignores additional values) to RGB ([r, g, b]).
-function labToRGB(lab) {
-    //To XYZ
-    var var_Y = (lab[0] + 16) / 116;
-    var var_X = lab[1] / 500 + var_Y;
-    var var_Z = var_Y - lab[2] / 200;
-    if (Math.pow(var_Y, 3) > 0.008856) {
-        var_Y = Math.pow(var_Y, 3);
-    }
-    else {
-        var_Y = (var_Y - 16 / 116) / 7.787;
-    }
-    if (Math.pow(var_X, 3) > 0.008856) {
-        var_X = Math.pow(var_X, 3);
-    }
-    else {
-        var_X = (var_X - 16 / 116) / 7.787;
-    }
-    if (Math.pow(var_Z, 3) > 0.008856) {
-        var_Z = Math.pow(var_Z, 3);
-    }
-    else {
-        var_Z = (var_Z - 16 / 116) / 7.787;
-    }
-    var X = var_X * 95.047;
-    var Y = var_Y * 100;
-    var Z = var_Z * 108.883;
-    //To RGB
-    var_X = X / 100;
-    var_Y = Y / 100;
-    var_Z = Z / 100;
-    var var_R = var_X * 3.2406 + var_Y * -1.5372 + var_Z * -0.4986;
-    var var_G = var_X * -0.9689 + var_Y * 1.8758 + var_Z * 0.0415;
-    var var_B = var_X * 0.0557 + var_Y * -0.2040 + var_Z * 1.0570;
-    if (var_R > 0.0031308) {
-        var_R = 1.055 * Math.pow(var_R, (1 / 2.4)) - 0.055;
-    }
-    else {
-        var_R = 12.92 * var_R;
-    }
-    if (var_G > 0.0031308) {
-        var_G = 1.055 * Math.pow(var_G, (1 / 2.4)) - 0.055;
-    }
-    else {
-        var_G = 12.92 * var_G;
-    }
-    if (var_B > 0.0031308) {
-        var_B = 1.055 * Math.pow(var_B, (1 / 2.4)) - 0.055;
-    }
-    else {
-        var_B = 12.92 * var_B;
-    }
-    var r = var_R * 255;
-    var g = var_G * 255;
-    var b = var_B * 255;
-    return [r, g, b];
-}
 
 
 /***/ })
