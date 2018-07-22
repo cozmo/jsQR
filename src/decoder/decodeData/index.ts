@@ -244,9 +244,8 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
     }
   }
 
-  // If we got here it means we ran out of data to read but didn't encounter a termination byte...
-  // If there are no bits available it should be safe to return what we have, else something is probably corrupted
-  if (stream.available() === 0) {
+  // If there is no data left, or the remaining bits are all 0, then that counts as a termination marker
+  if (stream.available() === 0 || stream.readBits(stream.available()) === 0) {
     return result;
   }
 }
