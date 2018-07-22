@@ -100,4 +100,25 @@ describe("decode", () => {
       ],
     });
   });
+
+  it("Extracts a QR code that is missing the termination byte", async () => {
+    const data = await loadBinarized("./src/decoder/test-data/no-termination-byte.png");
+    expect(decode(data)).toEqual({
+      text: "1788c74b1c9262866c2071b65df7bfcb7911c2b064c931b580515c2d9d2cd7f8",
+      bytes: [ 49, 55, 56, 56, 99, 55, 52, 98, 49, 99, 57, 50, 54, 50, 56, 54, 54, 99, 50, 48, 55, 49, 98, 54, 53, 100,
+        102, 55, 98, 102, 99, 98, 55, 57, 49, 49, 99, 50, 98, 48, 54, 52, 99, 57, 51, 49, 98, 53, 56, 48, 53, 49, 53,
+        99, 50, 100, 57, 100, 50, 99, 100, 55, 102, 56 ],
+      chunks: [
+        { type: "numeric", text: "1788" },
+        { type: "byte", bytes: [99, 55, 52, 98, 49, 99], text: "c74b1c" },
+        { type: "numeric", text: "9262866" },
+        { type: "byte",
+          bytes: [99, 50, 48, 55, 49, 98, 54, 53, 100, 102, 55, 98, 102, 99, 98, 55, 57, 49, 49, 99, 50, 98, 48, 54, 52,
+            99, 57, 51, 49, 98],
+          text: "c2071b65df7bfcb7911c2b064c931b" },
+        { type: "numeric", text: "580515" },
+        { type: "byte", bytes: [99, 50, 100, 57, 100, 50, 99, 100, 55, 102, 56], text: "c2d9d2cd7f8" },
+      ],
+    });
+  });
 });
