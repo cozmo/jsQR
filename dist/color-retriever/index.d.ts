@@ -1,11 +1,20 @@
-import { BitMatrix } from "../BitMatrix";
+import { Extracted } from "../extractor";
 import { QRLocation } from "../locator";
-import { Point } from "../Point";
 export interface QRColors {
-    qr: Uint8ClampedArray;
-    background: Uint8ClampedArray;
+    qr: RGBColor;
+    background: RGBColor;
 }
-export declare function retrieveColors(location: QRLocation, extracted: {
-    matrix: BitMatrix;
-    mappingFunction: (x: number, y: number) => Point;
-}, sourceData: Uint8ClampedArray, sourceWidth: number): QRColors;
+export interface RGBColor {
+    r: number;
+    g: number;
+    b: number;
+}
+interface CIELabColor {
+    L: number;
+    a: number;
+    b: number;
+}
+export declare function retrieveColors(location: QRLocation, extracted: Extracted, sourceData: Uint8ClampedArray, sourceWidth: number): QRColors;
+export declare function rgbToLab(rgb: RGBColor): CIELabColor;
+export declare function labToRGB(lab: CIELabColor): RGBColor;
+export {};

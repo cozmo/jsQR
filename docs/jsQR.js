@@ -332,7 +332,7 @@ var color_retriever_1 = __webpack_require__(5);
 var decoder_1 = __webpack_require__(6);
 var extractor_1 = __webpack_require__(12);
 var locator_1 = __webpack_require__(13);
-function scan(matrix, sourceData, sourceWidth, scanOptions) {
+function scan(matrix, sourceData, scanOptions) {
     var location = locator_1.locate(matrix);
     if (!location) {
         return null;
@@ -358,7 +358,7 @@ function scan(matrix, sourceData, sourceWidth, scanOptions) {
         },
     };
     if (scanOptions.retrieveColors) {
-        output.colors = color_retriever_1.retrieveColors(location, extracted, sourceData, sourceWidth);
+        output.colors = color_retriever_1.retrieveColors(location, extracted, sourceData, matrix.width);
     }
     return output;
 }
@@ -372,9 +372,9 @@ function jsQR(data, width, height, options) {
         actualOpts[opt] = options[opt];
     });
     var binarized = binarizer_1.binarize(data, width, height);
-    var result = scan(binarized, data, width, actualOpts);
+    var result = scan(binarized, data, actualOpts);
     if (!result && actualOpts.attemptInverted) {
-        result = scan(binarized.getInverted(), data, width, actualOpts);
+        result = scan(binarized.getInverted(), data, actualOpts);
     }
     return result;
 }
@@ -498,47 +498,42 @@ exports.binarize = binarize;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /* Retrieves the colors that make up a scanned QR code. RGB (assumed to be sRGB) values are converted to the CIELab
-color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged
-directly. */
+color space for averaging (with no regard for alpha), and then converted back to RGB. */
 function retrieveColors(location, extracted, sourceData, sourceWidth) {
-    // Sum totals for all the pixels as [L*, a*, b*, a].
-    var backgroundColorTotals = [0, 0, 0, 0];
-    var qrColorTotals = [0, 0, 0, 0];
-    // The number of each type of pixel that has been totaled, used to average at the end.
-    var backgroundPixels = 0;
+    var qrColor = { L: 0, a: 0, b: 0 };
+    var backgroundColor = { L: 0, a: 0, b: 0 };
     var qrPixels = 0;
+    var backgroundPixels = 0;
     for (var y = 0; y < location.dimension; y++) {
-        var _loop_1 = function (x) {
+        for (var x = 0; x < location.dimension; x++) {
             var sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
             var sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
-            var sourceColor = rgbToLab(sourceData.slice(sourcePixelOffset, sourcePixelOffset + 3));
-            sourceColor.push(sourceData[sourcePixelOffset + 3]);
+            var sourceColor = rgbToLab({ r: sourceData[sourcePixelOffset],
+                g: sourceData[sourcePixelOffset + 1],
+                b: sourceData[sourcePixelOffset + 2] });
             if (extracted.matrix.get(x, y)) {
-                qrColorTotals.forEach(function (value, componentIndex, array) {
-                    array[componentIndex] = value + sourceColor[componentIndex];
-                });
+                qrColor.L += sourceColor.L;
+                qrColor.a += sourceColor.a;
+                qrColor.b += sourceColor.b;
                 qrPixels++;
             }
             else {
-                backgroundColorTotals.forEach(function (value, componentIndex, array) {
-                    array[componentIndex] = value + sourceColor[componentIndex];
-                });
+                backgroundColor.L += sourceColor.L;
+                backgroundColor.a += sourceColor.a;
+                backgroundColor.b += sourceColor.b;
                 backgroundPixels++;
             }
-        };
-        for (var x = 0; x < location.dimension; x++) {
-            _loop_1(x);
         }
     }
-    var backgroundAverages = backgroundColorTotals.map(function (value) { return value / backgroundPixels; });
-    var qrAverages = qrColorTotals.map(function (value) { return value / backgroundPixels; });
-    var backgroundColor = labToRGB(backgroundAverages);
-    backgroundColor.push(backgroundAverages[3]);
-    var qrColor = labToRGB(qrAverages);
-    qrColor.push(qrAverages[3]);
+    qrColor.L /= qrPixels;
+    qrColor.a /= qrPixels;
+    qrColor.b /= qrPixels;
+    backgroundColor.L /= backgroundPixels;
+    backgroundColor.a /= backgroundPixels;
+    backgroundColor.b /= backgroundPixels;
     return {
-        qr: new Uint8ClampedArray(qrColor),
-        background: new Uint8ClampedArray(backgroundColor),
+        qr: labToRGB(qrColor),
+        background: labToRGB(backgroundColor),
     };
 }
 exports.retrieveColors = retrieveColors;
@@ -546,9 +541,9 @@ exports.retrieveColors = retrieveColors;
 // Converts an RGB color ([r, g, b] or [r, g, b, a] - a is ignored) to CIELab ([L*, a*, b*]).
 function rgbToLab(rgb) {
     // To XYZ
-    var varR = (rgb[0] / 255);
-    var varG = (rgb[1] / 255);
-    var varB = (rgb[2] / 255);
+    var varR = (rgb.r / 255);
+    var varG = (rgb.g / 255);
+    var varB = (rgb.b / 255);
     if (varR > 0.04045) {
         varR = Math.pow(((varR + 0.055) / 1.055), 2.4);
     }
@@ -598,14 +593,15 @@ function rgbToLab(rgb) {
     var l = (116 * varY) - 16;
     var a = 500 * (varX - varY);
     var b = 200 * (varY - varZ);
-    return [l, a, b];
+    return { L: l, a: a, b: b };
 }
+exports.rgbToLab = rgbToLab;
 // Converts a CIELab color ([L*, a*, b*] - ignores additional values) to RGB ([r, g, b]).
 function labToRGB(lab) {
     // To XYZ
-    var varY = (lab[0] + 16) / 116;
-    var varX = lab[1] / 500 + varY;
-    var varZ = varY - lab[2] / 200;
+    var varY = (lab.L + 16) / 116;
+    var varX = lab.a / 500 + varY;
+    var varZ = varY - lab.b / 200;
     if (Math.pow(varY, 3) > 0.008856) {
         varY = Math.pow(varY, 3);
     }
@@ -655,8 +651,9 @@ function labToRGB(lab) {
     var r = varR * 255;
     var g = varG * 255;
     var b = varB * 255;
-    return [r, g, b];
+    return { r: r, g: g, b: b };
 }
+exports.labToRGB = labToRGB;
 
 
 /***/ }),
