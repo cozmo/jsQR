@@ -13,6 +13,11 @@ interface PerspectiveTransform {
   a33: number;
 }
 
+export interface Extracted {
+  matrix: BitMatrix;
+  mappingFunction: (x: number, y: number) => Point;
+}
+
 function squareToQuadrilateral(p1: Point, p2: Point, p3: Point, p4: Point): PerspectiveTransform {
   const dx3 = p1.x - p2.x + p3.x - p4.x;
   const dy3 = p1.y - p2.y + p3.y - p4.y;
@@ -80,7 +85,7 @@ function times(a: PerspectiveTransform, b: PerspectiveTransform): PerspectiveTra
   };
 }
 
-export function extract(image: BitMatrix, location: QRLocation) {
+export function extract(image: BitMatrix, location: QRLocation): Extracted {
   const qToS = quadrilateralToSquare(
     {x: 3.5, y: 3.5},
     {x: location.dimension - 3.5, y: 3.5},

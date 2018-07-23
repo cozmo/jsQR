@@ -1,72 +1,78 @@
-import { BitMatrix } from "../BitMatrix";
+import { Extracted } from "../extractor";
 import { QRLocation } from "../locator";
-import { Point } from "../Point";
 
-// Stores two RGBA values (0-255, [r, g, b, a])
 export interface QRColors {
-  qr: Uint8ClampedArray;
-  background: Uint8ClampedArray;
+  qr: RGBColor;
+  background: RGBColor;
+}
+
+export interface RGBColor {
+  r: number;
+  g: number;
+  b: number;
+}
+
+interface CIELabColor {
+  L: number;
+  a: number;
+  b: number;
 }
 
 /* Retrieves the colors that make up a scanned QR code. RGB (assumed to be sRGB) values are converted to the CIELab
-color space for averaging (with no regard for alpha), and then converted back to RGB. Alpha values are simply averaged
-directly. */
+color space for averaging (with no regard for alpha), and then converted back to RGB. */
 export function retrieveColors(location: QRLocation,
-                               extracted: {matrix: BitMatrix; mappingFunction: (x: number, y: number) => Point; },
+                               extracted: Extracted,
                                sourceData: Uint8ClampedArray,
                                sourceWidth: number): QRColors {
 
-  // Sum totals for all the pixels as [L*, a*, b*, a].
-  const backgroundColorTotals = [0, 0, 0, 0];
-  const qrColorTotals = [0, 0, 0, 0];
-  // The number of each type of pixel that has been totaled, used to average at the end.
-  let backgroundPixels = 0;
+  const qrColor: CIELabColor = {L: 0, a: 0, b: 0};
+  const backgroundColor: CIELabColor = {L: 0, a: 0, b: 0};
   let qrPixels = 0;
+  let backgroundPixels = 0;
 
   for (let y = 0; y < location.dimension; y++) {
     for (let x = 0; x < location.dimension; x++) {
       const sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
       const sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
-
-      const sourceColor = rgbToLab(sourceData.slice(sourcePixelOffset, sourcePixelOffset + 3));
-      sourceColor.push(sourceData[sourcePixelOffset + 3]);
+      const sourceColor = rgbToLab({r: sourceData[sourcePixelOffset],
+                                          g: sourceData[sourcePixelOffset + 1],
+                                          b: sourceData[sourcePixelOffset + 2]});
 
       if (extracted.matrix.get(x, y)) {
-        qrColorTotals.forEach((value, componentIndex, array) => {
-          array[componentIndex] = value + sourceColor[componentIndex];
-        });
+        qrColor.L += sourceColor.L;
+        qrColor.a += sourceColor.a;
+        qrColor.b += sourceColor.b;
         qrPixels++;
       } else {
-        backgroundColorTotals.forEach((value, componentIndex, array) => {
-          array[componentIndex] = value + sourceColor[componentIndex];
-        });
+        backgroundColor.L += sourceColor.L;
+        backgroundColor.a += sourceColor.a;
+        backgroundColor.b += sourceColor.b;
         backgroundPixels++;
       }
     }
   }
 
-  const backgroundAverages = backgroundColorTotals.map(value => value / backgroundPixels);
-  const qrAverages = qrColorTotals.map(value => value / backgroundPixels);
-
-  const backgroundColor = labToRGB(backgroundAverages);
-  backgroundColor.push(backgroundAverages[3]);
-  const qrColor = labToRGB(qrAverages);
-  qrColor.push(qrAverages[3]);
+  qrColor.L /= qrPixels;
+  qrColor.a /= qrPixels;
+  qrColor.b /= qrPixels;
+  backgroundColor.L /= backgroundPixels;
+  backgroundColor.a /= backgroundPixels;
+  backgroundColor.b /= backgroundPixels;
 
   return {
-    qr: new Uint8ClampedArray(qrColor),
-    background: new Uint8ClampedArray(backgroundColor),
+    qr: labToRGB(qrColor),
+    background: labToRGB(backgroundColor),
   };
 }
 
 // Color space conversions from http://www.easyrgb.com/en/math.php
 
 // Converts an RGB color ([r, g, b] or [r, g, b, a] - a is ignored) to CIELab ([L*, a*, b*]).
-function rgbToLab(rgb: Uint8ClampedArray): number[] {
+export function rgbToLab(rgb: RGBColor): CIELabColor {
   // To XYZ
-  let varR = ( rgb[0] / 255 );
-  let varG = ( rgb[1] / 255 );
-  let varB = ( rgb[2] / 255 );
+  let varR = ( rgb.r / 255 );
+  let varG = ( rgb.g / 255 );
+  let varB = ( rgb.b / 255 );
 
   if ( varR > 0.04045 ) {
     varR = Math.pow(( ( varR + 0.055) / 1.055 ), 2.4);
@@ -121,15 +127,15 @@ function rgbToLab(rgb: Uint8ClampedArray): number[] {
   const a = 500 * ( varX - varY );
   const b = 200 * ( varY - varZ );
 
-  return [l, a, b];
+  return {L: l, a, b};
 }
 
 // Converts a CIELab color ([L*, a*, b*] - ignores additional values) to RGB ([r, g, b]).
-function labToRGB(lab: number[]): number[] {
+export function labToRGB(lab: CIELabColor): RGBColor {
   // To XYZ
-  let varY = ( lab[0] + 16 ) / 116;
-  let varX = lab[1] / 500 + varY;
-  let varZ = varY - lab[2] / 200;
+  let varY = ( lab.L + 16 ) / 116;
+  let varX = lab.a / 500 + varY;
+  let varZ = varY - lab.b / 200;
 
   if ( Math.pow(varY, 3)  > 0.008856 ) {
     varY = Math.pow(varY, 3);
@@ -184,5 +190,5 @@ function labToRGB(lab: number[]): number[] {
   const g = varG * 255;
   const b = varB * 255;
 
-  return [r, g, b];
+  return {r, g, b};
 }

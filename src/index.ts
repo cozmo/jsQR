@@ -25,7 +25,7 @@ export interface QRCode {
   colors?: QRColors;
 }
 
-function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: number, scanOptions: Options): QRCode | null {
+function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, scanOptions: Options): QRCode | null {
   const location = locate(matrix);
   if (!location) {
     return null;
@@ -56,7 +56,7 @@ function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, sourceWidth: num
   };
 
   if (scanOptions.retrieveColors) {
-    output.colors = retrieveColors(location, extracted, sourceData, sourceWidth);
+    output.colors = retrieveColors(location, extracted, sourceData, matrix.width);
   }
 
   return output;
@@ -80,9 +80,9 @@ function jsQR(data: Uint8ClampedArray, width: number, height: number, options?: 
   });
 
   const binarized = binarize(data, width, height);
-  let result = scan(binarized, data, width, actualOpts);
+  let result = scan(binarized, data, actualOpts);
   if (!result && actualOpts.attemptInverted) {
-    result = scan(binarized.getInverted(), data, width, actualOpts);
+    result = scan(binarized.getInverted(), data, actualOpts);
   }
   return result;
 }

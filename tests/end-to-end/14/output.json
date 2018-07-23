@@ -1,148 +1,59 @@
 {
-  "default": {
-    "binaryData": [
-      77,
-      111,
-      114,
-      100,
-      101,
-      110
-    ],
-    "data": "Morden",
-    "chunks": [
-      {
-        "type": "byte",
-        "bytes": [
-          77,
-          111,
-          114,
-          100,
-          101,
-          110
-        ],
-        "text": "Morden"
-      }
-    ],
-    "location": {
-      "topRightCorner": {
-        "x": 175,
-        "y": 28
-      },
-      "topLeftCorner": {
-        "x": 28,
-        "y": 28
-      },
-      "bottomRightCorner": {
-        "x": 175,
-        "y": 175
-      },
-      "bottomLeftCorner": {
-        "x": 28,
-        "y": 175
-      },
-      "topRightFinderPattern": {
-        "x": 150.5,
-        "y": 52.5
-      },
-      "topLeftFinderPattern": {
-        "x": 52.5,
-        "y": 52.5
-      },
-      "bottomLeftFinderPattern": {
-        "x": 52.5,
-        "y": 150.5
-      },
-      "bottomRightAlignmentPattern": {
-        "x": 129.5,
-        "y": 129.5
-      }
-    },
-    "colors": {
-      "qr": {
-        "0": 0,
-        "1": 0,
-        "2": 0,
-        "3": 254
-      },
-      "background": {
-        "0": 255,
-        "1": 255,
-        "2": 255,
-        "3": 255
-      }
+  "binaryData": [
+    77,
+    111,
+    114,
+    100,
+    101,
+    110
+  ],
+  "data": "Morden",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        77,
+        111,
+        114,
+        100,
+        101,
+        110
+      ],
+      "text": "Morden"
     }
-  },
-  "color": {
-    "binaryData": [
-      77,
-      111,
-      114,
-      100,
-      101,
-      110
-    ],
-    "data": "Morden",
-    "chunks": [
-      {
-        "type": "byte",
-        "bytes": [
-          77,
-          111,
-          114,
-          100,
-          101,
-          110
-        ],
-        "text": "Morden"
-      }
-    ],
-    "location": {
-      "topRightCorner": {
-        "x": 175,
-        "y": 28
-      },
-      "topLeftCorner": {
-        "x": 28,
-        "y": 28
-      },
-      "bottomRightCorner": {
-        "x": 175,
-        "y": 175
-      },
-      "bottomLeftCorner": {
-        "x": 28,
-        "y": 175
-      },
-      "topRightFinderPattern": {
-        "x": 150.5,
-        "y": 52.5
-      },
-      "topLeftFinderPattern": {
-        "x": 52.5,
-        "y": 52.5
-      },
-      "bottomLeftFinderPattern": {
-        "x": 52.5,
-        "y": 150.5
-      },
-      "bottomRightAlignmentPattern": {
-        "x": 129.5,
-        "y": 129.5
-      }
+  ],
+  "location": {
+    "topRightCorner": {
+      "x": 175,
+      "y": 28
     },
-    "colors": {
-      "qr": {
-        "0": 0,
-        "1": 0,
-        "2": 0,
-        "3": 254
-      },
-      "background": {
-        "0": 255,
-        "1": 255,
-        "2": 255,
-        "3": 255
-      }
+    "topLeftCorner": {
+      "x": 28,
+      "y": 28
+    },
+    "bottomRightCorner": {
+      "x": 175,
+      "y": 175
+    },
+    "bottomLeftCorner": {
+      "x": 28,
+      "y": 175
+    },
+    "topRightFinderPattern": {
+      "x": 150.5,
+      "y": 52.5
+    },
+    "topLeftFinderPattern": {
+      "x": 52.5,
+      "y": 52.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 52.5,
+      "y": 150.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 129.5,
+      "y": 129.5
     }
   }
 }
