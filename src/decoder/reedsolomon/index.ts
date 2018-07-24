@@ -98,6 +98,10 @@ export function decode(bytes: number[], twoS: number) {
   const field = new GenericGF(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
   const poly = new GenericGFPoly(field, outputBytes);
 
+  if (poly.isZero()) {
+    return null;
+  }
+
   const syndromeCoefficients = new Uint8ClampedArray(twoS);
   let error = false;
   for (let s = 0; s < twoS; s++) {
