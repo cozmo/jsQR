@@ -243,4 +243,9 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
       });
     }
   }
+
+  // If there is no data left, or the remaining bits are all 0, then that counts as a termination marker
+  if (stream.available() === 0 || stream.readBits(stream.available()) === 0) {
+    return result;
+  }
 }
