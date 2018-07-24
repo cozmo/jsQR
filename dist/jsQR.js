@@ -228,6 +228,7 @@ var GenericGFPoly = /** @class */ (function () {
         return this.coefficients[this.coefficients.length - 1 - degree];
     };
     GenericGFPoly.prototype.addOrSubtract = function (other) {
+        var _a;
         if (this.isZero()) {
             return other;
         }
@@ -248,7 +249,6 @@ var GenericGFPoly = /** @class */ (function () {
             sumDiff[i] = GenericGF_1.addOrSubtractGF(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
         }
         return new GenericGFPoly(this.field, sumDiff);
-        var _a;
     };
     GenericGFPoly.prototype.multiply = function (scalar) {
         if (scalar === 0) {
@@ -328,10 +328,11 @@ exports.default = GenericGFPoly;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var binarizer_1 = __webpack_require__(4);
-var decoder_1 = __webpack_require__(5);
-var extractor_1 = __webpack_require__(11);
-var locator_1 = __webpack_require__(12);
-function scan(matrix) {
+var color_retriever_1 = __webpack_require__(5);
+var decoder_1 = __webpack_require__(6);
+var extractor_1 = __webpack_require__(12);
+var locator_1 = __webpack_require__(13);
+function scan(matrix, sourceData, scanOptions) {
     var location = locator_1.locate(matrix);
     if (!location) {
         return null;
@@ -341,7 +342,7 @@ function scan(matrix) {
     if (!decoded) {
         return null;
     }
-    return {
+    var output = {
         binaryData: decoded.bytes,
         data: decoded.text,
         chunks: decoded.chunks,
@@ -356,12 +357,24 @@ function scan(matrix) {
             bottomRightAlignmentPattern: location.alignmentPattern,
         },
     };
+    if (scanOptions.retrieveColors) {
+        output.colors = color_retriever_1.retrieveColors(location, extracted, sourceData, matrix.width);
+    }
+    return output;
 }
-function jsQR(data, width, height) {
+var defaultOptions = {
+    attemptInverted: true,
+    retrieveColors: false,
+};
+function jsQR(data, width, height, options) {
+    var actualOpts = defaultOptions;
+    Object.keys(options || {}).forEach(function (opt) {
+        actualOpts[opt] = options[opt];
+    });
     var binarized = binarizer_1.binarize(data, width, height);
-    var result = scan(binarized);
-    if (!result) {
-        result = scan(binarized.getInverted());
+    var result = scan(binarized, data, actualOpts);
+    if (!result && actualOpts.attemptInverted) {
+        result = scan(binarized.getInverted(), data, actualOpts);
     }
     return result;
 }
@@ -484,10 +497,176 @@ exports.binarize = binarize;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/* Retrieves the colors that make up a scanned QR code. RGB (assumed to be sRGB) values are converted to the CIELab
+color space for averaging (with no regard for alpha), and then converted back to RGB. */
+function retrieveColors(location, extracted, sourceData, sourceWidth) {
+    var qrColor = { L: 0, a: 0, b: 0 };
+    var backgroundColor = { L: 0, a: 0, b: 0 };
+    var qrPixels = 0;
+    var backgroundPixels = 0;
+    for (var y = 0; y < location.dimension; y++) {
+        for (var x = 0; x < location.dimension; x++) {
+            var sourcePixel = extracted.mappingFunction(x + 0.5, y + 0.5);
+            var sourcePixelOffset = ((Math.floor(sourcePixel.y) * sourceWidth) + Math.floor(sourcePixel.x)) * 4;
+            var sourceColor = rgbToLab({ r: sourceData[sourcePixelOffset],
+                g: sourceData[sourcePixelOffset + 1],
+                b: sourceData[sourcePixelOffset + 2] });
+            if (extracted.matrix.get(x, y)) {
+                qrColor.L += sourceColor.L;
+                qrColor.a += sourceColor.a;
+                qrColor.b += sourceColor.b;
+                qrPixels++;
+            }
+            else {
+                backgroundColor.L += sourceColor.L;
+                backgroundColor.a += sourceColor.a;
+                backgroundColor.b += sourceColor.b;
+                backgroundPixels++;
+            }
+        }
+    }
+    qrColor.L /= qrPixels;
+    qrColor.a /= qrPixels;
+    qrColor.b /= qrPixels;
+    backgroundColor.L /= backgroundPixels;
+    backgroundColor.a /= backgroundPixels;
+    backgroundColor.b /= backgroundPixels;
+    return {
+        qr: labToRGB(qrColor),
+        background: labToRGB(backgroundColor),
+    };
+}
+exports.retrieveColors = retrieveColors;
+// Color space conversions from http://www.easyrgb.com/en/math.php
+// Converts an RGB color ([r, g, b] or [r, g, b, a] - a is ignored) to CIELab ([L*, a*, b*]).
+function rgbToLab(rgb) {
+    // To XYZ
+    var varR = (rgb.r / 255);
+    var varG = (rgb.g / 255);
+    var varB = (rgb.b / 255);
+    if (varR > 0.04045) {
+        varR = Math.pow(((varR + 0.055) / 1.055), 2.4);
+    }
+    else {
+        varR = varR / 12.92;
+    }
+    if (varG > 0.04045) {
+        varG = Math.pow(((varG + 0.055) / 1.055), 2.4);
+    }
+    else {
+        varG = varG / 12.92;
+    }
+    if (varB > 0.04045) {
+        varB = Math.pow(((varB + 0.055) / 1.055), 2.4);
+    }
+    else {
+        varB = varB / 12.92;
+    }
+    varR = varR * 100;
+    varG = varG * 100;
+    varB = varB * 100;
+    var x = varR * 0.4124 + varG * 0.3576 + varB * 0.1805;
+    var y = varR * 0.2126 + varG * 0.7152 + varB * 0.0722;
+    var z = varR * 0.0193 + varG * 0.1192 + varB * 0.9505;
+    // To Lab
+    var varX = x / 95.047;
+    var varY = y / 100;
+    var varZ = z / 108.883;
+    if (varX > 0.008856) {
+        varX = Math.pow(varX, (1 / 3));
+    }
+    else {
+        varX = (7.787 * varX) + (16 / 116);
+    }
+    if (varY > 0.008856) {
+        varY = Math.pow(varY, (1 / 3));
+    }
+    else {
+        varY = (7.787 * varY) + (16 / 116);
+    }
+    if (varZ > 0.008856) {
+        varZ = Math.pow(varZ, (1 / 3));
+    }
+    else {
+        varZ = (7.787 * varZ) + (16 / 116);
+    }
+    var l = (116 * varY) - 16;
+    var a = 500 * (varX - varY);
+    var b = 200 * (varY - varZ);
+    return { L: l, a: a, b: b };
+}
+exports.rgbToLab = rgbToLab;
+// Converts a CIELab color ([L*, a*, b*] - ignores additional values) to RGB ([r, g, b]).
+function labToRGB(lab) {
+    // To XYZ
+    var varY = (lab.L + 16) / 116;
+    var varX = lab.a / 500 + varY;
+    var varZ = varY - lab.b / 200;
+    if (Math.pow(varY, 3) > 0.008856) {
+        varY = Math.pow(varY, 3);
+    }
+    else {
+        varY = (varY - 16 / 116) / 7.787;
+    }
+    if (Math.pow(varX, 3) > 0.008856) {
+        varX = Math.pow(varX, 3);
+    }
+    else {
+        varX = (varX - 16 / 116) / 7.787;
+    }
+    if (Math.pow(varZ, 3) > 0.008856) {
+        varZ = Math.pow(varZ, 3);
+    }
+    else {
+        varZ = (varZ - 16 / 116) / 7.787;
+    }
+    var x = varX * 95.047;
+    var y = varY * 100;
+    var z = varZ * 108.883;
+    // To RGB
+    varX = x / 100;
+    varY = y / 100;
+    varZ = z / 100;
+    var varR = varX * 3.2406 + varY * -1.5372 + varZ * -0.4986;
+    var varG = varX * -0.9689 + varY * 1.8758 + varZ * 0.0415;
+    var varB = varX * 0.0557 + varY * -0.2040 + varZ * 1.0570;
+    if (varR > 0.0031308) {
+        varR = 1.055 * Math.pow(varR, (1 / 2.4)) - 0.055;
+    }
+    else {
+        varR = 12.92 * varR;
+    }
+    if (varG > 0.0031308) {
+        varG = 1.055 * Math.pow(varG, (1 / 2.4)) - 0.055;
+    }
+    else {
+        varG = 12.92 * varG;
+    }
+    if (varB > 0.0031308) {
+        varB = 1.055 * Math.pow(varB, (1 / 2.4)) - 0.055;
+    }
+    else {
+        varB = 12.92 * varB;
+    }
+    var r = varR * 255;
+    var g = varG * 255;
+    var b = varB * 255;
+    return { r: r, g: g, b: b };
+}
+exports.labToRGB = labToRGB;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var BitMatrix_1 = __webpack_require__(0);
-var decodeData_1 = __webpack_require__(6);
-var reedsolomon_1 = __webpack_require__(9);
-var version_1 = __webpack_require__(10);
+var decodeData_1 = __webpack_require__(7);
+var reedsolomon_1 = __webpack_require__(10);
+var version_1 = __webpack_require__(11);
 // tslint:disable:no-bitwise
 function numBitsDiffering(x, y) {
     var z = x ^ y;
@@ -580,7 +759,7 @@ function readCodewords(matrix, version, formatInfo) {
     // Read columns in pairs, from right to left
     var readingUp = true;
     for (var columnIndex = dimension - 1; columnIndex > 0; columnIndex -= 2) {
-        if (columnIndex === 6) {
+        if (columnIndex === 6) { // Skip whole column with vertical alignment pattern;
             columnIndex--;
         }
         for (var i = 0; i < dimension; i++) {
@@ -594,7 +773,7 @@ function readCodewords(matrix, version, formatInfo) {
                         bit = !bit;
                     }
                     currentByte = pushBit(bit, currentByte);
-                    if (bitsRead === 8) {
+                    if (bitsRead === 8) { // Whole bytes
                         codewords.push(currentByte);
                         bitsRead = 0;
                         currentByte = 0;
@@ -609,7 +788,7 @@ function readCodewords(matrix, version, formatInfo) {
 function readVersion(matrix) {
     var dimension = matrix.height;
     var provisionalVersion = Math.floor((dimension - 17) / 4);
-    if (provisionalVersion <= 6) {
+    if (provisionalVersion <= 6) { // 6 and under dont have version info in the QR code
         return version_1.VERSIONS[provisionalVersion - 1];
     }
     var topRightVersionBits = 0;
@@ -651,21 +830,21 @@ function readVersion(matrix) {
 function readFormatInformation(matrix) {
     var topLeftFormatInfoBits = 0;
     for (var x = 0; x <= 8; x++) {
-        if (x !== 6) {
+        if (x !== 6) { // Skip timing pattern bit
             topLeftFormatInfoBits = pushBit(matrix.get(x, 8), topLeftFormatInfoBits);
         }
     }
     for (var y = 7; y >= 0; y--) {
-        if (y !== 6) {
+        if (y !== 6) { // Skip timing pattern bit
             topLeftFormatInfoBits = pushBit(matrix.get(8, y), topLeftFormatInfoBits);
         }
     }
     var dimension = matrix.height;
     var topRightBottomRightFormatInfoBits = 0;
-    for (var y = dimension - 1; y >= dimension - 7; y--) {
+    for (var y = dimension - 1; y >= dimension - 7; y--) { // bottom left
         topRightBottomRightFormatInfoBits = pushBit(matrix.get(8, y), topRightBottomRightFormatInfoBits);
     }
-    for (var x = dimension - 8; x < dimension; x++) {
+    for (var x = dimension - 8; x < dimension; x++) { // top right
         topRightBottomRightFormatInfoBits = pushBit(matrix.get(x, 8), topRightBottomRightFormatInfoBits);
     }
     var bestDifference = Infinity;
@@ -680,7 +859,7 @@ function readFormatInformation(matrix) {
             bestFormatInfo = formatInfo;
             bestDifference = difference;
         }
-        if (topLeftFormatInfoBits !== topRightBottomRightFormatInfoBits) {
+        if (topLeftFormatInfoBits !== topRightBottomRightFormatInfoBits) { // also try the other option
             difference = numBitsDiffering(topRightBottomRightFormatInfoBits, bits);
             if (difference < bestDifference) {
                 bestFormatInfo = formatInfo;
@@ -794,15 +973,15 @@ exports.decode = decode;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 // tslint:disable:no-bitwise
-var BitStream_1 = __webpack_require__(7);
-var shiftJISTable_1 = __webpack_require__(8);
+var BitStream_1 = __webpack_require__(8);
+var shiftJISTable_1 = __webpack_require__(9);
 var Mode;
 (function (Mode) {
     Mode["Numeric"] = "numeric";
@@ -926,6 +1105,7 @@ function decodeKanji(stream, size) {
     return { bytes: bytes, text: text };
 }
 function decode(data, version) {
+    var _a, _b, _c, _d;
     var stream = new BitStream_1.BitStream(data);
     // There are 3 'sizes' based on the version. 1-9 is small (0), 10-26 is medium (1) and 27-40 is large (2).
     var size = version <= 9 ? 0 : version <= 26 ? 1 : 2;
@@ -1005,13 +1185,12 @@ function decode(data, version) {
             });
         }
     }
-    var _a, _b, _c, _d;
 }
 exports.decode = decode;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1069,7 +1248,7 @@ exports.BitStream = BitStream;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8117,7 +8296,7 @@ exports.shiftJISTable = {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8126,6 +8305,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var GenericGF_1 = __webpack_require__(1);
 var GenericGFPoly_1 = __webpack_require__(2);
 function runEuclideanAlgorithm(field, a, b, R) {
+    var _a;
     // Assume a's degree is >= b's
     if (a.degree() < b.degree()) {
         _a = [b, a], a = _a[0], b = _a[1];
@@ -8166,7 +8346,6 @@ function runEuclideanAlgorithm(field, a, b, R) {
     }
     var inverse = field.inverse(sigmaTildeAtZero);
     return [t.multiply(inverse), r.multiply(inverse)];
-    var _a;
 }
 function findErrorLocations(field, errorLocator) {
     // This is a direct application of Chien's search
@@ -8246,7 +8425,7 @@ exports.decode = decode;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9561,7 +9740,7 @@ exports.VERSIONS = [
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9571,7 +9750,7 @@ var BitMatrix_1 = __webpack_require__(0);
 function squareToQuadrilateral(p1, p2, p3, p4) {
     var dx3 = p1.x - p2.x + p3.x - p4.x;
     var dy3 = p1.y - p2.y + p3.y - p4.y;
-    if (dx3 === 0 && dy3 === 0) {
+    if (dx3 === 0 && dy3 === 0) { // Affine
         return {
             a11: p2.x - p1.x,
             a12: p2.y - p1.y,
@@ -9662,7 +9841,7 @@ exports.extract = extract;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9677,6 +9856,7 @@ function sum(values) {
 }
 // Takes three finder patterns and organizes them into topLeft, topRight, etc
 function reorderFinderPatterns(pattern1, pattern2, pattern3) {
+    var _a, _b, _c, _d;
     // Find distances between pattern centers
     var oneTwoDistance = distance(pattern1, pattern2);
     var twoThreeDistance = distance(pattern2, pattern3);
@@ -9701,7 +9881,6 @@ function reorderFinderPatterns(pattern1, pattern2, pattern3) {
         _d = [topRight, bottomLeft], bottomLeft = _d[0], topRight = _d[1];
     }
     return { bottomLeft: bottomLeft, topLeft: topLeft, topRight: topRight };
-    var _a, _b, _c, _d;
 }
 // Computes the dimension (number of modules on a side) of the QR Code based on the position of the finder patterns
 function computeDimension(topLeft, topRight, bottomLeft, matrix) {
@@ -9791,13 +9970,13 @@ function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
 // along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
 // of the black white run. Takes a length which represents the number of switches from black to white to look for.
 function countBlackWhiteRun(origin, end, matrix, length) {
+    var _a;
     var rise = end.y - origin.y;
     var run = end.x - origin.x;
     var towardsEnd = countBlackWhiteRunTowardsPoint(origin, end, matrix, Math.ceil(length / 2));
     var awayFromEnd = countBlackWhiteRunTowardsPoint(origin, { x: origin.x - run, y: origin.y - rise }, matrix, Math.ceil(length / 2));
     var middleValue = towardsEnd.shift() + awayFromEnd.shift() - 1; // Substract one so we don't double count a pixel
     return (_a = awayFromEnd.concat(middleValue)).concat.apply(_a, towardsEnd);
-    var _a;
 }
 // Takes in a black white run and an array of expected ratios. Returns the average size of the run as well as the "error" -
 // that is the amount the run diverges from the expected ratio
@@ -9846,6 +10025,7 @@ function scorePattern(point, ratios, matrix) {
     }
 }
 function locate(matrix) {
+    var _a;
     var finderPatternQuads = [];
     var activeFinderPatternQuads = [];
     var alignmentPatternQuads = [];
@@ -9947,6 +10127,7 @@ function locate(matrix) {
     })
         .filter(function (q) { return !!q; }) // Filter out any rejected quads from above
         .sort(function (a, b) { return a.score - b.score; })
+        // Now take the top finder pattern options and try to find 2 other options with a similar size.
         .map(function (point, i, finderPatterns) {
         if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
             return null;
@@ -9966,13 +10147,13 @@ function locate(matrix) {
     if (finderPatternGroups.length === 0) {
         return null;
     }
-    var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
+    var _b = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _b.topRight, topLeft = _b.topLeft, bottomLeft = _b.bottomLeft;
     // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
     // We'll use these to help find the alignment pattern but also later when we do the extraction.
     var dimension;
     var moduleSize;
     try {
-        (_b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize);
+        (_a = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _a.dimension, moduleSize = _a.moduleSize);
     }
     catch (e) {
         return null;
@@ -10013,7 +10194,6 @@ function locate(matrix) {
         topLeft: { x: topLeft.x, y: topLeft.y },
         topRight: { x: topRight.x, y: topRight.y },
     };
-    var _b;
 }
 exports.locate = locate;
 

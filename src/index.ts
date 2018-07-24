@@ -1,9 +1,10 @@
-import {binarize} from "./binarizer";
-import {BitMatrix} from "./BitMatrix";
-import {Chunks} from "./decoder/decodeData";
-import {decode} from "./decoder/decoder";
-import {extract} from "./extractor";
-import {locate, Point} from "./locator";
+import { binarize } from "./binarizer";
+import { BitMatrix } from "./BitMatrix";
+import { QRColors, retrieveColors } from "./color-retriever";
+import { Chunks } from "./decoder/decodeData";
+import { decode } from "./decoder/decoder";
+import { extract } from "./extractor";
+import { locate, Point } from "./locator";
 
 export interface QRCode {
   binaryData: number[];
@@ -21,21 +22,22 @@ export interface QRCode {
 
     bottomRightAlignmentPattern?: Point;
   };
+  colors?: QRColors;
 }
 
-function scan(matrix: BitMatrix): QRCode | null {
+function scan(matrix: BitMatrix, sourceData: Uint8ClampedArray, scanOptions: Options): QRCode | null {
   const location = locate(matrix);
   if (!location) {
     return null;
   }
+
   const extracted = extract(matrix, location);
   const decoded = decode(extracted.matrix);
-
   if (!decoded) {
     return null;
   }
 
-  return {
+  const output: QRCode = {
     binaryData: decoded.bytes,
     data: decoded.text,
     chunks: decoded.chunks,
@@ -52,13 +54,35 @@ function scan(matrix: BitMatrix): QRCode | null {
       bottomRightAlignmentPattern: location.alignmentPattern,
     },
   };
+
+  if (scanOptions.retrieveColors) {
+    output.colors = retrieveColors(location, extracted, sourceData, matrix.width);
+  }
+
+  return output;
 }
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
+export interface Options {
+  attemptInverted?: boolean;
+  retrieveColors?: boolean;
+}
+
+const defaultOptions: Options = {
+  attemptInverted: true,
+  retrieveColors: false,
+};
+
+function jsQR(data: Uint8ClampedArray, width: number, height: number, options?: Options): QRCode | null {
+
+  const actualOpts: Options = defaultOptions;
+  Object.keys(options || {}).forEach(opt => {
+    (actualOpts as any)[opt] = (options as any)[opt];
+  });
+
   const binarized = binarize(data, width, height);
-  let result = scan(binarized);
-  if (!result) {
-    result = scan(binarized.getInverted());
+  let result = scan(binarized, data, actualOpts);
+  if (!result && actualOpts.attemptInverted) {
+    result = scan(binarized.getInverted(), data, actualOpts);
   }
   return result;
 }

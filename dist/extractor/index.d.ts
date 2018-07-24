@@ -1,9 +1,7 @@
 import { BitMatrix } from "../BitMatrix";
-import { QRLocation } from "../locator";
-export declare function extract(image: BitMatrix, location: QRLocation): {
+import { Point, QRLocation } from "../locator";
+export interface Extracted {
     matrix: BitMatrix;
-    mappingFunction: (x: number, y: number) => {
-        x: number;
-        y: number;
-    };
-};
+    mappingFunction: (x: number, y: number) => Point;
+}
+export declare function extract(image: BitMatrix, location: QRLocation): Extracted;
