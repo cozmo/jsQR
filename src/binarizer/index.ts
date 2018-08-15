@@ -23,7 +23,7 @@ class Matrix {
   }
 }
 
-export function binarize(data: Uint8ClampedArray, width: number, height: number): BitMatrix {
+export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean) {
   if (data.length !== width * height * 4) {
     throw new Error("Malformed data passed to binarizer.");
   }
@@ -88,6 +88,10 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number)
   }
 
   const binarized = BitMatrix.createEmpty(width, height);
+  let inverted: BitMatrix = null;
+  if (returnInverted) {
+    inverted = BitMatrix.createEmpty(width, height);
+  }
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
       const left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
@@ -99,14 +103,21 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number)
         }
       }
       const threshold = sum / 25;
-      for (let x = 0; x < REGION_SIZE; x++) {
-        for (let y = 0; y < REGION_SIZE; y++) {
-          const lum = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
-          binarized.set(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y, lum <= threshold);
+      for (let xRegion = 0; xRegion < REGION_SIZE; xRegion++) {
+        for (let yRegion = 0; yRegion < REGION_SIZE; yRegion++) {
+          const x = hortizontalRegion * REGION_SIZE + xRegion;
+          const y = verticalRegion * REGION_SIZE + yRegion;
+          const lum = greyscalePixels.get(x, y);
+          binarized.set(x, y, lum <= threshold);
+          if (returnInverted) {
+            inverted.set(x, y, !(lum <= threshold));
+          }
         }
       }
     }
   }
-
-  return binarized;
+  if (returnInverted) {
+    return { binarized, inverted };
+  }
+  return { binarized };
 }

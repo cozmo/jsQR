@@ -7,5 +7,4 @@ export declare class BitMatrix {
     get(x: number, y: number): boolean;
     set(x: number, y: number, v: boolean): void;
     setRegion(left: number, top: number, width: number, height: number, v: boolean): void;
-    getInverted(): BitMatrix;
 }

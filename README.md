@@ -46,10 +46,10 @@ If you want to use jsQR to scan a webcam stream you'll need to extract the [`Ima
 
 ## Usage
 
-jsQR exports a method that takes in 3 arguments representing the image data you wish to decode.
+jsQR exports a method that takes in 3 arguments representing the image data you wish to decode. Additionally can take an options object to further configure scanning behavior.
 
 ```javascript
-const code = jsQR(imageData, width, height);
+const code = jsQR(imageData, width, height, options?);
 
 if (code) {
   console.log("Found QR code", code);
@@ -61,7 +61,9 @@ if (code) {
 As such the length of this array should be `4 * width * height`.
 This data is in the same form as the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) interface, and it's also [commonly](https://www.npmjs.com/package/jpeg-js#decoding-jpegs) [returned](https://github.com/lukeapage/pngjs/blob/master/README.md#property-data) by node modules for reading images.
 - `width` - The width of the image you wish to decode.
-- `height` The height of the image you wish to decode.
+- `height` - The height of the image you wish to decode.
+- `options` (optional) - Additional options.
+  - `inversionAttempts` - (`attemptBoth` (default), `dontInvert`, `onlyInvert`, or `invertFirst`) - Should jsQR attempt to invert the image to find QR codes with white modules on black backgrounds instead of the black modules on white background. This option defaults to `attemptBoth` for backwards compatibility but causes a ~50% performance hit, and will probably be default to `dontInvert` in future versions.
 
 ### Return value
 If a QR is able to be decoded the library will return an object with the following keys.

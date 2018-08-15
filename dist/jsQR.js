@@ -105,9 +105,6 @@ var BitMatrix = /** @class */ (function () {
             }
         }
     };
-    BitMatrix.prototype.getInverted = function () {
-        return new BitMatrix(this.data.map(function (d) { return d === 0 ? 1 : 0; }), this.width);
-    };
     return BitMatrix;
 }());
 exports.BitMatrix = BitMatrix;
@@ -357,11 +354,21 @@ function scan(matrix) {
         },
     };
 }
-function jsQR(data, width, height) {
-    var binarized = binarizer_1.binarize(data, width, height);
-    var result = scan(binarized);
-    if (!result) {
-        result = scan(binarized.getInverted());
+var defaultOptions = {
+    inversionAttempts: "attemptBoth",
+};
+function jsQR(data, width, height, providedOptions) {
+    if (providedOptions === void 0) { providedOptions = {}; }
+    var options = defaultOptions;
+    Object.keys(options || {}).forEach(function (opt) {
+        options[opt] = providedOptions[opt] || options[opt];
+    });
+    var shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
+    var tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
+    var _a = binarizer_1.binarize(data, width, height, shouldInvert), binarized = _a.binarized, inverted = _a.inverted;
+    var result = scan(tryInvertedFirst ? inverted : binarized);
+    if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
+        result = scan(tryInvertedFirst ? binarized : inverted);
     }
     return result;
 }
@@ -396,7 +403,7 @@ var Matrix = /** @class */ (function () {
     };
     return Matrix;
 }());
-function binarize(data, width, height) {
+function binarize(data, width, height, returnInverted) {
     if (data.length !== width * height * 4) {
         throw new Error("Malformed data passed to binarizer.");
     }
@@ -453,6 +460,10 @@ function binarize(data, width, height) {
         }
     }
     var binarized = BitMatrix_1.BitMatrix.createEmpty(width, height);
+    var inverted = null;
+    if (returnInverted) {
+        inverted = BitMatrix_1.BitMatrix.createEmpty(width, height);
+    }
     for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
         for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
             var left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
@@ -464,15 +475,23 @@ function binarize(data, width, height) {
                 }
             }
             var threshold = sum / 25;
-            for (var x = 0; x < REGION_SIZE; x++) {
-                for (var y = 0; y < REGION_SIZE; y++) {
-                    var lum = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
-                    binarized.set(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y, lum <= threshold);
+            for (var xRegion = 0; xRegion < REGION_SIZE; xRegion++) {
+                for (var yRegion = 0; yRegion < REGION_SIZE; yRegion++) {
+                    var x = hortizontalRegion * REGION_SIZE + xRegion;
+                    var y = verticalRegion * REGION_SIZE + yRegion;
+                    var lum = greyscalePixels.get(x, y);
+                    binarized.set(x, y, lum <= threshold);
+                    if (returnInverted) {
+                        inverted.set(x, y, !(lum <= threshold));
+                    }
                 }
             }
         }
     }
-    return binarized;
+    if (returnInverted) {
+        return { binarized: binarized, inverted: inverted };
+    }
+    return { binarized: binarized };
 }
 exports.binarize = binarize;
 
