@@ -55,24 +55,26 @@ function scan(matrix: BitMatrix): QRCode | null {
 }
 
 export interface Options {
-  attemptInverted?: boolean;
+  inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
 }
 
 const defaultOptions: Options = {
-  attemptInverted: true,
+  inversionAttempts: "attemptBoth",
 };
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number, options?: Options): QRCode | null {
+function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions: Options = {}): QRCode | null {
 
-  const actualOpts = defaultOptions;
-  Object.keys(options || {}).forEach(opt => {
-    (actualOpts as any)[opt] = (options as any)[opt];
+  const options = defaultOptions;
+  Object.keys(options || {}).forEach(opt => { // Sad implementation of Object.assign since we target es5 not es6
+    (options as any)[opt] = (providedOptions as any)[opt] || (options as any)[opt];
   });
 
-  const binarized = binarize(data, width, height);
-  let result = scan(binarized);
-  if (!result && actualOpts.attemptInverted) {
-    result = scan(binarized.getInverted());
+  const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
+  const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
+  const {binarized, inverted} = binarize(data, width, height, shouldInvert);
+  let result = scan(tryInvertedFirst ? inverted : binarized);
+  if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
+    result = scan(tryInvertedFirst ? binarized : inverted);
   }
   return result;
 }
