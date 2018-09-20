@@ -17,7 +17,14 @@ export interface ECIChunk {
   assignmentNumber: number;
 }
 
-export type Chunks = Array<Chunk | ByteChunk | ECIChunk>;
+export interface StructuredAppend {
+  type: Mode.StructuredAppend;
+  currentSequence: number;
+  totalSequence: number;
+  parity: number;
+}
+
+export type Chunks = Array<Chunk | ByteChunk | ECIChunk | StructuredAppend>;
 
 export interface DecodedQR {
   text: string;
@@ -31,6 +38,7 @@ export enum Mode {
   Byte = "byte",
   Kanji = "kanji",
   ECI = "eci",
+  StructuredAppend = "structuredappend",
 }
 
 enum ModeByte {
@@ -40,7 +48,7 @@ enum ModeByte {
   Byte = 0x4,
   Kanji = 0x8,
   ECI = 0x7,
-  // StructuredAppend = 0x3,
+  StructuredAppend = 0x3,
   // FNC1FirstPosition = 0x5,
   // FNC1SecondPosition = 0x9,
 }
@@ -240,6 +248,13 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
         type: Mode.Kanji,
         bytes: kanjiResult.bytes,
         text: kanjiResult.text,
+      });
+    } else if (mode === ModeByte.StructuredAppend) {
+      result.chunks.push({
+        type: Mode.StructuredAppend,
+        currentSequence: stream.readBits(4),
+        totalSequence: stream.readBits(4),
+        parity: stream.readBits(8),
       });
     }
   }
