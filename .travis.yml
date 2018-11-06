@@ -1,6 +1,9 @@
 language: node_js
 node_js:
   - "node" # Latest
+  - "10"
+  - "8"
+  - "6"
 deploy:
   provider: npm
   on:
