@@ -1,6 +1,9 @@
 language: node_js
 node_js:
   - "node" # Latest
+cache:
+  directories:
+    - "node_modules"
 deploy:
   provider: npm
   on:
