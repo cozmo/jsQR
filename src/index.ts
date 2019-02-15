@@ -56,11 +56,25 @@ function scan(matrix: BitMatrix): QRCode | null {
 
 export interface Options {
   inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
+  greyScaleWeights?: GreyscaleWeights;
   canOverwriteImage?: boolean;
+}
+
+export interface GreyscaleWeights {
+  red: number;
+  green: number;
+  blue: number;
+  useIntegerApproximation?: boolean;
 }
 
 const defaultOptions: Options = {
   inversionAttempts: "attemptBoth",
+  greyScaleWeights: {
+    red: 0.2126,
+    green: 0.7152,
+    blue: 0.0722,
+    useIntegerApproximation: false,
+  },
   canOverwriteImage: true,
 };
 
@@ -73,7 +87,8 @@ function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOp
 
   const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
   const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
-  const {binarized, inverted} = binarize(data, width, height, shouldInvert, options.canOverwriteImage);
+  const {binarized, inverted} = binarize(data, width, height, shouldInvert, options.greyScaleWeights,
+      options.canOverwriteImage);
   let result = scan(tryInvertedFirst ? inverted : binarized);
   if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
     result = scan(tryInvertedFirst ? binarized : inverted);

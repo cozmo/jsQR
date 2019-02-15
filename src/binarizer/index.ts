@@ -1,4 +1,5 @@
 import {BitMatrix} from "../BitMatrix";
+import {GreyscaleWeights} from "../index";
 
 const REGION_SIZE = 8;
 const MIN_DYNAMIC_RANGE = 24;
@@ -28,7 +29,7 @@ class Matrix {
 }
 
 export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean,
-                         canOverwriteImage: boolean) {
+                         greyscaleWeights: GreyscaleWeights, canOverwriteImage: boolean) {
   const pixelCount = width * height;
   if (data.length !== pixelCount * 4) {
     throw new Error("Malformed data passed to binarizer.");
@@ -42,13 +43,28 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
     bufferOffset += pixelCount;
   }
   const greyscalePixels = new Matrix(width, height, greyscaleBuffer);
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const pixelPosition = (y * width + x) * 4;
-      const r = data[pixelPosition];
-      const g = data[pixelPosition + 1];
-      const b = data[pixelPosition + 2];
-      greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
+  if (greyscaleWeights.useIntegerApproximation) {
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const pixelPosition = (y * width + x) * 4;
+        const r = data[pixelPosition];
+        const g = data[pixelPosition + 1];
+        const b = data[pixelPosition + 2];
+        greyscalePixels.set(x, y,
+          // tslint:disable-next-line no-bitwise
+          (greyscaleWeights.red * r + greyscaleWeights.green * g + greyscaleWeights.blue * b + 128) >> 8);
+      }
+    }
+  } else {
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const pixelPosition = (y * width + x) * 4;
+        const r = data[pixelPosition];
+        const g = data[pixelPosition + 1];
+        const b = data[pixelPosition + 2];
+        greyscalePixels.set(x, y,
+          greyscaleWeights.red * r + greyscaleWeights.green * g + greyscaleWeights.blue * b);
+      }
     }
   }
   const horizontalRegionCount = Math.ceil(width / REGION_SIZE);
