@@ -11,9 +11,13 @@ function numBetween(value: number, min: number, max: number): number {
 class Matrix {
   private data: Uint8ClampedArray;
   private width: number;
-  constructor(width: number, height: number) {
+  constructor(width: number, height: number, buffer?: Uint8ClampedArray) {
     this.width = width;
-    this.data = new Uint8ClampedArray(width * height);
+    const bufferSize = width * height;
+    if (buffer && buffer.length !== bufferSize) {
+      throw new Error("Wrong buffer size");
+    }
+    this.data = buffer || new Uint8ClampedArray(bufferSize);
   }
   public get(x: number, y: number) {
     return this.data[y * this.width + x];
@@ -24,16 +28,22 @@ class Matrix {
 }
 
 export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean) {
-  if (data.length !== width * height * 4) {
+  const pixelCount = width * height;
+  if (data.length !== pixelCount * 4) {
     throw new Error("Malformed data passed to binarizer.");
   }
+  // assign the greyscale and binary image within the rgba buffer as the rgba image will not be needed after conversion
+  let bufferOffset = 0;
   // Convert image to greyscale
-  const greyscalePixels = new Matrix(width, height);
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-      const r = data[((y * width + x) * 4) + 0];
-      const g = data[((y * width + x) * 4) + 1];
-      const b = data[((y * width + x) * 4) + 2];
+  const greyScaleBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+  bufferOffset += pixelCount;
+  const greyscalePixels = new Matrix(width, height, greyScaleBuffer);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const pixelPosition = (y * width + x) * 4;
+      const r = data[pixelPosition];
+      const g = data[pixelPosition + 1];
+      const b = data[pixelPosition + 2];
       greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
     }
   }
@@ -87,11 +97,15 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
     }
   }
 
-  const binarized = BitMatrix.createEmpty(width, height);
+  const binarizedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+  bufferOffset += binarizedBuffer.byteLength;
+  const binarized = new BitMatrix(binarizedBuffer, width);
   let inverted: BitMatrix = null;
   if (returnInverted) {
-    inverted = BitMatrix.createEmpty(width, height);
+    const invertedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+    inverted = new BitMatrix(invertedBuffer, width);
   }
+
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
       const left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
