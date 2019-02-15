@@ -1,439 +1,107 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["jsQR"] = factory();
-	else
-		root["jsQR"] = factory();
-})(typeof self !== 'undefined' ? self : this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var BitMatrix = /** @class */ (function () {
-    function BitMatrix(data, width) {
+class BitMatrix {
+    static createEmpty(width, height) {
+        return new BitMatrix(new Uint8ClampedArray(width * height), width);
+    }
+    constructor(data, width) {
         this.width = width;
         this.height = data.length / width;
         this.data = data;
     }
-    BitMatrix.createEmpty = function (width, height) {
-        return new BitMatrix(new Uint8ClampedArray(width * height), width);
-    };
-    BitMatrix.prototype.get = function (x, y) {
+    get(x, y) {
         if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
             return false;
         }
         return !!this.data[y * this.width + x];
-    };
-    BitMatrix.prototype.set = function (x, y, v) {
+    }
+    set(x, y, v) {
         this.data[y * this.width + x] = v ? 1 : 0;
-    };
-    BitMatrix.prototype.setRegion = function (left, top, width, height, v) {
-        for (var y = top; y < top + height; y++) {
-            for (var x = left; x < left + width; x++) {
+    }
+    setRegion(left, top, width, height, v) {
+        for (let y = top; y < top + height; y++) {
+            for (let x = left; x < left + width; x++) {
                 this.set(x, y, !!v);
             }
         }
-    };
-    return BitMatrix;
-}());
-exports.BitMatrix = BitMatrix;
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var GenericGFPoly_1 = __webpack_require__(2);
-function addOrSubtractGF(a, b) {
-    return a ^ b; // tslint:disable-line:no-bitwise
+    }
 }
-exports.addOrSubtractGF = addOrSubtractGF;
-var GenericGF = /** @class */ (function () {
-    function GenericGF(primitive, size, genBase) {
-        this.primitive = primitive;
-        this.size = size;
-        this.generatorBase = genBase;
-        this.expTable = new Array(this.size);
-        this.logTable = new Array(this.size);
-        var x = 1;
-        for (var i = 0; i < this.size; i++) {
-            this.expTable[i] = x;
-            x = x * 2;
-            if (x >= this.size) {
-                x = (x ^ this.primitive) & (this.size - 1); // tslint:disable-line:no-bitwise
-            }
-        }
-        for (var i = 0; i < this.size - 1; i++) {
-            this.logTable[this.expTable[i]] = i;
-        }
-        this.zero = new GenericGFPoly_1.default(this, Uint8ClampedArray.from([0]));
-        this.one = new GenericGFPoly_1.default(this, Uint8ClampedArray.from([1]));
-    }
-    GenericGF.prototype.multiply = function (a, b) {
-        if (a === 0 || b === 0) {
-            return 0;
-        }
-        return this.expTable[(this.logTable[a] + this.logTable[b]) % (this.size - 1)];
-    };
-    GenericGF.prototype.inverse = function (a) {
-        if (a === 0) {
-            throw new Error("Can't invert 0");
-        }
-        return this.expTable[this.size - this.logTable[a] - 1];
-    };
-    GenericGF.prototype.buildMonomial = function (degree, coefficient) {
-        if (degree < 0) {
-            throw new Error("Invalid monomial degree less than 0");
-        }
-        if (coefficient === 0) {
-            return this.zero;
-        }
-        var coefficients = new Uint8ClampedArray(degree + 1);
-        coefficients[0] = coefficient;
-        return new GenericGFPoly_1.default(this, coefficients);
-    };
-    GenericGF.prototype.log = function (a) {
-        if (a === 0) {
-            throw new Error("Can't take log(0)");
-        }
-        return this.logTable[a];
-    };
-    GenericGF.prototype.exp = function (a) {
-        return this.expTable[a];
-    };
-    return GenericGF;
-}());
-exports.default = GenericGF;
 
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var GenericGF_1 = __webpack_require__(1);
-var GenericGFPoly = /** @class */ (function () {
-    function GenericGFPoly(field, coefficients) {
-        if (coefficients.length === 0) {
-            throw new Error("No coefficients.");
-        }
-        this.field = field;
-        var coefficientsLength = coefficients.length;
-        if (coefficientsLength > 1 && coefficients[0] === 0) {
-            // Leading term must be non-zero for anything except the constant polynomial "0"
-            var firstNonZero = 1;
-            while (firstNonZero < coefficientsLength && coefficients[firstNonZero] === 0) {
-                firstNonZero++;
-            }
-            if (firstNonZero === coefficientsLength) {
-                this.coefficients = field.zero.coefficients;
-            }
-            else {
-                this.coefficients = new Uint8ClampedArray(coefficientsLength - firstNonZero);
-                for (var i = 0; i < this.coefficients.length; i++) {
-                    this.coefficients[i] = coefficients[firstNonZero + i];
-                }
-            }
-        }
-        else {
-            this.coefficients = coefficients;
-        }
-    }
-    GenericGFPoly.prototype.degree = function () {
-        return this.coefficients.length - 1;
-    };
-    GenericGFPoly.prototype.isZero = function () {
-        return this.coefficients[0] === 0;
-    };
-    GenericGFPoly.prototype.getCoefficient = function (degree) {
-        return this.coefficients[this.coefficients.length - 1 - degree];
-    };
-    GenericGFPoly.prototype.addOrSubtract = function (other) {
-        if (this.isZero()) {
-            return other;
-        }
-        if (other.isZero()) {
-            return this;
-        }
-        var smallerCoefficients = this.coefficients;
-        var largerCoefficients = other.coefficients;
-        if (smallerCoefficients.length > largerCoefficients.length) {
-            _a = [largerCoefficients, smallerCoefficients], smallerCoefficients = _a[0], largerCoefficients = _a[1];
-        }
-        var sumDiff = new Uint8ClampedArray(largerCoefficients.length);
-        var lengthDiff = largerCoefficients.length - smallerCoefficients.length;
-        for (var i = 0; i < lengthDiff; i++) {
-            sumDiff[i] = largerCoefficients[i];
-        }
-        for (var i = lengthDiff; i < largerCoefficients.length; i++) {
-            sumDiff[i] = GenericGF_1.addOrSubtractGF(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
-        }
-        return new GenericGFPoly(this.field, sumDiff);
-        var _a;
-    };
-    GenericGFPoly.prototype.multiply = function (scalar) {
-        if (scalar === 0) {
-            return this.field.zero;
-        }
-        if (scalar === 1) {
-            return this;
-        }
-        var size = this.coefficients.length;
-        var product = new Uint8ClampedArray(size);
-        for (var i = 0; i < size; i++) {
-            product[i] = this.field.multiply(this.coefficients[i], scalar);
-        }
-        return new GenericGFPoly(this.field, product);
-    };
-    GenericGFPoly.prototype.multiplyPoly = function (other) {
-        if (this.isZero() || other.isZero()) {
-            return this.field.zero;
-        }
-        var aCoefficients = this.coefficients;
-        var aLength = aCoefficients.length;
-        var bCoefficients = other.coefficients;
-        var bLength = bCoefficients.length;
-        var product = new Uint8ClampedArray(aLength + bLength - 1);
-        for (var i = 0; i < aLength; i++) {
-            var aCoeff = aCoefficients[i];
-            for (var j = 0; j < bLength; j++) {
-                product[i + j] = GenericGF_1.addOrSubtractGF(product[i + j], this.field.multiply(aCoeff, bCoefficients[j]));
-            }
-        }
-        return new GenericGFPoly(this.field, product);
-    };
-    GenericGFPoly.prototype.multiplyByMonomial = function (degree, coefficient) {
-        if (degree < 0) {
-            throw new Error("Invalid degree less than 0");
-        }
-        if (coefficient === 0) {
-            return this.field.zero;
-        }
-        var size = this.coefficients.length;
-        var product = new Uint8ClampedArray(size + degree);
-        for (var i = 0; i < size; i++) {
-            product[i] = this.field.multiply(this.coefficients[i], coefficient);
-        }
-        return new GenericGFPoly(this.field, product);
-    };
-    GenericGFPoly.prototype.evaluateAt = function (a) {
-        var result = 0;
-        if (a === 0) {
-            // Just return the x^0 coefficient
-            return this.getCoefficient(0);
-        }
-        var size = this.coefficients.length;
-        if (a === 1) {
-            // Just the sum of the coefficients
-            this.coefficients.forEach(function (coefficient) {
-                result = GenericGF_1.addOrSubtractGF(result, coefficient);
-            });
-            return result;
-        }
-        result = this.coefficients[0];
-        for (var i = 1; i < size; i++) {
-            result = GenericGF_1.addOrSubtractGF(this.field.multiply(a, result), this.coefficients[i]);
-        }
-        return result;
-    };
-    return GenericGFPoly;
-}());
-exports.default = GenericGFPoly;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var binarizer_1 = __webpack_require__(4);
-var decoder_1 = __webpack_require__(5);
-var extractor_1 = __webpack_require__(11);
-var locator_1 = __webpack_require__(12);
-function scan(matrix) {
-    var location = locator_1.locate(matrix);
-    if (!location) {
-        return null;
-    }
-    var extracted = extractor_1.extract(matrix, location);
-    var decoded = decoder_1.decode(extracted.matrix);
-    if (!decoded) {
-        return null;
-    }
-    return {
-        binaryData: decoded.bytes,
-        data: decoded.text,
-        chunks: decoded.chunks,
-        location: {
-            topRightCorner: extracted.mappingFunction(location.dimension, 0),
-            topLeftCorner: extracted.mappingFunction(0, 0),
-            bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
-            bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
-            topRightFinderPattern: location.topRight,
-            topLeftFinderPattern: location.topLeft,
-            bottomLeftFinderPattern: location.bottomLeft,
-            bottomRightAlignmentPattern: location.alignmentPattern,
-        },
-    };
-}
-var defaultOptions = {
-    inversionAttempts: "attemptBoth",
-};
-function jsQR(data, width, height, providedOptions) {
-    if (providedOptions === void 0) { providedOptions = {}; }
-    var options = defaultOptions;
-    Object.keys(options || {}).forEach(function (opt) {
-        options[opt] = providedOptions[opt] || options[opt];
-    });
-    var shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
-    var tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
-    var _a = binarizer_1.binarize(data, width, height, shouldInvert), binarized = _a.binarized, inverted = _a.inverted;
-    var result = scan(tryInvertedFirst ? inverted : binarized);
-    if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
-        result = scan(tryInvertedFirst ? binarized : inverted);
-    }
-    return result;
-}
-jsQR.default = jsQR;
-exports.default = jsQR;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var BitMatrix_1 = __webpack_require__(0);
-var REGION_SIZE = 8;
-var MIN_DYNAMIC_RANGE = 24;
+const REGION_SIZE = 8;
+const MIN_DYNAMIC_RANGE = 24;
 function numBetween(value, min, max) {
     return value < min ? min : value > max ? max : value;
 }
 // Like BitMatrix but accepts arbitry Uint8 values
-var Matrix = /** @class */ (function () {
-    function Matrix(width, height) {
+class Matrix {
+    constructor(width, height, buffer) {
         this.width = width;
-        this.data = new Uint8ClampedArray(width * height);
+        const bufferSize = width * height;
+        if (buffer && buffer.length !== bufferSize) {
+            throw new Error("Wrong buffer size");
+        }
+        this.data = buffer || new Uint8ClampedArray(bufferSize);
     }
-    Matrix.prototype.get = function (x, y) {
+    get(x, y) {
         return this.data[y * this.width + x];
-    };
-    Matrix.prototype.set = function (x, y, value) {
+    }
+    set(x, y, value) {
         this.data[y * this.width + x] = value;
-    };
-    return Matrix;
-}());
-function binarize(data, width, height, returnInverted) {
-    if (data.length !== width * height * 4) {
+    }
+}
+function binarize(data, width, height, returnInverted, greyscaleWeights, canOverwriteImage) {
+    const pixelCount = width * height;
+    if (data.length !== pixelCount * 4) {
         throw new Error("Malformed data passed to binarizer.");
     }
+    // assign the greyscale and binary image within the rgba buffer as the rgba image will not be needed after conversion
+    let bufferOffset = 0;
     // Convert image to greyscale
-    var greyscalePixels = new Matrix(width, height);
-    for (var x = 0; x < width; x++) {
-        for (var y = 0; y < height; y++) {
-            var r = data[((y * width + x) * 4) + 0];
-            var g = data[((y * width + x) * 4) + 1];
-            var b = data[((y * width + x) * 4) + 2];
-            greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
+    let greyscaleBuffer;
+    if (canOverwriteImage) {
+        greyscaleBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+        bufferOffset += pixelCount;
+    }
+    const greyscalePixels = new Matrix(width, height, greyscaleBuffer);
+    if (greyscaleWeights.useIntegerApproximation) {
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const pixelPosition = (y * width + x) * 4;
+                const r = data[pixelPosition];
+                const g = data[pixelPosition + 1];
+                const b = data[pixelPosition + 2];
+                greyscalePixels.set(x, y, 
+                // tslint:disable-next-line no-bitwise
+                (greyscaleWeights.red * r + greyscaleWeights.green * g + greyscaleWeights.blue * b + 128) >> 8);
+            }
         }
     }
-    var horizontalRegionCount = Math.ceil(width / REGION_SIZE);
-    var verticalRegionCount = Math.ceil(height / REGION_SIZE);
-    var blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
-    for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
-        for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
-            var sum = 0;
-            var min = Infinity;
-            var max = 0;
-            for (var y = 0; y < REGION_SIZE; y++) {
-                for (var x = 0; x < REGION_SIZE; x++) {
-                    var pixelLumosity = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
+    else {
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const pixelPosition = (y * width + x) * 4;
+                const r = data[pixelPosition];
+                const g = data[pixelPosition + 1];
+                const b = data[pixelPosition + 2];
+                greyscalePixels.set(x, y, greyscaleWeights.red * r + greyscaleWeights.green * g + greyscaleWeights.blue * b);
+            }
+        }
+    }
+    const horizontalRegionCount = Math.ceil(width / REGION_SIZE);
+    const verticalRegionCount = Math.ceil(height / REGION_SIZE);
+    const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
+    for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
+        for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
+            let sum = 0;
+            let min = Infinity;
+            let max = 0;
+            for (let y = 0; y < REGION_SIZE; y++) {
+                for (let x = 0; x < REGION_SIZE; x++) {
+                    const pixelLumosity = greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
                     sum += pixelLumosity;
                     min = Math.min(min, pixelLumosity);
                     max = Math.max(max, pixelLumosity);
                 }
             }
-            var average = sum / (Math.pow(REGION_SIZE, 2));
+            let average = sum / (Math.pow(REGION_SIZE, 2));
             if (max - min <= MIN_DYNAMIC_RANGE) {
                 // If variation within the block is low, assume this is a block with only light or only
                 // dark pixels. In that case we do not want to use the average, as it would divide this
@@ -448,7 +116,7 @@ function binarize(data, width, height, returnInverted) {
                     // background for which reasonable black point estimates were made. The bp estimated at
                     // the boundaries is used for the interior.
                     // The (min < bp) is arbitrary but works better than other heuristics that were tried.
-                    var averageNeighborBlackPoint = (blackPoints.get(hortizontalRegion, verticalRegion - 1) +
+                    const averageNeighborBlackPoint = (blackPoints.get(hortizontalRegion, verticalRegion - 1) +
                         (2 * blackPoints.get(hortizontalRegion - 1, verticalRegion)) +
                         blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)) / 4;
                     if (min < averageNeighborBlackPoint) {
@@ -459,27 +127,41 @@ function binarize(data, width, height, returnInverted) {
             blackPoints.set(hortizontalRegion, verticalRegion, average);
         }
     }
-    var binarized = BitMatrix_1.BitMatrix.createEmpty(width, height);
-    var inverted = null;
-    if (returnInverted) {
-        inverted = BitMatrix_1.BitMatrix.createEmpty(width, height);
+    let binarized;
+    if (canOverwriteImage) {
+        const binarizedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+        bufferOffset += pixelCount;
+        binarized = new BitMatrix(binarizedBuffer, width);
     }
-    for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
-        for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
-            var left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
-            var top_1 = numBetween(verticalRegion, 2, verticalRegionCount - 3);
-            var sum = 0;
-            for (var xRegion = -2; xRegion <= 2; xRegion++) {
-                for (var yRegion = -2; yRegion <= 2; yRegion++) {
-                    sum += blackPoints.get(left + xRegion, top_1 + yRegion);
+    else {
+        binarized = BitMatrix.createEmpty(width, height);
+    }
+    let inverted = null;
+    if (returnInverted) {
+        if (canOverwriteImage) {
+            const invertedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+            inverted = new BitMatrix(invertedBuffer, width);
+        }
+        else {
+            inverted = BitMatrix.createEmpty(width, height);
+        }
+    }
+    for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
+        for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
+            const left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
+            const top = numBetween(verticalRegion, 2, verticalRegionCount - 3);
+            let sum = 0;
+            for (let xRegion = -2; xRegion <= 2; xRegion++) {
+                for (let yRegion = -2; yRegion <= 2; yRegion++) {
+                    sum += blackPoints.get(left + xRegion, top + yRegion);
                 }
             }
-            var threshold = sum / 25;
-            for (var xRegion = 0; xRegion < REGION_SIZE; xRegion++) {
-                for (var yRegion = 0; yRegion < REGION_SIZE; yRegion++) {
-                    var x = hortizontalRegion * REGION_SIZE + xRegion;
-                    var y = verticalRegion * REGION_SIZE + yRegion;
-                    var lum = greyscalePixels.get(x, y);
+            const threshold = sum / 25;
+            for (let xRegion = 0; xRegion < REGION_SIZE; xRegion++) {
+                for (let yRegion = 0; yRegion < REGION_SIZE; yRegion++) {
+                    const x = hortizontalRegion * REGION_SIZE + xRegion;
+                    const y = verticalRegion * REGION_SIZE + yRegion;
+                    const lum = greyscalePixels.get(x, y);
                     binarized.set(x, y, lum <= threshold);
                     if (returnInverted) {
                         inverted.set(x, y, !(lum <= threshold));
@@ -489,571 +171,29 @@ function binarize(data, width, height, returnInverted) {
         }
     }
     if (returnInverted) {
-        return { binarized: binarized, inverted: inverted };
+        return { binarized, inverted };
     }
-    return { binarized: binarized };
+    return { binarized };
 }
-exports.binarize = binarize;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var BitMatrix_1 = __webpack_require__(0);
-var decodeData_1 = __webpack_require__(6);
-var reedsolomon_1 = __webpack_require__(9);
-var version_1 = __webpack_require__(10);
-// tslint:disable:no-bitwise
-function numBitsDiffering(x, y) {
-    var z = x ^ y;
-    var bitCount = 0;
-    while (z) {
-        bitCount++;
-        z &= z - 1;
-    }
-    return bitCount;
-}
-function pushBit(bit, byte) {
-    return (byte << 1) | bit;
-}
-// tslint:enable:no-bitwise
-var FORMAT_INFO_TABLE = [
-    { bits: 0x5412, formatInfo: { errorCorrectionLevel: 1, dataMask: 0 } },
-    { bits: 0x5125, formatInfo: { errorCorrectionLevel: 1, dataMask: 1 } },
-    { bits: 0x5E7C, formatInfo: { errorCorrectionLevel: 1, dataMask: 2 } },
-    { bits: 0x5B4B, formatInfo: { errorCorrectionLevel: 1, dataMask: 3 } },
-    { bits: 0x45F9, formatInfo: { errorCorrectionLevel: 1, dataMask: 4 } },
-    { bits: 0x40CE, formatInfo: { errorCorrectionLevel: 1, dataMask: 5 } },
-    { bits: 0x4F97, formatInfo: { errorCorrectionLevel: 1, dataMask: 6 } },
-    { bits: 0x4AA0, formatInfo: { errorCorrectionLevel: 1, dataMask: 7 } },
-    { bits: 0x77C4, formatInfo: { errorCorrectionLevel: 0, dataMask: 0 } },
-    { bits: 0x72F3, formatInfo: { errorCorrectionLevel: 0, dataMask: 1 } },
-    { bits: 0x7DAA, formatInfo: { errorCorrectionLevel: 0, dataMask: 2 } },
-    { bits: 0x789D, formatInfo: { errorCorrectionLevel: 0, dataMask: 3 } },
-    { bits: 0x662F, formatInfo: { errorCorrectionLevel: 0, dataMask: 4 } },
-    { bits: 0x6318, formatInfo: { errorCorrectionLevel: 0, dataMask: 5 } },
-    { bits: 0x6C41, formatInfo: { errorCorrectionLevel: 0, dataMask: 6 } },
-    { bits: 0x6976, formatInfo: { errorCorrectionLevel: 0, dataMask: 7 } },
-    { bits: 0x1689, formatInfo: { errorCorrectionLevel: 3, dataMask: 0 } },
-    { bits: 0x13BE, formatInfo: { errorCorrectionLevel: 3, dataMask: 1 } },
-    { bits: 0x1CE7, formatInfo: { errorCorrectionLevel: 3, dataMask: 2 } },
-    { bits: 0x19D0, formatInfo: { errorCorrectionLevel: 3, dataMask: 3 } },
-    { bits: 0x0762, formatInfo: { errorCorrectionLevel: 3, dataMask: 4 } },
-    { bits: 0x0255, formatInfo: { errorCorrectionLevel: 3, dataMask: 5 } },
-    { bits: 0x0D0C, formatInfo: { errorCorrectionLevel: 3, dataMask: 6 } },
-    { bits: 0x083B, formatInfo: { errorCorrectionLevel: 3, dataMask: 7 } },
-    { bits: 0x355F, formatInfo: { errorCorrectionLevel: 2, dataMask: 0 } },
-    { bits: 0x3068, formatInfo: { errorCorrectionLevel: 2, dataMask: 1 } },
-    { bits: 0x3F31, formatInfo: { errorCorrectionLevel: 2, dataMask: 2 } },
-    { bits: 0x3A06, formatInfo: { errorCorrectionLevel: 2, dataMask: 3 } },
-    { bits: 0x24B4, formatInfo: { errorCorrectionLevel: 2, dataMask: 4 } },
-    { bits: 0x2183, formatInfo: { errorCorrectionLevel: 2, dataMask: 5 } },
-    { bits: 0x2EDA, formatInfo: { errorCorrectionLevel: 2, dataMask: 6 } },
-    { bits: 0x2BED, formatInfo: { errorCorrectionLevel: 2, dataMask: 7 } },
-];
-var DATA_MASKS = [
-    function (p) { return ((p.y + p.x) % 2) === 0; },
-    function (p) { return (p.y % 2) === 0; },
-    function (p) { return p.x % 3 === 0; },
-    function (p) { return (p.y + p.x) % 3 === 0; },
-    function (p) { return (Math.floor(p.y / 2) + Math.floor(p.x / 3)) % 2 === 0; },
-    function (p) { return ((p.x * p.y) % 2) + ((p.x * p.y) % 3) === 0; },
-    function (p) { return ((((p.y * p.x) % 2) + (p.y * p.x) % 3) % 2) === 0; },
-    function (p) { return ((((p.y + p.x) % 2) + (p.y * p.x) % 3) % 2) === 0; },
-];
-function buildFunctionPatternMask(version) {
-    var dimension = 17 + 4 * version.versionNumber;
-    var matrix = BitMatrix_1.BitMatrix.createEmpty(dimension, dimension);
-    matrix.setRegion(0, 0, 9, 9, true); // Top left finder pattern + separator + format
-    matrix.setRegion(dimension - 8, 0, 8, 9, true); // Top right finder pattern + separator + format
-    matrix.setRegion(0, dimension - 8, 9, 8, true); // Bottom left finder pattern + separator + format
-    // Alignment patterns
-    for (var _i = 0, _a = version.alignmentPatternCenters; _i < _a.length; _i++) {
-        var x = _a[_i];
-        for (var _b = 0, _c = version.alignmentPatternCenters; _b < _c.length; _b++) {
-            var y = _c[_b];
-            if (!(x === 6 && y === 6 || x === 6 && y === dimension - 7 || x === dimension - 7 && y === 6)) {
-                matrix.setRegion(x - 2, y - 2, 5, 5, true);
-            }
-        }
-    }
-    matrix.setRegion(6, 9, 1, dimension - 17, true); // Vertical timing pattern
-    matrix.setRegion(9, 6, dimension - 17, 1, true); // Horizontal timing pattern
-    if (version.versionNumber > 6) {
-        matrix.setRegion(dimension - 11, 0, 3, 6, true); // Version info, top right
-        matrix.setRegion(0, dimension - 11, 6, 3, true); // Version info, bottom left
-    }
-    return matrix;
-}
-function readCodewords(matrix, version, formatInfo) {
-    var dataMask = DATA_MASKS[formatInfo.dataMask];
-    var dimension = matrix.height;
-    var functionPatternMask = buildFunctionPatternMask(version);
-    var codewords = [];
-    var currentByte = 0;
-    var bitsRead = 0;
-    // Read columns in pairs, from right to left
-    var readingUp = true;
-    for (var columnIndex = dimension - 1; columnIndex > 0; columnIndex -= 2) {
-        if (columnIndex === 6) {
-            columnIndex--;
-        }
-        for (var i = 0; i < dimension; i++) {
-            var y = readingUp ? dimension - 1 - i : i;
-            for (var columnOffset = 0; columnOffset < 2; columnOffset++) {
-                var x = columnIndex - columnOffset;
-                if (!functionPatternMask.get(x, y)) {
-                    bitsRead++;
-                    var bit = matrix.get(x, y);
-                    if (dataMask({ y: y, x: x })) {
-                        bit = !bit;
-                    }
-                    currentByte = pushBit(bit, currentByte);
-                    if (bitsRead === 8) {
-                        codewords.push(currentByte);
-                        bitsRead = 0;
-                        currentByte = 0;
-                    }
-                }
-            }
-        }
-        readingUp = !readingUp;
-    }
-    return codewords;
-}
-function readVersion(matrix) {
-    var dimension = matrix.height;
-    var provisionalVersion = Math.floor((dimension - 17) / 4);
-    if (provisionalVersion <= 6) {
-        return version_1.VERSIONS[provisionalVersion - 1];
-    }
-    var topRightVersionBits = 0;
-    for (var y = 5; y >= 0; y--) {
-        for (var x = dimension - 9; x >= dimension - 11; x--) {
-            topRightVersionBits = pushBit(matrix.get(x, y), topRightVersionBits);
-        }
-    }
-    var bottomLeftVersionBits = 0;
-    for (var x = 5; x >= 0; x--) {
-        for (var y = dimension - 9; y >= dimension - 11; y--) {
-            bottomLeftVersionBits = pushBit(matrix.get(x, y), bottomLeftVersionBits);
-        }
-    }
-    var bestDifference = Infinity;
-    var bestVersion;
-    for (var _i = 0, VERSIONS_1 = version_1.VERSIONS; _i < VERSIONS_1.length; _i++) {
-        var version = VERSIONS_1[_i];
-        if (version.infoBits === topRightVersionBits || version.infoBits === bottomLeftVersionBits) {
-            return version;
-        }
-        var difference = numBitsDiffering(topRightVersionBits, version.infoBits);
-        if (difference < bestDifference) {
-            bestVersion = version;
-            bestDifference = difference;
-        }
-        difference = numBitsDiffering(bottomLeftVersionBits, version.infoBits);
-        if (difference < bestDifference) {
-            bestVersion = version;
-            bestDifference = difference;
-        }
-    }
-    // We can tolerate up to 3 bits of error since no two version info codewords will
-    // differ in less than 8 bits.
-    if (bestDifference <= 3) {
-        return bestVersion;
-    }
-}
-function readFormatInformation(matrix) {
-    var topLeftFormatInfoBits = 0;
-    for (var x = 0; x <= 8; x++) {
-        if (x !== 6) {
-            topLeftFormatInfoBits = pushBit(matrix.get(x, 8), topLeftFormatInfoBits);
-        }
-    }
-    for (var y = 7; y >= 0; y--) {
-        if (y !== 6) {
-            topLeftFormatInfoBits = pushBit(matrix.get(8, y), topLeftFormatInfoBits);
-        }
-    }
-    var dimension = matrix.height;
-    var topRightBottomRightFormatInfoBits = 0;
-    for (var y = dimension - 1; y >= dimension - 7; y--) {
-        topRightBottomRightFormatInfoBits = pushBit(matrix.get(8, y), topRightBottomRightFormatInfoBits);
-    }
-    for (var x = dimension - 8; x < dimension; x++) {
-        topRightBottomRightFormatInfoBits = pushBit(matrix.get(x, 8), topRightBottomRightFormatInfoBits);
-    }
-    var bestDifference = Infinity;
-    var bestFormatInfo = null;
-    for (var _i = 0, FORMAT_INFO_TABLE_1 = FORMAT_INFO_TABLE; _i < FORMAT_INFO_TABLE_1.length; _i++) {
-        var _a = FORMAT_INFO_TABLE_1[_i], bits = _a.bits, formatInfo = _a.formatInfo;
-        if (bits === topLeftFormatInfoBits || bits === topRightBottomRightFormatInfoBits) {
-            return formatInfo;
-        }
-        var difference = numBitsDiffering(topLeftFormatInfoBits, bits);
-        if (difference < bestDifference) {
-            bestFormatInfo = formatInfo;
-            bestDifference = difference;
-        }
-        if (topLeftFormatInfoBits !== topRightBottomRightFormatInfoBits) {
-            difference = numBitsDiffering(topRightBottomRightFormatInfoBits, bits);
-            if (difference < bestDifference) {
-                bestFormatInfo = formatInfo;
-                bestDifference = difference;
-            }
-        }
-    }
-    // Hamming distance of the 32 masked codes is 7, by construction, so <= 3 bits differing means we found a match
-    if (bestDifference <= 3) {
-        return bestFormatInfo;
-    }
-    return null;
-}
-function getDataBlocks(codewords, version, ecLevel) {
-    var ecInfo = version.errorCorrectionLevels[ecLevel];
-    var dataBlocks = [];
-    var totalCodewords = 0;
-    ecInfo.ecBlocks.forEach(function (block) {
-        for (var i = 0; i < block.numBlocks; i++) {
-            dataBlocks.push({ numDataCodewords: block.dataCodewordsPerBlock, codewords: [] });
-            totalCodewords += block.dataCodewordsPerBlock + ecInfo.ecCodewordsPerBlock;
-        }
-    });
-    // In some cases the QR code will be malformed enough that we pull off more or less than we should.
-    // If we pull off less there's nothing we can do.
-    // If we pull off more we can safely truncate
-    if (codewords.length < totalCodewords) {
-        return null;
-    }
-    codewords = codewords.slice(0, totalCodewords);
-    var shortBlockSize = ecInfo.ecBlocks[0].dataCodewordsPerBlock;
-    // Pull codewords to fill the blocks up to the minimum size
-    for (var i = 0; i < shortBlockSize; i++) {
-        for (var _i = 0, dataBlocks_1 = dataBlocks; _i < dataBlocks_1.length; _i++) {
-            var dataBlock = dataBlocks_1[_i];
-            dataBlock.codewords.push(codewords.shift());
-        }
-    }
-    // If there are any large blocks, pull codewords to fill the last element of those
-    if (ecInfo.ecBlocks.length > 1) {
-        var smallBlockCount = ecInfo.ecBlocks[0].numBlocks;
-        var largeBlockCount = ecInfo.ecBlocks[1].numBlocks;
-        for (var i = 0; i < largeBlockCount; i++) {
-            dataBlocks[smallBlockCount + i].codewords.push(codewords.shift());
-        }
-    }
-    // Add the rest of the codewords to the blocks. These are the error correction codewords.
-    while (codewords.length > 0) {
-        for (var _a = 0, dataBlocks_2 = dataBlocks; _a < dataBlocks_2.length; _a++) {
-            var dataBlock = dataBlocks_2[_a];
-            dataBlock.codewords.push(codewords.shift());
-        }
-    }
-    return dataBlocks;
-}
-function decodeMatrix(matrix) {
-    var version = readVersion(matrix);
-    if (!version) {
-        return null;
-    }
-    var formatInfo = readFormatInformation(matrix);
-    if (!formatInfo) {
-        return null;
-    }
-    var codewords = readCodewords(matrix, version, formatInfo);
-    var dataBlocks = getDataBlocks(codewords, version, formatInfo.errorCorrectionLevel);
-    if (!dataBlocks) {
-        return null;
-    }
-    // Count total number of data bytes
-    var totalBytes = dataBlocks.reduce(function (a, b) { return a + b.numDataCodewords; }, 0);
-    var resultBytes = new Uint8ClampedArray(totalBytes);
-    var resultIndex = 0;
-    for (var _i = 0, dataBlocks_3 = dataBlocks; _i < dataBlocks_3.length; _i++) {
-        var dataBlock = dataBlocks_3[_i];
-        var correctedBytes = reedsolomon_1.decode(dataBlock.codewords, dataBlock.codewords.length - dataBlock.numDataCodewords);
-        if (!correctedBytes) {
-            return null;
-        }
-        for (var i = 0; i < dataBlock.numDataCodewords; i++) {
-            resultBytes[resultIndex++] = correctedBytes[i];
-        }
-    }
-    try {
-        return decodeData_1.decode(resultBytes, version.versionNumber);
-    }
-    catch (_a) {
-        return null;
-    }
-}
-function decode(matrix) {
-    if (matrix == null) {
-        return null;
-    }
-    var result = decodeMatrix(matrix);
-    if (result) {
-        return result;
-    }
-    // Decoding didn't work, try mirroring the QR across the topLeft -> bottomRight line.
-    for (var x = 0; x < matrix.width; x++) {
-        for (var y = x + 1; y < matrix.height; y++) {
-            if (matrix.get(x, y) !== matrix.get(y, x)) {
-                matrix.set(x, y, !matrix.get(x, y));
-                matrix.set(y, x, !matrix.get(y, x));
-            }
-        }
-    }
-    return decodeMatrix(matrix);
-}
-exports.decode = decode;
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-// tslint:disable:no-bitwise
-var BitStream_1 = __webpack_require__(7);
-var shiftJISTable_1 = __webpack_require__(8);
-var Mode;
-(function (Mode) {
-    Mode["Numeric"] = "numeric";
-    Mode["Alphanumeric"] = "alphanumeric";
-    Mode["Byte"] = "byte";
-    Mode["Kanji"] = "kanji";
-    Mode["ECI"] = "eci";
-})(Mode = exports.Mode || (exports.Mode = {}));
-var ModeByte;
-(function (ModeByte) {
-    ModeByte[ModeByte["Terminator"] = 0] = "Terminator";
-    ModeByte[ModeByte["Numeric"] = 1] = "Numeric";
-    ModeByte[ModeByte["Alphanumeric"] = 2] = "Alphanumeric";
-    ModeByte[ModeByte["Byte"] = 4] = "Byte";
-    ModeByte[ModeByte["Kanji"] = 8] = "Kanji";
-    ModeByte[ModeByte["ECI"] = 7] = "ECI";
-    // StructuredAppend = 0x3,
-    // FNC1FirstPosition = 0x5,
-    // FNC1SecondPosition = 0x9,
-})(ModeByte || (ModeByte = {}));
-function decodeNumeric(stream, size) {
-    var bytes = [];
-    var text = "";
-    var characterCountSize = [10, 12, 14][size];
-    var length = stream.readBits(characterCountSize);
-    // Read digits in groups of 3
-    while (length >= 3) {
-        var num = stream.readBits(10);
-        if (num >= 1000) {
-            throw new Error("Invalid numeric value above 999");
-        }
-        var a = Math.floor(num / 100);
-        var b = Math.floor(num / 10) % 10;
-        var c = num % 10;
-        bytes.push(48 + a, 48 + b, 48 + c);
-        text += a.toString() + b.toString() + c.toString();
-        length -= 3;
-    }
-    // If the number of digits aren't a multiple of 3, the remaining digits are special cased.
-    if (length === 2) {
-        var num = stream.readBits(7);
-        if (num >= 100) {
-            throw new Error("Invalid numeric value above 99");
-        }
-        var a = Math.floor(num / 10);
-        var b = num % 10;
-        bytes.push(48 + a, 48 + b);
-        text += a.toString() + b.toString();
-    }
-    else if (length === 1) {
-        var num = stream.readBits(4);
-        if (num >= 10) {
-            throw new Error("Invalid numeric value above 9");
-        }
-        bytes.push(48 + num);
-        text += num.toString();
-    }
-    return { bytes: bytes, text: text };
-}
-var AlphanumericCharacterCodes = [
-    "0", "1", "2", "3", "4", "5", "6", "7", "8",
-    "9", "A", "B", "C", "D", "E", "F", "G", "H",
-    "I", "J", "K", "L", "M", "N", "O", "P", "Q",
-    "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-    " ", "$", "%", "*", "+", "-", ".", "/", ":",
-];
-function decodeAlphanumeric(stream, size) {
-    var bytes = [];
-    var text = "";
-    var characterCountSize = [9, 11, 13][size];
-    var length = stream.readBits(characterCountSize);
-    while (length >= 2) {
-        var v = stream.readBits(11);
-        var a = Math.floor(v / 45);
-        var b = v % 45;
-        bytes.push(AlphanumericCharacterCodes[a].charCodeAt(0), AlphanumericCharacterCodes[b].charCodeAt(0));
-        text += AlphanumericCharacterCodes[a] + AlphanumericCharacterCodes[b];
-        length -= 2;
-    }
-    if (length === 1) {
-        var a = stream.readBits(6);
-        bytes.push(AlphanumericCharacterCodes[a].charCodeAt(0));
-        text += AlphanumericCharacterCodes[a];
-    }
-    return { bytes: bytes, text: text };
-}
-function decodeByte(stream, size) {
-    var bytes = [];
-    var text = "";
-    var characterCountSize = [8, 16, 16][size];
-    var length = stream.readBits(characterCountSize);
-    for (var i = 0; i < length; i++) {
-        var b = stream.readBits(8);
-        bytes.push(b);
-    }
-    try {
-        text += decodeURIComponent(bytes.map(function (b) { return "%" + ("0" + b.toString(16)).substr(-2); }).join(""));
-    }
-    catch (_a) {
-        // failed to decode
-    }
-    return { bytes: bytes, text: text };
-}
-function decodeKanji(stream, size) {
-    var bytes = [];
-    var text = "";
-    var characterCountSize = [8, 10, 12][size];
-    var length = stream.readBits(characterCountSize);
-    for (var i = 0; i < length; i++) {
-        var k = stream.readBits(13);
-        var c = (Math.floor(k / 0xC0) << 8) | (k % 0xC0);
-        if (c < 0x1F00) {
-            c += 0x8140;
-        }
-        else {
-            c += 0xC140;
-        }
-        bytes.push(c >> 8, c & 0xFF);
-        text += String.fromCharCode(shiftJISTable_1.shiftJISTable[c]);
-    }
-    return { bytes: bytes, text: text };
-}
-function decode(data, version) {
-    var stream = new BitStream_1.BitStream(data);
-    // There are 3 'sizes' based on the version. 1-9 is small (0), 10-26 is medium (1) and 27-40 is large (2).
-    var size = version <= 9 ? 0 : version <= 26 ? 1 : 2;
-    var result = {
-        text: "",
-        bytes: [],
-        chunks: [],
-    };
-    while (stream.available() >= 4) {
-        var mode = stream.readBits(4);
-        if (mode === ModeByte.Terminator) {
-            return result;
-        }
-        else if (mode === ModeByte.ECI) {
-            if (stream.readBits(1) === 0) {
-                result.chunks.push({
-                    type: Mode.ECI,
-                    assignmentNumber: stream.readBits(7),
-                });
-            }
-            else if (stream.readBits(1) === 0) {
-                result.chunks.push({
-                    type: Mode.ECI,
-                    assignmentNumber: stream.readBits(14),
-                });
-            }
-            else if (stream.readBits(1) === 0) {
-                result.chunks.push({
-                    type: Mode.ECI,
-                    assignmentNumber: stream.readBits(21),
-                });
-            }
-            else {
-                // ECI data seems corrupted
-                result.chunks.push({
-                    type: Mode.ECI,
-                    assignmentNumber: -1,
-                });
-            }
-        }
-        else if (mode === ModeByte.Numeric) {
-            var numericResult = decodeNumeric(stream, size);
-            result.text += numericResult.text;
-            (_a = result.bytes).push.apply(_a, numericResult.bytes);
-            result.chunks.push({
-                type: Mode.Numeric,
-                text: numericResult.text,
-            });
-        }
-        else if (mode === ModeByte.Alphanumeric) {
-            var alphanumericResult = decodeAlphanumeric(stream, size);
-            result.text += alphanumericResult.text;
-            (_b = result.bytes).push.apply(_b, alphanumericResult.bytes);
-            result.chunks.push({
-                type: Mode.Alphanumeric,
-                text: alphanumericResult.text,
-            });
-        }
-        else if (mode === ModeByte.Byte) {
-            var byteResult = decodeByte(stream, size);
-            result.text += byteResult.text;
-            (_c = result.bytes).push.apply(_c, byteResult.bytes);
-            result.chunks.push({
-                type: Mode.Byte,
-                bytes: byteResult.bytes,
-                text: byteResult.text,
-            });
-        }
-        else if (mode === ModeByte.Kanji) {
-            var kanjiResult = decodeKanji(stream, size);
-            result.text += kanjiResult.text;
-            (_d = result.bytes).push.apply(_d, kanjiResult.bytes);
-            result.chunks.push({
-                type: Mode.Kanji,
-                bytes: kanjiResult.bytes,
-                text: kanjiResult.text,
-            });
-        }
-    }
-    var _a, _b, _c, _d;
-}
-exports.decode = decode;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 // tslint:disable:no-bitwise
-Object.defineProperty(exports, "__esModule", { value: true });
-var BitStream = /** @class */ (function () {
-    function BitStream(bytes) {
+class BitStream {
+    constructor(bytes) {
         this.byteOffset = 0;
         this.bitOffset = 0;
         this.bytes = bytes;
     }
-    BitStream.prototype.readBits = function (numBits) {
+    readBits(numBits) {
         if (numBits < 1 || numBits > 32 || numBits > this.available()) {
             throw new Error("Cannot read " + numBits.toString() + " bits");
         }
-        var result = 0;
+        let result = 0;
         // First, read remainder from current byte
         if (this.bitOffset > 0) {
-            var bitsLeft = 8 - this.bitOffset;
-            var toRead = numBits < bitsLeft ? numBits : bitsLeft;
-            var bitsToNotRead = bitsLeft - toRead;
-            var mask = (0xFF >> (8 - toRead)) << bitsToNotRead;
+            const bitsLeft = 8 - this.bitOffset;
+            const toRead = numBits < bitsLeft ? numBits : bitsLeft;
+            const bitsToNotRead = bitsLeft - toRead;
+            const mask = (0xFF >> (8 - toRead)) << bitsToNotRead;
             result = (this.bytes[this.byteOffset] & mask) >> bitsToNotRead;
             numBits -= toRead;
             this.bitOffset += toRead;
@@ -1071,30 +211,20 @@ var BitStream = /** @class */ (function () {
             }
             // Finally read a partial byte
             if (numBits > 0) {
-                var bitsToNotRead = 8 - numBits;
-                var mask = (0xFF >> bitsToNotRead) << bitsToNotRead;
+                const bitsToNotRead = 8 - numBits;
+                const mask = (0xFF >> bitsToNotRead) << bitsToNotRead;
                 result = (result << numBits) | ((this.bytes[this.byteOffset] & mask) >> bitsToNotRead);
                 this.bitOffset += numBits;
             }
         }
         return result;
-    };
-    BitStream.prototype.available = function () {
+    }
+    available() {
         return 8 * (this.bytes.length - this.byteOffset) - this.bitOffset;
-    };
-    return BitStream;
-}());
-exports.BitStream = BitStream;
+    }
+}
 
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.shiftJISTable = {
+const shiftJISTable = {
     0x20: 0x0020,
     0x21: 0x0021,
     0x22: 0x0022,
@@ -8134,29 +7264,411 @@ exports.shiftJISTable = {
     0xEAA4: 0x7199,
 };
 
+// tslint:disable:no-bitwise
+var Mode;
+(function (Mode) {
+    Mode["Numeric"] = "numeric";
+    Mode["Alphanumeric"] = "alphanumeric";
+    Mode["Byte"] = "byte";
+    Mode["Kanji"] = "kanji";
+    Mode["ECI"] = "eci";
+})(Mode || (Mode = {}));
+var ModeByte;
+(function (ModeByte) {
+    ModeByte[ModeByte["Terminator"] = 0] = "Terminator";
+    ModeByte[ModeByte["Numeric"] = 1] = "Numeric";
+    ModeByte[ModeByte["Alphanumeric"] = 2] = "Alphanumeric";
+    ModeByte[ModeByte["Byte"] = 4] = "Byte";
+    ModeByte[ModeByte["Kanji"] = 8] = "Kanji";
+    ModeByte[ModeByte["ECI"] = 7] = "ECI";
+    // StructuredAppend = 0x3,
+    // FNC1FirstPosition = 0x5,
+    // FNC1SecondPosition = 0x9,
+})(ModeByte || (ModeByte = {}));
+function decodeNumeric(stream, size) {
+    const bytes = [];
+    let text = "";
+    const characterCountSize = [10, 12, 14][size];
+    let length = stream.readBits(characterCountSize);
+    // Read digits in groups of 3
+    while (length >= 3) {
+        const num = stream.readBits(10);
+        if (num >= 1000) {
+            throw new Error("Invalid numeric value above 999");
+        }
+        const a = Math.floor(num / 100);
+        const b = Math.floor(num / 10) % 10;
+        const c = num % 10;
+        bytes.push(48 + a, 48 + b, 48 + c);
+        text += a.toString() + b.toString() + c.toString();
+        length -= 3;
+    }
+    // If the number of digits aren't a multiple of 3, the remaining digits are special cased.
+    if (length === 2) {
+        const num = stream.readBits(7);
+        if (num >= 100) {
+            throw new Error("Invalid numeric value above 99");
+        }
+        const a = Math.floor(num / 10);
+        const b = num % 10;
+        bytes.push(48 + a, 48 + b);
+        text += a.toString() + b.toString();
+    }
+    else if (length === 1) {
+        const num = stream.readBits(4);
+        if (num >= 10) {
+            throw new Error("Invalid numeric value above 9");
+        }
+        bytes.push(48 + num);
+        text += num.toString();
+    }
+    return { bytes, text };
+}
+const AlphanumericCharacterCodes = [
+    "0", "1", "2", "3", "4", "5", "6", "7", "8",
+    "9", "A", "B", "C", "D", "E", "F", "G", "H",
+    "I", "J", "K", "L", "M", "N", "O", "P", "Q",
+    "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    " ", "$", "%", "*", "+", "-", ".", "/", ":",
+];
+function decodeAlphanumeric(stream, size) {
+    const bytes = [];
+    let text = "";
+    const characterCountSize = [9, 11, 13][size];
+    let length = stream.readBits(characterCountSize);
+    while (length >= 2) {
+        const v = stream.readBits(11);
+        const a = Math.floor(v / 45);
+        const b = v % 45;
+        bytes.push(AlphanumericCharacterCodes[a].charCodeAt(0), AlphanumericCharacterCodes[b].charCodeAt(0));
+        text += AlphanumericCharacterCodes[a] + AlphanumericCharacterCodes[b];
+        length -= 2;
+    }
+    if (length === 1) {
+        const a = stream.readBits(6);
+        bytes.push(AlphanumericCharacterCodes[a].charCodeAt(0));
+        text += AlphanumericCharacterCodes[a];
+    }
+    return { bytes, text };
+}
+function decodeByte(stream, size) {
+    const bytes = [];
+    let text = "";
+    const characterCountSize = [8, 16, 16][size];
+    const length = stream.readBits(characterCountSize);
+    for (let i = 0; i < length; i++) {
+        const b = stream.readBits(8);
+        bytes.push(b);
+    }
+    try {
+        text += decodeURIComponent(bytes.map(b => `%${("0" + b.toString(16)).substr(-2)}`).join(""));
+    }
+    catch (_a) {
+        // failed to decode
+    }
+    return { bytes, text };
+}
+function decodeKanji(stream, size) {
+    const bytes = [];
+    let text = "";
+    const characterCountSize = [8, 10, 12][size];
+    const length = stream.readBits(characterCountSize);
+    for (let i = 0; i < length; i++) {
+        const k = stream.readBits(13);
+        let c = (Math.floor(k / 0xC0) << 8) | (k % 0xC0);
+        if (c < 0x1F00) {
+            c += 0x8140;
+        }
+        else {
+            c += 0xC140;
+        }
+        bytes.push(c >> 8, c & 0xFF);
+        text += String.fromCharCode(shiftJISTable[c]);
+    }
+    return { bytes, text };
+}
+function decode(data, version) {
+    const stream = new BitStream(data);
+    // There are 3 'sizes' based on the version. 1-9 is small (0), 10-26 is medium (1) and 27-40 is large (2).
+    const size = version <= 9 ? 0 : version <= 26 ? 1 : 2;
+    const result = {
+        text: "",
+        bytes: [],
+        chunks: [],
+    };
+    while (stream.available() >= 4) {
+        const mode = stream.readBits(4);
+        if (mode === ModeByte.Terminator) {
+            return result;
+        }
+        else if (mode === ModeByte.ECI) {
+            if (stream.readBits(1) === 0) {
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: stream.readBits(7),
+                });
+            }
+            else if (stream.readBits(1) === 0) {
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: stream.readBits(14),
+                });
+            }
+            else if (stream.readBits(1) === 0) {
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: stream.readBits(21),
+                });
+            }
+            else {
+                // ECI data seems corrupted
+                result.chunks.push({
+                    type: Mode.ECI,
+                    assignmentNumber: -1,
+                });
+            }
+        }
+        else if (mode === ModeByte.Numeric) {
+            const numericResult = decodeNumeric(stream, size);
+            result.text += numericResult.text;
+            result.bytes.push(...numericResult.bytes);
+            result.chunks.push({
+                type: Mode.Numeric,
+                text: numericResult.text,
+            });
+        }
+        else if (mode === ModeByte.Alphanumeric) {
+            const alphanumericResult = decodeAlphanumeric(stream, size);
+            result.text += alphanumericResult.text;
+            result.bytes.push(...alphanumericResult.bytes);
+            result.chunks.push({
+                type: Mode.Alphanumeric,
+                text: alphanumericResult.text,
+            });
+        }
+        else if (mode === ModeByte.Byte) {
+            const byteResult = decodeByte(stream, size);
+            result.text += byteResult.text;
+            result.bytes.push(...byteResult.bytes);
+            result.chunks.push({
+                type: Mode.Byte,
+                bytes: byteResult.bytes,
+                text: byteResult.text,
+            });
+        }
+        else if (mode === ModeByte.Kanji) {
+            const kanjiResult = decodeKanji(stream, size);
+            result.text += kanjiResult.text;
+            result.bytes.push(...kanjiResult.bytes);
+            result.chunks.push({
+                type: Mode.Kanji,
+                bytes: kanjiResult.bytes,
+                text: kanjiResult.text,
+            });
+        }
+    }
+    // If there is no data left, or the remaining bits are all 0, then that counts as a termination marker
+    if (stream.available() === 0 || stream.readBits(stream.available()) === 0) {
+        return result;
+    }
+}
 
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+class GenericGFPoly {
+    constructor(field, coefficients) {
+        if (coefficients.length === 0) {
+            throw new Error("No coefficients.");
+        }
+        this.field = field;
+        const coefficientsLength = coefficients.length;
+        if (coefficientsLength > 1 && coefficients[0] === 0) {
+            // Leading term must be non-zero for anything except the constant polynomial "0"
+            let firstNonZero = 1;
+            while (firstNonZero < coefficientsLength && coefficients[firstNonZero] === 0) {
+                firstNonZero++;
+            }
+            if (firstNonZero === coefficientsLength) {
+                this.coefficients = field.zero.coefficients;
+            }
+            else {
+                this.coefficients = new Uint8ClampedArray(coefficientsLength - firstNonZero);
+                for (let i = 0; i < this.coefficients.length; i++) {
+                    this.coefficients[i] = coefficients[firstNonZero + i];
+                }
+            }
+        }
+        else {
+            this.coefficients = coefficients;
+        }
+    }
+    degree() {
+        return this.coefficients.length - 1;
+    }
+    isZero() {
+        return this.coefficients[0] === 0;
+    }
+    getCoefficient(degree) {
+        return this.coefficients[this.coefficients.length - 1 - degree];
+    }
+    addOrSubtract(other) {
+        if (this.isZero()) {
+            return other;
+        }
+        if (other.isZero()) {
+            return this;
+        }
+        let smallerCoefficients = this.coefficients;
+        let largerCoefficients = other.coefficients;
+        if (smallerCoefficients.length > largerCoefficients.length) {
+            [smallerCoefficients, largerCoefficients] = [largerCoefficients, smallerCoefficients];
+        }
+        const sumDiff = new Uint8ClampedArray(largerCoefficients.length);
+        const lengthDiff = largerCoefficients.length - smallerCoefficients.length;
+        for (let i = 0; i < lengthDiff; i++) {
+            sumDiff[i] = largerCoefficients[i];
+        }
+        for (let i = lengthDiff; i < largerCoefficients.length; i++) {
+            sumDiff[i] = addOrSubtractGF(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
+        }
+        return new GenericGFPoly(this.field, sumDiff);
+    }
+    multiply(scalar) {
+        if (scalar === 0) {
+            return this.field.zero;
+        }
+        if (scalar === 1) {
+            return this;
+        }
+        const size = this.coefficients.length;
+        const product = new Uint8ClampedArray(size);
+        for (let i = 0; i < size; i++) {
+            product[i] = this.field.multiply(this.coefficients[i], scalar);
+        }
+        return new GenericGFPoly(this.field, product);
+    }
+    multiplyPoly(other) {
+        if (this.isZero() || other.isZero()) {
+            return this.field.zero;
+        }
+        const aCoefficients = this.coefficients;
+        const aLength = aCoefficients.length;
+        const bCoefficients = other.coefficients;
+        const bLength = bCoefficients.length;
+        const product = new Uint8ClampedArray(aLength + bLength - 1);
+        for (let i = 0; i < aLength; i++) {
+            const aCoeff = aCoefficients[i];
+            for (let j = 0; j < bLength; j++) {
+                product[i + j] = addOrSubtractGF(product[i + j], this.field.multiply(aCoeff, bCoefficients[j]));
+            }
+        }
+        return new GenericGFPoly(this.field, product);
+    }
+    multiplyByMonomial(degree, coefficient) {
+        if (degree < 0) {
+            throw new Error("Invalid degree less than 0");
+        }
+        if (coefficient === 0) {
+            return this.field.zero;
+        }
+        const size = this.coefficients.length;
+        const product = new Uint8ClampedArray(size + degree);
+        for (let i = 0; i < size; i++) {
+            product[i] = this.field.multiply(this.coefficients[i], coefficient);
+        }
+        return new GenericGFPoly(this.field, product);
+    }
+    evaluateAt(a) {
+        let result = 0;
+        if (a === 0) {
+            // Just return the x^0 coefficient
+            return this.getCoefficient(0);
+        }
+        const size = this.coefficients.length;
+        if (a === 1) {
+            // Just the sum of the coefficients
+            this.coefficients.forEach((coefficient) => {
+                result = addOrSubtractGF(result, coefficient);
+            });
+            return result;
+        }
+        result = this.coefficients[0];
+        for (let i = 1; i < size; i++) {
+            result = addOrSubtractGF(this.field.multiply(a, result), this.coefficients[i]);
+        }
+        return result;
+    }
+}
 
-"use strict";
+function addOrSubtractGF(a, b) {
+    return a ^ b; // tslint:disable-line:no-bitwise
+}
+class GenericGF {
+    constructor(primitive, size, genBase) {
+        this.primitive = primitive;
+        this.size = size;
+        this.generatorBase = genBase;
+        this.expTable = new Array(this.size);
+        this.logTable = new Array(this.size);
+        let x = 1;
+        for (let i = 0; i < this.size; i++) {
+            this.expTable[i] = x;
+            x = x * 2;
+            if (x >= this.size) {
+                x = (x ^ this.primitive) & (this.size - 1); // tslint:disable-line:no-bitwise
+            }
+        }
+        for (let i = 0; i < this.size - 1; i++) {
+            this.logTable[this.expTable[i]] = i;
+        }
+        this.zero = new GenericGFPoly(this, Uint8ClampedArray.from([0]));
+        this.one = new GenericGFPoly(this, Uint8ClampedArray.from([1]));
+    }
+    multiply(a, b) {
+        if (a === 0 || b === 0) {
+            return 0;
+        }
+        return this.expTable[(this.logTable[a] + this.logTable[b]) % (this.size - 1)];
+    }
+    inverse(a) {
+        if (a === 0) {
+            throw new Error("Can't invert 0");
+        }
+        return this.expTable[this.size - this.logTable[a] - 1];
+    }
+    buildMonomial(degree, coefficient) {
+        if (degree < 0) {
+            throw new Error("Invalid monomial degree less than 0");
+        }
+        if (coefficient === 0) {
+            return this.zero;
+        }
+        const coefficients = new Uint8ClampedArray(degree + 1);
+        coefficients[0] = coefficient;
+        return new GenericGFPoly(this, coefficients);
+    }
+    log(a) {
+        if (a === 0) {
+            throw new Error("Can't take log(0)");
+        }
+        return this.logTable[a];
+    }
+    exp(a) {
+        return this.expTable[a];
+    }
+}
 
-Object.defineProperty(exports, "__esModule", { value: true });
-var GenericGF_1 = __webpack_require__(1);
-var GenericGFPoly_1 = __webpack_require__(2);
 function runEuclideanAlgorithm(field, a, b, R) {
     // Assume a's degree is >= b's
     if (a.degree() < b.degree()) {
-        _a = [b, a], a = _a[0], b = _a[1];
+        [a, b] = [b, a];
     }
-    var rLast = a;
-    var r = b;
-    var tLast = field.zero;
-    var t = field.one;
+    let rLast = a;
+    let r = b;
+    let tLast = field.zero;
+    let t = field.one;
     // Run Euclidean algorithm until r's degree is less than R/2
     while (r.degree() >= R / 2) {
-        var rLastLast = rLast;
-        var tLastLast = tLast;
+        const rLastLast = rLast;
+        const tLastLast = tLast;
         rLast = r;
         tLast = t;
         // Divide rLastLast by rLast, with quotient in q and remainder in r
@@ -8165,12 +7677,12 @@ function runEuclideanAlgorithm(field, a, b, R) {
             return null;
         }
         r = rLastLast;
-        var q = field.zero;
-        var denominatorLeadingTerm = rLast.getCoefficient(rLast.degree());
-        var dltInverse = field.inverse(denominatorLeadingTerm);
+        let q = field.zero;
+        const denominatorLeadingTerm = rLast.getCoefficient(rLast.degree());
+        const dltInverse = field.inverse(denominatorLeadingTerm);
         while (r.degree() >= rLast.degree() && !r.isZero()) {
-            var degreeDiff = r.degree() - rLast.degree();
-            var scale = field.multiply(r.getCoefficient(r.degree()), dltInverse);
+            const degreeDiff = r.degree() - rLast.degree();
+            const scale = field.multiply(r.getCoefficient(r.degree()), dltInverse);
             q = q.addOrSubtract(field.buildMonomial(degreeDiff, scale));
             r = r.addOrSubtract(rLast.multiplyByMonomial(degreeDiff, scale));
         }
@@ -8179,23 +7691,22 @@ function runEuclideanAlgorithm(field, a, b, R) {
             return null;
         }
     }
-    var sigmaTildeAtZero = t.getCoefficient(0);
+    const sigmaTildeAtZero = t.getCoefficient(0);
     if (sigmaTildeAtZero === 0) {
         return null;
     }
-    var inverse = field.inverse(sigmaTildeAtZero);
+    const inverse = field.inverse(sigmaTildeAtZero);
     return [t.multiply(inverse), r.multiply(inverse)];
-    var _a;
 }
 function findErrorLocations(field, errorLocator) {
     // This is a direct application of Chien's search
-    var numErrors = errorLocator.degree();
+    const numErrors = errorLocator.degree();
     if (numErrors === 1) {
         return [errorLocator.getCoefficient(1)];
     }
-    var result = new Array(numErrors);
-    var errorCount = 0;
-    for (var i = 1; i < field.size && errorCount < numErrors; i++) {
+    const result = new Array(numErrors);
+    let errorCount = 0;
+    for (let i = 1; i < field.size && errorCount < numErrors; i++) {
         if (errorLocator.evaluateAt(i) === 0) {
             result[errorCount] = field.inverse(i);
             errorCount++;
@@ -8208,14 +7719,14 @@ function findErrorLocations(field, errorLocator) {
 }
 function findErrorMagnitudes(field, errorEvaluator, errorLocations) {
     // This is directly applying Forney's Formula
-    var s = errorLocations.length;
-    var result = new Array(s);
-    for (var i = 0; i < s; i++) {
-        var xiInverse = field.inverse(errorLocations[i]);
-        var denominator = 1;
-        for (var j = 0; j < s; j++) {
+    const s = errorLocations.length;
+    const result = new Array(s);
+    for (let i = 0; i < s; i++) {
+        const xiInverse = field.inverse(errorLocations[i]);
+        let denominator = 1;
+        for (let j = 0; j < s; j++) {
             if (i !== j) {
-                denominator = field.multiply(denominator, GenericGF_1.addOrSubtractGF(1, field.multiply(errorLocations[j], xiInverse)));
+                denominator = field.multiply(denominator, addOrSubtractGF(1, field.multiply(errorLocations[j], xiInverse)));
             }
         }
         result[i] = field.multiply(errorEvaluator.evaluateAt(xiInverse), field.inverse(denominator));
@@ -8225,15 +7736,15 @@ function findErrorMagnitudes(field, errorEvaluator, errorLocations) {
     }
     return result;
 }
-function decode(bytes, twoS) {
-    var outputBytes = new Uint8ClampedArray(bytes.length);
+function decode$1(bytes, twoS) {
+    const outputBytes = new Uint8ClampedArray(bytes.length);
     outputBytes.set(bytes);
-    var field = new GenericGF_1.default(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
-    var poly = new GenericGFPoly_1.default(field, outputBytes);
-    var syndromeCoefficients = new Uint8ClampedArray(twoS);
-    var error = false;
-    for (var s = 0; s < twoS; s++) {
-        var evaluation = poly.evaluateAt(field.exp(s + field.generatorBase));
+    const field = new GenericGF(0x011D, 256, 0); // x^8 + x^4 + x^3 + x^2 + 1
+    const poly = new GenericGFPoly(field, outputBytes);
+    const syndromeCoefficients = new Uint8ClampedArray(twoS);
+    let error = false;
+    for (let s = 0; s < twoS; s++) {
+        const evaluation = poly.evaluateAt(field.exp(s + field.generatorBase));
         syndromeCoefficients[syndromeCoefficients.length - 1 - s] = evaluation;
         if (evaluation !== 0) {
             error = true;
@@ -8242,36 +7753,27 @@ function decode(bytes, twoS) {
     if (!error) {
         return outputBytes;
     }
-    var syndrome = new GenericGFPoly_1.default(field, syndromeCoefficients);
-    var sigmaOmega = runEuclideanAlgorithm(field, field.buildMonomial(twoS, 1), syndrome, twoS);
+    const syndrome = new GenericGFPoly(field, syndromeCoefficients);
+    const sigmaOmega = runEuclideanAlgorithm(field, field.buildMonomial(twoS, 1), syndrome, twoS);
     if (sigmaOmega === null) {
         return null;
     }
-    var errorLocations = findErrorLocations(field, sigmaOmega[0]);
+    const errorLocations = findErrorLocations(field, sigmaOmega[0]);
     if (errorLocations == null) {
         return null;
     }
-    var errorMagnitudes = findErrorMagnitudes(field, sigmaOmega[1], errorLocations);
-    for (var i = 0; i < errorLocations.length; i++) {
-        var position = outputBytes.length - 1 - field.log(errorLocations[i]);
+    const errorMagnitudes = findErrorMagnitudes(field, sigmaOmega[1], errorLocations);
+    for (let i = 0; i < errorLocations.length; i++) {
+        const position = outputBytes.length - 1 - field.log(errorLocations[i]);
         if (position < 0) {
             return null;
         }
-        outputBytes[position] = GenericGF_1.addOrSubtractGF(outputBytes[position], errorMagnitudes[i]);
+        outputBytes[position] = addOrSubtractGF(outputBytes[position], errorMagnitudes[i]);
     }
     return outputBytes;
 }
-exports.decode = decode;
 
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VERSIONS = [
+const VERSIONS = [
     {
         infoBits: null,
         versionNumber: 1,
@@ -9578,19 +9080,306 @@ exports.VERSIONS = [
     },
 ];
 
+// tslint:disable:no-bitwise
+function numBitsDiffering(x, y) {
+    let z = x ^ y;
+    let bitCount = 0;
+    while (z) {
+        bitCount++;
+        z &= z - 1;
+    }
+    return bitCount;
+}
+function pushBit(bit, byte) {
+    return (byte << 1) | bit;
+}
+// tslint:enable:no-bitwise
+const FORMAT_INFO_TABLE = [
+    { bits: 0x5412, formatInfo: { errorCorrectionLevel: 1, dataMask: 0 } },
+    { bits: 0x5125, formatInfo: { errorCorrectionLevel: 1, dataMask: 1 } },
+    { bits: 0x5E7C, formatInfo: { errorCorrectionLevel: 1, dataMask: 2 } },
+    { bits: 0x5B4B, formatInfo: { errorCorrectionLevel: 1, dataMask: 3 } },
+    { bits: 0x45F9, formatInfo: { errorCorrectionLevel: 1, dataMask: 4 } },
+    { bits: 0x40CE, formatInfo: { errorCorrectionLevel: 1, dataMask: 5 } },
+    { bits: 0x4F97, formatInfo: { errorCorrectionLevel: 1, dataMask: 6 } },
+    { bits: 0x4AA0, formatInfo: { errorCorrectionLevel: 1, dataMask: 7 } },
+    { bits: 0x77C4, formatInfo: { errorCorrectionLevel: 0, dataMask: 0 } },
+    { bits: 0x72F3, formatInfo: { errorCorrectionLevel: 0, dataMask: 1 } },
+    { bits: 0x7DAA, formatInfo: { errorCorrectionLevel: 0, dataMask: 2 } },
+    { bits: 0x789D, formatInfo: { errorCorrectionLevel: 0, dataMask: 3 } },
+    { bits: 0x662F, formatInfo: { errorCorrectionLevel: 0, dataMask: 4 } },
+    { bits: 0x6318, formatInfo: { errorCorrectionLevel: 0, dataMask: 5 } },
+    { bits: 0x6C41, formatInfo: { errorCorrectionLevel: 0, dataMask: 6 } },
+    { bits: 0x6976, formatInfo: { errorCorrectionLevel: 0, dataMask: 7 } },
+    { bits: 0x1689, formatInfo: { errorCorrectionLevel: 3, dataMask: 0 } },
+    { bits: 0x13BE, formatInfo: { errorCorrectionLevel: 3, dataMask: 1 } },
+    { bits: 0x1CE7, formatInfo: { errorCorrectionLevel: 3, dataMask: 2 } },
+    { bits: 0x19D0, formatInfo: { errorCorrectionLevel: 3, dataMask: 3 } },
+    { bits: 0x0762, formatInfo: { errorCorrectionLevel: 3, dataMask: 4 } },
+    { bits: 0x0255, formatInfo: { errorCorrectionLevel: 3, dataMask: 5 } },
+    { bits: 0x0D0C, formatInfo: { errorCorrectionLevel: 3, dataMask: 6 } },
+    { bits: 0x083B, formatInfo: { errorCorrectionLevel: 3, dataMask: 7 } },
+    { bits: 0x355F, formatInfo: { errorCorrectionLevel: 2, dataMask: 0 } },
+    { bits: 0x3068, formatInfo: { errorCorrectionLevel: 2, dataMask: 1 } },
+    { bits: 0x3F31, formatInfo: { errorCorrectionLevel: 2, dataMask: 2 } },
+    { bits: 0x3A06, formatInfo: { errorCorrectionLevel: 2, dataMask: 3 } },
+    { bits: 0x24B4, formatInfo: { errorCorrectionLevel: 2, dataMask: 4 } },
+    { bits: 0x2183, formatInfo: { errorCorrectionLevel: 2, dataMask: 5 } },
+    { bits: 0x2EDA, formatInfo: { errorCorrectionLevel: 2, dataMask: 6 } },
+    { bits: 0x2BED, formatInfo: { errorCorrectionLevel: 2, dataMask: 7 } },
+];
+const DATA_MASKS = [
+    (p) => ((p.y + p.x) % 2) === 0,
+    (p) => (p.y % 2) === 0,
+    (p) => p.x % 3 === 0,
+    (p) => (p.y + p.x) % 3 === 0,
+    (p) => (Math.floor(p.y / 2) + Math.floor(p.x / 3)) % 2 === 0,
+    (p) => ((p.x * p.y) % 2) + ((p.x * p.y) % 3) === 0,
+    (p) => ((((p.y * p.x) % 2) + (p.y * p.x) % 3) % 2) === 0,
+    (p) => ((((p.y + p.x) % 2) + (p.y * p.x) % 3) % 2) === 0,
+];
+function buildFunctionPatternMask(version) {
+    const dimension = 17 + 4 * version.versionNumber;
+    const matrix = BitMatrix.createEmpty(dimension, dimension);
+    matrix.setRegion(0, 0, 9, 9, true); // Top left finder pattern + separator + format
+    matrix.setRegion(dimension - 8, 0, 8, 9, true); // Top right finder pattern + separator + format
+    matrix.setRegion(0, dimension - 8, 9, 8, true); // Bottom left finder pattern + separator + format
+    // Alignment patterns
+    for (const x of version.alignmentPatternCenters) {
+        for (const y of version.alignmentPatternCenters) {
+            if (!(x === 6 && y === 6 || x === 6 && y === dimension - 7 || x === dimension - 7 && y === 6)) {
+                matrix.setRegion(x - 2, y - 2, 5, 5, true);
+            }
+        }
+    }
+    matrix.setRegion(6, 9, 1, dimension - 17, true); // Vertical timing pattern
+    matrix.setRegion(9, 6, dimension - 17, 1, true); // Horizontal timing pattern
+    if (version.versionNumber > 6) {
+        matrix.setRegion(dimension - 11, 0, 3, 6, true); // Version info, top right
+        matrix.setRegion(0, dimension - 11, 6, 3, true); // Version info, bottom left
+    }
+    return matrix;
+}
+function readCodewords(matrix, version, formatInfo) {
+    const dataMask = DATA_MASKS[formatInfo.dataMask];
+    const dimension = matrix.height;
+    const functionPatternMask = buildFunctionPatternMask(version);
+    const codewords = [];
+    let currentByte = 0;
+    let bitsRead = 0;
+    // Read columns in pairs, from right to left
+    let readingUp = true;
+    for (let columnIndex = dimension - 1; columnIndex > 0; columnIndex -= 2) {
+        if (columnIndex === 6) { // Skip whole column with vertical alignment pattern;
+            columnIndex--;
+        }
+        for (let i = 0; i < dimension; i++) {
+            const y = readingUp ? dimension - 1 - i : i;
+            for (let columnOffset = 0; columnOffset < 2; columnOffset++) {
+                const x = columnIndex - columnOffset;
+                if (!functionPatternMask.get(x, y)) {
+                    bitsRead++;
+                    let bit = matrix.get(x, y);
+                    if (dataMask({ y, x })) {
+                        bit = !bit;
+                    }
+                    currentByte = pushBit(bit, currentByte);
+                    if (bitsRead === 8) { // Whole bytes
+                        codewords.push(currentByte);
+                        bitsRead = 0;
+                        currentByte = 0;
+                    }
+                }
+            }
+        }
+        readingUp = !readingUp;
+    }
+    return codewords;
+}
+function readVersion(matrix) {
+    const dimension = matrix.height;
+    const provisionalVersion = Math.floor((dimension - 17) / 4);
+    if (provisionalVersion <= 6) { // 6 and under dont have version info in the QR code
+        return VERSIONS[provisionalVersion - 1];
+    }
+    let topRightVersionBits = 0;
+    for (let y = 5; y >= 0; y--) {
+        for (let x = dimension - 9; x >= dimension - 11; x--) {
+            topRightVersionBits = pushBit(matrix.get(x, y), topRightVersionBits);
+        }
+    }
+    let bottomLeftVersionBits = 0;
+    for (let x = 5; x >= 0; x--) {
+        for (let y = dimension - 9; y >= dimension - 11; y--) {
+            bottomLeftVersionBits = pushBit(matrix.get(x, y), bottomLeftVersionBits);
+        }
+    }
+    let bestDifference = Infinity;
+    let bestVersion;
+    for (const version of VERSIONS) {
+        if (version.infoBits === topRightVersionBits || version.infoBits === bottomLeftVersionBits) {
+            return version;
+        }
+        let difference = numBitsDiffering(topRightVersionBits, version.infoBits);
+        if (difference < bestDifference) {
+            bestVersion = version;
+            bestDifference = difference;
+        }
+        difference = numBitsDiffering(bottomLeftVersionBits, version.infoBits);
+        if (difference < bestDifference) {
+            bestVersion = version;
+            bestDifference = difference;
+        }
+    }
+    // We can tolerate up to 3 bits of error since no two version info codewords will
+    // differ in less than 8 bits.
+    if (bestDifference <= 3) {
+        return bestVersion;
+    }
+}
+function readFormatInformation(matrix) {
+    let topLeftFormatInfoBits = 0;
+    for (let x = 0; x <= 8; x++) {
+        if (x !== 6) { // Skip timing pattern bit
+            topLeftFormatInfoBits = pushBit(matrix.get(x, 8), topLeftFormatInfoBits);
+        }
+    }
+    for (let y = 7; y >= 0; y--) {
+        if (y !== 6) { // Skip timing pattern bit
+            topLeftFormatInfoBits = pushBit(matrix.get(8, y), topLeftFormatInfoBits);
+        }
+    }
+    const dimension = matrix.height;
+    let topRightBottomRightFormatInfoBits = 0;
+    for (let y = dimension - 1; y >= dimension - 7; y--) { // bottom left
+        topRightBottomRightFormatInfoBits = pushBit(matrix.get(8, y), topRightBottomRightFormatInfoBits);
+    }
+    for (let x = dimension - 8; x < dimension; x++) { // top right
+        topRightBottomRightFormatInfoBits = pushBit(matrix.get(x, 8), topRightBottomRightFormatInfoBits);
+    }
+    let bestDifference = Infinity;
+    let bestFormatInfo = null;
+    for (const { bits, formatInfo } of FORMAT_INFO_TABLE) {
+        if (bits === topLeftFormatInfoBits || bits === topRightBottomRightFormatInfoBits) {
+            return formatInfo;
+        }
+        let difference = numBitsDiffering(topLeftFormatInfoBits, bits);
+        if (difference < bestDifference) {
+            bestFormatInfo = formatInfo;
+            bestDifference = difference;
+        }
+        if (topLeftFormatInfoBits !== topRightBottomRightFormatInfoBits) { // also try the other option
+            difference = numBitsDiffering(topRightBottomRightFormatInfoBits, bits);
+            if (difference < bestDifference) {
+                bestFormatInfo = formatInfo;
+                bestDifference = difference;
+            }
+        }
+    }
+    // Hamming distance of the 32 masked codes is 7, by construction, so <= 3 bits differing means we found a match
+    if (bestDifference <= 3) {
+        return bestFormatInfo;
+    }
+    return null;
+}
+function getDataBlocks(codewords, version, ecLevel) {
+    const ecInfo = version.errorCorrectionLevels[ecLevel];
+    const dataBlocks = [];
+    let totalCodewords = 0;
+    ecInfo.ecBlocks.forEach(block => {
+        for (let i = 0; i < block.numBlocks; i++) {
+            dataBlocks.push({ numDataCodewords: block.dataCodewordsPerBlock, codewords: [] });
+            totalCodewords += block.dataCodewordsPerBlock + ecInfo.ecCodewordsPerBlock;
+        }
+    });
+    // In some cases the QR code will be malformed enough that we pull off more or less than we should.
+    // If we pull off less there's nothing we can do.
+    // If we pull off more we can safely truncate
+    if (codewords.length < totalCodewords) {
+        return null;
+    }
+    codewords = codewords.slice(0, totalCodewords);
+    const shortBlockSize = ecInfo.ecBlocks[0].dataCodewordsPerBlock;
+    // Pull codewords to fill the blocks up to the minimum size
+    for (let i = 0; i < shortBlockSize; i++) {
+        for (const dataBlock of dataBlocks) {
+            dataBlock.codewords.push(codewords.shift());
+        }
+    }
+    // If there are any large blocks, pull codewords to fill the last element of those
+    if (ecInfo.ecBlocks.length > 1) {
+        const smallBlockCount = ecInfo.ecBlocks[0].numBlocks;
+        const largeBlockCount = ecInfo.ecBlocks[1].numBlocks;
+        for (let i = 0; i < largeBlockCount; i++) {
+            dataBlocks[smallBlockCount + i].codewords.push(codewords.shift());
+        }
+    }
+    // Add the rest of the codewords to the blocks. These are the error correction codewords.
+    while (codewords.length > 0) {
+        for (const dataBlock of dataBlocks) {
+            dataBlock.codewords.push(codewords.shift());
+        }
+    }
+    return dataBlocks;
+}
+function decodeMatrix(matrix) {
+    const version = readVersion(matrix);
+    if (!version) {
+        return null;
+    }
+    const formatInfo = readFormatInformation(matrix);
+    if (!formatInfo) {
+        return null;
+    }
+    const codewords = readCodewords(matrix, version, formatInfo);
+    const dataBlocks = getDataBlocks(codewords, version, formatInfo.errorCorrectionLevel);
+    if (!dataBlocks) {
+        return null;
+    }
+    // Count total number of data bytes
+    const totalBytes = dataBlocks.reduce((a, b) => a + b.numDataCodewords, 0);
+    const resultBytes = new Uint8ClampedArray(totalBytes);
+    let resultIndex = 0;
+    for (const dataBlock of dataBlocks) {
+        const correctedBytes = decode$1(dataBlock.codewords, dataBlock.codewords.length - dataBlock.numDataCodewords);
+        if (!correctedBytes) {
+            return null;
+        }
+        for (let i = 0; i < dataBlock.numDataCodewords; i++) {
+            resultBytes[resultIndex++] = correctedBytes[i];
+        }
+    }
+    try {
+        return decode(resultBytes, version.versionNumber);
+    }
+    catch (_a) {
+        return null;
+    }
+}
+function decode$2(matrix) {
+    if (matrix == null) {
+        return null;
+    }
+    const result = decodeMatrix(matrix);
+    if (result) {
+        return result;
+    }
+    // Decoding didn't work, try mirroring the QR across the topLeft -> bottomRight line.
+    for (let x = 0; x < matrix.width; x++) {
+        for (let y = x + 1; y < matrix.height; y++) {
+            if (matrix.get(x, y) !== matrix.get(y, x)) {
+                matrix.set(x, y, !matrix.get(x, y));
+                matrix.set(y, x, !matrix.get(y, x));
+            }
+        }
+    }
+    return decodeMatrix(matrix);
+}
 
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var BitMatrix_1 = __webpack_require__(0);
 function squareToQuadrilateral(p1, p2, p3, p4) {
-    var dx3 = p1.x - p2.x + p3.x - p4.x;
-    var dy3 = p1.y - p2.y + p3.y - p4.y;
-    if (dx3 === 0 && dy3 === 0) {
+    const dx3 = p1.x - p2.x + p3.x - p4.x;
+    const dy3 = p1.y - p2.y + p3.y - p4.y;
+    if (dx3 === 0 && dy3 === 0) { // Affine
         return {
             a11: p2.x - p1.x,
             a12: p2.y - p1.y,
@@ -9604,20 +9393,20 @@ function squareToQuadrilateral(p1, p2, p3, p4) {
         };
     }
     else {
-        var dx1 = p2.x - p3.x;
-        var dx2 = p4.x - p3.x;
-        var dy1 = p2.y - p3.y;
-        var dy2 = p4.y - p3.y;
-        var denominator = dx1 * dy2 - dx2 * dy1;
-        var a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
-        var a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
+        const dx1 = p2.x - p3.x;
+        const dx2 = p4.x - p3.x;
+        const dy1 = p2.y - p3.y;
+        const dy2 = p4.y - p3.y;
+        const denominator = dx1 * dy2 - dx2 * dy1;
+        const a13 = (dx3 * dy2 - dx2 * dy3) / denominator;
+        const a23 = (dx1 * dy3 - dx3 * dy1) / denominator;
         return {
             a11: p2.x - p1.x + a13 * p2.x,
             a12: p2.y - p1.y + a13 * p2.y,
-            a13: a13,
+            a13,
             a21: p4.x - p1.x + a23 * p4.x,
             a22: p4.y - p1.y + a23 * p4.y,
-            a23: a23,
+            a23,
             a31: p1.x,
             a32: p1.y,
             a33: 1,
@@ -9626,7 +9415,7 @@ function squareToQuadrilateral(p1, p2, p3, p4) {
 }
 function quadrilateralToSquare(p1, p2, p3, p4) {
     // Here, the adjoint serves as the inverse:
-    var sToQ = squareToQuadrilateral(p1, p2, p3, p4);
+    const sToQ = squareToQuadrilateral(p1, p2, p3, p4);
     return {
         a11: sToQ.a22 * sToQ.a33 - sToQ.a23 * sToQ.a32,
         a12: sToQ.a13 * sToQ.a32 - sToQ.a12 * sToQ.a33,
@@ -9653,87 +9442,77 @@ function times(a, b) {
     };
 }
 function extract(image, location) {
-    var qToS = quadrilateralToSquare({ x: 3.5, y: 3.5 }, { x: location.dimension - 3.5, y: 3.5 }, { x: location.dimension - 6.5, y: location.dimension - 6.5 }, { x: 3.5, y: location.dimension - 3.5 });
-    var sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
-    var transform = times(sToQ, qToS);
-    var matrix = BitMatrix_1.BitMatrix.createEmpty(location.dimension, location.dimension);
-    var mappingFunction = function (x, y) {
-        var denominator = transform.a13 * x + transform.a23 * y + transform.a33;
+    const qToS = quadrilateralToSquare({ x: 3.5, y: 3.5 }, { x: location.dimension - 3.5, y: 3.5 }, { x: location.dimension - 6.5, y: location.dimension - 6.5 }, { x: 3.5, y: location.dimension - 3.5 });
+    const sToQ = squareToQuadrilateral(location.topLeft, location.topRight, location.alignmentPattern, location.bottomLeft);
+    const transform = times(sToQ, qToS);
+    const matrix = BitMatrix.createEmpty(location.dimension, location.dimension);
+    const mappingFunction = (x, y) => {
+        const denominator = transform.a13 * x + transform.a23 * y + transform.a33;
         return {
             x: (transform.a11 * x + transform.a21 * y + transform.a31) / denominator,
             y: (transform.a12 * x + transform.a22 * y + transform.a32) / denominator,
         };
     };
-    for (var y = 0; y < location.dimension; y++) {
-        for (var x = 0; x < location.dimension; x++) {
-            var xValue = x + 0.5;
-            var yValue = y + 0.5;
-            var sourcePixel = mappingFunction(xValue, yValue);
+    for (let y = 0; y < location.dimension; y++) {
+        for (let x = 0; x < location.dimension; x++) {
+            const xValue = x + 0.5;
+            const yValue = y + 0.5;
+            const sourcePixel = mappingFunction(xValue, yValue);
             matrix.set(x, y, image.get(Math.floor(sourcePixel.x), Math.floor(sourcePixel.y)));
         }
     }
     return {
-        matrix: matrix,
-        mappingFunction: mappingFunction,
+        matrix,
+        mappingFunction,
     };
 }
-exports.extract = extract;
 
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var MAX_FINDERPATTERNS_TO_SEARCH = 4;
-var MIN_QUAD_RATIO = 0.5;
-var MAX_QUAD_RATIO = 1.5;
-var distance = function (a, b) { return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2)); };
+const MAX_FINDERPATTERNS_TO_SEARCH = 4;
+const MIN_QUAD_RATIO = 0.5;
+const MAX_QUAD_RATIO = 1.5;
+const distance = (a, b) => Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2));
 function sum(values) {
-    return values.reduce(function (a, b) { return a + b; });
+    return values.reduce((a, b) => a + b);
 }
 // Takes three finder patterns and organizes them into topLeft, topRight, etc
 function reorderFinderPatterns(pattern1, pattern2, pattern3) {
     // Find distances between pattern centers
-    var oneTwoDistance = distance(pattern1, pattern2);
-    var twoThreeDistance = distance(pattern2, pattern3);
-    var oneThreeDistance = distance(pattern1, pattern3);
-    var bottomLeft;
-    var topLeft;
-    var topRight;
+    const oneTwoDistance = distance(pattern1, pattern2);
+    const twoThreeDistance = distance(pattern2, pattern3);
+    const oneThreeDistance = distance(pattern1, pattern3);
+    let bottomLeft;
+    let topLeft;
+    let topRight;
     // Assume one closest to other two is B; A and C will just be guesses at first
     if (twoThreeDistance >= oneTwoDistance && twoThreeDistance >= oneThreeDistance) {
-        _a = [pattern2, pattern1, pattern3], bottomLeft = _a[0], topLeft = _a[1], topRight = _a[2];
+        [bottomLeft, topLeft, topRight] = [pattern2, pattern1, pattern3];
     }
     else if (oneThreeDistance >= twoThreeDistance && oneThreeDistance >= oneTwoDistance) {
-        _b = [pattern1, pattern2, pattern3], bottomLeft = _b[0], topLeft = _b[1], topRight = _b[2];
+        [bottomLeft, topLeft, topRight] = [pattern1, pattern2, pattern3];
     }
     else {
-        _c = [pattern1, pattern3, pattern2], bottomLeft = _c[0], topLeft = _c[1], topRight = _c[2];
+        [bottomLeft, topLeft, topRight] = [pattern1, pattern3, pattern2];
     }
     // Use cross product to figure out whether bottomLeft (A) and topRight (C) are correct or flipped in relation to topLeft (B)
     // This asks whether BC x BA has a positive z component, which is the arrangement we want. If it's negative, then
     // we've got it flipped around and should swap topRight and bottomLeft.
     if (((topRight.x - topLeft.x) * (bottomLeft.y - topLeft.y)) - ((topRight.y - topLeft.y) * (bottomLeft.x - topLeft.x)) < 0) {
-        _d = [topRight, bottomLeft], bottomLeft = _d[0], topRight = _d[1];
+        [bottomLeft, topRight] = [topRight, bottomLeft];
     }
-    return { bottomLeft: bottomLeft, topLeft: topLeft, topRight: topRight };
-    var _a, _b, _c, _d;
+    return { bottomLeft, topLeft, topRight };
 }
 // Computes the dimension (number of modules on a side) of the QR Code based on the position of the finder patterns
 function computeDimension(topLeft, topRight, bottomLeft, matrix) {
-    var moduleSize = (sum(countBlackWhiteRun(topLeft, bottomLeft, matrix, 5)) / 7 + // Divide by 7 since the ratio is 1:1:3:1:1
+    const moduleSize = (sum(countBlackWhiteRun(topLeft, bottomLeft, matrix, 5)) / 7 + // Divide by 7 since the ratio is 1:1:3:1:1
         sum(countBlackWhiteRun(topLeft, topRight, matrix, 5)) / 7 +
         sum(countBlackWhiteRun(bottomLeft, topLeft, matrix, 5)) / 7 +
         sum(countBlackWhiteRun(topRight, topLeft, matrix, 5)) / 7) / 4;
     if (moduleSize < 1) {
         throw new Error("Invalid module size");
     }
-    var topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
-    var sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
-    var dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
+    const topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
+    const sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
+    let dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
     switch (dimension % 4) {
         case 0:
             dimension++;
@@ -9742,18 +9521,18 @@ function computeDimension(topLeft, topRight, bottomLeft, matrix) {
             dimension--;
             break;
     }
-    return { dimension: dimension, moduleSize: moduleSize };
+    return { dimension, moduleSize };
 }
 // Takes an origin point and an end point and counts the sizes of the black white run from the origin towards the end point.
 // Returns an array of elements, representing the pixel size of the black white run.
 // Uses a variant of http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
 function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
-    var switchPoints = [{ x: Math.floor(origin.x), y: Math.floor(origin.y) }];
-    var steep = Math.abs(end.y - origin.y) > Math.abs(end.x - origin.x);
-    var fromX;
-    var fromY;
-    var toX;
-    var toY;
+    const switchPoints = [{ x: Math.floor(origin.x), y: Math.floor(origin.y) }];
+    const steep = Math.abs(end.y - origin.y) > Math.abs(end.x - origin.x);
+    let fromX;
+    let fromY;
+    let toX;
+    let toY;
     if (steep) {
         fromX = Math.floor(origin.y);
         fromY = Math.floor(origin.x);
@@ -9766,19 +9545,19 @@ function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
         toX = Math.floor(end.x);
         toY = Math.floor(end.y);
     }
-    var dx = Math.abs(toX - fromX);
-    var dy = Math.abs(toY - fromY);
-    var error = Math.floor(-dx / 2);
-    var xStep = fromX < toX ? 1 : -1;
-    var yStep = fromY < toY ? 1 : -1;
-    var currentPixel = true;
+    const dx = Math.abs(toX - fromX);
+    const dy = Math.abs(toY - fromY);
+    let error = Math.floor(-dx / 2);
+    const xStep = fromX < toX ? 1 : -1;
+    const yStep = fromY < toY ? 1 : -1;
+    let currentPixel = true;
     // Loop up until x == toX, but not beyond
-    for (var x = fromX, y = fromY; x !== toX + xStep; x += xStep) {
+    for (let x = fromX, y = fromY; x !== toX + xStep; x += xStep) {
         // Does current pixel mean we have moved white to black or vice versa?
         // Scanning black in state 0,2 and white in state 1, so if we find the wrong
         // color, advance to next state or end if we are in state 2 already
-        var realX = steep ? y : x;
-        var realY = steep ? x : y;
+        const realX = steep ? y : x;
+        const realY = steep ? x : y;
         if (matrix.get(realX, realY) !== currentPixel) {
             currentPixel = !currentPixel;
             switchPoints.push({ x: realX, y: realY });
@@ -9795,8 +9574,8 @@ function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
             error -= dx;
         }
     }
-    var distances = [];
-    for (var i = 0; i < length; i++) {
+    const distances = [];
+    for (let i = 0; i < length; i++) {
         if (switchPoints[i] && switchPoints[i + 1]) {
             distances.push(distance(switchPoints[i], switchPoints[i + 1]));
         }
@@ -9810,51 +9589,50 @@ function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
 // along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
 // of the black white run. Takes a length which represents the number of switches from black to white to look for.
 function countBlackWhiteRun(origin, end, matrix, length) {
-    var rise = end.y - origin.y;
-    var run = end.x - origin.x;
-    var towardsEnd = countBlackWhiteRunTowardsPoint(origin, end, matrix, Math.ceil(length / 2));
-    var awayFromEnd = countBlackWhiteRunTowardsPoint(origin, { x: origin.x - run, y: origin.y - rise }, matrix, Math.ceil(length / 2));
-    var middleValue = towardsEnd.shift() + awayFromEnd.shift() - 1; // Substract one so we don't double count a pixel
-    return (_a = awayFromEnd.concat(middleValue)).concat.apply(_a, towardsEnd);
-    var _a;
+    const rise = end.y - origin.y;
+    const run = end.x - origin.x;
+    const towardsEnd = countBlackWhiteRunTowardsPoint(origin, end, matrix, Math.ceil(length / 2));
+    const awayFromEnd = countBlackWhiteRunTowardsPoint(origin, { x: origin.x - run, y: origin.y - rise }, matrix, Math.ceil(length / 2));
+    const middleValue = towardsEnd.shift() + awayFromEnd.shift() - 1; // Substract one so we don't double count a pixel
+    return awayFromEnd.concat(middleValue).concat(...towardsEnd);
 }
 // Takes in a black white run and an array of expected ratios. Returns the average size of the run as well as the "error" -
 // that is the amount the run diverges from the expected ratio
 function scoreBlackWhiteRun(sequence, ratios) {
-    var averageSize = sum(sequence) / sum(ratios);
-    var error = 0;
-    ratios.forEach(function (ratio, i) {
+    const averageSize = sum(sequence) / sum(ratios);
+    let error = 0;
+    ratios.forEach((ratio, i) => {
         error += Math.pow((sequence[i] - ratio * averageSize), 2);
     });
-    return { averageSize: averageSize, error: error };
+    return { averageSize, error };
 }
 // Takes an X,Y point and an array of sizes and scores the point against those ratios.
 // For example for a finder pattern takes the ratio list of 1:1:3:1:1 and checks horizontal, vertical and diagonal ratios
 // against that.
 function scorePattern(point, ratios, matrix) {
     try {
-        var horizontalRun = countBlackWhiteRun(point, { x: -1, y: point.y }, matrix, ratios.length);
-        var verticalRun = countBlackWhiteRun(point, { x: point.x, y: -1 }, matrix, ratios.length);
-        var topLeftPoint = {
+        const horizontalRun = countBlackWhiteRun(point, { x: -1, y: point.y }, matrix, ratios.length);
+        const verticalRun = countBlackWhiteRun(point, { x: point.x, y: -1 }, matrix, ratios.length);
+        const topLeftPoint = {
             x: Math.max(0, point.x - point.y) - 1,
             y: Math.max(0, point.y - point.x) - 1,
         };
-        var topLeftBottomRightRun = countBlackWhiteRun(point, topLeftPoint, matrix, ratios.length);
-        var bottomLeftPoint = {
+        const topLeftBottomRightRun = countBlackWhiteRun(point, topLeftPoint, matrix, ratios.length);
+        const bottomLeftPoint = {
             x: Math.min(matrix.width, point.x + point.y) + 1,
             y: Math.min(matrix.height, point.y + point.x) + 1,
         };
-        var bottomLeftTopRightRun = countBlackWhiteRun(point, bottomLeftPoint, matrix, ratios.length);
-        var horzError = scoreBlackWhiteRun(horizontalRun, ratios);
-        var vertError = scoreBlackWhiteRun(verticalRun, ratios);
-        var diagDownError = scoreBlackWhiteRun(topLeftBottomRightRun, ratios);
-        var diagUpError = scoreBlackWhiteRun(bottomLeftTopRightRun, ratios);
-        var ratioError = Math.sqrt(horzError.error * horzError.error +
+        const bottomLeftTopRightRun = countBlackWhiteRun(point, bottomLeftPoint, matrix, ratios.length);
+        const horzError = scoreBlackWhiteRun(horizontalRun, ratios);
+        const vertError = scoreBlackWhiteRun(verticalRun, ratios);
+        const diagDownError = scoreBlackWhiteRun(topLeftBottomRightRun, ratios);
+        const diagUpError = scoreBlackWhiteRun(bottomLeftTopRightRun, ratios);
+        const ratioError = Math.sqrt(horzError.error * horzError.error +
             vertError.error * vertError.error +
             diagDownError.error * diagDownError.error +
             diagUpError.error * diagUpError.error);
-        var avgSize = (horzError.averageSize + vertError.averageSize + diagDownError.averageSize + diagUpError.averageSize) / 4;
-        var sizeError = (Math.pow((horzError.averageSize - avgSize), 2) +
+        const avgSize = (horzError.averageSize + vertError.averageSize + diagDownError.averageSize + diagUpError.averageSize) / 4;
+        const sizeError = (Math.pow((horzError.averageSize - avgSize), 2) +
             Math.pow((vertError.averageSize - avgSize), 2) +
             Math.pow((diagDownError.averageSize - avgSize), 2) +
             Math.pow((diagUpError.averageSize - avgSize), 2)) / avgSize;
@@ -9865,50 +9643,48 @@ function scorePattern(point, ratios, matrix) {
     }
 }
 function locate(matrix) {
-    var finderPatternQuads = [];
-    var activeFinderPatternQuads = [];
-    var alignmentPatternQuads = [];
-    var activeAlignmentPatternQuads = [];
-    var _loop_1 = function (y) {
-        var length_1 = 0;
-        var lastBit = false;
-        var scans = [0, 0, 0, 0, 0];
-        var _loop_2 = function (x) {
-            var v = matrix.get(x, y);
+    const finderPatternQuads = [];
+    let activeFinderPatternQuads = [];
+    const alignmentPatternQuads = [];
+    let activeAlignmentPatternQuads = [];
+    for (let y = 0; y <= matrix.height; y++) {
+        let length = 0;
+        let lastBit = false;
+        let scans = [0, 0, 0, 0, 0];
+        for (let x = -1; x <= matrix.width; x++) {
+            const v = matrix.get(x, y);
             if (v === lastBit) {
-                length_1++;
+                length++;
             }
             else {
-                scans = [scans[1], scans[2], scans[3], scans[4], length_1];
-                length_1 = 1;
+                scans = [scans[1], scans[2], scans[3], scans[4], length];
+                length = 1;
                 lastBit = v;
                 // Do the last 5 color changes ~ match the expected ratio for a finder pattern? 1:1:3:1:1 of b:w:b:w:b
-                var averageFinderPatternBlocksize = sum(scans) / 7;
-                var validFinderPattern = Math.abs(scans[0] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
+                const averageFinderPatternBlocksize = sum(scans) / 7;
+                const validFinderPattern = Math.abs(scans[0] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
                     Math.abs(scans[1] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
                     Math.abs(scans[2] - 3 * averageFinderPatternBlocksize) < 3 * averageFinderPatternBlocksize &&
                     Math.abs(scans[3] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
                     Math.abs(scans[4] - averageFinderPatternBlocksize) < averageFinderPatternBlocksize &&
                     !v; // And make sure the current pixel is white since finder patterns are bordered in white
                 // Do the last 3 color changes ~ match the expected ratio for an alignment pattern? 1:1:1 of w:b:w
-                var averageAlignmentPatternBlocksize = sum(scans.slice(-3)) / 3;
-                var validAlignmentPattern = Math.abs(scans[2] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
+                const averageAlignmentPatternBlocksize = sum(scans.slice(-3)) / 3;
+                const validAlignmentPattern = Math.abs(scans[2] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
                     Math.abs(scans[3] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
                     Math.abs(scans[4] - averageAlignmentPatternBlocksize) < averageAlignmentPatternBlocksize &&
                     v; // Is the current pixel black since alignment patterns are bordered in black
                 if (validFinderPattern) {
                     // Compute the start and end x values of the large center black square
-                    var endX_1 = x - scans[3] - scans[4];
-                    var startX_1 = endX_1 - scans[2];
-                    var line = { startX: startX_1, endX: endX_1, y: y };
+                    const endX = x - scans[3] - scans[4];
+                    const startX = endX - scans[2];
+                    const line = { startX, endX, y };
                     // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
                     // that line as the starting point.
-                    var matchingQuads = activeFinderPatternQuads.filter(function (q) {
-                        return (startX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
-                            (endX_1 >= q.bottom.startX && startX_1 <= q.bottom.endX) ||
-                            (startX_1 <= q.bottom.startX && endX_1 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
-                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
-                    });
+                    const matchingQuads = activeFinderPatternQuads.filter(q => (startX >= q.bottom.startX && startX <= q.bottom.endX) ||
+                        (endX >= q.bottom.startX && startX <= q.bottom.endX) ||
+                        (startX <= q.bottom.startX && endX >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+                            (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO)));
                     if (matchingQuads.length > 0) {
                         matchingQuads[0].bottom = line;
                     }
@@ -9918,17 +9694,15 @@ function locate(matrix) {
                 }
                 if (validAlignmentPattern) {
                     // Compute the start and end x values of the center black square
-                    var endX_2 = x - scans[4];
-                    var startX_2 = endX_2 - scans[3];
-                    var line = { startX: startX_2, y: y, endX: endX_2 };
+                    const endX = x - scans[4];
+                    const startX = endX - scans[3];
+                    const line = { startX, y, endX };
                     // Is there a quad directly above the current spot? If so, extend it with the new line. Otherwise, create a new quad with
                     // that line as the starting point.
-                    var matchingQuads = activeAlignmentPatternQuads.filter(function (q) {
-                        return (startX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
-                            (endX_2 >= q.bottom.startX && startX_2 <= q.bottom.endX) ||
-                            (startX_2 <= q.bottom.startX && endX_2 >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
-                                (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO));
-                    });
+                    const matchingQuads = activeAlignmentPatternQuads.filter(q => (startX >= q.bottom.startX && startX <= q.bottom.endX) ||
+                        (endX >= q.bottom.startX && startX <= q.bottom.endX) ||
+                        (startX <= q.bottom.startX && endX >= q.bottom.endX && ((scans[2] / (q.bottom.endX - q.bottom.startX)) < MAX_QUAD_RATIO &&
+                            (scans[2] / (q.bottom.endX - q.bottom.startX)) > MIN_QUAD_RATIO)));
                     if (matchingQuads.length > 0) {
                         matchingQuads[0].bottom = line;
                     }
@@ -9937,106 +9711,149 @@ function locate(matrix) {
                     }
                 }
             }
-        };
-        for (var x = -1; x <= matrix.width; x++) {
-            _loop_2(x);
         }
-        finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads.filter(function (q) { return q.bottom.y !== y && q.bottom.y - q.top.y >= 2; }));
-        activeFinderPatternQuads = activeFinderPatternQuads.filter(function (q) { return q.bottom.y === y; });
-        alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y !== y; }));
-        activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(function (q) { return q.bottom.y === y; });
-    };
-    for (var y = 0; y <= matrix.height; y++) {
-        _loop_1(y);
+        finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y !== y && q.bottom.y - q.top.y >= 2));
+        activeFinderPatternQuads = activeFinderPatternQuads.filter(q => q.bottom.y === y);
+        alignmentPatternQuads.push(...activeAlignmentPatternQuads.filter(q => q.bottom.y !== y));
+        activeAlignmentPatternQuads = activeAlignmentPatternQuads.filter(q => q.bottom.y === y);
     }
-    finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads.filter(function (q) { return q.bottom.y - q.top.y >= 2; }));
-    alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads);
-    var finderPatternGroups = finderPatternQuads
-        .filter(function (q) { return q.bottom.y - q.top.y >= 2; }) // All quads must be at least 2px tall since the center square is larger than a block
-        .map(function (q) {
-        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
-        var y = (q.top.y + q.bottom.y + 1) / 2;
+    finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y - q.top.y >= 2));
+    alignmentPatternQuads.push(...activeAlignmentPatternQuads);
+    const finderPatternGroups = finderPatternQuads
+        .filter(q => q.bottom.y - q.top.y >= 2) // All quads must be at least 2px tall since the center square is larger than a block
+        .map(q => {
+        const x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
+        const y = (q.top.y + q.bottom.y + 1) / 2;
         if (!matrix.get(Math.round(x), Math.round(y))) {
             return;
         }
-        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, q.bottom.y - q.top.y + 1];
-        var size = sum(lengths) / lengths.length;
-        var score = scorePattern({ x: Math.round(x), y: Math.round(y) }, [1, 1, 3, 1, 1], matrix);
-        return { score: score, x: x, y: y, size: size };
+        const lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, q.bottom.y - q.top.y + 1];
+        const size = sum(lengths) / lengths.length;
+        const score = scorePattern({ x: Math.round(x), y: Math.round(y) }, [1, 1, 3, 1, 1], matrix);
+        return { score, x, y, size };
     })
-        .filter(function (q) { return !!q; }) // Filter out any rejected quads from above
-        .sort(function (a, b) { return a.score - b.score; })
-        .map(function (point, i, finderPatterns) {
+        .filter(q => !!q) // Filter out any rejected quads from above
+        .sort((a, b) => a.score - b.score)
+        // Now take the top finder pattern options and try to find 2 other options with a similar size.
+        .map((point, i, finderPatterns) => {
         if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
             return null;
         }
-        var otherPoints = finderPatterns
-            .filter(function (p, ii) { return i !== ii; })
-            .map(function (p) { return ({ x: p.x, y: p.y, score: p.score + (Math.pow((p.size - point.size), 2)) / point.size, size: p.size }); })
-            .sort(function (a, b) { return a.score - b.score; });
+        const otherPoints = finderPatterns
+            .filter((p, ii) => i !== ii)
+            .map(p => ({ x: p.x, y: p.y, score: p.score + (Math.pow((p.size - point.size), 2)) / point.size, size: p.size }))
+            .sort((a, b) => a.score - b.score);
         if (otherPoints.length < 2) {
             return null;
         }
-        var score = point.score + otherPoints[0].score + otherPoints[1].score;
-        return { points: [point].concat(otherPoints.slice(0, 2)), score: score };
+        const score = point.score + otherPoints[0].score + otherPoints[1].score;
+        return { points: [point].concat(otherPoints.slice(0, 2)), score };
     })
-        .filter(function (q) { return !!q; }) // Filter out any rejected finder patterns from above
-        .sort(function (a, b) { return a.score - b.score; });
+        .filter(q => !!q) // Filter out any rejected finder patterns from above
+        .sort((a, b) => a.score - b.score);
     if (finderPatternGroups.length === 0) {
         return null;
     }
-    var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
+    const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]);
     // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
     // We'll use these to help find the alignment pattern but also later when we do the extraction.
-    var dimension;
-    var moduleSize;
+    let dimension;
+    let moduleSize;
     try {
-        (_b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize);
+        ({ dimension, moduleSize } = computeDimension(topLeft, topRight, bottomLeft, matrix));
     }
     catch (e) {
         return null;
     }
     // Now find the alignment pattern
-    var bottomRightFinderPattern = {
+    const bottomRightFinderPattern = {
         x: topRight.x - topLeft.x + bottomLeft.x,
         y: topRight.y - topLeft.y + bottomLeft.y,
     };
-    var modulesBetweenFinderPatterns = ((distance(topLeft, bottomLeft) + distance(topLeft, topRight)) / 2 / moduleSize);
-    var correctionToTopLeft = 1 - (3 / modulesBetweenFinderPatterns);
-    var expectedAlignmentPattern = {
+    const modulesBetweenFinderPatterns = ((distance(topLeft, bottomLeft) + distance(topLeft, topRight)) / 2 / moduleSize);
+    const correctionToTopLeft = 1 - (3 / modulesBetweenFinderPatterns);
+    const expectedAlignmentPattern = {
         x: topLeft.x + correctionToTopLeft * (bottomRightFinderPattern.x - topLeft.x),
         y: topLeft.y + correctionToTopLeft * (bottomRightFinderPattern.y - topLeft.y),
     };
-    var alignmentPatterns = alignmentPatternQuads
-        .map(function (q) {
-        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
-        var y = (q.top.y + q.bottom.y + 1) / 2;
+    const alignmentPatterns = alignmentPatternQuads
+        .map(q => {
+        const x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
+        const y = (q.top.y + q.bottom.y + 1) / 2;
         if (!matrix.get(Math.floor(x), Math.floor(y))) {
             return;
         }
-        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, (q.bottom.y - q.top.y + 1)];
-        var size = sum(lengths) / lengths.length;
-        var sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
-        var score = sizeScore + distance({ x: x, y: y }, expectedAlignmentPattern);
-        return { x: x, y: y, score: score };
+        const lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, (q.bottom.y - q.top.y + 1)];
+        const size = sum(lengths) / lengths.length;
+        const sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
+        const score = sizeScore + distance({ x, y }, expectedAlignmentPattern);
+        return { x, y, score };
     })
-        .filter(function (v) { return !!v; })
-        .sort(function (a, b) { return a.score - b.score; });
+        .filter(v => !!v)
+        .sort((a, b) => a.score - b.score);
     // If there are less than 15 modules between finder patterns it's a version 1 QR code and as such has no alignmemnt pattern
     // so we can only use our best guess.
-    var alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
+    const alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
     return {
         alignmentPattern: { x: alignmentPattern.x, y: alignmentPattern.y },
         bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
-        dimension: dimension,
+        dimension,
         topLeft: { x: topLeft.x, y: topLeft.y },
         topRight: { x: topRight.x, y: topRight.y },
     };
-    var _b;
 }
-exports.locate = locate;
 
+function scan(matrix) {
+    const location = locate(matrix);
+    if (!location) {
+        return null;
+    }
+    const extracted = extract(matrix, location);
+    const decoded = decode$2(extracted.matrix);
+    if (!decoded) {
+        return null;
+    }
+    return {
+        binaryData: decoded.bytes,
+        data: decoded.text,
+        chunks: decoded.chunks,
+        location: {
+            topRightCorner: extracted.mappingFunction(location.dimension, 0),
+            topLeftCorner: extracted.mappingFunction(0, 0),
+            bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
+            bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
+            topRightFinderPattern: location.topRight,
+            topLeftFinderPattern: location.topLeft,
+            bottomLeftFinderPattern: location.bottomLeft,
+            bottomRightAlignmentPattern: location.alignmentPattern,
+        },
+    };
+}
+const defaultOptions = {
+    inversionAttempts: "attemptBoth",
+    greyScaleWeights: {
+        red: 0.2126,
+        green: 0.7152,
+        blue: 0.0722,
+        useIntegerApproximation: false,
+    },
+    canOverwriteImage: true,
+};
+function jsQR(data, width, height, providedOptions = {}) {
+    const options = defaultOptions;
+    Object.keys(options || {}).forEach(opt => {
+        options[opt] = providedOptions[opt] || options[opt];
+    });
+    const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
+    const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
+    const { binarized, inverted } = binarize(data, width, height, shouldInvert, options.greyScaleWeights, options.canOverwriteImage);
+    let result = scan(tryInvertedFirst ? inverted : binarized);
+    if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
+        result = scan(tryInvertedFirst ? binarized : inverted);
+    }
+    return result;
+}
+jsQR.default = jsQR;
 
-/***/ })
-/******/ ])["default"];
-});
+export default jsQR;
+//# sourceMappingURL=jsQR.js.map

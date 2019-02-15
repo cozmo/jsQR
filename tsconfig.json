@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es6",
+    "moduleResolution": "node",
     "noImplicitAny": true,
-    "target": "es5",
+    "target": "es6",
     "typeRoots": [],
     "declaration": true,
+    "sourceMap": true,
     "outDir": "./dist",
-    "newLine": "LF"
+    "newLine": "LF",
+    "lib": ["ES6"]
   },
   "files": [
     "./src/index.ts"
