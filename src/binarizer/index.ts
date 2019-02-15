@@ -27,7 +27,8 @@ class Matrix {
   }
 }
 
-export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean) {
+export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean,
+                         canOverwriteImage: boolean) {
   const pixelCount = width * height;
   if (data.length !== pixelCount * 4) {
     throw new Error("Malformed data passed to binarizer.");
@@ -35,9 +36,12 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
   // assign the greyscale and binary image within the rgba buffer as the rgba image will not be needed after conversion
   let bufferOffset = 0;
   // Convert image to greyscale
-  const greyScaleBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
-  bufferOffset += pixelCount;
-  const greyscalePixels = new Matrix(width, height, greyScaleBuffer);
+  let greyscaleBuffer: Uint8ClampedArray;
+  if (canOverwriteImage) {
+    greyscaleBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+    bufferOffset += pixelCount;
+  }
+  const greyscalePixels = new Matrix(width, height, greyscaleBuffer);
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const pixelPosition = (y * width + x) * 4;
@@ -97,13 +101,23 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
     }
   }
 
-  const binarizedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
-  bufferOffset += binarizedBuffer.byteLength;
-  const binarized = new BitMatrix(binarizedBuffer, width);
+  let binarized: BitMatrix;
+  if (canOverwriteImage) {
+    const binarizedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+    bufferOffset += pixelCount;
+    binarized = new BitMatrix(binarizedBuffer, width);
+  } else {
+    binarized = BitMatrix.createEmpty(width, height);
+  }
+
   let inverted: BitMatrix = null;
   if (returnInverted) {
-    const invertedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
-    inverted = new BitMatrix(invertedBuffer, width);
+    if (canOverwriteImage) {
+      const invertedBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, pixelCount);
+      inverted = new BitMatrix(invertedBuffer, width);
+    } else {
+      inverted = BitMatrix.createEmpty(width, height);
+    }
   }
 
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
