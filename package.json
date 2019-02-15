@@ -20,21 +20,21 @@
     "@types/fs-extra": "^4.0.2",
     "@types/jest": "^20.0.8",
     "@types/node": "^8.0.27",
-    "awesome-typescript-loader": "^3.2.3",
     "fs-extra": "^4.0.1",
     "jest": "^23.1.0",
     "rimraf": "^2.6.2",
+    "rollup": "^1.1.2",
+    "rollup-plugin-typescript2": "^0.19.2",
     "ts-jest": "^20.0.14",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
     "typescript": "^2.5.2",
-    "upng-js": "^1.0.1",
-    "webpack": "^3.10.0"
+    "upng-js": "^1.0.1"
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "./node_modules/.bin/webpack",
-    "watch": "./node_modules/.bin/webpack --watch",
+    "build": "rollup --config",
+    "watch": "rollup --config --watch",
     "test": "./node_modules/.bin/jest",
     "lint": "tslint --project .",
     "generate-test-data": "node_modules/.bin/ts-node --project tests/ tests/generate-test-data.ts"

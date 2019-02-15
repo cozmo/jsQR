@@ -21,6 +21,6 @@ export declare enum Mode {
     Alphanumeric = "alphanumeric",
     Byte = "byte",
     Kanji = "kanji",
-    ECI = "eci",
+    ECI = "eci"
 }
 export declare function decode(data: Uint8ClampedArray, version: number): DecodedQR;
