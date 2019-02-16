@@ -1,6 +1,6 @@
 {
   "name": "jsqr-es6",
-  "version": "1.2.0",
+  "version": "1.2.0-1",
   "description": "Fork of jsqr (github.com/cozmo/jsQR) that builds a es-6 target and adds color correction and performance improvements.",
   "repository": "https://github.com/danimoh/jsQR",
   "main": "./dist/jsQR.js",
