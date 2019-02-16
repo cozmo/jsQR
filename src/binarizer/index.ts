@@ -69,8 +69,14 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
   }
   const horizontalRegionCount = Math.ceil(width / REGION_SIZE);
   const verticalRegionCount = Math.ceil(height / REGION_SIZE);
+  const blackPointsCount = horizontalRegionCount * verticalRegionCount;
 
-  const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
+  let blackPointsBuffer: Uint8ClampedArray;
+  if (canOverwriteImage) {
+    blackPointsBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, blackPointsCount);
+    bufferOffset += blackPointsCount;
+  }
+  const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount, blackPointsBuffer);
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
       let sum = 0;

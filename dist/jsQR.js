@@ -87,7 +87,13 @@ function binarize(data, width, height, returnInverted, greyscaleWeights, canOver
     }
     const horizontalRegionCount = Math.ceil(width / REGION_SIZE);
     const verticalRegionCount = Math.ceil(height / REGION_SIZE);
-    const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
+    const blackPointsCount = horizontalRegionCount * verticalRegionCount;
+    let blackPointsBuffer;
+    if (canOverwriteImage) {
+        blackPointsBuffer = new Uint8ClampedArray(data.buffer, bufferOffset, blackPointsCount);
+        bufferOffset += blackPointsCount;
+    }
+    const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount, blackPointsBuffer);
     for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
         for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
             let sum = 0;
@@ -9839,11 +9845,15 @@ const defaultOptions = {
     },
     canOverwriteImage: true,
 };
-function jsQR(data, width, height, providedOptions = {}) {
-    const options = defaultOptions;
-    Object.keys(options || {}).forEach(opt => {
-        options[opt] = providedOptions[opt] || options[opt];
+function mergeObject(target, src) {
+    Object.keys(src).forEach(opt => {
+        target[opt] = src[opt];
     });
+}
+function jsQR(data, width, height, providedOptions = {}) {
+    const options = Object.create(null);
+    mergeObject(options, defaultOptions);
+    mergeObject(options, providedOptions);
     const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
     const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
     const { binarized, inverted } = binarize(data, width, height, shouldInvert, options.greyScaleWeights, options.canOverwriteImage);
