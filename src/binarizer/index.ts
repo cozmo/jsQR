@@ -79,20 +79,25 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
   const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount, blackPointsBuffer);
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
-      let sum = 0;
       let min = Infinity;
       let max = 0;
       for (let y = 0; y < REGION_SIZE; y++) {
         for (let x = 0; x < REGION_SIZE; x++) {
           const pixelLumosity =
             greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
-          sum += pixelLumosity;
           min = Math.min(min, pixelLumosity);
           max = Math.max(max, pixelLumosity);
         }
       }
-
-      let average = sum / (REGION_SIZE ** 2);
+      // We could also compute the real average of all pixels but following the assumption that the qr code consists
+      // of bright and dark pixels and essentially not much in between, by (min + max)/2 we make the cut really between
+      // those two classes. If using the average over all pixel in a block of mostly bright pixels and few dark pixels,
+      // the avg would tend to the bright side and darker bright pixels could be interpreted as dark.
+      let average = (min + max) / 2;
+      // Small bias towards black by moving the threshold up. We do this, as in the finder patterns white holes tend
+      // to appear which makes them undetectable.
+      const blackBias = 1.1;
+      average = Math.min(255, average * blackBias);
       if (max - min <= MIN_DYNAMIC_RANGE) {
         // If variation within the block is low, assume this is a block with only light or only
         // dark pixels. In that case we do not want to use the average, as it would divide this
@@ -115,7 +120,7 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
             blackPoints.get(hortizontalRegion - 1, verticalRegion - 1)
           ) / 4;
           if (min < averageNeighborBlackPoint) {
-            average = averageNeighborBlackPoint;
+            average = averageNeighborBlackPoint; // no need to apply black bias as already applied to neighbors
           }
         }
       }
