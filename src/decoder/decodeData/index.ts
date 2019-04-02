@@ -1,6 +1,7 @@
 // tslint:disable:no-bitwise
 import { BitStream } from "./BitStream";
 import { shiftJISTable } from "./shiftJISTable";
+import * as assert from 'assert';
 
 export interface StructuredAppendTag {
   M: number;
@@ -245,7 +246,7 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
       };
       // QR codes sometimes contain duplicate Structured Append tags for redundancy.
       // If they exist, they are all supposed to be equal. This checks for that:
-      if(typeof result.parity === 'undefined') {
+      if(typeof result.structuredAppend === 'undefined') {
         result.structuredAppend = structuredAppend;
       } else {
         try {

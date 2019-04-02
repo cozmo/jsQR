@@ -40,7 +40,7 @@ function scan(matrix: BitMatrix): QRCode | null {
     binaryData: decoded.bytes,
     data: decoded.text,
     chunks: decoded.chunks,
-    structuredAppend?: decoded.structuredAppend,
+    structuredAppend: decoded.structuredAppend,
     location: {
       topRightCorner: extracted.mappingFunction(location.dimension, 0),
       topLeftCorner: extracted.mappingFunction(0, 0),
