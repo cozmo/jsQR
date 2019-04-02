@@ -3,6 +3,7 @@ import * as path from "path";
 import jsQR from "../src";
 import { loadPng } from "../tests/helpers";
 import * as helpers from "./helpers";
+import { strict as assert } from 'assert';
 
 
 // Fisher-Yates-Durstenfeld shuffle
@@ -31,6 +32,7 @@ describe("structured-append", () => {
 
 
   var N;
+  var parity;
   let blocks = new Array();
   var i = 0;
 
@@ -46,24 +48,40 @@ describe("structured-append", () => {
       expect(result.binaryData.length).toBeGreaterThan(0);
     });
 
-    result.M = i++; //blocks.length; // TODO: expose this in the jsQR API; for now, just load in order
-    result.N = pieces.length; // TODO: ditto
-
     if(typeof N === 'undefined') {
-        N = result.N;
+        N = result.structuredAppend.N;
+    }
+
+    if(typeof parity === 'undefined') {
+        parity = result.structuredAppend.parity;
     }
 
     it('reads page numbers', () => {
-      expect(result.N).toBeGreaterThan(0);
+      // page numbers are 4 bits and 1-based (so 1..16 inclusive)
+      // The QR standard, section 9.2, explains that it stores them 0-based but counts them 1-based:
+      // > The 4-bit patterns shall be the binary equivalents of (m - 1) and (n - 1) respectively.
+      // or in short, 0<M<=N<=16
+      // TODO: maybe the API should change to 0<=M<N<=16, python-style, so that N is the *count* and M is the *index*.
+      expect(result.structuredAppend.N).toBeGreaterThan(0);
+      expect(result.structuredAppend.N).toBeLessThanOrEqual(16);
 
-      expect(result.M).toBeGreaterThanOrEqual(0);
-      expect(result.M).toBeLessThan(result.N);
+      expect(result.structuredAppend.M).toBeGreaterThan(0);
+      expect(result.structuredAppend.M).toBeLessThanOrEqual(16);
+
+      expect(result.structuredAppend.M).toBeLessThanOrEqual(result.structuredAppend.N);
 
       // ensure N, the total count, is constant across all pieces
-      expect(result.N).toEqual(N);
+      expect(result.structuredAppend.N).toEqual(N);
+
+      // ensure parity is constant across all pieces
+      // parity is meant to be a sort of quick ID tag and second-check
+      // to make sure you're scanning codes from the same data.
+      expect(result.structuredAppend.N).toEqual(N);
     });
 
-    blocks[result.M] = result.binaryData;
+    // insert the block into the list at its stated location
+    // the numbering is 1-based, so we have to shift it back down to 0-based to play nice with Javascript.
+    blocks[result.structuredAppend.M-1] = result.binaryData;
   });
 
   describe('reconstructs split codes', () => {
@@ -72,5 +90,11 @@ describe("structured-append", () => {
       expect(blocks.length).toEqual(N);
       expect(reconstructed).toEqual(expectedOutput);
     }
+    it('parity checks out', () => {
+      // parity is the xor of all data bytes in the message; see QR spec section 9.3.
+      // TODO: test how parity interacts with mixed-mode QR codes; 
+      expect(reconstructed.reduce((acc, val) => acc^val, 0)).toEqual(parity);
+    });
+
   }));
 });

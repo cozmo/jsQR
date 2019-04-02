@@ -2,9 +2,19 @@
 import { BitStream } from "./BitStream";
 import { shiftJISTable } from "./shiftJISTable";
 
+export interface StructuredAppendTag {
+  M: number;
+  N: number;
+  parity: number;
+}
+
 export interface Chunk {
   type: Mode;
   text: string;
+}
+
+export interface StructuredAppendChunk extends StructuredAppendTag {
+  type: Mode.StructuredAppend;
 }
 
 export interface ByteChunk {
@@ -17,17 +27,19 @@ export interface ECIChunk {
   assignmentNumber: number;
 }
 
-export type Chunks = Array<Chunk | ByteChunk | ECIChunk>;
+export type Chunks = Array<Chunk | StructuredAppendChunk | ByteChunk | ECIChunk>;
 
 export interface DecodedQR {
   text: string;
   bytes: number[];
   chunks: Chunks;
+  structuredAppend?: StructuredAppendTag;
 }
 
 export enum Mode {
   Numeric = "numeric",
   Alphanumeric = "alphanumeric",
+  StructuredAppend = "structuredappend",
   Byte = "byte",
   Kanji = "kanji",
   ECI = "eci",
@@ -37,10 +49,10 @@ enum ModeByte {
   Terminator = 0x0,
   Numeric = 0x1,
   Alphanumeric = 0x2,
+  StructuredAppend = 0x3,
   Byte = 0x4,
   Kanji = 0x8,
   ECI = 0x7,
-  // StructuredAppend = 0x3,
   // FNC1FirstPosition = 0x5,
   // FNC1SecondPosition = 0x9,
 }
@@ -222,6 +234,29 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
       result.chunks.push({
         type: Mode.Alphanumeric,
         text: alphanumericResult.text,
+      });
+    } else if (mode === ModeByte.StructuredAppend) {
+      // QR Standard section 9.2:
+      // > The 4-bit patterns shall be the binary equivalents of (m - 1) and (n - 1) respectively.
+      const structuredAppend : StructuredAppendTag = {
+        M: stream.readBits(4) + 1,
+        N: stream.readBits(4) + 1,
+        parity: stream.readBits(8)
+      };
+      // QR codes sometimes contain duplicate Structured Append tags for redundancy.
+      // If they exist, they are all supposed to be equal. This checks for that:
+      if(typeof result.parity === 'undefined') {
+        result.structuredAppend = structuredAppend;
+      } else {
+        try {
+          assert.deepStrictEqual(structuredAppend, result.structuredAppend);
+        } catch {
+          console.warn("QR Code contains inconsistent Structured Append tags:", result.structuredAppend, "vs", structuredAppend);
+        }
+      }
+      result.chunks.push({
+        type: Mode.StructuredAppend,
+        ...result.structuredAppend
       });
     } else if (mode === ModeByte.Byte) {
       const byteResult = decodeByte(stream, size);
