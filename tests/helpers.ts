@@ -32,6 +32,20 @@ export async function loadPng(path) {
   return out;
 }
 
+export function loadPngSync(path) {
+  const data = png.decode(fs.readFileSync(path));
+  const out: {
+    data: Uint8ClampedArray,
+    height: number,
+    width: number,
+  } = {
+    data: png.toRGBA8(data),
+    height: data.height,
+    width: data.width,
+  };
+  return out;
+}
+
 export async function loadBinarized(path) {
   const image = await loadPng(path);
   const out = BitMatrix.createEmpty(image.width, image.height);

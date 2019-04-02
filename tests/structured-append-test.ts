@@ -22,51 +22,55 @@ if(typeof Array.prototype.flat === 'undefined') {
 }
 
 
-describe("structured-append", async () => {
+describe("structured-append", () => {
   const pieces = fs.readdirSync(path.join("tests", "end-to-end")).filter((n) => n.includes("structured-append-"));
+  const expectedOutput = [].concat(...fs.readFileSync(path.join("tests", "amen.mp3")));
 
   // TODO: the structured append header should be exposed so we can reconstruct misordered codes
   //pieces.shuffle();
-  
+
+
   var N;
   let blocks = new Array();
-  it('reconstructs data split across qr codes', async () => {
+  var i = 0;
 
-    for (const p of pieces) {
-      const inputImage = await helpers.loadPng(path.join("tests", "end-to-end", p, "input.png"));
-      const result = jsQR(inputImage.data, inputImage.width, inputImage.height);
+  describe.each(pieces)('piece %s', (p) => {
+    const inputImage = helpers.loadPngSync(path.join("tests", "end-to-end", p, "input.png"));
+    const result = jsQR(inputImage.data, inputImage.width, inputImage.height);
 
+    it('loads binary data', () => {
       expect(result.binaryData).toBeInstanceOf(Array);
 
       expect(result.data).toEqual(""); // 'data' i.e. 'text' should be empty because there's no text in binary!
       expect(result.binaryData).toBeInstanceOf(Array /*TODO: change API to Uint8Array*/);
       expect(result.binaryData.length).toBeGreaterThan(0);
+    });
 
-      result.M = blocks.length; // TODO: expose this in the jsQR API; for now, just load in order
-      result.N = pieces.length; // TODO: ditto
+    result.M = i++; //blocks.length; // TODO: expose this in the jsQR API; for now, just load in order
+    result.N = pieces.length; // TODO: ditto
 
+    if(typeof N === 'undefined') {
+        N = result.N;
+    }
+
+    it('reads page numbers', () => {
       expect(result.N).toBeGreaterThan(0);
 
       expect(result.M).toBeGreaterThanOrEqual(0);
       expect(result.M).toBeLessThan(result.N);
 
       // ensure N, the total count, is constant across all pieces
-      if(typeof N === 'undefined') {
-          N = result.N;
-      }
       expect(result.N).toEqual(N);
+    });
 
-      expect(blocks[result.N]).toBeUndefined(); // we should not have seen this block yet
-
-      blocks[result.M] = result.binaryData;
-    }
-
-    expect(blocks.length).toEqual(N);
-    
-    const reconstructed = blocks.flat();
-    const expectedOutput = [].concat(...(await fs.readFile(path.join("tests", "amen.mp3"))));
-
-    expect(reconstructed).toEqual(expectedOutput);
+    blocks[result.M] = result.binaryData;
   });
 
+  describe('reconstructs split codes', () => {
+    const reconstructed = blocks.flat();
+    it('reconstructs', () => {
+      expect(blocks.length).toEqual(N);
+      expect(reconstructed).toEqual(expectedOutput);
+    }
+  }));
 });
