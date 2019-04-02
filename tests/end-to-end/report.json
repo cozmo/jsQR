@@ -1,7 +1,7 @@
 {
   "counts": {
-    "failed": 47,
-    "successful": 207
+    "failed": 48,
+    "successful": 208
   },
   "tests": {
     "0": true,
@@ -211,6 +211,7 @@
     "cupcake-3": true,
     "cupcake-4": true,
     "damaged": false,
+    "embedded-nul": true,
     "emblem-patch": false,
     "hk-ikea": true,
     "hudson-highlands-state-park": true,
