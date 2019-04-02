@@ -255,6 +255,12 @@
   "data": "",
   "chunks": [
     {
+      "type": "structuredappend",
+      "M": 15,
+      "N": 15,
+      "parity": 109
+    },
+    {
       "type": "byte",
       "bytes": [
         150,
@@ -512,6 +518,11 @@
       "text": ""
     }
   ],
+  "structuredAppend": {
+    "M": 15,
+    "N": 15,
+    "parity": 109
+  },
   "location": {
     "topRightCorner": {
       "x": 254.99999999999997,
