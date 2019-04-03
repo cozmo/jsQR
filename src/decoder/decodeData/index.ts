@@ -249,11 +249,8 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
       if (typeof result.structuredAppend === "undefined") {
         result.structuredAppend = structuredAppend;
       } else {
-        try {
-          assert.deepStrictEqual(structuredAppend, result.structuredAppend);
-        } catch {
-          console.warn("QR Code contains inconsistent Structured Append tags:", result.structuredAppend, "vs", structuredAppend);
-        }
+        // TODO: should this really be an assert? If the user has a corrupt QR code they probably still want to try to read it.
+        assert.deepStrictEqual(structuredAppend, result.structuredAppend, "QR Code contains inconsistent Structured Append tags.");
       }
       result.chunks.push({
         type: Mode.StructuredAppend,
