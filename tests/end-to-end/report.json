@@ -1,7 +1,7 @@
 {
   "counts": {
     "failed": 47,
-    "successful": 207
+    "successful": 222
   },
   "tests": {
     "0": true,
@@ -245,6 +245,21 @@
     "stickerbook-4": true,
     "stickerbook-5": true,
     "stickerbook-6": false,
+    "structured-append-01": true,
+    "structured-append-02": true,
+    "structured-append-03": true,
+    "structured-append-04": true,
+    "structured-append-05": true,
+    "structured-append-06": true,
+    "structured-append-07": true,
+    "structured-append-08": true,
+    "structured-append-09": true,
+    "structured-append-10": true,
+    "structured-append-11": true,
+    "structured-append-12": true,
+    "structured-append-13": true,
+    "structured-append-14": true,
+    "structured-append-15": true,
     "subway-station": false,
     "tattoo-scan": true,
     "trackable-book-1": false,
