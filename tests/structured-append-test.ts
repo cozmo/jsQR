@@ -24,12 +24,12 @@ if(typeof Array.prototype.flat === 'undefined') {
 
 
 describe("structured-append", () => {
-  const pieces = fs.readdirSync(path.join("tests", "end-to-end")).filter((n) => n.includes("structured-append-"));
+  const pieces = [].concat(...fs.readdirSync(path.join("tests", "end-to-end")).filter((n) => n.includes("structured-append-")));
   const expectedOutput = [].concat(...fs.readFileSync(path.join("tests", "amen.mp3")));
 
-  // TODO: the structured append header should be exposed so we can reconstruct misordered codes
-  //pieces.shuffle();
-
+  // randomize the codes, to demonstrate that we can reconstruct the full data
+  // from any misordering, just by using the embedded headers.
+  pieces.shuffle();
 
   var N;
   var parity;
