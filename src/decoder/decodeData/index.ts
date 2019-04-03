@@ -1,7 +1,7 @@
 // tslint:disable:no-bitwise
+import * as assert from "assert";
 import { BitStream } from "./BitStream";
 import { shiftJISTable } from "./shiftJISTable";
-import * as assert from 'assert';
 
 export interface StructuredAppendTag {
   M: number;
@@ -239,14 +239,14 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
     } else if (mode === ModeByte.StructuredAppend) {
       // QR Standard section 9.2:
       // > The 4-bit patterns shall be the binary equivalents of (m - 1) and (n - 1) respectively.
-      const structuredAppend : StructuredAppendTag = {
+      const structuredAppend: StructuredAppendTag = {
         M: stream.readBits(4) + 1,
         N: stream.readBits(4) + 1,
-        parity: stream.readBits(8)
+        parity: stream.readBits(8),
       };
       // QR codes sometimes contain duplicate Structured Append tags for redundancy.
       // If they exist, they are all supposed to be equal. This checks for that:
-      if(typeof result.structuredAppend === 'undefined') {
+      if (typeof result.structuredAppend === "undefined") {
         result.structuredAppend = structuredAppend;
       } else {
         try {
@@ -257,7 +257,7 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
       }
       result.chunks.push({
         type: Mode.StructuredAppend,
-        ...result.structuredAppend
+        ...result.structuredAppend,
       });
     } else if (mode === ModeByte.Byte) {
       const byteResult = decodeByte(stream, size);
