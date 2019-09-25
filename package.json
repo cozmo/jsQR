@@ -26,7 +26,7 @@
     "rimraf": "^2.6.2",
     "ts-jest": "^20.0.14",
     "ts-node": "^3.3.0",
-    "tslint": "^5.7.0",
+    "tslint": "^5.20.0",
     "typescript": "^2.5.2",
     "upng-js": "^1.0.1",
     "webpack": "^3.10.0"
@@ -36,7 +36,7 @@
     "build": "./node_modules/.bin/webpack",
     "watch": "./node_modules/.bin/webpack --watch",
     "test": "./node_modules/.bin/jest",
-    "lint": "tslint --project .",
+    "lint": "tslint --fix ./src/*",
     "generate-test-data": "node_modules/.bin/ts-node --project tests/ tests/generate-test-data.ts"
   },
   "jest": {

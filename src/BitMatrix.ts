@@ -1,8 +1,23 @@
 export class BitMatrix {
   public static createEmpty(width: number, height: number) {
+    if (width > 320 && height > 320) {
+      let bitMatrix = BitMatrix.Memo[width * height];
+      if (!!bitMatrix) {
+        // tslint:disable-next-line:triple-equals
+        if (bitMatrix.width == width) {
+          return bitMatrix;
+        }
+        bitMatrix.width = width;
+        bitMatrix.height = height;
+        return bitMatrix;
+      }
+      bitMatrix = new BitMatrix(new Uint8ClampedArray(width * height), width);
+      BitMatrix.Memo[width * height] = bitMatrix;
+      return bitMatrix;
+    }
     return new BitMatrix(new Uint8ClampedArray(width * height), width);
   }
-
+  private static Memo: any = {};
   public width: number;
   public height: number;
   private data: Uint8ClampedArray;
