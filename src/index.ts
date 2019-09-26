@@ -23,6 +23,13 @@ export interface QRCode {
   };
 }
 
+class Switcher {
+  public static switcher: boolean = true;
+  public static switch(): void {
+    Switcher.switcher = !Switcher.switcher;
+  }
+}
+
 function scan(matrix: BitMatrix): QRCode | null {
   const location = locate(matrix);
   if (!location) {
@@ -30,7 +37,6 @@ function scan(matrix: BitMatrix): QRCode | null {
   }
   const extracted = extract(matrix, location);
   const decoded = decode(extracted.matrix);
-
   if (!decoded) {
     return null;
   }
@@ -55,8 +61,14 @@ function scan(matrix: BitMatrix): QRCode | null {
 }
 
 function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null {
+  if (!Switcher.switcher) {
+    return;
+  }
+  Switcher.switch();
   const {binarized} = binarize(data, width, height);
-  return scan(binarized);
+  const result = scan(binarized);
+  Switcher.switch();
+  return result;
 }
 
 (jsQR as any).default = jsQR;

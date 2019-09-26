@@ -344,6 +344,15 @@ var binarizer_1 = __webpack_require__(4);
 var decoder_1 = __webpack_require__(5);
 var extractor_1 = __webpack_require__(11);
 var locator_1 = __webpack_require__(12);
+var Switcher = /** @class */ (function () {
+    function Switcher() {
+    }
+    Switcher.switch = function () {
+        Switcher.switcher = !Switcher.switcher;
+    };
+    Switcher.switcher = true;
+    return Switcher;
+}());
 function scan(matrix) {
     var location = locator_1.locate(matrix);
     if (!location) {
@@ -371,8 +380,14 @@ function scan(matrix) {
     };
 }
 function jsQR(data, width, height) {
+    if (!Switcher.switcher) {
+        return;
+    }
+    Switcher.switch();
     var binarized = binarizer_1.binarize(data, width, height).binarized;
-    return scan(binarized);
+    var result = scan(binarized);
+    Switcher.switch();
+    return result;
 }
 jsQR.default = jsQR;
 exports.default = jsQR;
@@ -427,6 +442,7 @@ function binarize(data, width, height) {
     var horizontalRegionCount = Math.ceil(width / REGION_SIZE);
     var verticalRegionCount = Math.ceil(height / REGION_SIZE);
     var blackPoints = Matrix.createEmpty(horizontalRegionCount, verticalRegionCount);
+    var binarized = BitMatrix_1.BitMatrix.createEmpty(width, height);
     for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
         for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
             var X = void 0;
@@ -474,7 +490,6 @@ function binarize(data, width, height) {
             blackPoints.set(hortizontalRegion, verticalRegion, average);
         }
     }
-    var binarized = BitMatrix_1.BitMatrix.createEmpty(width, height);
     for (var verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
         for (var hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
             var left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
@@ -9701,7 +9716,12 @@ var MIN_QUAD_RATIO = 0.5;
 var MAX_QUAD_RATIO = 1.5;
 var distance = function (a, b) { return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2)); };
 function sum(values) {
-    return values.reduce(function (a, b) { return a + b; });
+    var s = 0;
+    // tslint:disable-next-line:prefer-for-of
+    for (var i = 0; i < values.length; i++) {
+        s += values[i];
+    }
+    return s;
 }
 // Takes three finder patterns and organizes them into topLeft, topRight, etc
 function reorderFinderPatterns(pattern1, pattern2, pattern3) {
@@ -9832,9 +9852,9 @@ function countBlackWhiteRun(origin, end, matrix, length) {
 function scoreBlackWhiteRun(sequence, ratios) {
     var averageSize = sum(sequence) / sum(ratios);
     var error = 0;
-    ratios.forEach(function (ratio, i) {
-        error += Math.pow((sequence[i] - ratio * averageSize), 2);
-    });
+    for (var i = 0; i < ratios.length; i++) {
+        error += Math.pow((sequence[i] - ratios[i] * averageSize), 2);
+    }
     return { averageSize: averageSize, error: error };
 }
 // Takes an X,Y point and an array of sizes and scores the point against those ratios.

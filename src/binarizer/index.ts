@@ -47,6 +47,7 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number)
   const verticalRegionCount = Math.ceil(height / REGION_SIZE);
 
   const blackPoints = Matrix.createEmpty(horizontalRegionCount, verticalRegionCount);
+  const binarized = BitMatrix.createEmpty(width, height);
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
       let X;
@@ -104,7 +105,6 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number)
     }
   }
 
-  const binarized = BitMatrix.createEmpty(width, height);
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
       const left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
