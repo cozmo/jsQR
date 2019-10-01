@@ -9699,7 +9699,7 @@ function extract(image, location) {
     }
     return {
         matrix: matrix,
-        transform: transform,
+        transform: sToQ,
         mappingFunction: mappingFunction,
     };
 }
