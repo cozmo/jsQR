@@ -110,7 +110,8 @@ export function extract(image: BitMatrix, location: QRLocation) {
 
   return {
     matrix,
-    transform: sToQ,
+    transform,
+    dimention: location.dimension,
     mappingFunction,
   };
 }
