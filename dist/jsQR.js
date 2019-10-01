@@ -367,6 +367,7 @@ function scan(matrix) {
         binaryData: decoded.bytes,
         data: decoded.text,
         chunks: decoded.chunks,
+        transform: extracted.transform,
         location: {
             topRightCorner: extracted.mappingFunction(location.dimension, 0),
             topLeftCorner: extracted.mappingFunction(0, 0),
@@ -9698,6 +9699,7 @@ function extract(image, location) {
     }
     return {
         matrix: matrix,
+        transform: transform,
         mappingFunction: mappingFunction,
     };
 }

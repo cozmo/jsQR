@@ -9,6 +9,7 @@ export interface QRCode {
   binaryData: number[];
   data: string;
   chunks: Chunks;
+  transform: any;
   location: {
     topRightCorner: Point;
     topLeftCorner: Point;
@@ -45,6 +46,7 @@ function scan(matrix: BitMatrix): QRCode | null {
     binaryData: decoded.bytes,
     data: decoded.text,
     chunks: decoded.chunks,
+    transform: extracted.transform,
     location: {
       topRightCorner: extracted.mappingFunction(location.dimension, 0),
       topLeftCorner: extracted.mappingFunction(0, 0),
