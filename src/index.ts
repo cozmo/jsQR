@@ -69,8 +69,9 @@ function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOp
     (options as any)[opt] = (providedOptions as any)[opt] || (options as any)[opt];
   });
 
-  const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst" || options.inversionAttempts === "onlyInvert";
   const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
+  const shouldInvert = options.inversionAttempts === "attemptBoth" || tryInvertedFirst;
+  
   const {binarized, inverted} = binarize(data, width, height, shouldInvert);
   let result = scan(tryInvertedFirst ? inverted : binarized);
   if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
