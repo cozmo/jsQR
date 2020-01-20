@@ -4,6 +4,7 @@ export interface QRCode {
     binaryData: number[];
     data: string;
     chunks: Chunks;
+    transform: any;
     location: {
         topRightCorner: Point;
         topLeftCorner: Point;
@@ -15,8 +16,5 @@ export interface QRCode {
         bottomRightAlignmentPattern?: Point;
     };
 }
-export interface Options {
-    inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
-}
-declare function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions?: Options): QRCode | null;
+declare function jsQR(data: Uint8ClampedArray, width: number, height: number): QRCode | null;
 export default jsQR;

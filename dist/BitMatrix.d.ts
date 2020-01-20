@@ -1,5 +1,6 @@
 export declare class BitMatrix {
-    static createEmpty(width: number, height: number): BitMatrix;
+    static createEmpty(width: number, height: number): any;
+    private static Memo;
     width: number;
     height: number;
     private data;

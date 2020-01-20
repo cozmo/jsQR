@@ -7,6 +7,11 @@ describe("locate", () => {
     expect(() => locate(binarized)).not.toThrow();
     expect(locate(binarized)).toEqual(null);
   });
+  it("handles images with missing finder patterns for the second time but faster", async () => {
+    const binarized = await loadBinarized("./src/locator/test-data/missing-finder-patterns.png");
+    expect(() => locate(binarized)).not.toThrow();
+    expect(locate(binarized)).toEqual(null);
+  });
 
   it('locates a "perfect" image', async () => {
     const binarized = await loadBinarized("./src/locator/test-data/perfect.png");
@@ -29,7 +34,16 @@ describe("locate", () => {
       topRight: { x: 270.75, y: 107.5 },
     });
   });
-
+  it("locates a QR in a real world image for the second tile but faster", async () => {
+    const binarized = await loadBinarized("./src/locator/test-data/real-world.png");
+    expect(locate(binarized)).toEqual({
+      alignmentPattern: { x: 264.25, y: 177 },
+      bottomLeft: { x: 195.5, y: 191.5 },
+      dimension: 33,
+      topLeft: { x: 191.75, y: 113.5 },
+      topRight: { x: 270.75, y: 107.5 },
+    });
+  });
   it("locates a small QR code in real world photo", async () => {
     const binarized = await loadBinarized("./src/locator/test-data/small-photo.png");
     expect(locate(binarized)).toEqual({

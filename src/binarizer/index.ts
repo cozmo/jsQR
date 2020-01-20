@@ -9,6 +9,19 @@ function numBetween(value: number, min: number, max: number): number {
 
 // Like BitMatrix but accepts arbitry Uint8 values
 class Matrix {
+  public static createEmpty(width: number, height: number) {
+    if (width > 320 && height > 320) {
+      let matrix = Matrix.Memo[width + "*" + height];
+      if (!!matrix) {
+        return matrix;
+      }
+      matrix = new Matrix(width, height);
+      Matrix.Memo[width + "*" + height] = matrix;
+      return matrix;
+    }
+    return new Matrix(width, height);
+  }
+  private static Memo: any = {};
   private data: Uint8ClampedArray;
   private width: number;
   constructor(width: number, height: number) {
@@ -23,33 +36,38 @@ class Matrix {
   }
 }
 
-export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean) {
+export function binarize(data: Uint8ClampedArray, width: number, height: number) {
   if (data.length !== width * height * 4) {
     throw new Error("Malformed data passed to binarizer.");
   }
   // Convert image to greyscale
-  const greyscalePixels = new Matrix(width, height);
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-      const r = data[((y * width + x) * 4) + 0];
-      const g = data[((y * width + x) * 4) + 1];
-      const b = data[((y * width + x) * 4) + 2];
-      greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
-    }
-  }
+  const greyscalePixels = Matrix.createEmpty(width, height);
+
   const horizontalRegionCount = Math.ceil(width / REGION_SIZE);
   const verticalRegionCount = Math.ceil(height / REGION_SIZE);
 
-  const blackPoints = new Matrix(horizontalRegionCount, verticalRegionCount);
+  const blackPoints = Matrix.createEmpty(horizontalRegionCount, verticalRegionCount);
+  const binarized = BitMatrix.createEmpty(width, height);
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
+      let X;
+      let Y;
       let sum = 0;
       let min = Infinity;
       let max = 0;
       for (let y = 0; y < REGION_SIZE; y++) {
         for (let x = 0; x < REGION_SIZE; x++) {
-          const pixelLumosity =
-            greyscalePixels.get(hortizontalRegion * REGION_SIZE + x, verticalRegion * REGION_SIZE + y);
+          X = hortizontalRegion * REGION_SIZE + x; Y = verticalRegion * REGION_SIZE + y;
+          const r = data[((Y * width + X) * 4) + 0];
+          const g = data[((Y * width + X) * 4) + 1];
+          const b = data[((Y * width + X) * 4) + 2];
+          const pixelLumosity = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+          greyscalePixels.set(
+            X,
+            Y,
+            pixelLumosity,
+          );
+
           sum += pixelLumosity;
           min = Math.min(min, pixelLumosity);
           max = Math.max(max, pixelLumosity);
@@ -87,11 +105,6 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
     }
   }
 
-  const binarized = BitMatrix.createEmpty(width, height);
-  let inverted: BitMatrix = null;
-  if (returnInverted) {
-    inverted = BitMatrix.createEmpty(width, height);
-  }
   for (let verticalRegion = 0; verticalRegion < verticalRegionCount; verticalRegion++) {
     for (let hortizontalRegion = 0; hortizontalRegion < horizontalRegionCount; hortizontalRegion++) {
       const left = numBetween(hortizontalRegion, 2, horizontalRegionCount - 3);
@@ -109,15 +122,9 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
           const y = verticalRegion * REGION_SIZE + yRegion;
           const lum = greyscalePixels.get(x, y);
           binarized.set(x, y, lum <= threshold);
-          if (returnInverted) {
-            inverted.set(x, y, !(lum <= threshold));
-          }
         }
       }
     }
-  }
-  if (returnInverted) {
-    return { binarized, inverted };
   }
   return { binarized };
 }

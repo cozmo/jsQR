@@ -20,7 +20,12 @@ export interface QRLocation {
 const distance = (a: Point, b: Point) => Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
 
 function sum(values: number[]) {
-  return values.reduce((a, b) => a + b);
+  let s = 0;
+  // tslint:disable-next-line:prefer-for-of
+  for (let i = 0; i < values.length; i++) {
+    s += values[i];
+  }
+  return s;
 }
 
 // Takes three finder patterns and organizes them into topLeft, topRight, etc
@@ -163,9 +168,9 @@ function countBlackWhiteRun(origin: Point, end: Point, matrix: BitMatrix, length
 function scoreBlackWhiteRun(sequence: number[], ratios: number[]) {
   const averageSize = sum(sequence) / sum(ratios);
   let error = 0;
-  ratios.forEach((ratio, i) => {
-    error += (sequence[i] - ratio * averageSize) ** 2;
-  });
+  for (let i = 0; i < ratios.length; i++) {
+    error += (sequence[i] - ratios[i] * averageSize) ** 2;
+  }
 
   return { averageSize, error };
 }
