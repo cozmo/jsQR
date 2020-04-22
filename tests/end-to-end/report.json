@@ -1,7 +1,7 @@
 {
   "counts": {
-    "failed": 47,
-    "successful": 207
+    "failed": 42,
+    "successful": 212
   },
   "tests": {
     "0": true,
@@ -64,7 +64,7 @@
     "58": true,
     "59": true,
     "60": true,
-    "61": false,
+    "61": true,
     "62": true,
     "63": true,
     "64": true,
@@ -97,9 +97,9 @@
     "91": true,
     "92": false,
     "93": true,
-    "94": false,
+    "94": true,
     "95": true,
-    "96": false,
+    "96": true,
     "97": true,
     "98": true,
     "99": true,
@@ -151,7 +151,7 @@
     "145": true,
     "146": true,
     "147": true,
-    "148": false,
+    "148": true,
     "149": true,
     "150": false,
     "151": true,
@@ -207,7 +207,7 @@
     "chevy-ad": true,
     "cupake-5": false,
     "cupcake-1": true,
-    "cupcake-2": false,
+    "cupcake-2": true,
     "cupcake-3": true,
     "cupcake-4": true,
     "damaged": false,
