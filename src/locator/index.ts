@@ -217,13 +217,23 @@ function recenterLocation(matrix: BitMatrix, p: Point): Point {
   while (matrix.get(leftX, Math.round(p.y))) {
     leftX--;
   }
-
   let rightX = Math.round(p.x);
   while (matrix.get(rightX, Math.round(p.y))) {
     rightX++;
   }
+  const x = (leftX + rightX) / 2;
 
-  return { x: (leftX + rightX) / 2, y: p.y };
+  let topY = Math.round(p.y);
+  while (matrix.get(Math.round(x), topY)) {
+    topY--;
+  }
+  let bottomY = Math.round(p.y);
+  while (matrix.get(Math.round(x), bottomY)) {
+    bottomY++;
+  }
+  const y = (topY + bottomY) / 2;
+
+  return { x, y };
 }
 
 interface Quad {

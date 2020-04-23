@@ -1,7 +1,7 @@
 {
   "counts": {
-    "failed": 42,
-    "successful": 212
+    "failed": 40,
+    "successful": 214
   },
   "tests": {
     "0": true,
@@ -85,7 +85,7 @@
     "79": true,
     "80": false,
     "81": false,
-    "82": false,
+    "82": true,
     "83": true,
     "84": true,
     "85": false,
@@ -95,7 +95,7 @@
     "89": true,
     "90": true,
     "91": true,
-    "92": false,
+    "92": true,
     "93": true,
     "94": true,
     "95": true,
