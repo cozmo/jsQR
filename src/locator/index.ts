@@ -385,7 +385,17 @@ export function locate(matrix: BitMatrix): QRLocation[] {
   const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
     finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2],
   );
-  const { alignmentPattern, dimension } = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
+  const alignment = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
+  const result: QRLocation[] = [];
+  if (alignment) {
+    result.push({
+      alignmentPattern: { x: alignment.alignmentPattern.x, y: alignment.alignmentPattern.y },
+      bottomLeft: {x: bottomLeft.x, y: bottomLeft.y },
+      dimension: alignment.dimension,
+      topLeft: {x: topLeft.x, y: topLeft.y },
+      topRight: {x: topRight.x, y: topRight.y },
+    });
+  }
 
   // We normally use the center of the quads as the location of the tracking points, which is optimal for most cases and will account
   // for a skew in the image. However, In some cases, a slight skew might not be real and instead be caused by image compression
@@ -396,20 +406,21 @@ export function locate(matrix: BitMatrix): QRLocation[] {
   const midTopLeft = recenterLocation(matrix, topLeft);
   const midBottomLeft = recenterLocation(matrix, bottomLeft);
   const centeredAlignment = findAlignmentPattern(matrix, alignmentPatternQuads, midTopRight, midTopLeft, midBottomLeft);
+  if (centeredAlignment) {
+    result.push({
+      alignmentPattern: { x: centeredAlignment.alignmentPattern.x, y: centeredAlignment.alignmentPattern.y },
+      bottomLeft: { x: midBottomLeft.x, y: midBottomLeft. y },
+      topLeft: { x: midTopLeft.x, y: midTopLeft. y },
+      topRight: { x: midTopRight.x, y: midTopRight. y },
+      dimension: centeredAlignment.dimension,
+    });
+  }
 
-  return [{
-    alignmentPattern: { x: alignmentPattern.x, y: alignmentPattern.y },
-    bottomLeft: {x: bottomLeft.x, y: bottomLeft.y },
-    dimension,
-    topLeft: {x: topLeft.x, y: topLeft.y },
-    topRight: {x: topRight.x, y: topRight.y },
-  }, {
-    alignmentPattern: { x: centeredAlignment.alignmentPattern.x, y: centeredAlignment.alignmentPattern.y },
-    bottomLeft: { x: midBottomLeft.x, y: midBottomLeft. y },
-    topLeft: { x: midTopLeft.x, y: midTopLeft. y },
-    topRight: { x: midTopRight.x, y: midTopRight. y },
-    dimension: centeredAlignment.dimension,
-  }];
+  if (result.length === 0) {
+    return null;
+  }
+
+  return result;
 }
 
 function findAlignmentPattern(matrix: BitMatrix, alignmentPatternQuads: Quad[], topRight: Point, topLeft: Point, bottomLeft: Point) {

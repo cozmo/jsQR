@@ -79,4 +79,15 @@ describe("locate", () => {
     const binarized = await loadBinarized("./src/locator/test-data/malformed-infinity.png");
     expect(locate(binarized)).toEqual(null);
   });
+
+  it("returns a centered alignment as a fallback", async () => {
+    const binarized = await loadBinarized("./src/locator/test-data/odd-skew.png");
+    expect(locate(binarized)[1]).toEqual({
+      alignmentPattern: { x: 163.5, y: 170 },
+      bottomLeft: { x: 56.5, y: 185.5 },
+      dimension: 29,
+      topLeft: { x: 57, y: 60 },
+      topRight: { x: 185.5, y: 57.5 },
+    });
+  });
 });
