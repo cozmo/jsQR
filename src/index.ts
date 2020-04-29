@@ -24,34 +24,35 @@ export interface QRCode {
 }
 
 function scan(matrix: BitMatrix): QRCode | null {
-  const location = locate(matrix);
-  if (!location) {
-    return null;
-  }
-  const extracted = extract(matrix, location);
-  const decoded = decode(extracted.matrix);
-
-  if (!decoded) {
+  const locations = locate(matrix);
+  if (!locations) {
     return null;
   }
 
-  return {
-    binaryData: decoded.bytes,
-    data: decoded.text,
-    chunks: decoded.chunks,
-    location: {
-      topRightCorner: extracted.mappingFunction(location.dimension, 0),
-      topLeftCorner: extracted.mappingFunction(0, 0),
-      bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
-      bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
+  for (const location of locations) {
+    const extracted = extract(matrix, location);
+    const decoded = decode(extracted.matrix);
+    if (decoded) {
+      return {
+        binaryData: decoded.bytes,
+        data: decoded.text,
+        chunks: decoded.chunks,
+        location: {
+          topRightCorner: extracted.mappingFunction(location.dimension, 0),
+          topLeftCorner: extracted.mappingFunction(0, 0),
+          bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
+          bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
 
-      topRightFinderPattern: location.topRight,
-      topLeftFinderPattern: location.topLeft,
-      bottomLeftFinderPattern: location.bottomLeft,
+          topRightFinderPattern: location.topRight,
+          topLeftFinderPattern: location.topLeft,
+          bottomLeftFinderPattern: location.bottomLeft,
 
-      bottomRightAlignmentPattern: location.alignmentPattern,
-    },
-  };
+          bottomRightAlignmentPattern: location.alignmentPattern,
+        },
+      };
+    }
+  }
+  return null;
 }
 
 export interface Options {
