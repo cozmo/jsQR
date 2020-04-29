@@ -225,6 +225,7 @@ var GenericGFPoly = /** @class */ (function () {
         return this.coefficients[this.coefficients.length - 1 - degree];
     };
     GenericGFPoly.prototype.addOrSubtract = function (other) {
+        var _a;
         if (this.isZero()) {
             return other;
         }
@@ -245,7 +246,6 @@ var GenericGFPoly = /** @class */ (function () {
             sumDiff[i] = GenericGF_1.addOrSubtractGF(smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
         }
         return new GenericGFPoly(this.field, sumDiff);
-        var _a;
     };
     GenericGFPoly.prototype.multiply = function (scalar) {
         if (scalar === 0) {
@@ -329,30 +329,33 @@ var decoder_1 = __webpack_require__(5);
 var extractor_1 = __webpack_require__(11);
 var locator_1 = __webpack_require__(12);
 function scan(matrix) {
-    var location = locator_1.locate(matrix);
-    if (!location) {
+    var locations = locator_1.locate(matrix);
+    if (!locations) {
         return null;
     }
-    var extracted = extractor_1.extract(matrix, location);
-    var decoded = decoder_1.decode(extracted.matrix);
-    if (!decoded) {
-        return null;
+    for (var _i = 0, locations_1 = locations; _i < locations_1.length; _i++) {
+        var location_1 = locations_1[_i];
+        var extracted = extractor_1.extract(matrix, location_1);
+        var decoded = decoder_1.decode(extracted.matrix);
+        if (decoded) {
+            return {
+                binaryData: decoded.bytes,
+                data: decoded.text,
+                chunks: decoded.chunks,
+                location: {
+                    topRightCorner: extracted.mappingFunction(location_1.dimension, 0),
+                    topLeftCorner: extracted.mappingFunction(0, 0),
+                    bottomRightCorner: extracted.mappingFunction(location_1.dimension, location_1.dimension),
+                    bottomLeftCorner: extracted.mappingFunction(0, location_1.dimension),
+                    topRightFinderPattern: location_1.topRight,
+                    topLeftFinderPattern: location_1.topLeft,
+                    bottomLeftFinderPattern: location_1.bottomLeft,
+                    bottomRightAlignmentPattern: location_1.alignmentPattern,
+                },
+            };
+        }
     }
-    return {
-        binaryData: decoded.bytes,
-        data: decoded.text,
-        chunks: decoded.chunks,
-        location: {
-            topRightCorner: extracted.mappingFunction(location.dimension, 0),
-            topLeftCorner: extracted.mappingFunction(0, 0),
-            bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
-            bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
-            topRightFinderPattern: location.topRight,
-            topLeftFinderPattern: location.topLeft,
-            bottomLeftFinderPattern: location.bottomLeft,
-            bottomRightAlignmentPattern: location.alignmentPattern,
-        },
-    };
+    return null;
 }
 var defaultOptions = {
     inversionAttempts: "attemptBoth",
@@ -599,7 +602,7 @@ function readCodewords(matrix, version, formatInfo) {
     // Read columns in pairs, from right to left
     var readingUp = true;
     for (var columnIndex = dimension - 1; columnIndex > 0; columnIndex -= 2) {
-        if (columnIndex === 6) {
+        if (columnIndex === 6) { // Skip whole column with vertical alignment pattern;
             columnIndex--;
         }
         for (var i = 0; i < dimension; i++) {
@@ -613,7 +616,7 @@ function readCodewords(matrix, version, formatInfo) {
                         bit = !bit;
                     }
                     currentByte = pushBit(bit, currentByte);
-                    if (bitsRead === 8) {
+                    if (bitsRead === 8) { // Whole bytes
                         codewords.push(currentByte);
                         bitsRead = 0;
                         currentByte = 0;
@@ -628,7 +631,7 @@ function readCodewords(matrix, version, formatInfo) {
 function readVersion(matrix) {
     var dimension = matrix.height;
     var provisionalVersion = Math.floor((dimension - 17) / 4);
-    if (provisionalVersion <= 6) {
+    if (provisionalVersion <= 6) { // 6 and under dont have version info in the QR code
         return version_1.VERSIONS[provisionalVersion - 1];
     }
     var topRightVersionBits = 0;
@@ -670,21 +673,21 @@ function readVersion(matrix) {
 function readFormatInformation(matrix) {
     var topLeftFormatInfoBits = 0;
     for (var x = 0; x <= 8; x++) {
-        if (x !== 6) {
+        if (x !== 6) { // Skip timing pattern bit
             topLeftFormatInfoBits = pushBit(matrix.get(x, 8), topLeftFormatInfoBits);
         }
     }
     for (var y = 7; y >= 0; y--) {
-        if (y !== 6) {
+        if (y !== 6) { // Skip timing pattern bit
             topLeftFormatInfoBits = pushBit(matrix.get(8, y), topLeftFormatInfoBits);
         }
     }
     var dimension = matrix.height;
     var topRightBottomRightFormatInfoBits = 0;
-    for (var y = dimension - 1; y >= dimension - 7; y--) {
+    for (var y = dimension - 1; y >= dimension - 7; y--) { // bottom left
         topRightBottomRightFormatInfoBits = pushBit(matrix.get(8, y), topRightBottomRightFormatInfoBits);
     }
-    for (var x = dimension - 8; x < dimension; x++) {
+    for (var x = dimension - 8; x < dimension; x++) { // top right
         topRightBottomRightFormatInfoBits = pushBit(matrix.get(x, 8), topRightBottomRightFormatInfoBits);
     }
     var bestDifference = Infinity;
@@ -699,7 +702,7 @@ function readFormatInformation(matrix) {
             bestFormatInfo = formatInfo;
             bestDifference = difference;
         }
-        if (topLeftFormatInfoBits !== topRightBottomRightFormatInfoBits) {
+        if (topLeftFormatInfoBits !== topRightBottomRightFormatInfoBits) { // also try the other option
             difference = numBitsDiffering(topRightBottomRightFormatInfoBits, bits);
             if (difference < bestDifference) {
                 bestFormatInfo = formatInfo;
@@ -945,6 +948,7 @@ function decodeKanji(stream, size) {
     return { bytes: bytes, text: text };
 }
 function decode(data, version) {
+    var _a, _b, _c, _d;
     var stream = new BitStream_1.BitStream(data);
     // There are 3 'sizes' based on the version. 1-9 is small (0), 10-26 is medium (1) and 27-40 is large (2).
     var size = version <= 9 ? 0 : version <= 26 ? 1 : 2;
@@ -1024,7 +1028,10 @@ function decode(data, version) {
             });
         }
     }
-    var _a, _b, _c, _d;
+    // If there is no data left, or the remaining bits are all 0, then that counts as a termination marker
+    if (stream.available() === 0 || stream.readBits(stream.available()) === 0) {
+        return result;
+    }
 }
 exports.decode = decode;
 
@@ -8145,6 +8152,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var GenericGF_1 = __webpack_require__(1);
 var GenericGFPoly_1 = __webpack_require__(2);
 function runEuclideanAlgorithm(field, a, b, R) {
+    var _a;
     // Assume a's degree is >= b's
     if (a.degree() < b.degree()) {
         _a = [b, a], a = _a[0], b = _a[1];
@@ -8185,7 +8193,6 @@ function runEuclideanAlgorithm(field, a, b, R) {
     }
     var inverse = field.inverse(sigmaTildeAtZero);
     return [t.multiply(inverse), r.multiply(inverse)];
-    var _a;
 }
 function findErrorLocations(field, errorLocator) {
     // This is a direct application of Chien's search
@@ -9590,7 +9597,7 @@ var BitMatrix_1 = __webpack_require__(0);
 function squareToQuadrilateral(p1, p2, p3, p4) {
     var dx3 = p1.x - p2.x + p3.x - p4.x;
     var dy3 = p1.y - p2.y + p3.y - p4.y;
-    if (dx3 === 0 && dy3 === 0) {
+    if (dx3 === 0 && dy3 === 0) { // Affine
         return {
             a11: p2.x - p1.x,
             a12: p2.y - p1.y,
@@ -9696,6 +9703,7 @@ function sum(values) {
 }
 // Takes three finder patterns and organizes them into topLeft, topRight, etc
 function reorderFinderPatterns(pattern1, pattern2, pattern3) {
+    var _a, _b, _c, _d;
     // Find distances between pattern centers
     var oneTwoDistance = distance(pattern1, pattern2);
     var twoThreeDistance = distance(pattern2, pattern3);
@@ -9720,7 +9728,6 @@ function reorderFinderPatterns(pattern1, pattern2, pattern3) {
         _d = [topRight, bottomLeft], bottomLeft = _d[0], topRight = _d[1];
     }
     return { bottomLeft: bottomLeft, topLeft: topLeft, topRight: topRight };
-    var _a, _b, _c, _d;
 }
 // Computes the dimension (number of modules on a side) of the QR Code based on the position of the finder patterns
 function computeDimension(topLeft, topRight, bottomLeft, matrix) {
@@ -9810,13 +9817,13 @@ function countBlackWhiteRunTowardsPoint(origin, end, matrix, length) {
 // along the line that intersects with the end point. Returns an array of elements, representing the pixel sizes
 // of the black white run. Takes a length which represents the number of switches from black to white to look for.
 function countBlackWhiteRun(origin, end, matrix, length) {
+    var _a;
     var rise = end.y - origin.y;
     var run = end.x - origin.x;
     var towardsEnd = countBlackWhiteRunTowardsPoint(origin, end, matrix, Math.ceil(length / 2));
     var awayFromEnd = countBlackWhiteRunTowardsPoint(origin, { x: origin.x - run, y: origin.y - rise }, matrix, Math.ceil(length / 2));
     var middleValue = towardsEnd.shift() + awayFromEnd.shift() - 1; // Substract one so we don't double count a pixel
     return (_a = awayFromEnd.concat(middleValue)).concat.apply(_a, towardsEnd);
-    var _a;
 }
 // Takes in a black white run and an array of expected ratios. Returns the average size of the run as well as the "error" -
 // that is the amount the run diverges from the expected ratio
@@ -9863,6 +9870,27 @@ function scorePattern(point, ratios, matrix) {
     catch (_a) {
         return Infinity;
     }
+}
+function recenterLocation(matrix, p) {
+    var leftX = Math.round(p.x);
+    while (matrix.get(leftX, Math.round(p.y))) {
+        leftX--;
+    }
+    var rightX = Math.round(p.x);
+    while (matrix.get(rightX, Math.round(p.y))) {
+        rightX++;
+    }
+    var x = (leftX + rightX) / 2;
+    var topY = Math.round(p.y);
+    while (matrix.get(Math.round(x), topY)) {
+        topY--;
+    }
+    var bottomY = Math.round(p.y);
+    while (matrix.get(Math.round(x), bottomY)) {
+        bottomY++;
+    }
+    var y = (topY + bottomY) / 2;
+    return { x: x, y: y };
 }
 function locate(matrix) {
     var finderPatternQuads = [];
@@ -9966,6 +9994,7 @@ function locate(matrix) {
     })
         .filter(function (q) { return !!q; }) // Filter out any rejected quads from above
         .sort(function (a, b) { return a.score - b.score; })
+        // Now take the top finder pattern options and try to find 2 other options with a similar size.
         .map(function (point, i, finderPatterns) {
         if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
             return null;
@@ -9986,12 +10015,49 @@ function locate(matrix) {
         return null;
     }
     var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
+    var alignment = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
+    var result = [];
+    if (alignment) {
+        result.push({
+            alignmentPattern: { x: alignment.alignmentPattern.x, y: alignment.alignmentPattern.y },
+            bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
+            dimension: alignment.dimension,
+            topLeft: { x: topLeft.x, y: topLeft.y },
+            topRight: { x: topRight.x, y: topRight.y },
+        });
+    }
+    // We normally use the center of the quads as the location of the tracking points, which is optimal for most cases and will account
+    // for a skew in the image. However, In some cases, a slight skew might not be real and instead be caused by image compression
+    // errors and/or low resolution. For those cases, we'd be better off centering the point exactly in the middle of the black area. We
+    // compute and return the location data for the naively centered points as it is little additional work and allows for multiple
+    // attempts at decoding harder images.
+    var midTopRight = recenterLocation(matrix, topRight);
+    var midTopLeft = recenterLocation(matrix, topLeft);
+    var midBottomLeft = recenterLocation(matrix, bottomLeft);
+    var centeredAlignment = findAlignmentPattern(matrix, alignmentPatternQuads, midTopRight, midTopLeft, midBottomLeft);
+    if (centeredAlignment) {
+        result.push({
+            alignmentPattern: { x: centeredAlignment.alignmentPattern.x, y: centeredAlignment.alignmentPattern.y },
+            bottomLeft: { x: midBottomLeft.x, y: midBottomLeft.y },
+            topLeft: { x: midTopLeft.x, y: midTopLeft.y },
+            topRight: { x: midTopRight.x, y: midTopRight.y },
+            dimension: centeredAlignment.dimension,
+        });
+    }
+    if (result.length === 0) {
+        return null;
+    }
+    return result;
+}
+exports.locate = locate;
+function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft) {
+    var _a;
     // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
     // We'll use these to help find the alignment pattern but also later when we do the extraction.
     var dimension;
     var moduleSize;
     try {
-        (_b = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _b.dimension, moduleSize = _b.moduleSize);
+        (_a = computeDimension(topLeft, topRight, bottomLeft, matrix), dimension = _a.dimension, moduleSize = _a.moduleSize);
     }
     catch (e) {
         return null;
@@ -10025,16 +10091,8 @@ function locate(matrix) {
     // If there are less than 15 modules between finder patterns it's a version 1 QR code and as such has no alignmemnt pattern
     // so we can only use our best guess.
     var alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
-    return {
-        alignmentPattern: { x: alignmentPattern.x, y: alignmentPattern.y },
-        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
-        dimension: dimension,
-        topLeft: { x: topLeft.x, y: topLeft.y },
-        topRight: { x: topRight.x, y: topRight.y },
-    };
-    var _b;
+    return { alignmentPattern: alignmentPattern, dimension: dimension };
 }
-exports.locate = locate;
 
 
 /***/ })

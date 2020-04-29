@@ -10,4 +10,4 @@ export interface QRLocation {
     alignmentPattern: Point;
     dimension: number;
 }
-export declare function locate(matrix: BitMatrix): QRLocation;
+export declare function locate(matrix: BitMatrix): QRLocation[];
