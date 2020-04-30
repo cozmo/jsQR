@@ -33,11 +33,11 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "./node_modules/.bin/webpack",
-    "watch": "./node_modules/.bin/webpack --watch",
-    "test": "./node_modules/.bin/jest",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "test": "jest",
     "lint": "tslint --project .",
-    "generate-test-data": "node_modules/.bin/ts-node --project tests/ tests/generate-test-data.ts"
+    "generate-test-data": "ts-node --project tests/ tests/generate-test-data.ts"
   },
   "jest": {
     "testRegex": ".*test.ts",
