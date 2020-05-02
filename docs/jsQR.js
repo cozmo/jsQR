@@ -362,15 +362,12 @@ var defaultOptions = {
 };
 function jsQR(data, width, height, providedOptions) {
     if (providedOptions === void 0) { providedOptions = {}; }
-    var options = defaultOptions;
-    Object.keys(options || {}).forEach(function (opt) {
-        options[opt] = providedOptions[opt] || options[opt];
-    });
-    var shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
-    var tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
-    var _a = binarizer_1.binarize(data, width, height, shouldInvert), binarized = _a.binarized, inverted = _a.inverted;
+    var _a = providedOptions.inversionAttempts, inversionAttempts = _a === void 0 ? defaultOptions.inversionAttempts : _a;
+    var shouldInvert = inversionAttempts === "attemptBoth" || inversionAttempts === "invertFirst";
+    var tryInvertedFirst = inversionAttempts === "onlyInvert" || inversionAttempts === "invertFirst";
+    var _b = binarizer_1.binarize(data, width, height, shouldInvert), binarized = _b.binarized, inverted = _b.inverted;
     var result = scan(tryInvertedFirst ? inverted : binarized);
-    if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
+    if (!result && (inversionAttempts === "attemptBoth" || inversionAttempts === "invertFirst")) {
         result = scan(tryInvertedFirst ? binarized : inverted);
     }
     return result;
