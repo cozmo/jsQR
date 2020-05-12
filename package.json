@@ -5,6 +5,7 @@
   "repository": "https://github.com/cozmo/jsQR",
   "main": "./dist/jsQR.js",
   "module": "./dist/index.js",
+  "browser": "./dist/jsQR.js",
   "types": "./dist/index.d.ts",
   "contributors": [
     {
