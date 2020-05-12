@@ -212,6 +212,30 @@ function scorePattern(point: Point, ratios: number[], matrix: BitMatrix) {
   }
 }
 
+function recenterLocation(matrix: BitMatrix, p: Point): Point {
+  let leftX = Math.round(p.x);
+  while (matrix.get(leftX, Math.round(p.y))) {
+    leftX--;
+  }
+  let rightX = Math.round(p.x);
+  while (matrix.get(rightX, Math.round(p.y))) {
+    rightX++;
+  }
+  const x = (leftX + rightX) / 2;
+
+  let topY = Math.round(p.y);
+  while (matrix.get(Math.round(x), topY)) {
+    topY--;
+  }
+  let bottomY = Math.round(p.y);
+  while (matrix.get(Math.round(x), bottomY)) {
+    bottomY++;
+  }
+  const y = (topY + bottomY) / 2;
+
+  return { x, y };
+}
+
 interface Quad {
   top: {
     startX: number;
@@ -225,7 +249,7 @@ interface Quad {
   };
 }
 
-export function locate(matrix: BitMatrix): QRLocation {
+export function locate(matrix: BitMatrix): QRLocation[] {
   const finderPatternQuads: Quad[] = [];
   let activeFinderPatternQuads: Quad[] = [];
   const alignmentPatternQuads: Quad[] = [];
@@ -361,7 +385,45 @@ export function locate(matrix: BitMatrix): QRLocation {
   const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
     finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2],
   );
+  const alignment = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
+  const result: QRLocation[] = [];
+  if (alignment) {
+    result.push({
+      alignmentPattern: { x: alignment.alignmentPattern.x, y: alignment.alignmentPattern.y },
+      bottomLeft: {x: bottomLeft.x, y: bottomLeft.y },
+      dimension: alignment.dimension,
+      topLeft: {x: topLeft.x, y: topLeft.y },
+      topRight: {x: topRight.x, y: topRight.y },
+    });
+  }
 
+  // We normally use the center of the quads as the location of the tracking points, which is optimal for most cases and will account
+  // for a skew in the image. However, In some cases, a slight skew might not be real and instead be caused by image compression
+  // errors and/or low resolution. For those cases, we'd be better off centering the point exactly in the middle of the black area. We
+  // compute and return the location data for the naively centered points as it is little additional work and allows for multiple
+  // attempts at decoding harder images.
+  const midTopRight = recenterLocation(matrix, topRight);
+  const midTopLeft = recenterLocation(matrix, topLeft);
+  const midBottomLeft = recenterLocation(matrix, bottomLeft);
+  const centeredAlignment = findAlignmentPattern(matrix, alignmentPatternQuads, midTopRight, midTopLeft, midBottomLeft);
+  if (centeredAlignment) {
+    result.push({
+      alignmentPattern: { x: centeredAlignment.alignmentPattern.x, y: centeredAlignment.alignmentPattern.y },
+      bottomLeft: { x: midBottomLeft.x, y: midBottomLeft. y },
+      topLeft: { x: midTopLeft.x, y: midTopLeft. y },
+      topRight: { x: midTopRight.x, y: midTopRight. y },
+      dimension: centeredAlignment.dimension,
+    });
+  }
+
+  if (result.length === 0) {
+    return null;
+  }
+
+  return result;
+}
+
+function findAlignmentPattern(matrix: BitMatrix, alignmentPatternQuads: Quad[], topRight: Point, topLeft: Point, bottomLeft: Point) {
   // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
   // We'll use these to help find the alignment pattern but also later when we do the extraction.
   let dimension: number;
@@ -405,11 +467,5 @@ export function locate(matrix: BitMatrix): QRLocation {
   // so we can only use our best guess.
   const alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
 
-  return {
-    alignmentPattern: { x: alignmentPattern.x, y: alignmentPattern.y },
-    bottomLeft: {x: bottomLeft.x, y: bottomLeft.y },
-    dimension,
-    topLeft: {x: topLeft.x, y: topLeft.y },
-    topRight: {x: topRight.x, y: topRight.y },
-  };
+  return { alignmentPattern, dimension };
 }
