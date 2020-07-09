@@ -1,6 +1,6 @@
 {
   "name": "jsqr-es6",
-  "version": "1.2.0-3",
+  "version": "1.3.1-1",
   "description": "Fork of jsqr (github.com/cozmo/jsQR) that builds a es-6 target and adds color correction and performance improvements.",
   "repository": "https://github.com/danimoh/jsQR",
   "main": "./dist/jsQR.js",
@@ -38,9 +38,9 @@
     "prebuild": "rimraf dist",
     "build": "rollup --config",
     "watch": "rollup --config --watch",
-    "test": "./node_modules/.bin/jest",
+    "test": "jest",
     "lint": "tslint --project .",
-    "generate-test-data": "node_modules/.bin/ts-node --project tests/ tests/generate-test-data.ts"
+    "generate-test-data": "ts-node --project tests/ tests/generate-test-data.ts"
   },
   "jest": {
     "testRegex": ".*test.ts",
