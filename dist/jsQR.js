@@ -2847,6 +2847,7 @@ function scan(matrix) {
                     bottomLeftFinderPattern: location.bottomLeft,
                     bottomRightAlignmentPattern: location.alignmentPattern,
                 },
+                matrix: extracted.matrix,
             };
         }
     }
@@ -2871,8 +2872,8 @@ function jsQR(data, width, height, providedOptions = {}) {
     const options = Object.create(null);
     mergeObject(options, defaultOptions);
     mergeObject(options, providedOptions);
-    const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
     const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
+    const shouldInvert = options.inversionAttempts === "attemptBoth" || tryInvertedFirst;
     const { binarized, inverted } = binarize(data, width, height, shouldInvert, options.greyScaleWeights, options.canOverwriteImage);
     let result = scan(tryInvertedFirst ? inverted : binarized);
     if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {

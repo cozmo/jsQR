@@ -1,3 +1,4 @@
+import { BitMatrix } from "./BitMatrix";
 import { Chunks } from "./decoder/decodeData";
 import { Point } from "./locator";
 export interface QRCode {
@@ -14,6 +15,7 @@ export interface QRCode {
         bottomLeftFinderPattern: Point;
         bottomRightAlignmentPattern?: Point;
     };
+    matrix: BitMatrix;
 }
 export interface Options {
     inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";

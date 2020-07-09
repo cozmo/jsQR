@@ -21,6 +21,7 @@ export interface QRCode {
 
     bottomRightAlignmentPattern?: Point;
   };
+  matrix: BitMatrix;
 }
 
 function scan(matrix: BitMatrix): QRCode | null {
@@ -49,6 +50,7 @@ function scan(matrix: BitMatrix): QRCode | null {
 
           bottomRightAlignmentPattern: location.alignmentPattern,
         },
+        matrix: extracted.matrix,
       };
     }
   }
