@@ -1,11 +1,11 @@
 class BitMatrix {
-    static createEmpty(width, height) {
-        return new BitMatrix(new Uint8ClampedArray(width * height), width);
-    }
     constructor(data, width) {
         this.width = width;
         this.height = data.length / width;
         this.data = data;
+    }
+    static createEmpty(width, height) {
+        return new BitMatrix(new Uint8ClampedArray(width * height), width);
     }
     get(x, y) {
         if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
