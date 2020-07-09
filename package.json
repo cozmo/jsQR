@@ -4,6 +4,7 @@
   "description": "Fork of jsqr (github.com/cozmo/jsQR) that builds a es-6 target and adds color correction and performance improvements.",
   "repository": "https://github.com/danimoh/jsQR",
   "main": "./dist/jsQR.js",
+  "module": "./dist/jsQR.js",
   "types": "./dist/index.d.ts",
   "contributors": [
     {

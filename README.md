@@ -1,6 +1,6 @@
 # jsQR
 
-This project is a fork of [cozmo/jsQR](https://github.com/cozmo/jsQR) that provides an es6 build. Most probably it's not going to be maintained much, but changes from the root repository will be merged from time to time.
+This project is a fork of [cozmo/jsQR](https://github.com/cozmo/jsQR) that provides an es6 build and contains several of the open pull requests of the original project which lately doesn't seem to be maintained much anymore.
 
 A pure javascript QR code reading library.
 This library takes in raw images and will locate, extract and parse any QR code found within.
@@ -16,15 +16,15 @@ This library takes in raw images and will locate, extract and parse any QR code 
 Available [on npm](https://www.npmjs.com/package/jsqr-es6). Can be used in a Node.js program or with a module bundler such as Webpack or Browserify.
 
 ```
-npm install jsqr --save
+npm install jsqr-es6 --save
 ```
 
 ```javascript
 // ES6 import
-import jsQR from "jsqr";
+import jsQR from "jsqr-es6";
 
 // CommonJS require
-const jsQR = require("jsqr");
+const jsQR = require("jsqr-es6");
 
 jsQR(...);
 ```
@@ -33,16 +33,17 @@ jsQR(...);
 Alternatively for frontend use [`jsQR.js`](./dist/jsQR.js) can be included with a script tag
 
 ```html
-<script src="jsQR.js"></script>
-<script>
-  jsQR(...);
+<script type="module">
+import jsQR from 'path/to/jsQR.js';
+
+jsQR(...);
 </script>
 ```
 
 ### A note on webcams
 jsQR is designed to be a completely standalone library for scanning QR codes. By design it does not include any platform specific code. This allows it to just as easily scan a frontend webcam stream, a user uploaded image, or be used as part of a backend Node.js process.
 
-If you want to use jsQR to scan a webcam stream you'll need to extract the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) from the video stream. This can then be passed to jsQR. The [jsQR demo](https://danimoh.github.io/jsQR) contains a barebones implementation of webcam scanning that can be used as a starting point and customized for your needs. For more advanced questions you can refer to the [`getUserMedia` docs](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) or the fairly comprehensive [webRTC sample code](https://github.com/webrtc/samples), both of which are great resources for consuming a webcam stream.
+If you want to have webcam support out of the box, this qr scanner based on this library is recommended: https://github.com/nimiq/qr-scanner/
 
 ## Usage
 
