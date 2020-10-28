@@ -21,6 +21,7 @@ export interface QRCode {
 
     bottomRightAlignmentPattern?: Point;
   };
+  matrix: BitMatrix;
 }
 
 function scan(matrix: BitMatrix): QRCode | null {
@@ -49,6 +50,7 @@ function scan(matrix: BitMatrix): QRCode | null {
 
           bottomRightAlignmentPattern: location.alignmentPattern,
         },
+        matrix: extracted.matrix,
       };
     }
   }
@@ -57,22 +59,43 @@ function scan(matrix: BitMatrix): QRCode | null {
 
 export interface Options {
   inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
+  greyScaleWeights?: GreyscaleWeights;
+  canOverwriteImage?: boolean;
+}
+
+export interface GreyscaleWeights {
+  red: number;
+  green: number;
+  blue: number;
+  useIntegerApproximation?: boolean;
 }
 
 const defaultOptions: Options = {
   inversionAttempts: "attemptBoth",
+  greyScaleWeights: {
+    red: 0.2126,
+    green: 0.7152,
+    blue: 0.0722,
+    useIntegerApproximation: false,
+  },
+  canOverwriteImage: true,
 };
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions: Options = {}): QRCode | null {
-
-  const options = defaultOptions;
-  Object.keys(options || {}).forEach(opt => { // Sad implementation of Object.assign since we target es5 not es6
-    (options as any)[opt] = (providedOptions as any)[opt] || (options as any)[opt];
+function mergeObject(target: any, src: any) {
+  Object.keys(src).forEach(opt => { // Sad implementation of Object.assign since we target es5 not es6
+    target[opt] = src[opt];
   });
+}
 
-  const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
+function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions: Options = {}): QRCode | null {
+  const options = Object.create(null);
+  mergeObject(options, defaultOptions);
+  mergeObject(options, providedOptions);
+
   const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
-  const {binarized, inverted} = binarize(data, width, height, shouldInvert);
+  const shouldInvert = options.inversionAttempts === "attemptBoth" || tryInvertedFirst;
+  const {binarized, inverted} = binarize(data, width, height, shouldInvert, options.greyScaleWeights,
+      options.canOverwriteImage);
   let result = scan(tryInvertedFirst ? inverted : binarized);
   if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
     result = scan(tryInvertedFirst ? binarized : inverted);

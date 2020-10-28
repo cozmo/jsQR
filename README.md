@@ -1,11 +1,11 @@
 # jsQR
 
-[![Build Status](https://travis-ci.org/cozmo/jsQR.svg?branch=master)](https://travis-ci.org/cozmo/jsQR)
+This project is a fork of [cozmo/jsQR](https://github.com/cozmo/jsQR) that provides an es6 build and contains several of the open pull requests of the original project which lately doesn't seem to be maintained much anymore.
 
 A pure javascript QR code reading library.
 This library takes in raw images and will locate, extract and parse any QR code found within.
 
-[Demo](https://cozmo.github.io/jsQR)
+[Demo](https://danimoh.github.io/jsQR)
 
 
 ## Installation
@@ -13,18 +13,18 @@ This library takes in raw images and will locate, extract and parse any QR code 
 
 
 ### NPM
-Available [on npm](https://www.npmjs.com/package/jsqr). Can be used in a Node.js program or with a module bundler such as Webpack or Browserify.
+Available [on npm](https://www.npmjs.com/package/jsqr-es6). Can be used in a Node.js program or with a module bundler such as Webpack or Browserify.
 
 ```
-npm install jsqr --save
+npm install jsqr-es6 --save
 ```
 
 ```javascript
 // ES6 import
-import jsQR from "jsqr";
+import jsQR from "jsqr-es6";
 
 // CommonJS require
-const jsQR = require("jsqr");
+const jsQR = require("jsqr-es6");
 
 jsQR(...);
 ```
@@ -33,16 +33,17 @@ jsQR(...);
 Alternatively for frontend use [`jsQR.js`](./dist/jsQR.js) can be included with a script tag
 
 ```html
-<script src="jsQR.js"></script>
-<script>
-  jsQR(...);
+<script type="module">
+import jsQR from 'path/to/jsQR.js';
+
+jsQR(...);
 </script>
 ```
 
 ### A note on webcams
 jsQR is designed to be a completely standalone library for scanning QR codes. By design it does not include any platform specific code. This allows it to just as easily scan a frontend webcam stream, a user uploaded image, or be used as part of a backend Node.js process.
 
-If you want to use jsQR to scan a webcam stream you'll need to extract the [`ImageData`](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) from the video stream. This can then be passed to jsQR. The [jsQR demo](https://cozmo.github.io/jsQR) contains a barebones implementation of webcam scanning that can be used as a starting point and customized for your needs. For more advanced questions you can refer to the [`getUserMedia` docs](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) or the fairly comprehensive [webRTC sample code](https://github.com/webrtc/samples), both of which are great resources for consuming a webcam stream.
+If you want to have webcam support out of the box, this qr scanner based on this library is recommended: https://github.com/nimiq/qr-scanner/
 
 ## Usage
 
@@ -64,6 +65,7 @@ This data is in the same form as the [`ImageData`](https://developer.mozilla.org
 - `height` - The height of the image you wish to decode.
 - `options` (optional) - Additional options.
   - `inversionAttempts` - (`attemptBoth` (default), `dontInvert`, `onlyInvert`, or `invertFirst`) - Should jsQR attempt to invert the image to find QR codes with white modules on black backgrounds instead of the black modules on white background. This option defaults to `attemptBoth` for backwards compatibility but causes a ~50% performance hit, and will probably be default to `dontInvert` in future versions.
+  - `canOverwriteImage` - (`true` (default) or `false`) - Specifies whether the image data can be overwritten for performance improvements or whether it should be kept untouched. If `true` the image buffer will be used internally to reduce additional memory allocation.
 
 ### Return value
 If a QR is able to be decoded the library will return an object with the following keys.
@@ -99,7 +101,7 @@ After testing any changes, you can compile the production version by running
 npm run-script build
 ```
 
-- Source hosted at [GitHub](https://github.com/cozmo/jsQR)
-- Report issues, questions, feature requests on [GitHub Issues](https://github.com/cozmo/jsQR/issues)
+- Source hosted at [GitHub](https://github.com/danimoh/jsQR)
+- Report issues, questions, feature requests on [GitHub Issues](https://github.com/danimoh/jsQR/issues)
 
 Pull requests are welcome! Please create seperate branches for seperate features/patches.
