@@ -342,6 +342,7 @@ function scan(matrix) {
                 binaryData: decoded.bytes,
                 data: decoded.text,
                 chunks: decoded.chunks,
+                version: decoded.version,
                 location: {
                     topRightCorner: extracted.mappingFunction(location_1.dimension, 0),
                     topLeftCorner: extracted.mappingFunction(0, 0),
@@ -956,6 +957,7 @@ function decode(data, version) {
         text: "",
         bytes: [],
         chunks: [],
+        version: version,
     };
     while (stream.available() >= 4) {
         var mode = stream.readBits(4);

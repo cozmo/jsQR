@@ -23,6 +23,7 @@ export interface DecodedQR {
   text: string;
   bytes: number[];
   chunks: Chunks;
+  version: number;
 }
 
 export enum Mode {
@@ -178,6 +179,7 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
     text: "",
     bytes: [],
     chunks: [],
+    version: version,
   };
 
   while (stream.available() >= 4) {
