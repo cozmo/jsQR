@@ -70,6 +70,8 @@ If a QR is able to be decoded the library will return an object with the followi
 
 - `binaryData` - `Uint8ClampedArray` - The raw bytes of the QR code.
 - `data` - The string version of the QR code data.
+- `chunks` - The QR chunks.
+- `version` - The QR version.
 - `location` - An object with keys describing key points of the QR code. Each key is a point of the form `{x: number, y: number}`.
 Has points for the following locations.
   - Corners - `topRightCorner`/`topLeftCorner`/`bottomRightCorner`/`bottomLeftCorner`;
