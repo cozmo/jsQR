@@ -1,4 +1,5 @@
 import {BitMatrix} from "../BitMatrix";
+import {GreyscaleWeights} from "../index";
 
 const REGION_SIZE = 8;
 const MIN_DYNAMIC_RANGE = 24;
@@ -23,18 +24,35 @@ class Matrix {
   }
 }
 
-export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean) {
+export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean,
+                         greyscaleWeights: GreyscaleWeights) {
   if (data.length !== width * height * 4) {
     throw new Error("Malformed data passed to binarizer.");
   }
   // Convert image to greyscale
   const greyscalePixels = new Matrix(width, height);
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-      const r = data[((y * width + x) * 4) + 0];
-      const g = data[((y * width + x) * 4) + 1];
-      const b = data[((y * width + x) * 4) + 2];
-      greyscalePixels.set(x, y, 0.2126 * r + 0.7152 * g + 0.0722 * b);
+  if (greyscaleWeights.useIntegerApproximation) {
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        const pixelPosition = (y * width + x) * 4;
+        const r = data[pixelPosition];
+        const g = data[pixelPosition + 1];
+        const b = data[pixelPosition + 2];
+        greyscalePixels.set(x, y,
+            // tslint:disable-next-line no-bitwise
+            (greyscaleWeights.red * r + greyscaleWeights.green * g + greyscaleWeights.blue * b + 128) >> 8);
+      }
+    }
+  } else {
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        const pixelPosition = (y * width + x) * 4;
+        const r = data[pixelPosition];
+        const g = data[pixelPosition + 1];
+        const b = data[pixelPosition + 2];
+        greyscalePixels.set(x, y,
+            greyscaleWeights.red * r + greyscaleWeights.green * g + greyscaleWeights.blue * b);
+      }
     }
   }
   const horizontalRegionCount = Math.ceil(width / REGION_SIZE);
