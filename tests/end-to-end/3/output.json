@@ -44,6 +44,7 @@
       "text": "MECARD:N:測試;;"
     }
   ],
+  "version": 2,
   "location": {
     "topRightCorner": {
       "x": 300,

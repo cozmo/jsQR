@@ -406,6 +406,7 @@
       "text": "BEGIN:VCARD\nN:Wilkinson;Paul\nTEL:020 8858 1104\nEMAIL:paul.wilkinson@pwcom.co.uk\nORG:pwcom.co.uk Limited\nTITLE:Dr\nADR:33 Glenluce Road, London SE3 7SD\nURL:http://www.pwcom.co.uk\nVERSION:3.0\nEND:VCARD"
     }
   ],
+  "version": 9,
   "location": {
     "topRightCorner": {
       "x": 414.88825680409997,

@@ -132,6 +132,7 @@
       "text": "MECARD:N:Sean Owen;TEL:+12125658770;EMAIL:srowen@google.com;;"
     }
   ],
+  "version": 4,
   "location": {
     "topRightCorner": {
       "x": 207.2041901285296,
