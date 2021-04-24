@@ -24,7 +24,7 @@
     "fs-extra": "^4.0.1",
     "jest": "^23.1.0",
     "rimraf": "^2.6.2",
-    "ts-jest": "^20.0.14",
+    "ts-jest": "^23.0.4",
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
     "typescript": "^2.5.2",
@@ -47,6 +47,15 @@
     ],
     "transform": {
       "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": {
+          "noImplicitAny": false,
+          "lib": ["es2015"],
+          "types": ["jest", "node"]
+        }
+      }
     }
   }
 }
