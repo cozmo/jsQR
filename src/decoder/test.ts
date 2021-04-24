@@ -10,6 +10,7 @@ describe("decode", () => {
       text: "123456789",
       bytes: [49, 50, 51, 52, 53, 54, 55, 56, 57],
       chunks: [{ type: "numeric", text: "123456789" }],
+      version: 1,
     });
   });
 
@@ -19,6 +20,7 @@ describe("decode", () => {
       text: "ABCD1234",
       bytes: [65, 66, 67, 68, 49, 50, 51, 52],
       chunks: [{ type: "alphanumeric", text: "ABCD1234" }],
+      version: 1,
     });
   });
 
@@ -28,6 +30,7 @@ describe("decode", () => {
       text: "Test",
       bytes: [84, 101, 115, 116],
       chunks: [{ type: "byte", bytes: [84, 101, 115, 116], text: "Test" }],
+      version: 1,
     });
   });
 
@@ -37,6 +40,7 @@ describe("decode", () => {
       text: "テスト",
       bytes: [131, 101, 131, 88, 131, 103],
       chunks: [{ type: "kanji", bytes: [131, 101, 131, 88, 131, 103], text: "テスト" }],
+      version: 1,
     });
   });
 
@@ -51,6 +55,7 @@ describe("decode", () => {
         { type: "byte", bytes: [84, 101, 115, 116], text: "Test" },
         { type: "kanji", bytes: [131, 101, 131, 88, 131, 103], text: "テスト" },
       ],
+      version: 2,
     });
   });
 
@@ -65,6 +70,7 @@ describe("decode", () => {
         { type: "byte", bytes: [84, 101, 115, 116], text: "Test" },
         { type: "kanji", bytes: [131, 101, 131, 88, 131, 103], text: "テスト" },
       ],
+      version: 2,
     });
   });
 
@@ -98,6 +104,7 @@ describe("decode", () => {
           text: "7948,328,1019,149,12,12,15,4,14,11,32,4",
         },
       ],
+      version: 3,
     });
   });
 
@@ -119,6 +126,7 @@ describe("decode", () => {
         { type: "numeric", text: "580515" },
         { type: "byte", bytes: [99, 50, 100, 57, 100, 50, 99, 100, 55, 102, 56], text: "c2d9d2cd7f8" },
       ],
+      version: 4,
     });
   });
 });

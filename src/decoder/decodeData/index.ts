@@ -179,7 +179,7 @@ export function decode(data: Uint8ClampedArray, version: number): DecodedQR {
     text: "",
     bytes: [],
     chunks: [],
-    version: version,
+    version,
   };
 
   while (stream.available() >= 4) {
