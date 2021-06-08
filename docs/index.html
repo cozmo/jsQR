@@ -80,6 +80,8 @@
       canvas.stroke();
     }
 
+    var lastResult = null;
+
     // Use facingMode: environment to attemt to get the front camera on phones
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
       video.srcObject = stream;
@@ -102,17 +104,21 @@
         var code = jsQR(imageData.data, imageData.width, imageData.height, {
           inversionAttempts: "attemptBoth",
         });
+        outputMessage.hidden = true;
+        outputData.parentElement.hidden = false;
+        var result;
         if (code) {
           drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
           drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
           drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
           drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
-          outputMessage.hidden = true;
-          outputData.parentElement.hidden = false;
-          outputData.innerText += code.data + "\n";
+          result = code.data;
         } else {
-          outputMessage.hidden = false;
-          outputData.parentElement.hidden = true;
+          result = "No code detected";
+        }
+        if (result !== lastResult) {
+          outputData.innerText += result + "\n";
+          lastResult = result;
         }
       }
       requestAnimationFrame(tick);
