@@ -102,7 +102,7 @@
         canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
         var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
         var code = jsQR(imageData.data, imageData.width, imageData.height, {
-          inversionAttempts: "attemptBoth",
+          inversionAttempts: "dontInvert",
         });
         outputMessage.hidden = true;
         outputData.parentElement.hidden = false;
