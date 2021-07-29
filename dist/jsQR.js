@@ -112,7 +112,7 @@ function binarize(data, width, height, returnInverted, greyscaleWeights, canOver
             let average = (min + max) / 2;
             // Small bias towards black by moving the threshold up. We do this, as in the finder patterns white holes tend
             // to appear which makes them undetectable.
-            const blackBias = 1.1;
+            const blackBias = 1.11;
             average = Math.min(255, average * blackBias);
             if (max - min <= MIN_DYNAMIC_RANGE) {
                 // If variation within the block is low, assume this is a block with only light or only
@@ -2811,8 +2811,6 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
         if (!matrix.get(Math.floor(x), Math.floor(y))) {
             return;
         }
-        const lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, (q.bottom.y - q.top.y + 1)];
-        sum(lengths) / lengths.length;
         const sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
         const score = sizeScore + distance({ x, y }, expectedAlignmentPattern);
         return { x, y, score };
