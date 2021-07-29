@@ -10,7 +10,13 @@ export interface ECIChunk {
     type: Mode.ECI;
     assignmentNumber: number;
 }
-export declare type Chunks = Array<Chunk | ByteChunk | ECIChunk>;
+export interface StructuredAppend {
+    type: Mode.StructuredAppend;
+    currentSequence: number;
+    totalSequence: number;
+    parity: number;
+}
+export declare type Chunks = Array<Chunk | ByteChunk | ECIChunk | StructuredAppend>;
 export interface DecodedQR {
     text: string;
     bytes: number[];
@@ -22,6 +28,7 @@ export declare enum Mode {
     Alphanumeric = "alphanumeric",
     Byte = "byte",
     Kanji = "kanji",
-    ECI = "eci"
+    ECI = "eci",
+    StructuredAppend = "structuredappend"
 }
 export declare function decode(data: Uint8ClampedArray, version: number): DecodedQR;

@@ -129,4 +129,24 @@ describe("decode", () => {
       version: 4,
     });
   });
+  it("Supports StructuredAppend chunks", async () => {
+    const data = await loadBinarized("./src/decoder/test-data/structuredAppend.png");
+    expect(decode(data)).toEqual({
+      text: "Hello ",
+      bytes: [72, 101, 108, 108, 111, 32],
+      chunks: [
+        {
+          currentSequence: 0,
+          parity: 32,
+          totalSequence: 1,
+          type: "structuredappend",
+        }, {
+          type: "byte",
+          bytes: [72, 101, 108, 108, 111, 32],
+          text: "Hello ",
+        },
+      ],
+      version: 1,
+    });
+  });
 });

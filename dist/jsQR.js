@@ -244,6 +244,7 @@ var Mode;
     Mode["Byte"] = "byte";
     Mode["Kanji"] = "kanji";
     Mode["ECI"] = "eci";
+    Mode["StructuredAppend"] = "structuredappend";
 })(Mode || (Mode = {}));
 var ModeByte;
 (function (ModeByte) {
@@ -253,7 +254,7 @@ var ModeByte;
     ModeByte[ModeByte["Byte"] = 4] = "Byte";
     ModeByte[ModeByte["Kanji"] = 8] = "Kanji";
     ModeByte[ModeByte["ECI"] = 7] = "ECI";
-    // StructuredAppend = 0x3,
+    ModeByte[ModeByte["StructuredAppend"] = 3] = "StructuredAppend";
     // FNC1FirstPosition = 0x5,
     // FNC1SecondPosition = 0x9,
 })(ModeByte || (ModeByte = {}));
@@ -436,6 +437,14 @@ function decode$2(data, version) {
                 type: Mode.Kanji,
                 bytes: kanjiResult.bytes,
                 text: kanjiResult.text,
+            });
+        }
+        else if (mode === ModeByte.StructuredAppend) {
+            result.chunks.push({
+                type: Mode.StructuredAppend,
+                currentSequence: stream.readBits(4),
+                totalSequence: stream.readBits(4),
+                parity: stream.readBits(8),
             });
         }
     }
