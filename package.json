@@ -51,6 +51,15 @@
     ],
     "transform": {
       "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": {
+          "noImplicitAny": false,
+          "lib": ["es2015"],
+          "types": ["jest", "node"]
+        }
+      }
     }
   }
 }

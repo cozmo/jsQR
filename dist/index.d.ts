@@ -5,6 +5,7 @@ export interface QRCode {
     binaryData: number[];
     data: string;
     chunks: Chunks;
+    version: number;
     location: {
         topRightCorner: Point;
         topLeftCorner: Point;

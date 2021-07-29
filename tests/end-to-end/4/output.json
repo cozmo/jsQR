@@ -566,6 +566,7 @@
       "text": "BEGIN:VCARD\r\nN:Kennedy;Steve\r\nTEL:+44 (0)7775 755503\r\nADR;HOME:;;Flat 2, 43 Howitt Road, Belsize Park;London;;NW34LU;UK\r\nORG:NetTek Ltd;\r\nTITLE:Consultant\r\nEMAIL:steve@nettek.co.uk\r\nURL:www.nettek.co.uk\r\nEMAIL;IM:MSN:steve@gbnet.net\r\nNOTE:Testing 1 2 3\r\nBDAY:19611105\r\nEND:VCARD"
     }
   ],
+  "version": 12,
   "location": {
     "topRightCorner": {
       "x": 65,

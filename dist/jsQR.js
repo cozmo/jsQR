@@ -358,7 +358,7 @@ function decodeKanji(stream, size) {
     const text = new TextDecoder("shift-jis").decode(Uint8Array.from(bytes));
     return { bytes, text };
 }
-function decode(data, version) {
+function decode$2(data, version) {
     const stream = new BitStream(data);
     // There are 3 'sizes' based on the version. 1-9 is small (0), 10-26 is medium (1) and 27-40 is large (2).
     const size = version <= 9 ? 0 : version <= 26 ? 1 : 2;
@@ -366,6 +366,7 @@ function decode(data, version) {
         text: "",
         bytes: [],
         chunks: [],
+        version,
     };
     while (stream.available() >= 4) {
         const mode = stream.readBits(4);
@@ -2321,13 +2322,13 @@ function decodeMatrix(matrix) {
         }
     }
     try {
-        return decode(resultBytes, version.versionNumber);
+        return decode$2(resultBytes, version.versionNumber);
     }
     catch (_a) {
         return null;
     }
 }
-function decode$2(matrix) {
+function decode(matrix) {
     if (matrix == null) {
         return null;
     }
@@ -2811,7 +2812,7 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
             return;
         }
         const lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, (q.bottom.y - q.top.y + 1)];
-        const size = sum(lengths) / lengths.length;
+        sum(lengths) / lengths.length;
         const sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
         const score = sizeScore + distance({ x, y }, expectedAlignmentPattern);
         return { x, y, score };
@@ -2831,12 +2832,13 @@ function scan(matrix) {
     }
     for (const location of locations) {
         const extracted = extract(matrix, location);
-        const decoded = decode$2(extracted.matrix);
+        const decoded = decode(extracted.matrix);
         if (decoded) {
             return {
                 binaryData: decoded.bytes,
                 data: decoded.text,
                 chunks: decoded.chunks,
+                version: decoded.version,
                 location: {
                     topRightCorner: extracted.mappingFunction(location.dimension, 0),
                     topLeftCorner: extracted.mappingFunction(0, 0),
@@ -2883,5 +2885,5 @@ function jsQR(data, width, height, providedOptions = {}) {
 }
 jsQR.default = jsQR;
 
-export default jsQR;
+export { jsQR as default };
 //# sourceMappingURL=jsQR.js.map
