@@ -96,7 +96,7 @@ export function binarize(data: Uint8ClampedArray, width: number, height: number,
       let average = (min + max) / 2;
       // Small bias towards black by moving the threshold up. We do this, as in the finder patterns white holes tend
       // to appear which makes them undetectable.
-      const blackBias = 1.1;
+      const blackBias = 1.11;
       average = Math.min(255, average * blackBias);
       if (max - min <= MIN_DYNAMIC_RANGE) {
         // If variation within the block is low, assume this is a block with only light or only

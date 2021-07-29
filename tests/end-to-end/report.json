@@ -1,7 +1,7 @@
 {
   "counts": {
-    "failed": 45,
-    "successful": 209
+    "failed": 42,
+    "successful": 212
   },
   "tests": {
     "0": true,
@@ -211,7 +211,7 @@
     "cupcake-3": true,
     "cupcake-4": true,
     "damaged": false,
-    "emblem-patch": false,
+    "emblem-patch": true,
     "hk-ikea": true,
     "hudson-highlands-state-park": true,
     "issue-14-regression": false,
@@ -226,7 +226,7 @@
     "japanese-jean-ad": false,
     "kanji": true,
     "key-flyer": false,
-    "museum-1": false,
+    "museum-1": true,
     "museum-2": false,
     "paper-flyer": true,
     "pepsi-bottle": false,
@@ -245,7 +245,7 @@
     "stickerbook-4": true,
     "stickerbook-5": true,
     "stickerbook-6": false,
-    "subway-station": false,
+    "subway-station": true,
     "tattoo-scan": true,
     "trackable-book-1": false,
     "trackable-book-2": false,
