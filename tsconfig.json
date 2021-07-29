@@ -4,7 +4,6 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "target": "es6",
-    "typeRoots": [],
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",

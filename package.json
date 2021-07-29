@@ -24,7 +24,9 @@
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.4",
     "@types/node": "^16.4.13",
+    "@types/upng-js": "^2.1.2",
     "fs-extra": "^10.0.0",
+    "full-icu": "^1.3.4",
     "jest": "^27.0.6",
     "rimraf": "^3.0.2",
     "rollup": "^2.56.1",
@@ -39,9 +41,9 @@
     "prebuild": "rimraf dist",
     "build": "rollup --config",
     "watch": "rollup --config --watch",
-    "test": "jest",
+    "test": "env NODE_ICU_DATA=./node_modules/full-icu jest",
     "lint": "tslint --project .",
-    "generate-test-data": "ts-node --project tests/ tests/generate-test-data.ts"
+    "generate-test-data": "env NODE_ICU_DATA=./node_modules/full-icu ts-node --project tests/tsconfig.json tests/generate-test-data.ts"
   },
   "jest": {
     "testRegex": ".*test.ts",
@@ -56,8 +58,14 @@
       "ts-jest": {
         "tsConfig": {
           "noImplicitAny": false,
-          "lib": ["es2015"],
-          "types": ["jest", "node"]
+          "lib": [
+            "es2017",
+            "dom"
+          ],
+          "types": [
+            "jest",
+            "node"
+          ]
         }
       }
     }

@@ -15,24 +15,24 @@ export function bitMatrixToPng(matrix: BitMatrix) {
       output[i + 3] = 0xff;
     }
   }
-  return new Buffer(png.encode(output, matrix.width, matrix.height, 0));
+  return new Buffer(png.encode([output.buffer], matrix.width, matrix.height, 0));
 }
 
-export async function loadPng(path) {
+export async function loadPng(path: string) {
   const data = png.decode(await fs.readFile(path));
   const out: {
     data: Uint8ClampedArray,
     height: number,
     width: number,
   } = {
-    data: png.toRGBA8(data),
+    data: new Uint8ClampedArray(png.toRGBA8(data)[0]),
     height: data.height,
     width: data.width,
   };
   return out;
 }
 
-export async function loadBinarized(path) {
+export async function loadBinarized(path: string) {
   const image = await loadPng(path);
   const out = BitMatrix.createEmpty(image.width, image.height);
   for (let x = 0; x < image.width; x++) {

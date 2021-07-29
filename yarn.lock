@@ -634,6 +634,11 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
+"@types/upng-js@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@types/upng-js/-/upng-js-2.1.2.tgz#4680f700c3003eaf958b92418c6e19521bb1e034"
+  integrity sha512-sxCnLDEmGFDcnrdSMml3/mDSbfSAvt86Ld32J6Ac75Og7GzzmwHbUnJNTue74tfQC/3PPD/W0jG2dQuF9v6UOg==
+
 "@types/yargs-parser@*":
   version "20.2.1"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.1.tgz#3b9ce2489919d9e4fea439b76916abc34b2df129"
@@ -1264,6 +1269,11 @@ fsevents@^2.3.2, fsevents@~2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
+
+full-icu@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/full-icu/-/full-icu-1.3.4.tgz#4e09b2f6a30e9f3d2eebc1c08f90b21b037e22a9"
+  integrity sha512-BERy9j2ybYSfP8QmXyg496NjVrGXfM73TZckQ5s5hgDV2lpKshjGfPEYYWU3hhE2kU8atZXUZNLSeNz4OQ8hNA==
 
 function-bind@^1.1.1:
   version "1.1.1"
