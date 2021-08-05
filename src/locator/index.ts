@@ -1,6 +1,6 @@
 import { BitMatrix } from "../BitMatrix";
 
-const MAX_FINDERPATTERNS_TO_SEARCH = 4;
+const MAX_FINDERPATTERNS_TO_SEARCH = 5;
 const MIN_QUAD_RATIO = 0.5;
 const MAX_QUAD_RATIO = 1.5;
 
@@ -344,47 +344,65 @@ export function locate(matrix: BitMatrix): QRLocation[] {
   finderPatternQuads.push(...activeFinderPatternQuads.filter(q => q.bottom.y - q.top.y >= 2));
   alignmentPatternQuads.push(...activeAlignmentPatternQuads);
 
-  const finderPatternGroups = finderPatternQuads
-    .filter(q => q.bottom.y - q.top.y >= 2) // All quads must be at least 2px tall since the center square is larger than a block
-    .map(q => { // Initial scoring of finder pattern quads by looking at their ratios, not taking into account position
-      const x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
-      const y = (q.top.y + q.bottom.y + 1) / 2;
-      if (!matrix.get(Math.round(x), Math.round(y))) {
-        return;
-      }
+  // Refactored from cozmo/jsQR to (hopefully) circumvent an issue in Safari 13+ on both Mac and iOS (also including
+  // iOS Chrome and other Safari iOS derivatives). Safari was very occasionally and apparently not deterministically
+  // throwing a "RangeError: Array size is not a small enough positive integer." exception seemingly within the second
+  // .map of the original code (here the second for-loop). This second .map contained a nested .map call over the same
+  // array instance which was the chained result from previous calls to .map, .filter and .sort which potentially caused
+  // this bug in Safari?
+  // Also see https://github.com/cozmo/jsQR/issues/157 and https://bugs.webkit.org/show_bug.cgi?id=211619#c3
+  const scoredFinderPatternPositions: Array<Point & { size: number, score: number }> = [];
+  for (const quad of finderPatternQuads) {
+    if (quad.bottom.y - quad.top.y < 2) {
+      // All quads must be at least 2px tall since the center square is larger than a block
+      continue;
+    }
 
-      const lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, q.bottom.y - q.top.y + 1];
-      const size = sum(lengths) / lengths.length;
-      const score = scorePattern({x: Math.round(x), y: Math.round(y)}, [1, 1, 3, 1, 1], matrix);
-      return { score, x, y, size };
-    })
-    .filter(q => !!q) // Filter out any rejected quads from above
-    .sort((a, b) => a.score - b.score)
-    // Now take the top finder pattern options and try to find 2 other options with a similar size.
-    .map((point, i, finderPatterns) => {
-      if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
-        return null;
-      }
-      const otherPoints = finderPatterns
-        .filter((p, ii) => i !== ii)
-        .map(p => ({ x: p.x, y: p.y, score: p.score + ((p.size - point.size) ** 2) / point.size, size: p.size }))
-        .sort((a, b) => a.score - b.score);
-      if (otherPoints.length < 2) {
-        return null;
-      }
-      const score = point.score + otherPoints[0].score + otherPoints[1].score;
-      return {points: [point].concat(otherPoints.slice(0, 2)), score};
-    })
-    .filter(q => !!q) // Filter out any rejected finder patterns from above
-    .sort((a, b) => a.score - b.score);
+    // calculate quad center
+    const x = (quad.top.startX + quad.top.endX + quad.bottom.startX + quad.bottom.endX) / 4;
+    const y = (quad.top.y + quad.bottom.y + 1) / 2;
+    if (!matrix.get(Math.round(x), Math.round(y))) {
+      continue;
+    }
 
-  if (finderPatternGroups.length === 0) {
+    const lengths = [quad.top.endX - quad.top.startX, quad.bottom.endX - quad.bottom.startX, quad.bottom.y - quad.top.y + 1];
+    const size = sum(lengths) / lengths.length;
+    // Initial scoring of finder pattern quads by looking at their ratios, not taking into account position
+    const score = scorePattern({x: Math.round(x), y: Math.round(y)}, [1, 1, 3, 1, 1], matrix);
+    scoredFinderPatternPositions.push({ score, x, y, size });
+  }
+  if (scoredFinderPatternPositions.length < 3) {
+    // A QR code has 3 finder patterns, therefore we need at least 3 candidates.
     return null;
   }
+  scoredFinderPatternPositions.sort((a, b) => a.score - b.score);
 
-  const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
-    finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2],
-  );
+  // Now take the top finder pattern options and try to find 2 other options with a similar size.
+  const finderPatternGroups: Array<{ points: [Point, Point, Point], score: number }> = [];
+  for (let i = 0; i < Math.min(scoredFinderPatternPositions.length, MAX_FINDERPATTERNS_TO_SEARCH); ++i) {
+    const point = scoredFinderPatternPositions[i];
+    const otherPoints: typeof scoredFinderPatternPositions = [];
+
+    for (const otherPoint of scoredFinderPatternPositions) {
+      if (otherPoint === point) {
+        continue;
+      }
+      otherPoints.push({
+        ...otherPoint,
+        score: otherPoint.score + ((otherPoint.size - point.size) ** 2) / point.size, // score similarity of sizes
+      });
+    }
+    otherPoints.sort((a, b) => a.score - b.score);
+
+    finderPatternGroups.push({
+      points: [point, otherPoints[0], otherPoints[1]], // note that otherPoints.length >= 2 as scoredFinderPatternPositions.length >= 3
+      score: point.score + otherPoints[0].score + otherPoints[1].score, // total combined score of the three points in the group
+    });
+  }
+  finderPatternGroups.sort((a, b) => a.score - b.score);
+  const bestFinderPatternGroup = finderPatternGroups[0];
+
+  const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(...bestFinderPatternGroup.points);
   const alignment = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
   const result: QRLocation[] = [];
   if (alignment) {

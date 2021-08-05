@@ -9695,8 +9695,16 @@ exports.extract = extract;
 
 "use strict";
 
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var MAX_FINDERPATTERNS_TO_SEARCH = 4;
+var MAX_FINDERPATTERNS_TO_SEARCH = 5;
 var MIN_QUAD_RATIO = 0.5;
 var MAX_QUAD_RATIO = 1.5;
 var distance = function (a, b) { return Math.sqrt(Math.pow((b.x - a.x), 2) + Math.pow((b.y - a.y), 2)); };
@@ -9981,42 +9989,58 @@ function locate(matrix) {
     }
     finderPatternQuads.push.apply(finderPatternQuads, activeFinderPatternQuads.filter(function (q) { return q.bottom.y - q.top.y >= 2; }));
     alignmentPatternQuads.push.apply(alignmentPatternQuads, activeAlignmentPatternQuads);
-    var finderPatternGroups = finderPatternQuads
-        .filter(function (q) { return q.bottom.y - q.top.y >= 2; }) // All quads must be at least 2px tall since the center square is larger than a block
-        .map(function (q) {
-        var x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
-        var y = (q.top.y + q.bottom.y + 1) / 2;
+    // Refactored from cozmo/jsQR to (hopefully) circumvent an issue in Safari 13+ on both Mac and iOS (also including
+    // iOS Chrome and other Safari iOS derivatives). Safari was very occasionally and apparently not deterministically
+    // throwing a "RangeError: Array size is not a small enough positive integer." exception seemingly within the second
+    // .map of the original code (here the second for-loop). This second .map contained a nested .map call over the same
+    // array instance which was the chained result from previous calls to .map, .filter and .sort which potentially caused
+    // this bug in Safari?
+    // Also see https://github.com/cozmo/jsQR/issues/157 and https://bugs.webkit.org/show_bug.cgi?id=211619#c3
+    var scoredFinderPatternPositions = [];
+    for (var _i = 0, finderPatternQuads_1 = finderPatternQuads; _i < finderPatternQuads_1.length; _i++) {
+        var quad = finderPatternQuads_1[_i];
+        if (quad.bottom.y - quad.top.y < 2) {
+            // All quads must be at least 2px tall since the center square is larger than a block
+            continue;
+        }
+        // calculate quad center
+        var x = (quad.top.startX + quad.top.endX + quad.bottom.startX + quad.bottom.endX) / 4;
+        var y = (quad.top.y + quad.bottom.y + 1) / 2;
         if (!matrix.get(Math.round(x), Math.round(y))) {
-            return;
+            continue;
         }
-        var lengths = [q.top.endX - q.top.startX, q.bottom.endX - q.bottom.startX, q.bottom.y - q.top.y + 1];
+        var lengths = [quad.top.endX - quad.top.startX, quad.bottom.endX - quad.bottom.startX, quad.bottom.y - quad.top.y + 1];
         var size = sum(lengths) / lengths.length;
+        // Initial scoring of finder pattern quads by looking at their ratios, not taking into account position
         var score = scorePattern({ x: Math.round(x), y: Math.round(y) }, [1, 1, 3, 1, 1], matrix);
-        return { score: score, x: x, y: y, size: size };
-    })
-        .filter(function (q) { return !!q; }) // Filter out any rejected quads from above
-        .sort(function (a, b) { return a.score - b.score; })
-        // Now take the top finder pattern options and try to find 2 other options with a similar size.
-        .map(function (point, i, finderPatterns) {
-        if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
-            return null;
-        }
-        var otherPoints = finderPatterns
-            .filter(function (p, ii) { return i !== ii; })
-            .map(function (p) { return ({ x: p.x, y: p.y, score: p.score + (Math.pow((p.size - point.size), 2)) / point.size, size: p.size }); })
-            .sort(function (a, b) { return a.score - b.score; });
-        if (otherPoints.length < 2) {
-            return null;
-        }
-        var score = point.score + otherPoints[0].score + otherPoints[1].score;
-        return { points: [point].concat(otherPoints.slice(0, 2)), score: score };
-    })
-        .filter(function (q) { return !!q; }) // Filter out any rejected finder patterns from above
-        .sort(function (a, b) { return a.score - b.score; });
-    if (finderPatternGroups.length === 0) {
+        scoredFinderPatternPositions.push({ score: score, x: x, y: y, size: size });
+    }
+    if (scoredFinderPatternPositions.length < 3) {
+        // A QR code has 3 finder patterns, therefore we need at least 3 candidates.
         return null;
     }
-    var _a = reorderFinderPatterns(finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2]), topRight = _a.topRight, topLeft = _a.topLeft, bottomLeft = _a.bottomLeft;
+    scoredFinderPatternPositions.sort(function (a, b) { return a.score - b.score; });
+    // Now take the top finder pattern options and try to find 2 other options with a similar size.
+    var finderPatternGroups = [];
+    for (var i = 0; i < Math.min(scoredFinderPatternPositions.length, MAX_FINDERPATTERNS_TO_SEARCH); ++i) {
+        var point = scoredFinderPatternPositions[i];
+        var otherPoints = [];
+        for (var _a = 0, scoredFinderPatternPositions_1 = scoredFinderPatternPositions; _a < scoredFinderPatternPositions_1.length; _a++) {
+            var otherPoint = scoredFinderPatternPositions_1[_a];
+            if (otherPoint === point) {
+                continue;
+            }
+            otherPoints.push(__assign({}, otherPoint, { score: otherPoint.score + (Math.pow((otherPoint.size - point.size), 2)) / point.size }));
+        }
+        otherPoints.sort(function (a, b) { return a.score - b.score; });
+        finderPatternGroups.push({
+            points: [point, otherPoints[0], otherPoints[1]],
+            score: point.score + otherPoints[0].score + otherPoints[1].score,
+        });
+    }
+    finderPatternGroups.sort(function (a, b) { return a.score - b.score; });
+    var bestFinderPatternGroup = finderPatternGroups[0];
+    var _b = reorderFinderPatterns(bestFinderPatternGroup.points[0], bestFinderPatternGroup.points[1], bestFinderPatternGroup.points[2]), topRight = _b.topRight, topLeft = _b.topLeft, bottomLeft = _b.bottomLeft;
     var alignment = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
     var result = [];
     if (alignment) {
