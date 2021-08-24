@@ -16,6 +16,7 @@
     }
   ],
   "license": "Apache-2.0",
+  "module": "src/index.ts",
   "devDependencies": {
     "@types/fs-extra": "^4.0.2",
     "@types/jest": "^20.0.8",
