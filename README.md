@@ -64,6 +64,7 @@ This data is in the same form as the [`ImageData`](https://developer.mozilla.org
 - `height` - The height of the image you wish to decode.
 - `options` (optional) - Additional options.
   - `inversionAttempts` - (`attemptBoth` (default), `dontInvert`, `onlyInvert`, or `invertFirst`) - Should jsQR attempt to invert the image to find QR codes with white modules on black backgrounds instead of the black modules on white background. This option defaults to `attemptBoth` for backwards compatibility but causes a ~50% performance hit, and will probably be default to `dontInvert` in future versions.
+  - `canOverwriteImage` - (`true` (default) or `false`) - Specifies whether the image data can be overwritten for performance improvements or whether it should be kept untouched. If `true` the image buffer will be used internally to reduce additional memory allocation.
 
 ### Return value
 If a QR is able to be decoded the library will return an object with the following keys.
