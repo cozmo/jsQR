@@ -66,12 +66,16 @@ const defaultOptions: Options = {
   inversionAttempts: "attemptBoth",
 };
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions: Options = {}): QRCode | null {
-
-  const options = defaultOptions;
-  Object.keys(options || {}).forEach(opt => { // Sad implementation of Object.assign since we target es5 not es6
-    (options as any)[opt] = (providedOptions as any)[opt] || (options as any)[opt];
+function mergeObject(target: any, src: any) {
+  Object.keys(src).forEach(opt => { // Sad implementation of Object.assign since we target es5 not es6
+    target[opt] = src[opt];
   });
+}
+
+function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions: Options = {}): QRCode | null {
+  const options = Object.create(null);
+  mergeObject(options, defaultOptions);
+  mergeObject(options, providedOptions);
 
   const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
   const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
