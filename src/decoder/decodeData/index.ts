@@ -1,6 +1,7 @@
 // tslint:disable:no-bitwise
 import { BitStream } from "./BitStream";
 import { shiftJISTable } from "./shiftJISTable";
+import { TextDecoder } from "text-decoding";
 
 export interface Chunk {
   type: Mode;
@@ -141,6 +142,10 @@ function decodeByte(stream: BitStream, size: number) {
     text += decodeURIComponent(bytes.map(b => `%${("0" + b.toString(16)).substr(-2)}`).join(""));
   } catch {
     // failed to decode
+    if(characterCountSize == 16) {
+        text += decodeURIComponent(new TextDecoder('iso-8859-1').decode(Uint8Array.from(bytes)));
+    }
+    // => ToDo: Full ECI case switch, https://en.wikipedia.org/wiki/Extended_Channel_Interpretation    
   }
 
   return { bytes, text };
