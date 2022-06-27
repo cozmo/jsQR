@@ -141,10 +141,10 @@ function decodeByte(stream: BitStream, size: number) {
     text += decodeURIComponent(bytes.map(b => `%${("0" + b.toString(16)).substr(-2)}`).join(""));
   } catch {
     // failed to decode
-    if(characterCountSize == 16) {
-        text += decodeURIComponent(new TextDecoder('iso-8859-1').decode(Uint8Array.from(bytes)));
+    if(characterCountSize === 16) {
+        text += decodeURIComponent(new TextDecoder("iso-8859-1").decode(Uint8Array.from(bytes)));
     }
-    // => ToDo: Full ECI case switch, https://en.wikipedia.org/wiki/Extended_Channel_Interpretation    
+    // => ToDo: Full ECI case switch, https://en.wikipedia.org/wiki/Extended_Channel_Interpretation
   }
 
   return { bytes, text };
