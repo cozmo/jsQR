@@ -1,7 +1,6 @@
 // tslint:disable:no-bitwise
 import { BitStream } from "./BitStream";
 import { shiftJISTable } from "./shiftJISTable";
-import { TextDecoder } from "text-decoding";
 
 export interface Chunk {
   type: Mode;
