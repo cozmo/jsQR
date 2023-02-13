@@ -323,7 +323,6 @@ exports.default = GenericGFPoly;
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
 var binarizer_1 = __webpack_require__(4);
 var decoder_1 = __webpack_require__(5);
 var extractor_1 = __webpack_require__(11);
@@ -377,7 +376,7 @@ function jsQR(data, width, height, providedOptions) {
     return result;
 }
 jsQR.default = jsQR;
-exports.default = jsQR;
+module.exports = jsQR;
 
 
 /***/ }),

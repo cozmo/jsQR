@@ -6,26 +6,32 @@ import { Version } from "./decoder/version";
 import {extract} from "./extractor";
 import {locate, Point} from "./locator";
 
-export interface QRCode {
-  binaryData: number[];
-  data: string;
-  chunks: Chunks;
-  version: number;
-  location: {
-    topRightCorner: Point;
-    topLeftCorner: Point;
-    bottomRightCorner: Point;
-    bottomLeftCorner: Point;
+declare namespace jsQR {
+  interface QRCode {
+    binaryData: number[];
+    data: string;
+    chunks: Chunks;
+    version: number;
+    location: {
+      topRightCorner: Point;
+      topLeftCorner: Point;
+      bottomRightCorner: Point;
+      bottomLeftCorner: Point;
 
-    topRightFinderPattern: Point;
-    topLeftFinderPattern: Point;
-    bottomLeftFinderPattern: Point;
+      topRightFinderPattern: Point;
+      topLeftFinderPattern: Point;
+      bottomLeftFinderPattern: Point;
 
-    bottomRightAlignmentPattern?: Point;
-  };
+      bottomRightAlignmentPattern?: Point;
+    };
+  }
+
+  interface Options {
+    inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
+  }
 }
 
-function scan(matrix: BitMatrix): QRCode | null {
+function scan(matrix: BitMatrix): jsQR.QRCode | null {
   const locations = locate(matrix);
   if (!locations) {
     return null;
@@ -58,15 +64,11 @@ function scan(matrix: BitMatrix): QRCode | null {
   return null;
 }
 
-export interface Options {
-  inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
-}
-
-const defaultOptions: Options = {
+const defaultOptions: jsQR.Options = {
   inversionAttempts: "attemptBoth",
 };
 
-function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions: Options = {}): QRCode | null {
+function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOptions: jsQR.Options = {}): jsQR.QRCode | null {
 
   const options = defaultOptions;
   Object.keys(options || {}).forEach(opt => { // Sad implementation of Object.assign since we target es5 not es6
@@ -84,4 +86,4 @@ function jsQR(data: Uint8ClampedArray, width: number, height: number, providedOp
 }
 
 (jsQR as any).default = jsQR;
-export default jsQR;
+export = jsQR;
