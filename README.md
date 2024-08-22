@@ -6,7 +6,7 @@ A pure javascript QR code reading library.
 This library takes in raw images and will locate, extract and parse any QR code found within.
 
 [Demo](https://cozmo.github.io/jsQR)
-
+[Demo](https://codepen.io/hanjituan/pen/BagrXKe?editors=1010)
 
 ## Installation
 
