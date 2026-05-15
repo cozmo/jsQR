@@ -252,6 +252,49 @@ function recenterLocation(matrix: BitMatrix, p: Point): Point {
   return { x, y };
 }
 
+// Centroid-based recenter: floods the connected black region containing `p` (which
+// should be inside the finder pattern's center 3x3 black square) and returns the
+// arithmetic mean of those pixel coordinates. More accurate than walking-along-axes
+// recentering when the QR is rotated in-plane, because the axes-walking version
+// effectively takes the midpoint of a horizontal and vertical chord through the
+// region — which for a rotated square doesn't coincide with the true center.
+function recenterByCentroid(matrix: BitMatrix, p: Point): Point {
+  const startX = Math.round(p.x);
+  const startY = Math.round(p.y);
+  if (startX < 0 || startX >= matrix.width || startY < 0 || startY >= matrix.height) {
+    return p;
+  }
+  if (!matrix.get(startX, startY)) {
+    return p;
+  }
+  // Bounded flood-fill so we never wander off into adjacent black regions if the
+  // finder pattern is touching another structure.
+  const maxRadius = 12;
+  const minX = Math.max(0, startX - maxRadius);
+  const maxX = Math.min(matrix.width - 1, startX + maxRadius);
+  const minY = Math.max(0, startY - maxRadius);
+  const maxY = Math.min(matrix.height - 1, startY + maxRadius);
+  const visited = new Uint8Array((maxX - minX + 1) * (maxY - minY + 1));
+  const w = maxX - minX + 1;
+  const stack: number[] = [startX, startY];
+  let sumX = 0, sumY = 0, count = 0;
+  while (stack.length > 0) {
+    const y = stack.pop()!;
+    const x = stack.pop()!;
+    if (x < minX || x > maxX || y < minY || y > maxY) continue;
+    const idx = (y - minY) * w + (x - minX);
+    if (visited[idx]) continue;
+    if (!matrix.get(x, y)) continue;
+    visited[idx] = 1;
+    sumX += x;
+    sumY += y;
+    count++;
+    stack.push(x - 1, y, x + 1, y, x, y - 1, x, y + 1);
+  }
+  if (count === 0) return p;
+  return { x: sumX / count + 0.5, y: sumY / count + 0.5 };
+}
+
 interface Quad {
   top: {
     startX: number;
@@ -416,6 +459,12 @@ export function locate(matrix: BitMatrix): QRLocation[] {
     const midTopLeft = recenterLocation(matrix, topLeft);
     const midBottomLeft = recenterLocation(matrix, bottomLeft);
 
+    // Centroid-based recenter — accurate for rotated finder patterns where the
+    // axes-walking recenter undershoots by a fraction of a pixel.
+    const cenTopRight = recenterByCentroid(matrix, topRight);
+    const cenTopLeft = recenterByCentroid(matrix, topLeft);
+    const cenBottomLeft = recenterByCentroid(matrix, bottomLeft);
+
     // Alternate alignment-pattern candidates per group. We give the top-scored
     // triplet the most exploration since it's most likely to be the real QR; lower
     // groups still get one alternate so that we recover when a real finder triplet
@@ -470,6 +519,20 @@ export function locate(matrix: BitMatrix): QRLocation[] {
         topRight: { x: midTopRight.x, y: midTopRight.y },
         dimension: centered[i].dimension,
       });
+    }
+
+    // Centroid-recentered candidates for the top group only.
+    if (groupIndex === 0) {
+      const cenAlignment = findAlignmentPatterns(matrix, alignmentPatternQuads, cenTopRight, cenTopLeft, cenBottomLeft, 0);
+      if (cenAlignment.length > 0) {
+        result.push({
+          alignmentPattern: { x: cenAlignment[0].alignmentPattern.x, y: cenAlignment[0].alignmentPattern.y },
+          bottomLeft: { x: cenBottomLeft.x, y: cenBottomLeft.y },
+          topLeft: { x: cenTopLeft.x, y: cenTopLeft.y },
+          topRight: { x: cenTopRight.x, y: cenTopRight.y },
+          dimension: cenAlignment[0].dimension,
+        });
+      }
     }
   }
 

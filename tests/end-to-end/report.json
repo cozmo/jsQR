@@ -1,7 +1,7 @@
 {
   "counts": {
-    "failed": 11,
-    "successful": 243
+    "failed": 7,
+    "successful": 247
   },
   "tests": {
     "0": true,
@@ -80,16 +80,16 @@
     "74": true,
     "75": true,
     "76": true,
-    "77": false,
+    "77": true,
     "78": true,
     "79": true,
-    "80": false,
+    "80": true,
     "81": true,
     "82": true,
     "83": true,
     "84": true,
     "85": true,
-    "86": false,
+    "86": true,
     "87": true,
     "88": true,
     "89": true,
@@ -244,7 +244,7 @@
     "stickerbook-3": true,
     "stickerbook-4": true,
     "stickerbook-5": true,
-    "stickerbook-6": false,
+    "stickerbook-6": true,
     "subway-station": true,
     "tattoo-scan": true,
     "trackable-book-1": true,

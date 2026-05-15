@@ -9638,6 +9638,40 @@ function recenterLocation(matrix, p) {
   const y = (topY + bottomY) / 2;
   return { x, y };
 }
+function recenterByCentroid(matrix, p) {
+  const startX = Math.round(p.x);
+  const startY = Math.round(p.y);
+  if (startX < 0 || startX >= matrix.width || startY < 0 || startY >= matrix.height) {
+    return p;
+  }
+  if (!matrix.get(startX, startY)) {
+    return p;
+  }
+  const maxRadius = 12;
+  const minX = Math.max(0, startX - maxRadius);
+  const maxX = Math.min(matrix.width - 1, startX + maxRadius);
+  const minY = Math.max(0, startY - maxRadius);
+  const maxY = Math.min(matrix.height - 1, startY + maxRadius);
+  const visited = new Uint8Array((maxX - minX + 1) * (maxY - minY + 1));
+  const w = maxX - minX + 1;
+  const stack = [startX, startY];
+  let sumX = 0, sumY = 0, count = 0;
+  while (stack.length > 0) {
+    const y = stack.pop();
+    const x = stack.pop();
+    if (x < minX || x > maxX || y < minY || y > maxY) continue;
+    const idx = (y - minY) * w + (x - minX);
+    if (visited[idx]) continue;
+    if (!matrix.get(x, y)) continue;
+    visited[idx] = 1;
+    sumX += x;
+    sumY += y;
+    count++;
+    stack.push(x - 1, y, x + 1, y, x, y - 1, x, y + 1);
+  }
+  if (count === 0) return p;
+  return { x: sumX / count + 0.5, y: sumY / count + 0.5 };
+}
 function locate(matrix) {
   const finderPatternQuads = [];
   let activeFinderPatternQuads = [];
@@ -9730,6 +9764,9 @@ function locate(matrix) {
     const midTopRight = recenterLocation(matrix, topRight);
     const midTopLeft = recenterLocation(matrix, topLeft);
     const midBottomLeft = recenterLocation(matrix, bottomLeft);
+    const cenTopRight = recenterByCentroid(matrix, topRight);
+    const cenTopLeft = recenterByCentroid(matrix, topLeft);
+    const cenBottomLeft = recenterByCentroid(matrix, bottomLeft);
     const alternates = groupIndex === 0 ? MAX_ALIGNMENT_ALTERNATES : 1;
     const primary = findAlignmentPatterns(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft, alternates);
     if (primary.length > 0) {
@@ -9771,6 +9808,18 @@ function locate(matrix) {
         topRight: { x: midTopRight.x, y: midTopRight.y },
         dimension: centered[i].dimension
       });
+    }
+    if (groupIndex === 0) {
+      const cenAlignment = findAlignmentPatterns(matrix, alignmentPatternQuads, cenTopRight, cenTopLeft, cenBottomLeft, 0);
+      if (cenAlignment.length > 0) {
+        result.push({
+          alignmentPattern: { x: cenAlignment[0].alignmentPattern.x, y: cenAlignment[0].alignmentPattern.y },
+          bottomLeft: { x: cenBottomLeft.x, y: cenBottomLeft.y },
+          topLeft: { x: cenTopLeft.x, y: cenTopLeft.y },
+          topRight: { x: cenTopRight.x, y: cenTopRight.y },
+          dimension: cenAlignment[0].dimension
+        });
+      }
     }
   }
   if (result.length === 0) {
@@ -9905,6 +9954,33 @@ function scan(matrix) {
         alignmentPattern: { x: location.alignmentPattern.x + dx, y: location.alignmentPattern.y + dy }
       };
       const result = tryDecodeLocation(matrix, shifted);
+      if (result) return result;
+    }
+  }
+  const PER_CORNER_OFFSETS = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+    [-1, -1],
+    [-1, 1],
+    [1, -1],
+    [1, 1],
+    [-2, 0],
+    [2, 0],
+    [0, -2],
+    [0, 2],
+    [-3, 0],
+    [3, 0],
+    [0, -3],
+    [0, 3]
+  ];
+  const base = locations[0];
+  for (const corner of ["topLeft", "topRight", "bottomLeft", "alignmentPattern"]) {
+    for (const [dx, dy] of PER_CORNER_OFFSETS) {
+      const adjusted = { ...base };
+      adjusted[corner] = { x: base[corner].x + dx, y: base[corner].y + dy };
+      const result = tryDecodeLocation(matrix, adjusted);
       if (result) return result;
     }
   }

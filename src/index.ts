@@ -113,6 +113,26 @@ function scan(matrix: BitMatrix): QRCode | null {
     }
   }
 
+  // Third pass: per-corner perturbation on the top-scored location only. Helps
+  // when one finder pattern's center is localized accurately but another's is off
+  // by a pixel — a case the whole-location translation can't represent. We perturb
+  // each of the three finder patterns and the alignment pattern independently.
+  const PER_CORNER_OFFSETS: ReadonlyArray<readonly [number, number]> = [
+    [-1, 0], [1, 0], [0, -1], [0, 1],
+    [-1, -1], [-1, 1], [1, -1], [1, 1],
+    [-2, 0], [2, 0], [0, -2], [0, 2],
+    [-3, 0], [3, 0], [0, -3], [0, 3],
+  ];
+  const base = locations[0];
+  for (const corner of ["topLeft", "topRight", "bottomLeft", "alignmentPattern"] as const) {
+    for (const [dx, dy] of PER_CORNER_OFFSETS) {
+      const adjusted = { ...base };
+      adjusted[corner] = { x: base[corner].x + dx, y: base[corner].y + dy };
+      const result = tryDecodeLocation(matrix, adjusted);
+      if (result) return result;
+    }
+  }
+
   return null;
 }
 
