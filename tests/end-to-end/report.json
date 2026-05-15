@@ -1,7 +1,7 @@
 {
   "counts": {
-    "failed": 7,
-    "successful": 247
+    "failed": 4,
+    "successful": 250
   },
   "tests": {
     "0": true,
@@ -174,7 +174,7 @@
     "168": true,
     "169": true,
     "170": true,
-    "171": false,
+    "171": true,
     "172": true,
     "173": true,
     "174": true,
@@ -200,7 +200,7 @@
     "bus-stop-2": true,
     "bus-stop-3": true,
     "business-card-1": true,
-    "business-card-2": true,
+    "business-card-2": false,
     "business-card-3": true,
     "cache-flyer": true,
     "cgi": true,
@@ -214,7 +214,7 @@
     "emblem-patch": true,
     "hk-ikea": true,
     "hudson-highlands-state-park": true,
-    "issue-14-regression": false,
+    "issue-14-regression": true,
     "issue-32-regression": true,
     "issue-34-regression": true,
     "issue-54-1": true,
@@ -236,7 +236,7 @@
     "sd-card-1": true,
     "sd-card-2": true,
     "sheep": true,
-    "sidewalk": false,
+    "sidewalk": true,
     "square-des-fusilles": true,
     "starbucks-app": true,
     "stickerbook-1": true,
@@ -250,7 +250,7 @@
     "trackable-book-1": true,
     "trackable-book-2": false,
     "trackable-book-3": true,
-    "trackable-book-4": false,
+    "trackable-book-4": true,
     "trackable-book-5": true,
     "trackable-book-6": true,
     "tree-1": true,

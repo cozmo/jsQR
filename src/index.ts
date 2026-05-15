@@ -97,7 +97,7 @@ function scan(matrix: BitMatrix): QRCode | null {
   // Second pass: apply small translation perturbations to the top-N locations.
   // Helps when recenterLocation lands the finder-pattern centers a fraction of a
   // pixel off due to rotation. Costly so only applied to first few candidates.
-  const MAX_LOCATIONS_TO_PERTURB = 4;
+  const MAX_LOCATIONS_TO_PERTURB = 12;
   const top = locations.slice(0, MAX_LOCATIONS_TO_PERTURB);
   for (const location of top) {
     for (const [dx, dy] of TRANSLATION_OFFSETS) {

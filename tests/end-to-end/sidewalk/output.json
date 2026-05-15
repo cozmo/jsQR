@@ -1,1 +1,70 @@
-null
+{
+  "binaryData": [
+    104,
+    101,
+    108,
+    108,
+    111,
+    32,
+    119,
+    111,
+    114,
+    108,
+    100
+  ],
+  "data": "hello world",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        101,
+        108,
+        108,
+        111,
+        32,
+        119,
+        111,
+        114,
+        108,
+        100
+      ],
+      "text": "hello world"
+    }
+  ],
+  "version": 1,
+  "location": {
+    "topRightCorner": {
+      "x": 207.62500000000003,
+      "y": 61.875
+    },
+    "topLeftCorner": {
+      "x": 119.51813403202866,
+      "y": 62.26152673737272
+    },
+    "bottomRightCorner": {
+      "x": 210.45037085417442,
+      "y": 151.66549067175131
+    },
+    "bottomLeftCorner": {
+      "x": 119.875,
+      "y": 149.62500000000003
+    },
+    "topRightFinderPattern": {
+      "x": 193,
+      "y": 76.5
+    },
+    "topLeftFinderPattern": {
+      "x": 134,
+      "y": 76.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 134.5,
+      "y": 135
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 181.2385208447942,
+      "y": 122.94459612471366
+    }
+  }
+}

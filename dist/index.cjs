@@ -9472,10 +9472,10 @@ function extract(image, location) {
 }
 
 // src/locator/index.ts
-var MAX_FINDERPATTERNS_TO_SEARCH = 8;
+var MAX_FINDERPATTERNS_TO_SEARCH = 12;
 var MIN_QUAD_RATIO = 0.5;
 var MAX_QUAD_RATIO = 1.5;
-var MAX_FINDER_GROUPS_TO_RETURN = 8;
+var MAX_FINDER_GROUPS_TO_RETURN = 12;
 var MAX_ALIGNMENT_ALTERNATES = 2;
 var distance = (a, b) => Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
 function sum(values) {
@@ -9742,12 +9742,33 @@ function locate(matrix) {
     if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
       return null;
     }
-    const otherPoints = finderPatterns.filter((p, ii) => i !== ii).map((p) => ({ x: p.x, y: p.y, score: p.score + (p.size - point.size) ** 2 / point.size, size: p.size })).sort((a, b) => a.score - b.score);
-    if (otherPoints.length < 2) {
-      return null;
+    const otherPoints = finderPatterns.filter((p, ii) => i !== ii).map((p) => ({ x: p.x, y: p.y, score: p.score + (p.size - point.size) ** 2 / point.size, size: p.size }));
+    const sortedByScore = [...otherPoints].sort((a, b) => a.score - b.score).slice(0, 12);
+    let best = null;
+    for (let a = 0; a < sortedByScore.length; a++) {
+      for (let b = a + 1; b < sortedByScore.length; b++) {
+        const p1 = point;
+        const p2 = sortedByScore[a];
+        const p3 = sortedByScore[b];
+        const d12 = distance(p1, p2);
+        const d13 = distance(p1, p3);
+        const d23 = distance(p2, p3);
+        const dists = [d12, d13, d23].sort((x, y) => x - y);
+        const [short1, short2, long] = dists;
+        const avgShort = (short1 + short2) / 2;
+        if (avgShort < 1) continue;
+        const legAsymmetry = Math.abs(short1 - short2) / avgShort;
+        const hypotenuseError = Math.abs(long - avgShort * Math.SQRT2) / avgShort;
+        const geometryPenalty = (legAsymmetry + hypotenuseError) * avgShort * 0.5;
+        const combined = p2.score + p3.score + geometryPenalty;
+        if (!best || combined < best.combinedScore) {
+          best = { partners: [p2, p3], combinedScore: combined };
+        }
+      }
     }
-    const score = point.score + otherPoints[0].score + otherPoints[1].score;
-    return { points: [point].concat(otherPoints.slice(0, 2)), score };
+    if (!best) return null;
+    const score = point.score + best.combinedScore;
+    return { points: [point].concat(best.partners), score };
   }).filter((q) => !!q).sort((a, b) => a.score - b.score);
   if (finderPatternGroups.length === 0) {
     return null;
@@ -9942,7 +9963,7 @@ function scan(matrix) {
     const result = tryDecodeLocation(matrix, location);
     if (result) return result;
   }
-  const MAX_LOCATIONS_TO_PERTURB = 4;
+  const MAX_LOCATIONS_TO_PERTURB = 12;
   const top = locations.slice(0, MAX_LOCATIONS_TO_PERTURB);
   for (const location of top) {
     for (const [dx, dy] of TRANSLATION_OFFSETS) {

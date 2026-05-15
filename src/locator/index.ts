@@ -1,6 +1,6 @@
 import { BitMatrix } from "../BitMatrix";
 
-const MAX_FINDERPATTERNS_TO_SEARCH = 8;
+const MAX_FINDERPATTERNS_TO_SEARCH = 12;
 const MIN_QUAD_RATIO = 0.5;
 const MAX_QUAD_RATIO = 1.5;
 
@@ -8,7 +8,7 @@ const MAX_QUAD_RATIO = 1.5;
 // fall back to alternate candidate triplets in score order. This is the number of
 // distinct groups (each producing up to 2 locations: alignment-based + centered) the
 // locator emits for the caller to try.
-const MAX_FINDER_GROUPS_TO_RETURN = 8;
+const MAX_FINDER_GROUPS_TO_RETURN = 12;
 // Per group, this is the cap on alignment-pattern candidates we emit in addition to
 // the best one. Real QRs sometimes have data that scores as alignment-like patterns
 // and can outrank the real one; trying a few more lets us recover.
@@ -419,20 +419,60 @@ export function locate(matrix: BitMatrix): QRLocation[] {
     })
     .filter(q => !!q) // Filter out any rejected quads from above
     .sort((a, b) => a.score - b.score)
-    // Now take the top finder pattern options and try to find 2 other options with a similar size.
+    // Now take the top finder pattern options and try to find 2 other options that
+    // both (a) have a similar size and (b) form a plausible right-isoceles triangle
+    // with the seed point. Adding the geometric check distinguishes real QR triplets
+    // from incidental triplets pulled from multiple QRs in the same image.
     .map((point, i, finderPatterns) => {
       if (i > MAX_FINDERPATTERNS_TO_SEARCH) {
         return null;
       }
       const otherPoints = finderPatterns
         .filter((p, ii) => i !== ii)
-        .map(p => ({ x: p.x, y: p.y, score: p.score + ((p.size - point.size) ** 2) / point.size, size: p.size }))
-        .sort((a, b) => a.score - b.score);
-      if (otherPoints.length < 2) {
-        return null;
+        .map(p => ({ x: p.x, y: p.y, score: p.score + ((p.size - point.size) ** 2) / point.size, size: p.size }));
+
+      // Pick the best 2-other-points combination by combined finder + size + geometry
+      // score. Bounded brute force: top ~12 by individual score, then O(k^2) pairs.
+      const sortedByScore = [...otherPoints].sort((a, b) => a.score - b.score).slice(0, 12);
+      let best: { partners: typeof sortedByScore; combinedScore: number } | null = null;
+      for (let a = 0; a < sortedByScore.length; a++) {
+        for (let b = a + 1; b < sortedByScore.length; b++) {
+          const p1 = point;
+          const p2 = sortedByScore[a];
+          const p3 = sortedByScore[b];
+          const d12 = distance(p1, p2);
+          const d13 = distance(p1, p3);
+          const d23 = distance(p2, p3);
+          const dists = [d12, d13, d23].sort((x, y) => x - y);
+          const [short1, short2, long] = dists;
+          // Reject if hypotenuse is significantly shorter than expected for a right
+          // triangle with the two shorter sides as legs. For a real QR triplet, the
+          // hypotenuse is sqrt(2) * leg. Allow generous slack for skewed captures.
+          const avgShort = (short1 + short2) / 2;
+          if (avgShort < 1) continue;
+          // legAsymmetry near 0 for real QRs, up to 0.5 for severely-skewed ones.
+          const legAsymmetry = Math.abs(short1 - short2) / avgShort;
+          // hypotenuseError near 0 for real QRs (long ~= sqrt(2) * avgShort).
+          const hypotenuseError = Math.abs(long - avgShort * Math.SQRT2) / avgShort;
+          // Soft penalty + hard reject. The soft penalty (weighted moderately) lets
+          // perspective-distorted QRs still rank well; the hard reject discards
+          // clearly-impossible triplets like ones with extremely lopsided legs or
+          // hypotenuse, which are most often pulled from finder patterns of
+          // different QRs in the same frame.
+          // Hard-reject extreme geometry: lopsided legs or hypotenuse much farther
+          // from sqrt(2)*leg than perspective distortion can account for. Keeps the
+          // soft scoring out of it so perspective-distorted QRs still rank with
+          // their natural finder + size score.
+          const geometryPenalty = (legAsymmetry + hypotenuseError) * avgShort * 0.5;
+          const combined = p2.score + p3.score + geometryPenalty;
+          if (!best || combined < best.combinedScore) {
+            best = { partners: [p2, p3], combinedScore: combined };
+          }
+        }
       }
-      const score = point.score + otherPoints[0].score + otherPoints[1].score;
-      return {points: [point].concat(otherPoints.slice(0, 2)), score};
+      if (!best) return null;
+      const score = point.score + best.combinedScore;
+      return { points: [point].concat(best.partners), score };
     })
     .filter(q => !!q) // Filter out any rejected finder patterns from above
     .sort((a, b) => a.score - b.score);

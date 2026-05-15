@@ -1,1 +1,88 @@
-null
+{
+  "binaryData": [
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    105,
+    102,
+    46,
+    103,
+    115,
+    47,
+    49,
+    86,
+    50,
+    66,
+    90,
+    77,
+    68
+  ],
+  "data": "http://if.gs/1V2BZMD",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        116,
+        116,
+        112,
+        58,
+        47,
+        47,
+        105,
+        102,
+        46,
+        103,
+        115,
+        47,
+        49,
+        86,
+        50,
+        66,
+        90,
+        77,
+        68
+      ],
+      "text": "http://if.gs/1V2BZMD"
+    }
+  ],
+  "version": 2,
+  "location": {
+    "topRightCorner": {
+      "x": 451.2705331303309,
+      "y": 442.8410904219882
+    },
+    "topLeftCorner": {
+      "x": 383.1014938683094,
+      "y": 417.08468943097654
+    },
+    "bottomRightCorner": {
+      "x": 450.6619637351965,
+      "y": 506.3312360452595
+    },
+    "bottomLeftCorner": {
+      "x": 380.76958337115366,
+      "y": 481.0435755131679
+    },
+    "topRightFinderPattern": {
+      "x": 441.75,
+      "y": 448
+    },
+    "topLeftFinderPattern": {
+      "x": 392.5,
+      "y": 429.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 391,
+      "y": 475.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 433,
+      "y": 483
+    }
+  }
+}
