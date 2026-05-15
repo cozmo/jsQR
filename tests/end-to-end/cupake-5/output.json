@@ -1,1 +1,86 @@
-null
+{
+  "binaryData": [
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    103,
+    101,
+    111,
+    108,
+    111,
+    113,
+    105,
+    46,
+    99,
+    111,
+    109,
+    47
+  ],
+  "data": "http://geoloqi.com/",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        116,
+        116,
+        112,
+        58,
+        47,
+        47,
+        103,
+        101,
+        111,
+        108,
+        111,
+        113,
+        105,
+        46,
+        99,
+        111,
+        109,
+        47
+      ],
+      "text": "http://geoloqi.com/"
+    }
+  ],
+  "version": 2,
+  "location": {
+    "topRightCorner": {
+      "x": 103.26626228969661,
+      "y": 121.17659807119226
+    },
+    "topLeftCorner": {
+      "x": 181.59429905935778,
+      "y": 117.20702121310413
+    },
+    "bottomRightCorner": {
+      "x": 159.00820936331678,
+      "y": 15.36428949277386
+    },
+    "bottomLeftCorner": {
+      "x": 238.7166294231761,
+      "y": 1.0078108194386595
+    },
+    "topRightFinderPattern": {
+      "x": 121.5,
+      "y": 105
+    },
+    "topLeftFinderPattern": {
+      "x": 178,
+      "y": 101
+    },
+    "bottomLeftFinderPattern": {
+      "x": 219,
+      "y": 18.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 164.25,
+      "y": 39
+    }
+  }
+}

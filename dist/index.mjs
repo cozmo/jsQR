@@ -9822,38 +9822,88 @@ function findAlignmentPatterns(matrix, alignmentPatternQuads, topRight, topLeft,
 
 // src/index.ts
 var DIMENSION_OFFSETS = [0, 4, -4, 8, -8, 12, -12];
+var TRANSLATION_OFFSETS = [
+  // Sub-pixel finer (helps high-density / small QRs where modules are 1-2 pixels)
+  [0, -0.25],
+  [0, 0.25],
+  [-0.25, 0],
+  [0.25, 0],
+  // Half-pixel offsets
+  [0, -0.5],
+  [0, 0.5],
+  [-0.5, 0],
+  [0.5, 0],
+  [-0.5, -0.5],
+  [-0.5, 0.5],
+  [0.5, -0.5],
+  [0.5, 0.5],
+  // Whole-pixel offsets — common when finder centers land between pixel rows
+  [0, -1],
+  [0, 1],
+  [-1, 0],
+  [1, 0],
+  [-1, -1],
+  [-1, 1],
+  [1, -1],
+  [1, 1],
+  // Two-pixel offsets — helps larger QRs with bigger localization error
+  [0, -2],
+  [0, 2],
+  [-2, 0],
+  [2, 0]
+];
+function tryDecodeLocation(matrix, location) {
+  for (const offset of DIMENSION_OFFSETS) {
+    const dimension = location.dimension + offset;
+    if (dimension < 21 || dimension > 177 || (dimension - 21) % 4 !== 0) {
+      continue;
+    }
+    const candidate = offset === 0 ? location : { ...location, dimension };
+    const extracted = extract(matrix, candidate);
+    const decoded = decode3(extracted.matrix);
+    if (decoded) {
+      return {
+        binaryData: decoded.bytes,
+        data: decoded.text,
+        chunks: decoded.chunks,
+        version: decoded.version,
+        location: {
+          topRightCorner: extracted.mappingFunction(candidate.dimension, 0),
+          topLeftCorner: extracted.mappingFunction(0, 0),
+          bottomRightCorner: extracted.mappingFunction(candidate.dimension, candidate.dimension),
+          bottomLeftCorner: extracted.mappingFunction(0, candidate.dimension),
+          topRightFinderPattern: candidate.topRight,
+          topLeftFinderPattern: candidate.topLeft,
+          bottomLeftFinderPattern: candidate.bottomLeft,
+          bottomRightAlignmentPattern: candidate.alignmentPattern
+        }
+      };
+    }
+  }
+  return null;
+}
 function scan(matrix) {
   const locations = locate(matrix);
   if (!locations) {
     return null;
   }
   for (const location of locations) {
-    for (const offset of DIMENSION_OFFSETS) {
-      const dimension = location.dimension + offset;
-      if (dimension < 21 || dimension > 177 || (dimension - 21) % 4 !== 0) {
-        continue;
-      }
-      const candidate = offset === 0 ? location : { ...location, dimension };
-      const extracted = extract(matrix, candidate);
-      const decoded = decode3(extracted.matrix);
-      if (decoded) {
-        return {
-          binaryData: decoded.bytes,
-          data: decoded.text,
-          chunks: decoded.chunks,
-          version: decoded.version,
-          location: {
-            topRightCorner: extracted.mappingFunction(candidate.dimension, 0),
-            topLeftCorner: extracted.mappingFunction(0, 0),
-            bottomRightCorner: extracted.mappingFunction(candidate.dimension, candidate.dimension),
-            bottomLeftCorner: extracted.mappingFunction(0, candidate.dimension),
-            topRightFinderPattern: candidate.topRight,
-            topLeftFinderPattern: candidate.topLeft,
-            bottomLeftFinderPattern: candidate.bottomLeft,
-            bottomRightAlignmentPattern: candidate.alignmentPattern
-          }
-        };
-      }
+    const result = tryDecodeLocation(matrix, location);
+    if (result) return result;
+  }
+  const MAX_LOCATIONS_TO_PERTURB = 4;
+  const top = locations.slice(0, MAX_LOCATIONS_TO_PERTURB);
+  for (const location of top) {
+    for (const [dx, dy] of TRANSLATION_OFFSETS) {
+      const shifted = {
+        ...location,
+        topLeft: { x: location.topLeft.x + dx, y: location.topLeft.y + dy },
+        topRight: { x: location.topRight.x + dx, y: location.topRight.y + dy },
+        bottomLeft: { x: location.bottomLeft.x + dx, y: location.bottomLeft.y + dy },
+        alignmentPattern: { x: location.alignmentPattern.x + dx, y: location.alignmentPattern.y + dy }
+      };
+      const result = tryDecodeLocation(matrix, shifted);
+      if (result) return result;
     }
   }
   return null;
