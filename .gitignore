@@ -31,3 +31,8 @@ node_modules
 # Don't commit package-lock.json - We don't have any direct dependencies, and the dev dependencies for now at least
 # dont't need to be locked beyond the package.json
 package-lock.json
+
+# Build output is committed (used by the GitHub Pages demo in docs/), so dist/ is not ignored here.
+# .tsbuildinfo from tsc --noEmit, however, should be ignored.
+*.tsbuildinfo
+

@@ -1,6 +1,9 @@
+import * as assert from "node:assert/strict";
+import { describe, it } from "node:test";
+
 import { loadBinarized } from "../../tests/helpers";
 import { BitMatrix } from "../BitMatrix";
-import { extract } from "./";
+import { extract } from "./index";
 
 function matricCompare(a: BitMatrix, b: BitMatrix) {
   if (!(a.height === b.height && a.width === b.width)) {
@@ -26,7 +29,7 @@ describe("extract", () => {
       alignmentPattern: { x: 18.5, y: 18.5 },
       dimension: 25,
     });
-    expect(matricCompare(extracted.matrix, data)).toBeTruthy();
+    assert.ok(matricCompare(extracted.matrix, data));
   });
 
   it("extracts a distorted QR code", async () => {
@@ -39,6 +42,6 @@ describe("extract", () => {
       alignmentPattern: { x: 197, y: 315 },
       dimension: 25,
     });
-    expect(matricCompare(extracted.matrix, expected)).toBeTruthy();
+    assert.ok(matricCompare(extracted.matrix, expected));
   });
 });

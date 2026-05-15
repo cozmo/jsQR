@@ -1,28 +1,28 @@
-import * as fs from "fs-extra";
-import * as path from "path";
-import jsQR from "../src";
+import { readdir, writeFile } from "node:fs/promises";
+import * as path from "node:path";
 
-import * as helpers from "./helpers";
+import jsQR from "../src/index";
+import { loadPng } from "./helpers";
 
-const report = {
-  counts: {
-    failed: 0,
-    successful: 0,
-  },
+interface Report {
+  counts: { failed: number; successful: number };
+  tests: Record<string, boolean>;
+}
+
+const report: Report = {
+  counts: { failed: 0, successful: 0 },
   tests: {},
 };
 
-(async () => {
-  const tests = (await fs.readdir(path.join("tests", "end-to-end"))).filter((n) => !n.includes("."));
+const tests = (await readdir(path.join("tests", "end-to-end"))).filter((n) => !n.includes("."));
 
-  for (const t of tests) {
-    const imageData = await helpers.loadPng(path.join("tests", "end-to-end", t, "input.png"));
-    const output = jsQR(imageData.data, imageData.width, imageData.height);
+for (const t of tests) {
+  const imageData = await loadPng(path.join("tests", "end-to-end", t, "input.png"));
+  const output = jsQR(imageData.data, imageData.width, imageData.height);
 
-    await fs.writeFile(path.join("tests", "end-to-end", t, "output.json"), JSON.stringify(output, null, 2), "utf8");
-    report.tests[t] = !!output;
-    report.counts[!!output ? "successful" : "failed"]++;
-  }
+  await writeFile(path.join("tests", "end-to-end", t, "output.json"), JSON.stringify(output, null, 2), "utf8");
+  report.tests[t] = !!output;
+  report.counts[output ? "successful" : "failed"]++;
+}
 
-  await fs.writeFile(path.join("tests", "end-to-end", "report.json"), JSON.stringify(report, null, 2));
-})().then(() => process.exit(0)).catch((e) => { throw e; });
+await writeFile(path.join("tests", "end-to-end", "report.json"), JSON.stringify(report, null, 2));

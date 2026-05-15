@@ -1,9 +1,9 @@
-import * as fs from "fs-extra";
+import { readFile } from "node:fs/promises";
 import * as png from "upng-js";
 
 import { BitMatrix } from "../src/BitMatrix";
 
-export function bitMatrixToPng(matrix: BitMatrix) {
+export function bitMatrixToPng(matrix: BitMatrix): Buffer {
   const output = new Uint8ClampedArray(matrix.width * matrix.height * 4);
   for (let y = 0; y < matrix.height; y++) {
     for (let x = 0; x < matrix.width; x++) {
@@ -15,24 +15,19 @@ export function bitMatrixToPng(matrix: BitMatrix) {
       output[i + 3] = 0xff;
     }
   }
-  return new Buffer(png.encode(output, matrix.width, matrix.height, 0));
+  return Buffer.from(png.encode(output, matrix.width, matrix.height, 0));
 }
 
-export async function loadPng(path) {
-  const data = png.decode(await fs.readFile(path));
-  const out: {
-    data: Uint8ClampedArray,
-    height: number,
-    width: number,
-  } = {
+export async function loadPng(path: string): Promise<{ data: Uint8ClampedArray; height: number; width: number }> {
+  const data = png.decode(await readFile(path));
+  return {
     data: png.toRGBA8(data),
     height: data.height,
     width: data.width,
   };
-  return out;
 }
 
-export async function loadBinarized(path) {
+export async function loadBinarized(path: string): Promise<BitMatrix> {
   const image = await loadPng(path);
   const out = BitMatrix.createEmpty(image.width, image.height);
   for (let x = 0; x < image.width; x++) {

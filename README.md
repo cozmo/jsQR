@@ -1,6 +1,6 @@
 # jsQR
 
-[![Build Status](https://travis-ci.org/cozmo/jsQR.svg?branch=master)](https://travis-ci.org/cozmo/jsQR)
+[![CI](https://github.com/cozmo/jsQR/actions/workflows/ci.yml/badge.svg)](https://github.com/cozmo/jsQR/actions/workflows/ci.yml)
 
 A pure javascript QR code reading library.
 This library takes in raw images and will locate, extract and parse any QR code found within.
@@ -20,7 +20,7 @@ npm install jsqr --save
 ```
 
 ```javascript
-// ES6 import
+// ES module import
 import jsQR from "jsqr";
 
 // CommonJS require
@@ -28,6 +28,10 @@ const jsQR = require("jsqr");
 
 jsQR(...);
 ```
+
+The package ships dual ES module (`.mjs`) and CommonJS (`.cjs`) builds with
+TypeScript declarations, resolved automatically by Node and modern bundlers
+via the `exports` field. Supported Node versions: `>=18`.
 
 ### Browser
 Alternatively for frontend use [`jsQR.js`](./dist/jsQR.js) can be included with a script tag
@@ -78,7 +82,11 @@ Has points for the following locations.
   - Finder patterns - `topRightFinderPattern`/`topLeftFinderPattern`/`bottomLeftFinderPattern`
   - May also have a point for the `bottomRightAlignmentPattern` assuming one exists and can be located.
 
-Because the library is written in [typescript](http://www.typescriptlang.org/) you can also view the [type definitions](./dist/index.d.ts) to understand the API.
+Because the library is written in [typescript](http://www.typescriptlang.org/) you can also view the [type definitions](./dist/index.d.ts) to understand the API. The named types `QRCode` and `Options` are also exported:
+
+```ts
+import jsQR, { type QRCode, type Options } from "jsqr";
+```
 
 ## Contributing
 

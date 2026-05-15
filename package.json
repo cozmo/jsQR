@@ -3,8 +3,34 @@
   "version": "1.4.0",
   "description": "A pure javascript QR code reading library that takes in raw images and will locate, extract and parse any QR code found within.",
   "repository": "https://github.com/cozmo/jsQR",
-  "main": "./dist/jsQR.js",
+  "bugs": "https://github.com/cozmo/jsQR/issues",
+  "homepage": "https://github.com/cozmo/jsQR#readme",
+  "license": "Apache-2.0",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "unpkg": "./dist/jsQR.js",
+  "jsdelivr": "./dist/jsQR.js",
+  "exports": {
+    ".": {
+      "types": {
+        "import": "./dist/index.d.mts",
+        "require": "./dist/index.d.ts"
+      },
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "contributors": [
     {
       "name": "Cosmo Wolfe",
@@ -15,47 +41,19 @@
       "email": "gmjefff@gmail.com"
     }
   ],
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "@types/fs-extra": "^4.0.2",
-    "@types/jest": "^20.0.8",
-    "@types/node": "^8.0.27",
-    "awesome-typescript-loader": "^3.2.3",
-    "fs-extra": "^4.0.1",
-    "jest": "^23.1.0",
-    "rimraf": "^2.6.2",
-    "ts-jest": "^23.0.4",
-    "ts-node": "^3.3.0",
-    "tslint": "^5.7.0",
-    "typescript": "^2.5.2",
-    "upng-js": "^1.0.1",
-    "webpack": "^3.10.0"
-  },
   "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "test": "jest",
-    "lint": "tslint --project .",
-    "generate-test-data": "ts-node --project tests/ tests/generate-test-data.ts"
+    "build": "tsup",
+    "watch": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test src/locator/locator.test.ts src/extractor/extractor.test.ts src/decoder/decoder.test.ts tests/end-to-end.test.ts",
+    "generate-test-data": "tsx tests/generate-test-data.ts",
+    "prepublishOnly": "npm run typecheck && npm run build && npm test"
   },
-  "jest": {
-    "testRegex": ".*test.ts",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "globals": {
-      "ts-jest": {
-        "tsConfig": {
-          "noImplicitAny": false,
-          "lib": ["es2015"],
-          "types": ["jest", "node"]
-        }
-      }
-    }
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "upng-js": "^1.0.1"
   }
 }
