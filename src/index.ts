@@ -24,6 +24,13 @@ export interface QRCode {
   };
 }
 
+// The dimensions to try around the locator's best guess, in priority order. The
+// locator's computeDimension uses moduleSize derived from black/white run lengths,
+// which is fragile under noise and can be off by one valid step (each step = 4
+// modules per QR version). Trying neighbors recovers cases where the right finder
+// triplet was found but moduleSize was noisy.
+const DIMENSION_OFFSETS = [0, 4, -4, 8, -8];
+
 function scan(matrix: BitMatrix): QRCode | null {
   const locations = locate(matrix);
   if (!locations) {
@@ -31,27 +38,35 @@ function scan(matrix: BitMatrix): QRCode | null {
   }
 
   for (const location of locations) {
-    const extracted = extract(matrix, location);
-    const decoded = decode(extracted.matrix);
-    if (decoded) {
-      return {
-        binaryData: decoded.bytes,
-        data: decoded.text,
-        chunks: decoded.chunks,
-        version: decoded.version,
-        location: {
-          topRightCorner: extracted.mappingFunction(location.dimension, 0),
-          topLeftCorner: extracted.mappingFunction(0, 0),
-          bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
-          bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
+    for (const offset of DIMENSION_OFFSETS) {
+      const dimension = location.dimension + offset;
+      // Valid QR dimensions are 21..177 with step 4 (versions 1..40).
+      if (dimension < 21 || dimension > 177 || (dimension - 21) % 4 !== 0) {
+        continue;
+      }
+      const candidate = offset === 0 ? location : { ...location, dimension };
+      const extracted = extract(matrix, candidate);
+      const decoded = decode(extracted.matrix);
+      if (decoded) {
+        return {
+          binaryData: decoded.bytes,
+          data: decoded.text,
+          chunks: decoded.chunks,
+          version: decoded.version,
+          location: {
+            topRightCorner: extracted.mappingFunction(candidate.dimension, 0),
+            topLeftCorner: extracted.mappingFunction(0, 0),
+            bottomRightCorner: extracted.mappingFunction(candidate.dimension, candidate.dimension),
+            bottomLeftCorner: extracted.mappingFunction(0, candidate.dimension),
 
-          topRightFinderPattern: location.topRight,
-          topLeftFinderPattern: location.topLeft,
-          bottomLeftFinderPattern: location.bottomLeft,
+            topRightFinderPattern: candidate.topRight,
+            topLeftFinderPattern: candidate.topLeft,
+            bottomLeftFinderPattern: candidate.bottomLeft,
 
-          bottomRightAlignmentPattern: location.alignmentPattern,
-        },
-      };
+            bottomRightAlignmentPattern: candidate.alignmentPattern,
+          },
+        };
+      }
     }
   }
   return null;

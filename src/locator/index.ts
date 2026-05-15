@@ -1,8 +1,18 @@
 import { BitMatrix } from "../BitMatrix";
 
-const MAX_FINDERPATTERNS_TO_SEARCH = 4;
+const MAX_FINDERPATTERNS_TO_SEARCH = 6;
 const MIN_QUAD_RATIO = 0.5;
 const MAX_QUAD_RATIO = 1.5;
+
+// When the top-scored finder pattern triplet doesn't lead to a successful decode, we
+// fall back to alternate candidate triplets in score order. This is the number of
+// distinct groups (each producing up to 2 locations: alignment-based + centered) the
+// locator emits for the caller to try.
+const MAX_FINDER_GROUPS_TO_RETURN = 6;
+// Per group, this is the cap on alignment-pattern candidates we emit in addition to
+// the best one. Real QRs sometimes have data that scores as alignment-like patterns
+// and can outrank the real one; trying a few more lets us recover.
+const MAX_ALIGNMENT_ALTERNATES = 2;
 
 export interface Point {
   x: number;
@@ -69,12 +79,18 @@ function computeDimension(topLeft: Point, topRight: Point, bottomLeft: Point, ma
   const topDimension = Math.round(distance(topLeft, topRight) / moduleSize);
   const sideDimension = Math.round(distance(topLeft, bottomLeft) / moduleSize);
   let dimension = Math.floor((topDimension + sideDimension) / 2) + 7;
+  // Snap to the nearest valid dimension. All QR codes have a side length of 4k + 1
+  // (21, 25, 29, ...). The previous switch was missing the case 3 branch, which let
+  // invalid 4k+3 dimensions through and made downstream extraction fail.
   switch (dimension % 4) {
     case 0:
       dimension++;
       break;
     case 2:
       dimension--;
+      break;
+    case 3:
+      dimension += 2;
       break;
   }
   return { dimension, moduleSize };
@@ -382,38 +398,78 @@ export function locate(matrix: BitMatrix): QRLocation[] {
     return null;
   }
 
-  const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
-    finderPatternGroups[0].points[0], finderPatternGroups[0].points[1], finderPatternGroups[0].points[2],
-  );
-  const alignment = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
   const result: QRLocation[] = [];
-  if (alignment) {
-    result.push({
-      alignmentPattern: { x: alignment.alignmentPattern.x, y: alignment.alignmentPattern.y },
-      bottomLeft: {x: bottomLeft.x, y: bottomLeft.y },
-      dimension: alignment.dimension,
-      topLeft: {x: topLeft.x, y: topLeft.y },
-      topRight: {x: topRight.x, y: topRight.y },
-    });
-  }
+  // The locator emits candidates in a deliberate priority order. Index 0 is the
+  // best-scored finder triplet with its best alignment pattern (the original
+  // behavior). Index 1 is the same triplet but with finder positions naively
+  // re-centered, which helps low-resolution images where a faint skew is just
+  // compression noise. After that we try alternate alignment patterns for the
+  // top triplet, and finally lower-scoring triplets — each with both alignment
+  // and centered variants. The scan() caller iterates these in order.
+  const groupsToTry = finderPatternGroups.slice(0, MAX_FINDER_GROUPS_TO_RETURN);
+  for (let groupIndex = 0; groupIndex < groupsToTry.length; groupIndex++) {
+    const group = groupsToTry[groupIndex];
+    const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
+      group.points[0], group.points[1], group.points[2],
+    );
+    const midTopRight = recenterLocation(matrix, topRight);
+    const midTopLeft = recenterLocation(matrix, topLeft);
+    const midBottomLeft = recenterLocation(matrix, bottomLeft);
 
-  // We normally use the center of the quads as the location of the tracking points, which is optimal for most cases and will account
-  // for a skew in the image. However, In some cases, a slight skew might not be real and instead be caused by image compression
-  // errors and/or low resolution. For those cases, we'd be better off centering the point exactly in the middle of the black area. We
-  // compute and return the location data for the naively centered points as it is little additional work and allows for multiple
-  // attempts at decoding harder images.
-  const midTopRight = recenterLocation(matrix, topRight);
-  const midTopLeft = recenterLocation(matrix, topLeft);
-  const midBottomLeft = recenterLocation(matrix, bottomLeft);
-  const centeredAlignment = findAlignmentPattern(matrix, alignmentPatternQuads, midTopRight, midTopLeft, midBottomLeft);
-  if (centeredAlignment) {
-    result.push({
-      alignmentPattern: { x: centeredAlignment.alignmentPattern.x, y: centeredAlignment.alignmentPattern.y },
-      bottomLeft: { x: midBottomLeft.x, y: midBottomLeft. y },
-      topLeft: { x: midTopLeft.x, y: midTopLeft. y },
-      topRight: { x: midTopRight.x, y: midTopRight. y },
-      dimension: centeredAlignment.dimension,
-    });
+    // For the top-scored group we generate alternate alignment-pattern candidates
+    // too; for lower-scored groups we only generate the best alignment to keep the
+    // total candidate count from exploding.
+    const alternates = groupIndex === 0 ? MAX_ALIGNMENT_ALTERNATES : 0;
+
+    const primary = findAlignmentPatterns(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft, alternates);
+    if (primary.length > 0) {
+      result.push({
+        alignmentPattern: { x: primary[0].alignmentPattern.x, y: primary[0].alignmentPattern.y },
+        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
+        dimension: primary[0].dimension,
+        topLeft: { x: topLeft.x, y: topLeft.y },
+        topRight: { x: topRight.x, y: topRight.y },
+      });
+    }
+
+    const centered = findAlignmentPatterns(matrix, alignmentPatternQuads, midTopRight, midTopLeft, midBottomLeft, alternates);
+    if (centered.length > 0) {
+      result.push({
+        alignmentPattern: { x: centered[0].alignmentPattern.x, y: centered[0].alignmentPattern.y },
+        bottomLeft: { x: midBottomLeft.x, y: midBottomLeft.y },
+        topLeft: { x: midTopLeft.x, y: midTopLeft.y },
+        topRight: { x: midTopRight.x, y: midTopRight.y },
+        dimension: centered[0].dimension,
+      });
+    }
+
+    // If the top-scored finder triplet produced no location at all, refuse to fall
+    // back to lower-scored triplets — they are almost certainly noise, and emitting
+    // them would turn "no QR found" into a false positive. We only chase alternates
+    // when we have at least one geometrically-valid candidate to back off from.
+    if (groupIndex === 0 && result.length === 0) {
+      return null;
+    }
+
+    // Alternates for the top group (alignment-based then centered-based).
+    for (let i = 1; i < primary.length; i++) {
+      result.push({
+        alignmentPattern: { x: primary[i].alignmentPattern.x, y: primary[i].alignmentPattern.y },
+        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
+        dimension: primary[i].dimension,
+        topLeft: { x: topLeft.x, y: topLeft.y },
+        topRight: { x: topRight.x, y: topRight.y },
+      });
+    }
+    for (let i = 1; i < centered.length; i++) {
+      result.push({
+        alignmentPattern: { x: centered[i].alignmentPattern.x, y: centered[i].alignmentPattern.y },
+        bottomLeft: { x: midBottomLeft.x, y: midBottomLeft.y },
+        topLeft: { x: midTopLeft.x, y: midTopLeft.y },
+        topRight: { x: midTopRight.x, y: midTopRight.y },
+        dimension: centered[i].dimension,
+      });
+    }
   }
 
   if (result.length === 0) {
@@ -423,18 +479,27 @@ export function locate(matrix: BitMatrix): QRLocation[] {
   return result;
 }
 
-function findAlignmentPattern(matrix: BitMatrix, alignmentPatternQuads: Quad[], topRight: Point, topLeft: Point, bottomLeft: Point) {
-  // Now that we've found the three finder patterns we can determine the blockSize and the size of the QR code.
-  // We'll use these to help find the alignment pattern but also later when we do the extraction.
+// Returns up to `1 + alternates` (alignmentPattern, dimension) candidates ordered by
+// confidence. The first entry mirrors the original findAlignmentPattern behavior; the
+// remaining are alternates (next-best quad-based alignment patterns, plus the
+// expected-position fallback when alternates are requested) so the caller can retry
+// a different perspective when the first attempt fails to decode.
+function findAlignmentPatterns(
+  matrix: BitMatrix,
+  alignmentPatternQuads: Quad[],
+  topRight: Point,
+  topLeft: Point,
+  bottomLeft: Point,
+  alternates: number,
+): Array<{ alignmentPattern: Point; dimension: number }> {
   let dimension: number;
   let moduleSize: number;
   try {
     ({ dimension, moduleSize } = computeDimension(topLeft, topRight, bottomLeft, matrix));
   } catch (e) {
-    return null;
+    return [];
   }
 
-  // Now find the alignment pattern
   const bottomRightFinderPattern = { // Best guess at where a bottomRight finder pattern would be
     x: topRight.x - topLeft.x + bottomLeft.x,
     y: topRight.y - topLeft.y + bottomLeft.y,
@@ -446,7 +511,7 @@ function findAlignmentPattern(matrix: BitMatrix, alignmentPatternQuads: Quad[], 
     y: topLeft.y + correctionToTopLeft * (bottomRightFinderPattern.y - topLeft.y),
   };
 
-  const alignmentPatterns = alignmentPatternQuads
+  const rankedAlignmentPatterns = alignmentPatternQuads
     .map(q => {
       const x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
       const y = (q.top.y + q.bottom.y + 1) / 2;
@@ -454,16 +519,30 @@ function findAlignmentPattern(matrix: BitMatrix, alignmentPatternQuads: Quad[], 
         return;
       }
 
-      const sizeScore = scorePattern({x: Math.floor(x), y: Math.floor(y)}, [1, 1, 1], matrix);
-      const score = sizeScore + distance({x, y}, expectedAlignmentPattern);
+      const sizeScore = scorePattern({ x: Math.floor(x), y: Math.floor(y) }, [1, 1, 1], matrix);
+      const score = sizeScore + distance({ x, y }, expectedAlignmentPattern);
       return { x, y, score };
     })
     .filter(v => !!v)
     .sort((a, b) => a.score - b.score);
 
-  // If there are less than 15 modules between finder patterns it's a version 1 QR code and as such has no alignmemnt pattern
-  // so we can only use our best guess.
-  const alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
+  // Version 1 QRs (less than 15 modules between finder patterns) have no alignment
+  // pattern at all, so we must rely on the geometric guess.
+  if (modulesBetweenFinderPatterns < 15 || rankedAlignmentPatterns.length === 0) {
+    return [{ alignmentPattern: expectedAlignmentPattern, dimension }];
+  }
 
-  return { alignmentPattern, dimension };
+  const results: Array<{ alignmentPattern: Point; dimension: number }> = [
+    { alignmentPattern: rankedAlignmentPatterns[0], dimension },
+  ];
+  // Add next-best quad-based alignments, then the geometric guess as a last resort.
+  // This lets us recover from cases where some piece of data scores as alignment-like
+  // and outranks the real alignment pattern.
+  for (let i = 1; i < rankedAlignmentPatterns.length && results.length <= alternates; i++) {
+    results.push({ alignmentPattern: rankedAlignmentPatterns[i], dimension });
+  }
+  if (results.length <= alternates) {
+    results.push({ alignmentPattern: expectedAlignmentPattern, dimension });
+  }
+  return results;
 }

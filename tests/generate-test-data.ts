@@ -14,15 +14,18 @@ const report: Report = {
   tests: {},
 };
 
-const tests = (await readdir(path.join("tests", "end-to-end"))).filter((n) => !n.includes("."));
+async function main() {
+  const tests = (await readdir(path.join("tests", "end-to-end"))).filter((n) => !n.includes("."));
 
-for (const t of tests) {
-  const imageData = await loadPng(path.join("tests", "end-to-end", t, "input.png"));
-  const output = jsQR(imageData.data, imageData.width, imageData.height);
+  for (const t of tests) {
+    const imageData = await loadPng(path.join("tests", "end-to-end", t, "input.png"));
+    const output = jsQR(imageData.data, imageData.width, imageData.height);
 
-  await writeFile(path.join("tests", "end-to-end", t, "output.json"), JSON.stringify(output, null, 2), "utf8");
-  report.tests[t] = !!output;
-  report.counts[output ? "successful" : "failed"]++;
+    await writeFile(path.join("tests", "end-to-end", t, "output.json"), JSON.stringify(output, null, 2), "utf8");
+    report.tests[t] = !!output;
+    report.counts[output ? "successful" : "failed"]++;
+  }
+
+  await writeFile(path.join("tests", "end-to-end", "report.json"), JSON.stringify(report, null, 2));
 }
-
-await writeFile(path.join("tests", "end-to-end", "report.json"), JSON.stringify(report, null, 2));
+main();

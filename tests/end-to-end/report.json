@@ -1,7 +1,7 @@
 {
   "counts": {
-    "failed": 40,
-    "successful": 214
+    "failed": 35,
+    "successful": 219
   },
   "tests": {
     "0": true,
@@ -144,7 +144,7 @@
     "138": true,
     "139": true,
     "140": true,
-    "141": false,
+    "141": true,
     "142": true,
     "143": true,
     "144": true,
@@ -200,7 +200,7 @@
     "bus-stop-2": true,
     "bus-stop-3": true,
     "business-card-1": true,
-    "business-card-2": false,
+    "business-card-2": true,
     "business-card-3": true,
     "cache-flyer": true,
     "cgi": true,
@@ -222,7 +222,7 @@
     "issue-59": true,
     "issue-59-inverted": true,
     "issue-61": true,
-    "japan-visa": false,
+    "japan-visa": true,
     "japanese-jean-ad": false,
     "kanji": true,
     "key-flyer": false,
@@ -255,8 +255,8 @@
     "trackable-book-6": true,
     "tree-1": true,
     "tree-2": true,
-    "videogame-frame": false,
+    "videogame-frame": true,
     "weekend-tirana-2016-agenda": true,
-    "windows-screenshot": false
+    "windows-screenshot": true
   }
 }

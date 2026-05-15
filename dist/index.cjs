@@ -9402,9 +9402,11 @@ function extract(image, location) {
 }
 
 // src/locator/index.ts
-var MAX_FINDERPATTERNS_TO_SEARCH = 4;
+var MAX_FINDERPATTERNS_TO_SEARCH = 6;
 var MIN_QUAD_RATIO = 0.5;
 var MAX_QUAD_RATIO = 1.5;
+var MAX_FINDER_GROUPS_TO_RETURN = 6;
+var MAX_ALIGNMENT_ALTERNATES = 2;
 var distance = (a, b) => Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
 function sum(values) {
   return values.reduce((a, b) => a + b);
@@ -9443,6 +9445,9 @@ function computeDimension(topLeft, topRight, bottomLeft, matrix) {
       break;
     case 2:
       dimension--;
+      break;
+    case 3:
+      dimension += 2;
       break;
   }
   return { dimension, moduleSize };
@@ -9643,47 +9648,73 @@ function locate(matrix) {
   if (finderPatternGroups.length === 0) {
     return null;
   }
-  const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
-    finderPatternGroups[0].points[0],
-    finderPatternGroups[0].points[1],
-    finderPatternGroups[0].points[2]
-  );
-  const alignment = findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft);
   const result = [];
-  if (alignment) {
-    result.push({
-      alignmentPattern: { x: alignment.alignmentPattern.x, y: alignment.alignmentPattern.y },
-      bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
-      dimension: alignment.dimension,
-      topLeft: { x: topLeft.x, y: topLeft.y },
-      topRight: { x: topRight.x, y: topRight.y }
-    });
-  }
-  const midTopRight = recenterLocation(matrix, topRight);
-  const midTopLeft = recenterLocation(matrix, topLeft);
-  const midBottomLeft = recenterLocation(matrix, bottomLeft);
-  const centeredAlignment = findAlignmentPattern(matrix, alignmentPatternQuads, midTopRight, midTopLeft, midBottomLeft);
-  if (centeredAlignment) {
-    result.push({
-      alignmentPattern: { x: centeredAlignment.alignmentPattern.x, y: centeredAlignment.alignmentPattern.y },
-      bottomLeft: { x: midBottomLeft.x, y: midBottomLeft.y },
-      topLeft: { x: midTopLeft.x, y: midTopLeft.y },
-      topRight: { x: midTopRight.x, y: midTopRight.y },
-      dimension: centeredAlignment.dimension
-    });
+  const groupsToTry = finderPatternGroups.slice(0, MAX_FINDER_GROUPS_TO_RETURN);
+  for (let groupIndex = 0; groupIndex < groupsToTry.length; groupIndex++) {
+    const group = groupsToTry[groupIndex];
+    const { topRight, topLeft, bottomLeft } = reorderFinderPatterns(
+      group.points[0],
+      group.points[1],
+      group.points[2]
+    );
+    const midTopRight = recenterLocation(matrix, topRight);
+    const midTopLeft = recenterLocation(matrix, topLeft);
+    const midBottomLeft = recenterLocation(matrix, bottomLeft);
+    const alternates = groupIndex === 0 ? MAX_ALIGNMENT_ALTERNATES : 0;
+    const primary = findAlignmentPatterns(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft, alternates);
+    if (primary.length > 0) {
+      result.push({
+        alignmentPattern: { x: primary[0].alignmentPattern.x, y: primary[0].alignmentPattern.y },
+        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
+        dimension: primary[0].dimension,
+        topLeft: { x: topLeft.x, y: topLeft.y },
+        topRight: { x: topRight.x, y: topRight.y }
+      });
+    }
+    const centered = findAlignmentPatterns(matrix, alignmentPatternQuads, midTopRight, midTopLeft, midBottomLeft, alternates);
+    if (centered.length > 0) {
+      result.push({
+        alignmentPattern: { x: centered[0].alignmentPattern.x, y: centered[0].alignmentPattern.y },
+        bottomLeft: { x: midBottomLeft.x, y: midBottomLeft.y },
+        topLeft: { x: midTopLeft.x, y: midTopLeft.y },
+        topRight: { x: midTopRight.x, y: midTopRight.y },
+        dimension: centered[0].dimension
+      });
+    }
+    if (groupIndex === 0 && result.length === 0) {
+      return null;
+    }
+    for (let i = 1; i < primary.length; i++) {
+      result.push({
+        alignmentPattern: { x: primary[i].alignmentPattern.x, y: primary[i].alignmentPattern.y },
+        bottomLeft: { x: bottomLeft.x, y: bottomLeft.y },
+        dimension: primary[i].dimension,
+        topLeft: { x: topLeft.x, y: topLeft.y },
+        topRight: { x: topRight.x, y: topRight.y }
+      });
+    }
+    for (let i = 1; i < centered.length; i++) {
+      result.push({
+        alignmentPattern: { x: centered[i].alignmentPattern.x, y: centered[i].alignmentPattern.y },
+        bottomLeft: { x: midBottomLeft.x, y: midBottomLeft.y },
+        topLeft: { x: midTopLeft.x, y: midTopLeft.y },
+        topRight: { x: midTopRight.x, y: midTopRight.y },
+        dimension: centered[i].dimension
+      });
+    }
   }
   if (result.length === 0) {
     return null;
   }
   return result;
 }
-function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft) {
+function findAlignmentPatterns(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft, alternates) {
   let dimension;
   let moduleSize;
   try {
     ({ dimension, moduleSize } = computeDimension(topLeft, topRight, bottomLeft, matrix));
   } catch (e) {
-    return null;
+    return [];
   }
   const bottomRightFinderPattern = {
     // Best guess at where a bottomRight finder pattern would be
@@ -9696,7 +9727,7 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
     x: topLeft.x + correctionToTopLeft * (bottomRightFinderPattern.x - topLeft.x),
     y: topLeft.y + correctionToTopLeft * (bottomRightFinderPattern.y - topLeft.y)
   };
-  const alignmentPatterns = alignmentPatternQuads.map((q) => {
+  const rankedAlignmentPatterns = alignmentPatternQuads.map((q) => {
     const x = (q.top.startX + q.top.endX + q.bottom.startX + q.bottom.endX) / 4;
     const y = (q.top.y + q.bottom.y + 1) / 2;
     if (!matrix.get(Math.floor(x), Math.floor(y))) {
@@ -9706,36 +9737,55 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
     const score = sizeScore + distance({ x, y }, expectedAlignmentPattern);
     return { x, y, score };
   }).filter((v) => !!v).sort((a, b) => a.score - b.score);
-  const alignmentPattern = modulesBetweenFinderPatterns >= 15 && alignmentPatterns.length ? alignmentPatterns[0] : expectedAlignmentPattern;
-  return { alignmentPattern, dimension };
+  if (modulesBetweenFinderPatterns < 15 || rankedAlignmentPatterns.length === 0) {
+    return [{ alignmentPattern: expectedAlignmentPattern, dimension }];
+  }
+  const results = [
+    { alignmentPattern: rankedAlignmentPatterns[0], dimension }
+  ];
+  for (let i = 1; i < rankedAlignmentPatterns.length && results.length <= alternates; i++) {
+    results.push({ alignmentPattern: rankedAlignmentPatterns[i], dimension });
+  }
+  if (results.length <= alternates) {
+    results.push({ alignmentPattern: expectedAlignmentPattern, dimension });
+  }
+  return results;
 }
 
 // src/index.ts
+var DIMENSION_OFFSETS = [0, 4, -4, 8, -8];
 function scan(matrix) {
   const locations = locate(matrix);
   if (!locations) {
     return null;
   }
   for (const location of locations) {
-    const extracted = extract(matrix, location);
-    const decoded = decode3(extracted.matrix);
-    if (decoded) {
-      return {
-        binaryData: decoded.bytes,
-        data: decoded.text,
-        chunks: decoded.chunks,
-        version: decoded.version,
-        location: {
-          topRightCorner: extracted.mappingFunction(location.dimension, 0),
-          topLeftCorner: extracted.mappingFunction(0, 0),
-          bottomRightCorner: extracted.mappingFunction(location.dimension, location.dimension),
-          bottomLeftCorner: extracted.mappingFunction(0, location.dimension),
-          topRightFinderPattern: location.topRight,
-          topLeftFinderPattern: location.topLeft,
-          bottomLeftFinderPattern: location.bottomLeft,
-          bottomRightAlignmentPattern: location.alignmentPattern
-        }
-      };
+    for (const offset of DIMENSION_OFFSETS) {
+      const dimension = location.dimension + offset;
+      if (dimension < 21 || dimension > 177 || (dimension - 21) % 4 !== 0) {
+        continue;
+      }
+      const candidate = offset === 0 ? location : { ...location, dimension };
+      const extracted = extract(matrix, candidate);
+      const decoded = decode3(extracted.matrix);
+      if (decoded) {
+        return {
+          binaryData: decoded.bytes,
+          data: decoded.text,
+          chunks: decoded.chunks,
+          version: decoded.version,
+          location: {
+            topRightCorner: extracted.mappingFunction(candidate.dimension, 0),
+            topLeftCorner: extracted.mappingFunction(0, 0),
+            bottomRightCorner: extracted.mappingFunction(candidate.dimension, candidate.dimension),
+            bottomLeftCorner: extracted.mappingFunction(0, candidate.dimension),
+            topRightFinderPattern: candidate.topRight,
+            topLeftFinderPattern: candidate.topLeft,
+            bottomLeftFinderPattern: candidate.bottomLeft,
+            bottomRightAlignmentPattern: candidate.alignmentPattern
+          }
+        };
+      }
     }
   }
   return null;
