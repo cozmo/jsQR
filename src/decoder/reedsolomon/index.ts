@@ -123,10 +123,21 @@ export function decode(bytes: number[], twoS: number) {
     return null;
   }
 
+  // A Reed-Solomon code with `twoS` parity symbols can correct at most floor(twoS/2)
+  // errors. If the algorithm "found" more than that, it's a false success — the
+  // syndrome math worked out but the corrections don't reflect the actual errors,
+  // and the returned bytes will be garbage that downstream decoders will choke on.
+  // Reject those upfront so the scan loop can keep searching.
+  if (errorLocations.length > Math.floor(twoS / 2)) {
+    return null;
+  }
+
   const errorMagnitudes = findErrorMagnitudes(field, sigmaOmega[1], errorLocations);
   for (let i = 0; i < errorLocations.length; i++) {
     const position = outputBytes.length - 1 - field.log(errorLocations[i]);
-    if (position < 0) {
+    // Out-of-range positions also indicate a false success: the algorithm placed
+    // an "error" at a codeword index that doesn't exist.
+    if (position < 0 || position >= outputBytes.length) {
       return null;
     }
     outputBytes[position] = addOrSubtractGF(outputBytes[position], errorMagnitudes[i]);

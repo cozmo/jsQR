@@ -285,17 +285,7 @@ function getDataBlocks(codewords: number[], version: Version, ecLevel: number) {
   return dataBlocks;
 }
 
-function decodeMatrix(matrix: BitMatrix) {
-  const version = readVersion(matrix);
-  if (!version) {
-    return null;
-  }
-
-  const formatInfo = readFormatInformation(matrix);
-  if (!formatInfo) {
-    return null;
-  }
-
+function tryDecodeWithFormat(matrix: BitMatrix, version: Version, formatInfo: FormatInformation): DecodedQR {
   const codewords = readCodewords(matrix, version, formatInfo);
   const dataBlocks = getDataBlocks(codewords, version, formatInfo.errorCorrectionLevel);
   if (!dataBlocks) {
@@ -322,6 +312,39 @@ function decodeMatrix(matrix: BitMatrix) {
   } catch {
     return null;
   }
+}
+
+function decodeMatrix(matrix: BitMatrix) {
+  const version = readVersion(matrix);
+  if (!version) {
+    return null;
+  }
+
+  const formatInfo = readFormatInformation(matrix);
+  if (!formatInfo) {
+    return null;
+  }
+
+  // First try with the format info we read. This succeeds for the vast majority of
+  // QRs and is fast.
+  const primary = tryDecodeWithFormat(matrix, version, formatInfo);
+  if (primary) return primary;
+
+  // Fallback: brute-force every (errorCorrectionLevel, dataMask) combination. This
+  // handles cases where the format info area has enough corruption that BCH-correction
+  // returns a wrong-but-close match. RS-decode + decodeData together act as a
+  // validator: only the true (ecLevel, mask) will produce a polynomial that both
+  // satisfies error correction AND parses as a valid QR data stream.
+  for (let ecLevel = 0; ecLevel < 4; ecLevel++) {
+    for (let dataMask = 0; dataMask < 8; dataMask++) {
+      if (ecLevel === formatInfo.errorCorrectionLevel && dataMask === formatInfo.dataMask) {
+        continue; // already tried
+      }
+      const result = tryDecodeWithFormat(matrix, version, { errorCorrectionLevel: ecLevel, dataMask });
+      if (result) return result;
+    }
+  }
+  return null;
 }
 
 export function decode(matrix: BitMatrix): DecodedQR {

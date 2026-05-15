@@ -99,12 +99,19 @@ export function extract(image: BitMatrix, location: QRLocation) {
     };
   };
 
+  // Three-vote sample along the module's image-space diagonal: center plus 20%
+  // pulled toward each corner. Single-point center sampling was brittle when the
+  // perspective transform landed near a module boundary — a 1-pixel slip became
+  // a flipped bit and Reed-Solomon couldn't recover after a few of those.
   for (let y = 0; y < location.dimension; y++) {
     for (let x = 0; x < location.dimension; x++) {
-      const xValue = x + 0.5;
-      const yValue = y + 0.5;
-      const sourcePixel = mappingFunction(xValue, yValue);
-      matrix.set(x, y, image.get(Math.floor(sourcePixel.x), Math.floor(sourcePixel.y)));
+      const c = mappingFunction(x + 0.5, y + 0.5);
+      const a = mappingFunction(x + 0.4, y + 0.4);
+      const b = mappingFunction(x + 0.6, y + 0.6);
+      const v1 = image.get(Math.floor(c.x), Math.floor(c.y)) ? 1 : 0;
+      const v2 = image.get(Math.floor(a.x), Math.floor(a.y)) ? 1 : 0;
+      const v3 = image.get(Math.floor(b.x), Math.floor(b.y)) ? 1 : 0;
+      matrix.set(x, y, v1 + v2 + v3 >= 2);
     }
   }
 

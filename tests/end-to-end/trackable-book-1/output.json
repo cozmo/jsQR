@@ -1,1 +1,40 @@
-null
+{
+  "binaryData": [],
+  "data": "",
+  "chunks": [],
+  "version": 1,
+  "location": {
+    "topRightCorner": {
+      "x": 385.375,
+      "y": 136.49999999999997
+    },
+    "topLeftCorner": {
+      "x": 403.9795155782333,
+      "y": 221.5508321941615
+    },
+    "bottomRightCorner": {
+      "x": 447.67518786116364,
+      "y": 131.19706916844106
+    },
+    "bottomLeftCorner": {
+      "x": 467.125,
+      "y": 214.49999999999997
+    },
+    "topRightFinderPattern": {
+      "x": 399,
+      "y": 149.5
+    },
+    "topLeftFinderPattern": {
+      "x": 411.5,
+      "y": 206
+    },
+    "bottomLeftFinderPattern": {
+      "x": 453.5,
+      "y": 201.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 434.50900525816326,
+      "y": 158.42205692379798
+    }
+  }
+}

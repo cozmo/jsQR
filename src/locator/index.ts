@@ -1,6 +1,6 @@
 import { BitMatrix } from "../BitMatrix";
 
-const MAX_FINDERPATTERNS_TO_SEARCH = 6;
+const MAX_FINDERPATTERNS_TO_SEARCH = 8;
 const MIN_QUAD_RATIO = 0.5;
 const MAX_QUAD_RATIO = 1.5;
 
@@ -8,7 +8,7 @@ const MAX_QUAD_RATIO = 1.5;
 // fall back to alternate candidate triplets in score order. This is the number of
 // distinct groups (each producing up to 2 locations: alignment-based + centered) the
 // locator emits for the caller to try.
-const MAX_FINDER_GROUPS_TO_RETURN = 6;
+const MAX_FINDER_GROUPS_TO_RETURN = 8;
 // Per group, this is the cap on alignment-pattern candidates we emit in addition to
 // the best one. Real QRs sometimes have data that scores as alignment-like patterns
 // and can outrank the real one; trying a few more lets us recover.
@@ -416,10 +416,11 @@ export function locate(matrix: BitMatrix): QRLocation[] {
     const midTopLeft = recenterLocation(matrix, topLeft);
     const midBottomLeft = recenterLocation(matrix, bottomLeft);
 
-    // For the top-scored group we generate alternate alignment-pattern candidates
-    // too; for lower-scored groups we only generate the best alignment to keep the
-    // total candidate count from exploding.
-    const alternates = groupIndex === 0 ? MAX_ALIGNMENT_ALTERNATES : 0;
+    // Alternate alignment-pattern candidates per group. We give the top-scored
+    // triplet the most exploration since it's most likely to be the real QR; lower
+    // groups still get one alternate so that we recover when a real finder triplet
+    // is in second place but its preferred alignment quad is a false positive.
+    const alternates = groupIndex === 0 ? MAX_ALIGNMENT_ALTERNATES : 1;
 
     const primary = findAlignmentPatterns(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft, alternates);
     if (primary.length > 0) {

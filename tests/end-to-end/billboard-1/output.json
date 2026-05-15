@@ -1,1 +1,86 @@
-null
+{
+  "binaryData": [
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    113,
+    114,
+    116,
+    117,
+    110,
+    105,
+    110,
+    103,
+    46,
+    99,
+    111,
+    109
+  ],
+  "data": "http://qrtuning.com",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        116,
+        116,
+        112,
+        58,
+        47,
+        47,
+        113,
+        114,
+        116,
+        117,
+        110,
+        105,
+        110,
+        103,
+        46,
+        99,
+        111,
+        109
+      ],
+      "text": "http://qrtuning.com"
+    }
+  ],
+  "version": 3,
+  "location": {
+    "topRightCorner": {
+      "x": 351.3228668267538,
+      "y": 233.63702102756852
+    },
+    "topLeftCorner": {
+      "x": 111.10131069257422,
+      "y": 220.20775718907092
+    },
+    "bottomRightCorner": {
+      "x": 361.0587764639994,
+      "y": 443.75317833840063
+    },
+    "bottomLeftCorner": {
+      "x": 102.82254194714406,
+      "y": 438.90554967978267
+    },
+    "topRightFinderPattern": {
+      "x": 324.25,
+      "y": 256
+    },
+    "topLeftFinderPattern": {
+      "x": 140.5,
+      "y": 246.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 136,
+      "y": 411.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 303.75,
+      "y": 392.5
+    }
+  }
+}

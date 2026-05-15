@@ -52,10 +52,59 @@ var jsQR = (() => {
   };
 
   // src/binarizer/index.ts
-  var REGION_SIZE = 8;
+  var DEFAULT_REGION_SIZE = 8;
   var MIN_DYNAMIC_RANGE = 24;
   function numBetween(value, min, max) {
     return value < min ? min : value > max ? max : value;
+  }
+  function otsuThreshold(grey) {
+    const hist = new Uint32Array(256);
+    for (let i = 0; i < grey.length; i++) hist[grey[i]]++;
+    const total = grey.length;
+    let sumAll = 0;
+    for (let i = 0; i < 256; i++) sumAll += i * hist[i];
+    let sumB = 0;
+    let wB = 0;
+    let maxVar = -1;
+    let threshold = 128;
+    for (let i = 0; i < 256; i++) {
+      wB += hist[i];
+      if (wB === 0) continue;
+      const wF = total - wB;
+      if (wF === 0) break;
+      sumB += i * hist[i];
+      const mB = sumB / wB;
+      const mF = (sumAll - sumB) / wF;
+      const between = wB * wF * (mB - mF) * (mB - mF);
+      if (between > maxVar) {
+        maxVar = between;
+        threshold = i;
+      }
+    }
+    return threshold;
+  }
+  function binarizeGlobal(data, width, height, returnInverted) {
+    if (data.length !== width * height * 4) {
+      throw new Error("Malformed data passed to binarizer.");
+    }
+    const grey = new Uint8ClampedArray(width * height);
+    for (let i = 0; i < width * height; i++) {
+      const r = data[i * 4];
+      const g = data[i * 4 + 1];
+      const b = data[i * 4 + 2];
+      grey[i] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+    const threshold = otsuThreshold(grey);
+    const binarized = BitMatrix.createEmpty(width, height);
+    const inverted = returnInverted ? BitMatrix.createEmpty(width, height) : null;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const isBlack = grey[y * width + x] <= threshold;
+        binarized.set(x, y, isBlack);
+        if (returnInverted) inverted.set(x, y, !isBlack);
+      }
+    }
+    return returnInverted ? { binarized, inverted } : { binarized };
   }
   var Matrix = class {
     constructor(width, height) {
@@ -69,10 +118,11 @@ var jsQR = (() => {
       this.data[y * this.width + x] = value;
     }
   };
-  function binarize(data, width, height, returnInverted) {
+  function binarize(data, width, height, returnInverted, regionSize = DEFAULT_REGION_SIZE) {
     if (data.length !== width * height * 4) {
       throw new Error("Malformed data passed to binarizer.");
     }
+    const REGION_SIZE = regionSize;
     const greyscalePixels = new Matrix(width, height);
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
@@ -7729,10 +7779,13 @@ var jsQR = (() => {
     if (errorLocations == null) {
       return null;
     }
+    if (errorLocations.length > Math.floor(twoS / 2)) {
+      return null;
+    }
     const errorMagnitudes = findErrorMagnitudes(field, sigmaOmega[1], errorLocations);
     for (let i = 0; i < errorLocations.length; i++) {
       const position = outputBytes.length - 1 - field.log(errorLocations[i]);
-      if (position < 0) {
+      if (position < 0 || position >= outputBytes.length) {
         return null;
       }
       outputBytes[position] = addOrSubtractGF(outputBytes[position], errorMagnitudes[i]);
@@ -9278,15 +9331,7 @@ var jsQR = (() => {
     }
     return dataBlocks;
   }
-  function decodeMatrix(matrix) {
-    const version = readVersion(matrix);
-    if (!version) {
-      return null;
-    }
-    const formatInfo = readFormatInformation(matrix);
-    if (!formatInfo) {
-      return null;
-    }
+  function tryDecodeWithFormat(matrix, version, formatInfo) {
     const codewords = readCodewords(matrix, version, formatInfo);
     const dataBlocks = getDataBlocks(codewords, version, formatInfo.errorCorrectionLevel);
     if (!dataBlocks) {
@@ -9309,6 +9354,28 @@ var jsQR = (() => {
     } catch {
       return null;
     }
+  }
+  function decodeMatrix(matrix) {
+    const version = readVersion(matrix);
+    if (!version) {
+      return null;
+    }
+    const formatInfo = readFormatInformation(matrix);
+    if (!formatInfo) {
+      return null;
+    }
+    const primary = tryDecodeWithFormat(matrix, version, formatInfo);
+    if (primary) return primary;
+    for (let ecLevel = 0; ecLevel < 4; ecLevel++) {
+      for (let dataMask = 0; dataMask < 8; dataMask++) {
+        if (ecLevel === formatInfo.errorCorrectionLevel && dataMask === formatInfo.dataMask) {
+          continue;
+        }
+        const result = tryDecodeWithFormat(matrix, version, { errorCorrectionLevel: ecLevel, dataMask });
+        if (result) return result;
+      }
+    }
+    return null;
   }
   function decode3(matrix) {
     if (matrix == null) {
@@ -9412,10 +9479,13 @@ var jsQR = (() => {
     };
     for (let y = 0; y < location.dimension; y++) {
       for (let x = 0; x < location.dimension; x++) {
-        const xValue = x + 0.5;
-        const yValue = y + 0.5;
-        const sourcePixel = mappingFunction(xValue, yValue);
-        matrix.set(x, y, image.get(Math.floor(sourcePixel.x), Math.floor(sourcePixel.y)));
+        const c = mappingFunction(x + 0.5, y + 0.5);
+        const a = mappingFunction(x + 0.4, y + 0.4);
+        const b = mappingFunction(x + 0.6, y + 0.6);
+        const v1 = image.get(Math.floor(c.x), Math.floor(c.y)) ? 1 : 0;
+        const v2 = image.get(Math.floor(a.x), Math.floor(a.y)) ? 1 : 0;
+        const v3 = image.get(Math.floor(b.x), Math.floor(b.y)) ? 1 : 0;
+        matrix.set(x, y, v1 + v2 + v3 >= 2);
       }
     }
     return {
@@ -9425,10 +9495,10 @@ var jsQR = (() => {
   }
 
   // src/locator/index.ts
-  var MAX_FINDERPATTERNS_TO_SEARCH = 6;
+  var MAX_FINDERPATTERNS_TO_SEARCH = 8;
   var MIN_QUAD_RATIO = 0.5;
   var MAX_QUAD_RATIO = 1.5;
-  var MAX_FINDER_GROUPS_TO_RETURN = 6;
+  var MAX_FINDER_GROUPS_TO_RETURN = 8;
   var MAX_ALIGNMENT_ALTERNATES = 2;
   var distance = (a, b) => Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
   function sum(values) {
@@ -9683,7 +9753,7 @@ var jsQR = (() => {
       const midTopRight = recenterLocation(matrix, topRight);
       const midTopLeft = recenterLocation(matrix, topLeft);
       const midBottomLeft = recenterLocation(matrix, bottomLeft);
-      const alternates = groupIndex === 0 ? MAX_ALIGNMENT_ALTERNATES : 0;
+      const alternates = groupIndex === 0 ? MAX_ALIGNMENT_ALTERNATES : 1;
       const primary = findAlignmentPatterns(matrix, alignmentPatternQuads, topRight, topLeft, bottomLeft, alternates);
       if (primary.length > 0) {
         result.push({
@@ -9776,7 +9846,7 @@ var jsQR = (() => {
   }
 
   // src/index.ts
-  var DIMENSION_OFFSETS = [0, 4, -4, 8, -8];
+  var DIMENSION_OFFSETS = [0, 4, -4, 8, -8, 12, -12];
   function scan(matrix) {
     const locations = locate(matrix);
     if (!locations) {
@@ -9820,11 +9890,22 @@ var jsQR = (() => {
     const options = { ...defaultOptions, ...providedOptions };
     const shouldInvert = options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst";
     const tryInvertedFirst = options.inversionAttempts === "onlyInvert" || options.inversionAttempts === "invertFirst";
-    const { binarized, inverted } = binarize(data, width, height, shouldInvert);
-    let result = scan(tryInvertedFirst ? inverted : binarized);
-    if (!result && (options.inversionAttempts === "attemptBoth" || options.inversionAttempts === "invertFirst")) {
-      result = scan(tryInvertedFirst ? binarized : inverted);
-    }
+    const tryScan = (primary, fallback) => {
+      let r = scan(tryInvertedFirst ? fallback : primary);
+      if (!r && shouldInvert) r = scan(tryInvertedFirst ? primary : fallback);
+      return r;
+    };
+    const adaptive = binarize(data, width, height, shouldInvert);
+    let result = tryScan(adaptive.binarized, adaptive.inverted);
+    if (result) return result;
+    const global = binarizeGlobal(data, width, height, shouldInvert);
+    result = tryScan(global.binarized, global.inverted);
+    if (result) return result;
+    const coarse = binarize(data, width, height, shouldInvert, 16);
+    result = tryScan(coarse.binarized, coarse.inverted);
+    if (result) return result;
+    const fine = binarize(data, width, height, shouldInvert, 4);
+    result = tryScan(fine.binarized, fine.inverted);
     return result;
   }
   var src_default = jsQR;

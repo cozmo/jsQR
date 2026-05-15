@@ -1,1 +1,88 @@
-null
+{
+  "binaryData": [
+    104,
+    116,
+    116,
+    112,
+    58,
+    47,
+    47,
+    98,
+    105,
+    116,
+    46,
+    108,
+    121,
+    47,
+    100,
+    68,
+    108,
+    115,
+    86,
+    109
+  ],
+  "data": "http://bit.ly/dDlsVm",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        104,
+        116,
+        116,
+        112,
+        58,
+        47,
+        47,
+        98,
+        105,
+        116,
+        46,
+        108,
+        121,
+        47,
+        100,
+        68,
+        108,
+        115,
+        86,
+        109
+      ],
+      "text": "http://bit.ly/dDlsVm"
+    }
+  ],
+  "version": 2,
+  "location": {
+    "topRightCorner": {
+      "x": 362.48488316931815,
+      "y": 64.58356107789973
+    },
+    "topLeftCorner": {
+      "x": 191.708378240516,
+      "y": 61.967086805926925
+    },
+    "bottomRightCorner": {
+      "x": 354.6815478496024,
+      "y": 215.49848588350454
+    },
+    "bottomLeftCorner": {
+      "x": 201.30618171475888,
+      "y": 220.2043762754052
+    },
+    "topRightFinderPattern": {
+      "x": 338.75,
+      "y": 87.5
+    },
+    "topLeftFinderPattern": {
+      "x": 217.75,
+      "y": 86.5
+    },
+    "bottomLeftFinderPattern": {
+      "x": 222.75,
+      "y": 199.5
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 317,
+      "y": 180
+    }
+  }
+}

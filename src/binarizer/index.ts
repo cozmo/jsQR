@@ -1,10 +1,68 @@
 import {BitMatrix} from "../BitMatrix";
 
-const REGION_SIZE = 8;
+const DEFAULT_REGION_SIZE = 8;
 const MIN_DYNAMIC_RANGE = 24;
 
 function numBetween(value: number, min: number, max: number): number {
   return value < min ? min : value > max ? max : value;
+}
+
+// Otsu's method: finds the global luminance threshold that maximizes the variance
+// between the two pixel classes (foreground/background). Works well for QRs printed
+// with high contrast on uniform backgrounds — exactly the cases where the regional
+// adaptive method can over-correct and lose data-area detail. We use this as a
+// secondary binarization that jsQR() falls back to when the adaptive scan fails.
+function otsuThreshold(grey: Uint8ClampedArray): number {
+  const hist = new Uint32Array(256);
+  for (let i = 0; i < grey.length; i++) hist[grey[i]]++;
+  const total = grey.length;
+  let sumAll = 0;
+  for (let i = 0; i < 256; i++) sumAll += i * hist[i];
+
+  let sumB = 0;
+  let wB = 0;
+  let maxVar = -1;
+  let threshold = 128;
+  for (let i = 0; i < 256; i++) {
+    wB += hist[i];
+    if (wB === 0) continue;
+    const wF = total - wB;
+    if (wF === 0) break;
+    sumB += i * hist[i];
+    const mB = sumB / wB;
+    const mF = (sumAll - sumB) / wF;
+    const between = wB * wF * (mB - mF) * (mB - mF);
+    if (between > maxVar) {
+      maxVar = between;
+      threshold = i;
+    }
+  }
+  return threshold;
+}
+
+// Build a global-threshold BitMatrix using Otsu's method.
+export function binarizeGlobal(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean) {
+  if (data.length !== width * height * 4) {
+    throw new Error("Malformed data passed to binarizer.");
+  }
+  const grey = new Uint8ClampedArray(width * height);
+  for (let i = 0; i < width * height; i++) {
+    const r = data[i * 4];
+    const g = data[i * 4 + 1];
+    const b = data[i * 4 + 2];
+    grey[i] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+  const threshold = otsuThreshold(grey);
+  const binarized = BitMatrix.createEmpty(width, height);
+  const inverted = returnInverted ? BitMatrix.createEmpty(width, height) : null;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const isBlack = grey[y * width + x] <= threshold;
+      binarized.set(x, y, isBlack);
+      if (returnInverted) inverted.set(x, y, !isBlack);
+    }
+  }
+  return returnInverted ? { binarized, inverted } : { binarized };
 }
 
 // Like BitMatrix but accepts arbitry Uint8 values
@@ -23,10 +81,11 @@ class Matrix {
   }
 }
 
-export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean) {
+export function binarize(data: Uint8ClampedArray, width: number, height: number, returnInverted: boolean, regionSize: number = DEFAULT_REGION_SIZE) {
   if (data.length !== width * height * 4) {
     throw new Error("Malformed data passed to binarizer.");
   }
+  const REGION_SIZE = regionSize;
   // Convert image to greyscale
   const greyscalePixels = new Matrix(width, height);
   for (let x = 0; x < width; x++) {
