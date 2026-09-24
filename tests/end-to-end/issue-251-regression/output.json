@@ -1,0 +1,126 @@
+{
+  "binaryData": [
+    86,
+    101,
+    114,
+    115,
+    105,
+    111,
+    110,
+    32,
+    50,
+    51,
+    32,
+    97,
+    108,
+    105,
+    103,
+    110,
+    109,
+    101,
+    110,
+    116,
+    32,
+    112,
+    97,
+    116,
+    116,
+    101,
+    114,
+    110,
+    32,
+    114,
+    101,
+    103,
+    114,
+    101,
+    115,
+    115,
+    105,
+    111,
+    110
+  ],
+  "data": "Version 23 alignment pattern regression",
+  "chunks": [
+    {
+      "type": "byte",
+      "bytes": [
+        86,
+        101,
+        114,
+        115,
+        105,
+        111,
+        110,
+        32,
+        50,
+        51,
+        32,
+        97,
+        108,
+        105,
+        103,
+        110,
+        109,
+        101,
+        110,
+        116,
+        32,
+        112,
+        97,
+        116,
+        116,
+        101,
+        114,
+        110,
+        32,
+        114,
+        101,
+        103,
+        114,
+        101,
+        115,
+        115,
+        105,
+        111,
+        110
+      ],
+      "text": "Version 23 alignment pattern regression"
+    }
+  ],
+  "version": 23,
+  "location": {
+    "topRightCorner": {
+      "x": 452,
+      "y": 16
+    },
+    "topLeftCorner": {
+      "x": 16,
+      "y": 16
+    },
+    "bottomRightCorner": {
+      "x": 452,
+      "y": 452
+    },
+    "bottomLeftCorner": {
+      "x": 16,
+      "y": 452
+    },
+    "topRightFinderPattern": {
+      "x": 438,
+      "y": 30
+    },
+    "topLeftFinderPattern": {
+      "x": 30,
+      "y": 30
+    },
+    "bottomLeftFinderPattern": {
+      "x": 30,
+      "y": 438
+    },
+    "bottomRightAlignmentPattern": {
+      "x": 426,
+      "y": 426
+    }
+  }
+}

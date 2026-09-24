@@ -129,4 +129,17 @@ describe("decode", () => {
       version: 4,
     });
   });
+
+  it("decodes a version 23 code", async () => {
+    // Version 23, error correction level L. Regression test for the alignment pattern centers of version 23.
+    const data = await loadBinarized("./src/decoder/test-data/version-23.png");
+    const bytes = [86, 101, 114, 115, 105, 111, 110, 32, 50, 51, 32, 97, 108, 105, 103, 110, 109, 101, 110, 116, 32, 112, 97,
+      116, 116, 101, 114, 110, 32, 114, 101, 103, 114, 101, 115, 115, 105, 111, 110];
+    expect(decode(data)).toEqual({
+      text: "Version 23 alignment pattern regression",
+      bytes,
+      chunks: [{ type: "byte", bytes, text: "Version 23 alignment pattern regression" }],
+      version: 23,
+    });
+  });
 });
